@@ -22,12 +22,10 @@ type service struct {
 }
 
 func (s *service) CreateDomain(domain *domain.Domain) error {
-	result, err := s.dc.InsertOne(context.TODO(), domain)
+	_, err := s.dc.InsertOne(context.TODO(), domain)
 	if err != nil {
 		return fmt.Errorf("inserted a domain document error, %s", err)
 	}
-
-	fmt.Println(result)
 
 	return nil
 }
