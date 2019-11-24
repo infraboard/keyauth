@@ -3,7 +3,6 @@ package conf
 import (
 	"context"
 	"fmt"
-	"sync"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -12,8 +11,7 @@ import (
 )
 
 var (
-	mclient *mongo.Client
-	monce   sync.Once
+	mgoclient *mongo.Client
 )
 
 func newConfig() *Config {
@@ -43,16 +41,11 @@ func newDefaultMongoDB() *mongodb {
 
 // Client 获取一个全局的mongodb客户端连接
 func (m *mongodb) Client() *mongo.Client {
-	monce.Do(func() {
-		client, err := m.getClient()
-		if err != nil {
-			panic(err)
-		}
+	if mgoclient == nil {
+		panic("please load mongo client first")
+	}
 
-		mclient = client
-	})
-
-	return mclient
+	return mgoclient
 }
 
 func (m *mongodb) getClient() (*mongo.Client, error) {
