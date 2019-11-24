@@ -7,7 +7,6 @@ import (
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
 var (
@@ -48,6 +47,10 @@ func (m *mongodb) Client() *mongo.Client {
 	return mgoclient
 }
 
+func (m *mongodb) GetDB() *mongo.Database {
+	return m.Client().Database(m.Database)
+}
+
 func (m *mongodb) getClient() (*mongo.Client, error) {
 	cred := options.Credential{
 		AuthSource: m.Database,
@@ -65,13 +68,14 @@ func (m *mongodb) getClient() (*mongo.Client, error) {
 	opts.SetAuth(cred)
 	opts.SetConnectTimeout(5 * time.Second)
 
-	client, err := mongo.NewClient(opts)
+	// Connect to MongoDB
+	client, err := mongo.Connect(context.TODO(), opts)
 	if err != nil {
 		return nil, fmt.Errorf("new mongodb client error, %s", err)
 	}
 
-	if err = client.Ping(context.TODO(), readpref.Primary()); err != nil {
-		return nil, fmt.Errorf("ping mongodb server error, %s", err)
+	if err = client.Ping(context.TODO(), nil); err != nil {
+		return nil, fmt.Errorf("ping mongodb server(%s) error, %s", m.Endpoints, err)
 	}
 
 	return client, nil
