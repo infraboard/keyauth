@@ -21,7 +21,15 @@ func newConfig() *Config {
 
 // Config 应用配置
 type Config struct {
+	App   *app     `toml:"app"`
 	Mongo *mongodb `toml:"mongodb"`
+}
+
+type app struct {
+}
+
+func newDefaultAPP() *app {
+	return &app{}
 }
 
 type mongodb struct {
