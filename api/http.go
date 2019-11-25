@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"time"
@@ -47,14 +48,28 @@ type HTTPService struct {
 }
 
 // Start 启动服务
-func (s *HTTPService) Start() {
+func (s *HTTPService) Start() error {
 	// 启动HTTP服务
-	s.l.Infof("服务启动成功, 监听地址: %s", s.http.Addr)
+	s.l.Infof("服务启动成功, 监听地址: %s", s.server.Addr)
 	if err := s.server.ListenAndServe(); err != nil {
 		if err == http.ErrServerClosed {
 			s.l.Info("service is stopped")
 		}
 		return fmt.Errorf("start service error, %s", err.Error())
+	}
+	return nil
+}
+
+// Stop 停止server
+func (s *HTTPService) Stop() error {
+	s.l.Info("start graceful shutdown")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	// 优雅关闭HTTP服务
+	if err := s.server.Shutdown(ctx); err != nil {
+		s.l.Errorf("graceful shutdown timeout, force exit")
 	}
 	return nil
 }
