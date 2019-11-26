@@ -27,14 +27,14 @@ func NewHTTPService() *HTTPService {
 		WriteTimeout:      25 * time.Second,
 		IdleTimeout:       120 * time.Second,
 		MaxHeaderBytes:    1 << 20,
-		Addr:              "0.0.0.0:8848",
+		Addr:              conf.C().App.Addr(),
 		Handler:           r,
 	}
 
 	return &HTTPService{
 		r:      r,
 		server: server,
-		l:      zap.L(),
+		l:      zap.L().Named("API"),
 		c:      conf.C(),
 	}
 }
@@ -71,6 +71,7 @@ func (s *HTTPService) Stop() error {
 	if err := s.server.Shutdown(ctx); err != nil {
 		s.l.Errorf("graceful shutdown timeout, force exit")
 	}
+
 	return nil
 }
 

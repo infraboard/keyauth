@@ -8,17 +8,13 @@ import (
 	"os/signal"
 	"strings"
 	"syscall"
-	"time"
 
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
-	"github.com/infraboard/mcube/register"
-	"github.com/infraboard/mcube/register/etcd"
 	"github.com/spf13/cobra"
 
 	"github.com/infraboard/keyauth/api"
 	"github.com/infraboard/keyauth/conf"
-	"github.com/infraboard/keyauth/version"
 )
 
 var (
@@ -40,7 +36,12 @@ var serviceCmd = &cobra.Command{
 		}
 
 		// 初始化全局变量
-		if err := loadGloabl(confType); err != nil {
+		if err := loadGlobalConfig(confType); err != nil {
+			return err
+		}
+
+		// 初始化全局日志配置
+		if err := loadGlobalLogger(); err != nil {
 			return err
 		}
 
@@ -54,17 +55,6 @@ var serviceCmd = &cobra.Command{
 			// 初始化服务
 			svr, err := newService(conf)
 			if err != nil {
-				return err
-			}
-
-			// 注册服务
-			r, err := etcd.NewEtcdRegister(conf.Etcd.EndPoints, conf.Etcd.Username, conf.Etcd.Password, zap.L().Named("Register"))
-			if err != nil {
-				svr.log.Warn(err)
-			}
-			defer r.UnRegiste()
-
-			if err := svr.registry(r, conf); err != nil {
 				return err
 			}
 
@@ -86,10 +76,7 @@ var serviceCmd = &cobra.Command{
 }
 
 func newService(cnf *conf.Config) (*service, error) {
-	http, err := api.NewHTTPService(cnf)
-	if err != nil {
-		return nil, err
-	}
+	http := api.NewHTTPService()
 
 	svr := &service{
 		http: http,
@@ -101,7 +88,6 @@ func newService(cnf *conf.Config) (*service, error) {
 
 type service struct {
 	http *api.HTTPService
-	hb   <-chan register.HeatbeatResonse
 
 	log  logger.Logger
 	stop context.CancelFunc
@@ -112,12 +98,11 @@ func (s *service) start() error {
 }
 
 // config 为全局变量, 只需要load 即可全局可用户
-// 日志需要初始化并配置
-func loadGloabl(configType string) error {
+func loadGlobalConfig(configType string) error {
 	// 配置加载
 	switch configType {
 	case "file":
-		err := conf.LoadConfigFromTomlFile(confFile, isEncrypto)
+		err := conf.LoadConfigFromToml(confFile)
 		if err != nil {
 			return err
 		}
@@ -129,13 +114,17 @@ func loadGloabl(configType string) error {
 		return errors.New("unknown config type")
 	}
 
-	// 加载日志组件
-	lc := conf.C().Log
+	return nil
+}
+
+// log 为全局变量, 只需要load 即可全局可用户, 依赖全局配置先初始化
+func loadGlobalLogger() error {
 	var (
 		logInitMsg string
 		level      zap.Level
 	)
 
+	lc := conf.C().Log
 	lv, err := zap.NewLevel(lc.Level)
 	if err != nil {
 		logInitMsg = fmt.Sprintf("%s, use default level INFO", err)
@@ -145,57 +134,28 @@ func loadGloabl(configType string) error {
 		logInitMsg = fmt.Sprintf("log level: %s", lv)
 	}
 
-	if lc.ToStdout {
-		// 输出到标准输出
-		if lc.JSON {
-			if err := zap.DevelopmentSetup(zap.WithLevel(level), zap.AsJSON()); err != nil {
-				return err
-			}
-		} else {
-			if err := zap.DevelopmentSetup(zap.WithLevel(level)); err != nil {
-				return err
-			}
-		}
-	} else {
-		// 输出到文件
-		logconf := zap.DefaultConfig()
-		logconf.Files.Name = "api.log"
-		logconf.Files.Path = lc.LogDirPath
-		logconf.Level = level
+	zapConfig := zap.DefaultConfig()
+	zapConfig.Level = level
 
-		if err := zap.Configure(logconf); err != nil {
-			return err
-		}
+	switch lc.To {
+	case conf.ToStdout:
+		zapConfig.ToStderr = true
+		zapConfig.ToFiles = false
+	case conf.ToFile:
+		zapConfig.Files.Name = "api.log"
+		zapConfig.Files.Path = lc.PathDir
 	}
 
-	zap.L().Named("Init").Info(logInitMsg)
-	return nil
-}
-
-func (s *service) registry(r register.Register, conf *conf.Config) error {
-	instance := &register.ServiceInstance{
-		InstanceName: conf.APP.Name,
-		ServiceName:  version.ServiceName,
-		Type:         register.API,
-		Address:      conf.APP.Host,
-		Version:      version.GIT_TAG,
-		GitBranch:    version.GIT_BRANCH,
-		GitCommit:    version.GIT_COMMIT,
-		BuildEnv:     version.GO_VERSION,
-		BuildAt:      version.BUILD_TIME,
-		Online:       time.Now().UnixNano() / 1000000, // 毫秒时间戳
-
-		Prefix:   conf.Etcd.InstancePrefixKey,
-		TTL:      conf.Etcd.InstanceTTL,
-		Interval: time.Duration(conf.Etcd.InstanceTTL/3) * time.Second,
+	switch lc.Format {
+	case conf.JSONFormat:
+		zapConfig.JSON = true
 	}
 
-	heatbeatResp, err := r.Registe(instance)
-	if err != nil {
+	if err := zap.Configure(zapConfig); err != nil {
 		return err
 	}
 
-	s.hb = heatbeatResp
+	zap.L().Named("INIT").Info(logInitMsg)
 	return nil
 }
 
@@ -212,8 +172,6 @@ func (s *service) waitSign(sign chan os.Signal) {
 				s.log.Infof("service stop complete")
 				return
 			}
-		case <-s.hb:
-			// s.log.Debug(hb.TTL())
 		}
 	}
 }

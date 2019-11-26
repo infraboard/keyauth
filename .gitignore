@@ -19,3 +19,4 @@ log/
 .vscode/
 .DS_Store
 etc
+keyauth

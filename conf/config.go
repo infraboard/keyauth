@@ -15,6 +15,8 @@ var (
 
 func newConfig() *Config {
 	return &Config{
+		App:   newDefaultAPP(),
+		Log:   newDefaultLog(),
 		Mongo: newDefaultMongoDB(),
 	}
 }
@@ -22,14 +24,44 @@ func newConfig() *Config {
 // Config 应用配置
 type Config struct {
 	App   *app     `toml:"app"`
+	Log   *log     `toml:"log"`
 	Mongo *mongodb `toml:"mongodb"`
 }
 
 type app struct {
+	Name string `toml:"name"`
+	Host string `toml:"host"`
+	Port string `toml:"port"`
+	Key  string `toml:"key"`
+}
+
+func (a *app) Addr() string {
+	return a.Host + ":" + a.Port
 }
 
 func newDefaultAPP() *app {
-	return &app{}
+	return &app{
+		Name: "keyauth",
+		Host: "127.0.0.1",
+		Port: "8050",
+		Key:  "default",
+	}
+}
+
+type log struct {
+	Level   string    `toml:"level"`
+	PathDir string    `toml:"path_dir"`
+	Format  LogFormat `toml:"format"`
+	To      LogTo     `toml:"to"`
+}
+
+func newDefaultLog() *log {
+	return &log{
+		Level:   "debug",
+		PathDir: "logs",
+		Format:  "text",
+		To:      "stdout",
+	}
 }
 
 type mongodb struct {
