@@ -1,16 +1,7 @@
 package pkg
 
 import (
-	"errors"
-	"fmt"
-
-	"github.com/infraboard/mcube/logger/zap"
-
 	"github.com/infraboard/keyauth/pkg/domain"
-)
-
-var (
-	log = zap.L().Named("PKG")
 )
 
 var (
@@ -18,22 +9,46 @@ var (
 	Domain domain.Service
 )
 
+var (
+	servers       []Service
+	successLoaded []string
+)
+
+// LoadedService 查询加载成功的服务
+func LoadedService() []string {
+	return successLoaded
+}
+
+func addService(name string, svr Service) {
+	servers = append(servers, svr)
+	successLoaded = append(successLoaded, name)
+}
+
 // Service 注册上的服务必须实现的方法
 type Service interface {
 	Config() error
 }
 
-// Registry 服务实例注册
-func Registry(name string, svr Service) error {
+// RegistryService 服务实例注册
+func RegistryService(name string, svr Service) {
 	switch value := svr.(type) {
 	case domain.Service:
 		if Domain != nil {
-			return errors.New("service has registried")
+			panic("service " + name + " has registried")
 		}
 		Domain = value
-		log.Info("domain service %s registry success", name)
+		addService(name, svr)
 	default:
-		return fmt.Errorf("unknown service type: %v", value)
+		return
+	}
+}
+
+// InitService 初始化所有服务
+func InitService() error {
+	for _, s := range servers {
+		if err := s.Config(); err != nil {
+			return err
+		}
 	}
 
 	return nil

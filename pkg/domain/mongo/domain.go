@@ -54,5 +54,5 @@ func (s *service) ListDomain(req *domain.Request) (domains []*domain.Domain, tot
 }
 
 func init() {
-	pkg.Registry("mongo impl", Service)
+	pkg.RegistryService("mongo impl", Service)
 }

@@ -15,6 +15,11 @@ import (
 
 	"github.com/infraboard/keyauth/api"
 	"github.com/infraboard/keyauth/conf"
+	"github.com/infraboard/keyauth/pkg"
+
+	// 加载服务模块
+	_ "github.com/infraboard/keyauth/pkg/domain/http"
+	_ "github.com/infraboard/keyauth/pkg/domain/mongo"
 )
 
 var (
@@ -42,6 +47,11 @@ var serviceCmd = &cobra.Command{
 
 		// 初始化全局日志配置
 		if err := loadGlobalLogger(); err != nil {
+			return err
+		}
+
+		// 初始化服务层
+		if err := pkg.InitService(); err != nil {
 			return err
 		}
 
@@ -94,6 +104,7 @@ type service struct {
 }
 
 func (s *service) start() error {
+	s.log.Infof("loaded services: %v", pkg.LoadedService())
 	return s.http.Start()
 }
 

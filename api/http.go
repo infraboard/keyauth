@@ -14,6 +14,7 @@ import (
 	"github.com/infraboard/mcube/logger/zap"
 
 	"github.com/infraboard/keyauth/conf"
+	"github.com/infraboard/keyauth/pkg"
 )
 
 // NewHTTPService 构建函数
@@ -50,6 +51,11 @@ type HTTPService struct {
 
 // Start 启动服务
 func (s *HTTPService) Start() error {
+	// 装置子服务路由
+	if err := pkg.InitHTTPAPI(s.r); err != nil {
+		return err
+	}
+
 	// 启动HTTP服务
 	s.l.Infof("服务启动成功, 监听地址: %s", s.server.Addr)
 	if err := s.server.ListenAndServe(); err != nil {
