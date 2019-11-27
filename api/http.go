@@ -6,13 +6,14 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/mcube/http/middleware/accesslog"
 	"github.com/infraboard/mcube/http/middleware/recovery"
 	"github.com/infraboard/mcube/http/router"
 	"github.com/infraboard/mcube/http/router/httprouter"
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
+
+	"github.com/infraboard/keyauth/conf"
 )
 
 // NewHTTPService 构建函数

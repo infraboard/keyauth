@@ -4,21 +4,28 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/infraboard/keyauth/pkg/domain"
 	"go.mongodb.org/mongo-driver/mongo"
+
+	"github.com/infraboard/keyauth/conf"
+	"github.com/infraboard/keyauth/pkg"
+	"github.com/infraboard/keyauth/pkg/domain"
 )
 
-// NewService 基于MongoDB存储实现的service
-func NewService(db *mongo.Database) domain.Service {
-	return &service{
-		dc: db.Collection("domain"),
-	}
-}
+var (
+	// Service 服务实例
+	Service = &service{}
+)
 
 type service struct {
 	dc            *mongo.Collection
 	enableCache   bool
 	notifyCachPre string
+}
+
+func (s *service) Config() error {
+	db := conf.C().Mongo.GetDB()
+	s.dc = db.Collection("domain")
+	return nil
 }
 
 func (s *service) CreateDomain(domain *domain.Domain) error {
@@ -44,4 +51,8 @@ func (s *service) GetDomainByID(domainID string) (*domain.Domain, error) {
 
 func (s *service) ListDomain(req *domain.Request) (domains []*domain.Domain, totalPage int64, err error) {
 	return nil, 0, nil
+}
+
+func init() {
+	pkg.Registry("mongo impl", Service)
 }

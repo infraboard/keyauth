@@ -4,11 +4,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/infraboard/keyauth/conf"
+	"github.com/stretchr/testify/require"
+
 	"github.com/infraboard/keyauth/conf/mock"
 	"github.com/infraboard/keyauth/pkg/domain"
 	"github.com/infraboard/keyauth/pkg/domain/mongo"
-	"github.com/stretchr/testify/require"
 )
 
 func newSuit(t *testing.T) *suit {
@@ -29,8 +29,9 @@ type suit struct {
 func (s *suit) SetUp() {
 	mock.Load()
 
-	db := conf.C().Mongo.GetDB()
-	s.service = mongo.NewService(db)
+	svr := mongo.Service
+	svr.Config()
+	s.service = svr
 
 	s.d1 = &domain.Domain{
 		ID:          "test01",
