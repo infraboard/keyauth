@@ -37,7 +37,7 @@ func RegistryService(name string, svr Service) {
 			panic("service " + name + " has registried")
 		}
 		Domain = value
-		addService(name, svr)
+		addService(name+"(domain)", svr)
 	default:
 		return
 	}

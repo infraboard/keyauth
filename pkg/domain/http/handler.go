@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/infraboard/mcube/http/response"
 	"github.com/infraboard/mcube/http/router"
 
 	"github.com/infraboard/keyauth/pkg"
@@ -33,7 +34,7 @@ func (h *handler) Config() error {
 }
 
 func (h *handler) ListDomains(w http.ResponseWriter, r *http.Request) {
-
+	response.Success(w, 200, "ok")
 }
 
 func init() {

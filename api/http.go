@@ -22,6 +22,7 @@ func NewHTTPService() *HTTPService {
 	r := httprouter.New()
 	r.Use(recovery.NewWithLogger(zap.L().Named("Recovery")))
 	r.Use(accesslog.NewWithLogger(zap.L().Named("AccessLog")))
+	r.EnableAPIRoot()
 
 	server := &http.Server{
 		ReadHeaderTimeout: 20 * time.Second,
