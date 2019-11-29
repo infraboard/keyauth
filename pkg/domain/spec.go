@@ -8,10 +8,10 @@ type Service interface {
 
 // Request 请求
 type Request struct {
-	ID         string
-	Name       string
-	pageNumber int64
-	pageSize   int64
+	ID         string `json:"id,omitempty"`
+	Name       string `json:"name,omitempty"`
+	PageNumber int64  `json:"page_number,omitempty"`
+	PageSize   int64  `json:"page_size,omitempty"`
 }
 
 // Reader for read data from store
