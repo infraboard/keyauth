@@ -6,12 +6,20 @@ type Service interface {
 	Writer
 }
 
+// NewRequest 请求
+func NewRequest() *Request {
+	return &Request{
+		PageSize:   20,
+		PageNumber: 1,
+	}
+}
+
 // Request 请求
 type Request struct {
 	ID         string `json:"id,omitempty"`
 	Name       string `json:"name,omitempty"`
-	PageNumber int64  `json:"page_number,omitempty"`
-	PageSize   int64  `json:"page_size,omitempty"`
+	PageSize   uint   `json:"page_size,omitempty" validate:"gte=1,lte=200"`
+	PageNumber uint   `json:"page_number,omitempty" validate:"gte=1"`
 }
 
 // Reader for read data from store

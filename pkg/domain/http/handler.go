@@ -34,7 +34,8 @@ func (h *handler) Config() error {
 }
 
 func (h *handler) ListDomains(w http.ResponseWriter, r *http.Request) {
-	response.Success(w, 200, "ok")
+	h.service.ListDomain(nil)
+	response.Success(w, "ok")
 }
 
 func init() {
