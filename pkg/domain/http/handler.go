@@ -1,7 +1,9 @@
 package http
 
 import (
+	"strconv"
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/infraboard/mcube/http/response"
@@ -34,8 +36,16 @@ func (h *handler) Config() error {
 }
 
 func (h *handler) ListDomains(w http.ResponseWriter, r *http.Request) {
-	h.service.ListDomain(nil)
+	ps := r.URL.Query().Get("page_size")
+	pn := r.URL.Query().Get("page_number")
+	fmt.Println(ps, pn)
+	req := domain.NewRequest()
+
+	resp := new(response.PageData)
+	resp.PageSize, _ := strconv.ParseUint(ps, 10, 16)
+	h.service.ListDomain(req)
 	response.Success(w, "ok")
+	return
 }
 
 func init() {
