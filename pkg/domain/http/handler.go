@@ -1,11 +1,11 @@
 package http
 
 import (
-	"strconv"
 	"errors"
-	"fmt"
 	"net/http"
 
+	"github.com/infraboard/mcube/http/context"
+	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 	"github.com/infraboard/mcube/http/router"
 
@@ -24,6 +24,7 @@ type handler struct {
 // Registry 注册HTTP服务路由
 func (h *handler) Registry(router router.SubRouter) {
 	router.AddProtected("GET", "/", h.ListDomains)
+	router.AddProtected("GET", "/:id", h.GetDomain)
 }
 
 func (h *handler) Config() error {
@@ -36,15 +37,34 @@ func (h *handler) Config() error {
 }
 
 func (h *handler) ListDomains(w http.ResponseWriter, r *http.Request) {
-	ps := r.URL.Query().Get("page_size")
-	pn := r.URL.Query().Get("page_number")
-	fmt.Println(ps, pn)
-	req := domain.NewRequest()
+	page := request.LoadPagginFromReq(r)
+	req := domain.NewPageRequest(page)
 
-	resp := new(response.PageData)
-	resp.PageSize, _ := strconv.ParseUint(ps, 10, 16)
-	h.service.ListDomain(req)
-	response.Success(w, "ok")
+	dommains, total, err := h.service.ListDomain(req)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	data := response.PageData{
+		PageRequest: page,
+		TotalCount:  uint(total),
+		List:        dommains,
+	}
+	response.Success(w, data)
+	return
+}
+
+func (h *handler) GetDomain(w http.ResponseWriter, r *http.Request) {
+	rctx := context.GetContext(r)
+
+	d, err := h.service.GetDomainByID(rctx.PS.ByName("id"))
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	response.Success(w, d)
 	return
 }
 

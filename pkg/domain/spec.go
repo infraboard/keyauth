@@ -1,25 +1,28 @@
 package domain
 
+import (
+	"github.com/infraboard/mcube/http/request"
+)
+
 // Service is an domain service
 type Service interface {
 	Reader
 	Writer
 }
 
-// NewRequest 请求
-func NewRequest() *Request {
+// NewPageRequest 分页请求
+func NewPageRequest(page *request.PageRequest) *Request {
 	return &Request{
-		PageSize:   20,
-		PageNumber: 1,
+		PageRequest: page,
 	}
 }
 
 // Request 请求
 type Request struct {
-	ID         string `json:"id,omitempty"`
-	Name       string `json:"name,omitempty"`
-	PageSize   uint   `json:"page_size,omitempty" validate:"gte=1,lte=200"`
-	PageNumber uint   `json:"page_number,omitempty" validate:"gte=1"`
+	*request.PageRequest
+
+	ID   string `json:"id,omitempty"`
+	Name string `json:"name,omitempty"`
 }
 
 // Reader for read data from store
