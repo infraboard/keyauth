@@ -23,6 +23,7 @@ type handler struct {
 
 // Registry 注册HTTP服务路由
 func (h *handler) Registry(router router.SubRouter) {
+	router.AddProtected("POST", "/", h.CreateDomain)
 	router.AddProtected("GET", "/", h.ListDomains)
 	router.AddProtected("GET", "/:id", h.GetDomain)
 }
@@ -60,6 +61,22 @@ func (h *handler) GetDomain(w http.ResponseWriter, r *http.Request) {
 
 	d, err := h.service.GetDomainByID(rctx.PS.ByName("id"))
 	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	response.Success(w, d)
+	return
+}
+
+func (h *handler) CreateDomain(w http.ResponseWriter, r *http.Request) {
+	d := new(domain.Domain)
+	if err := request.GetObjFromReq(r, d); err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	if err := h.service.CreateDomain(d); err != nil {
 		response.Failed(w, err)
 		return
 	}

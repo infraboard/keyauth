@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/assert"
 
 	"github.com/infraboard/keyauth/conf/mock"
 	"github.com/infraboard/keyauth/pkg/domain"
@@ -14,13 +14,13 @@ import (
 func newSuit(t *testing.T) *suit {
 	return &suit{
 		t:     t,
-		shoud: require.New(t),
+		shoud: assert.New(t),
 	}
 }
 
 type suit struct {
 	t     *testing.T
-	shoud *require.Assertions
+	shoud *assert.Assertions
 
 	service domain.Service
 	d1      *domain.Domain

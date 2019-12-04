@@ -34,6 +34,10 @@ func (s *service) Config() error {
 }
 
 func (s *service) CreateDomain(domain *domain.Domain) error {
+	if err := domain.Validate(); err != nil {
+		return err
+	}
+
 	domain.ID = xid.New().String()
 	domain.CreateAt = time.Now().Unix()
 
