@@ -26,6 +26,8 @@ func (h *handler) Registry(router router.SubRouter) {
 	router.AddProtected("POST", "/", h.CreateDomain)
 	router.AddProtected("GET", "/", h.ListDomains)
 	router.AddProtected("GET", "/:id", h.GetDomain)
+	router.AddProtected("PUT", "/:id", h.UpdateDomain)
+	router.AddProtected("DELETE", "/:id", h.DeleteDomain)
 }
 
 func (h *handler) Config() error {
@@ -86,6 +88,43 @@ func (h *handler) CreateDomain(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+func (h *handler) UpdateDomain(w http.ResponseWriter, r *http.Request) {
+	rctx := context.GetContext(r)
+
+	// 查找出原来的domain
+	d, err := h.service.GetDomainByID(rctx.PS.ByName("id"))
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	// 解析需要更新的数据
+	if err := request.GetObjFromReq(r, d.CreateDomainRequst); err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	if err := h.service.UpdateDomain(d); err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	response.Success(w, d)
+	return
+}
+
+func (h *handler) DeleteDomain(w http.ResponseWriter, r *http.Request) {
+	rctx := context.GetContext(r)
+
+	if err := h.service.DeleteDomainByID(rctx.PS.ByName("id")); err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	response.Success(w, "delete ok")
+	return
+}
+
 func init() {
-	pkg.RegistryHTTP("domains", api)
+	pkg.RegistryHTTPV1("domains", api)
 }

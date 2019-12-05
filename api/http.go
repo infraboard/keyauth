@@ -53,7 +53,7 @@ type HTTPService struct {
 // Start 启动服务
 func (s *HTTPService) Start() error {
 	// 装置子服务路由
-	if err := pkg.InitHTTPAPI(s.r); err != nil {
+	if err := pkg.InitV1HTTPAPI(s.c.App.Name, s.r); err != nil {
 		return err
 	}
 

@@ -2,7 +2,6 @@ package mongo_test
 
 import (
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
 
@@ -22,8 +21,8 @@ type suit struct {
 	t     *testing.T
 	shoud *assert.Assertions
 
-	service domain.Service
-	d1      *domain.Domain
+	service   domain.Service
+	createReq *domain.CreateDomainRequst
 }
 
 func (s *suit) SetUp() {
@@ -33,9 +32,7 @@ func (s *suit) SetUp() {
 	svr.Config()
 	s.service = svr
 
-	s.d1 = &domain.Domain{
-		ID:          "test01",
-		CreateAt:    time.Now().Unix(),
+	s.createReq = &domain.CreateDomainRequst{
 		Type:        domain.Personal,
 		Name:        "test domain01",
 		DisplayName: "仅仅测试",
@@ -48,7 +45,7 @@ func (s *suit) TearDown() {
 
 func (s *suit) CreateDomain() func(t *testing.T) {
 	return func(t *testing.T) {
-		err := s.service.CreateDomain(s.d1)
+		_, err := s.service.CreateDomain(s.createReq)
 		s.shoud.NoError(err)
 	}
 }

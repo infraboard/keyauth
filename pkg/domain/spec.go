@@ -11,14 +11,14 @@ type Service interface {
 }
 
 // NewPageRequest 分页请求
-func NewPageRequest(page *request.PageRequest) *Request {
-	return &Request{
+func NewPageRequest(page *request.PageRequest) *QueryDomainRequest {
+	return &QueryDomainRequest{
 		PageRequest: page,
 	}
 }
 
-// Request 请求
-type Request struct {
+// QueryDomainRequest 请求
+type QueryDomainRequest struct {
 	*request.PageRequest
 
 	ID   string `json:"id,omitempty"`
@@ -28,12 +28,12 @@ type Request struct {
 // Reader for read data from store
 type Reader interface {
 	GetDomainByID(domainID string) (*Domain, error)
-	ListDomain(req *Request) (domains []*Domain, totalPage int64, err error)
+	ListDomain(req *QueryDomainRequest) (domains []*Domain, totalPage int64, err error)
 }
 
 // Writer for write data to store
 type Writer interface {
 	CreateDomain(req *CreateDomainRequst) (*Domain, error)
-	UpdateDomain(domain *Domain) error
+	UpdateDomain(*Domain) error
 	DeleteDomainByID(id string) error
 }

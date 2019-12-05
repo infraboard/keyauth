@@ -35,7 +35,7 @@ func (s *service) Config() error {
 
 func (s *service) CreateDomain(req *domain.CreateDomainRequst) (*domain.Domain, error) {
 	if err := req.Validate(); err != nil {
-		return nil, err
+		return nil, exception.NewBadRequest(err.Error())
 	}
 
 	d := &domain.Domain{
@@ -66,8 +66,8 @@ func (s *service) GetDomainByID(domainID string) (*domain.Domain, error) {
 	return d, nil
 }
 
-func (s *service) ListDomain(req *domain.Request) (domains []*domain.Domain, totalPage int64, err error) {
-	r := request{Request: req}
+func (s *service) ListDomain(req *domain.QueryDomainRequest) (domains []*domain.Domain, totalPage int64, err error) {
+	r := request{QueryDomainRequest: req}
 	resp, err := s.dc.Find(context.TODO(), r.FindFilter(), r.FindOptions())
 
 	if err != nil {
@@ -94,16 +94,29 @@ func (s *service) ListDomain(req *domain.Request) (domains []*domain.Domain, tot
 	return domains, totalPage, nil
 }
 
-func (s *service) UpdateDomain(domain *domain.Domain) error {
+func (s *service) UpdateDomain(d *domain.Domain) error {
+	if err := d.CreateDomainRequst.Validate(); err != nil {
+		return exception.NewBadRequest(err.Error())
+	}
+
+	_, err := s.dc.UpdateOne(context.TODO(), bson.M{"_id": d.ID}, bson.M{"$set": d})
+	if err != nil {
+		return exception.NewInternalServerError("update domain(%s) error, %s", d.ID, err)
+	}
+
 	return nil
 }
 
 func (s *service) DeleteDomainByID(id string) error {
+	_, err := s.dc.DeleteOne(context.TODO(), bson.M{"_id": id})
+	if err != nil {
+		return exception.NewInternalServerError("delete domain(%s) error, %s", id, err)
+	}
 	return nil
 }
 
 type request struct {
-	*domain.Request
+	*domain.QueryDomainRequest
 
 	opt *options.FindOptions
 }
