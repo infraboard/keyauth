@@ -28,7 +28,15 @@ type Domain struct {
 	ID       string `bson:"_id" json:"id"`                        // 域ID
 	CreateAt int64  `bson:"create_at" json:"create_at,omitempty"` // 创建时间
 	UpdateAt int64  `bson:"update_at" json:"update_at,omitempty"` // 更新时间
+	*CreateDomainRequst
+}
 
+func (d *Domain) String() string {
+	return fmt.Sprint(*d)
+}
+
+// CreateDomainRequst 创建请求
+type CreateDomainRequst struct {
 	Type           Type   `bson:"type" json:"type,omitempty"`                                         // 域类型: Personal: 个人, Enterprise: 企业, Paterner: 合作伙伴伙伴
 	Name           string `bson:"name" json:"name,omitempty" validate:"required,gte=1,lte=30"`        // 公司或者组织名称
 	DisplayName    string `bson:"display_name" json:"display_name,omitempty" validate:"lte=80"`       // 全称
@@ -47,11 +55,11 @@ type Domain struct {
 	ContactsEmail  string `bson:"contacts_email" json:"contacts_email,omitempty" validate:"lte=40"`   // 联系人邮箱
 }
 
-func (d *Domain) String() string {
-	return fmt.Sprint(*d)
+// Validate 校验请求是否合法
+func (req *CreateDomainRequst) Validate() error {
+	return validate.Struct(req)
 }
 
-// Validate 校验请求是否合法
-func (d *Domain) Validate() error {
-	return validate.Struct(d)
+func (req *CreateDomainRequst) String() string {
+	return fmt.Sprint(*req)
 }

@@ -70,13 +70,14 @@ func (h *handler) GetDomain(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) CreateDomain(w http.ResponseWriter, r *http.Request) {
-	d := new(domain.Domain)
-	if err := request.GetObjFromReq(r, d); err != nil {
+	req := new(domain.CreateDomainRequst)
+	if err := request.GetObjFromReq(r, req); err != nil {
 		response.Failed(w, err)
 		return
 	}
 
-	if err := h.service.CreateDomain(d); err != nil {
+	d, err := h.service.CreateDomain(req)
+	if err != nil {
 		response.Failed(w, err)
 		return
 	}

@@ -33,7 +33,7 @@ type Reader interface {
 
 // Writer for write data to store
 type Writer interface {
-	CreateDomain(domain *Domain) error
+	CreateDomain(req *CreateDomainRequst) (*Domain, error)
 	UpdateDomain(domain *Domain) error
 	DeleteDomainByID(id string) error
 }

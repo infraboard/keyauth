@@ -33,20 +33,23 @@ func (s *service) Config() error {
 	return nil
 }
 
-func (s *service) CreateDomain(domain *domain.Domain) error {
-	if err := domain.Validate(); err != nil {
-		return err
+func (s *service) CreateDomain(req *domain.CreateDomainRequst) (*domain.Domain, error) {
+	if err := req.Validate(); err != nil {
+		return nil, err
 	}
 
-	domain.ID = xid.New().String()
-	domain.CreateAt = time.Now().Unix()
+	d := &domain.Domain{
+		ID:                 xid.New().String(),
+		CreateAt:           time.Now().Unix(),
+		CreateDomainRequst: req,
+	}
 
-	_, err := s.dc.InsertOne(context.TODO(), domain)
+	_, err := s.dc.InsertOne(context.TODO(), d)
 	if err != nil {
-		return fmt.Errorf("inserted a domain document error, %s", err)
+		return nil, fmt.Errorf("inserted a domain document error, %s", err)
 	}
 
-	return nil
+	return d, nil
 }
 
 func (s *service) GetDomainByID(domainID string) (*domain.Domain, error) {
