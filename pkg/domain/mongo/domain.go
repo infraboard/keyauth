@@ -3,9 +3,9 @@ package mongo
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/infraboard/mcube/exception"
+	"github.com/infraboard/mcube/types/ftime"
 	"github.com/rs/xid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -40,7 +40,8 @@ func (s *service) CreateDomain(req *domain.CreateDomainRequst) (*domain.Domain, 
 
 	d := &domain.Domain{
 		ID:                 xid.New().String(),
-		CreateAt:           time.Now().Unix(),
+		CreateAt:           ftime.Now(),
+		UpdateAt:           ftime.Now(),
 		CreateDomainRequst: req,
 	}
 

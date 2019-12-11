@@ -5,10 +5,9 @@ go 1.12
 require (
 	github.com/BurntSushi/toml v0.3.1
 	github.com/go-playground/validator/v10 v10.0.1
-	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/google/go-cmp v0.3.1 // indirect
-	github.com/infraboard/mcube v0.0.0-20191203055623-4f837abe459f
+	github.com/infraboard/mcube v0.0.0-20191211015445-91142b795743
 	github.com/rs/xid v1.2.1
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/pflag v1.0.5 // indirect
