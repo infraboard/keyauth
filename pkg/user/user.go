@@ -1,36 +1,62 @@
 package user
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/infraboard/mcube/types/ftime"
+)
 
 // User info
 type User struct {
-	ID                string    `json:"id,omitempty"`                  // 用户UUID
-	Account           string    `json:"account,omitempty"`             // 用户账号名称
-	Mobile            string    `json:"mobile,omitempty"`              // 手机号码, 用户可以通过手机进行注册和密码找回, 还可以通过手机号进行登录
-	Email             string    `json:"email,omitempty"`               // 邮箱, 用户可以通过邮箱进行注册和照明密码
-	Phone             string    `json:"phone,omitempty"`               // 用户的座机号码
-	Address           string    `json:"address,omitempty"`             // 用户住址
-	RealName          string    `json:"real_name,omitempty"`           // 用户真实姓名
-	NickName          string    `json:"nick_name,omitempty"`           // 用户昵称, 用于在界面进行展示
-	Gender            string    `json:"gender,omitempty"`              // 性别
-	Avatar            string    `json:"avatar,omitempty"`              // 头像
-	Language          string    `json:"language,omitempty"`            // 用户使用的语言
-	City              string    `json:"city,omitempty"`                // 用户所在的城市
-	Province          string    `json:"province,omitempty"`            // 用户所在的省
-	Locked            string    `json:"locked,omitempty"`              // 是否冻结次用户
-	CreateAt          int64     `json:"create_at,omitempty"`           // 用户创建的时间
-	ExpiresActiveDays int       `json:"expires_active_days,omitempty"` // 用户多久未登录时(天), 冻结改用户, 防止僵尸用户的账号被利用
-	Password          *Password `json:"password,omitempty"`            // 密码相关信息
-	IsDomainOwner     bool      `json:"is_domain_owner,omitempty"`
+	ID       string     `bson:"_id" json:"id,omitempty"`              // 用户UUID
+	CreateAt ftime.Time `bson:"create_at" json:"create_at,omitempty"` // 用户创建的时间
+	UpdateAt ftime.Time `bson:"update_at" json:"update_at,omitempty"` // 修改时间
+	Primary  bool       `json:"primary,omitempty"`                    // 是否是主账号
+
+	*CreateUserRequest `bson:",inline"`
+
+	Status *Status `bson:"status" json:"status,omitempty"` // 用户状态
+}
+
+// Status 用户状态
+type Status struct {
+	Locked      bool       `bson:"locked" json:"locked,omitempty"`             // 是否冻结
+	LockedTime  ftime.Time `bson:"locked_time" json:"locked_time,omitempty"`   // 冻结时间
+	LockedReson string     `bson:"locked_reson" json:"locked_reson,omitempty"` // 冻结原因
+	UnLockTime  ftime.Time `bson:"unlock_time" json:"unlock_time,omitempty"`   // 解冻时间
+}
+
+// NewCreateUserRequest 创建请求
+func NewCreateUserRequest() *CreateUserRequest {
+	return &CreateUserRequest{
+		Password: &Password{},
+	}
+}
+
+// CreateUserRequest 创建用户请求
+type CreateUserRequest struct {
+	Account     string    `bson:"account" json:"account,omitempty" validate:"required,lte=60"` // 用户账号名称
+	Mobile      string    `bson:"mobile" json:"mobile,omitempty" validate:"lte=30"`            // 手机号码, 用户可以通过手机进行注册和密码找回, 还可以通过手机号进行登录
+	Email       string    `bson:"email" json:"email,omitempty" validate:"lte=30"`              // 邮箱, 用户可以通过邮箱进行注册和照明密码
+	Phone       string    `bson:"phone" json:"phone,omitempty" validate:"lte=30"`              // 用户的座机号码
+	Address     string    `bson:"address" json:"address,omitempty" validate:"lte=120"`         // 用户住址
+	RealName    string    `bson:"real_name" json:"real_name,omitempty" validate:"lte=10"`      // 用户真实姓名
+	NickName    string    `bson:"nick_name" json:"nick_name,omitempty" validate:"lte=30"`      // 用户昵称, 用于在界面进行展示
+	Gender      string    `bson:"gender" json:"gender,omitempty" validate:"lte=10"`            // 性别
+	Avatar      string    `bson:"avatar" json:"avatar,omitempty" validate:"lte=300"`           // 头像
+	Language    string    `bson:"language" json:"language,omitempty" validate:"lte=40"`        // 用户使用的语言
+	City        string    `bson:"city" json:"city,omitempty" validate:"lte=40"`                // 用户所在的城市
+	Province    string    `bson:"province" json:"province,omitempty" validate:"lte=40"`        // 用户所在的省
+	ExpiresDays int       `bson:"expires_days" json:"expires_days,omitempty"`                  // 用户多久未登录时(天), 冻结改用户, 防止僵尸用户的账号被利用
+	Password    *Password `bson:"password" json:"password,omitempty"`                          // 密码相关信息
 }
 
 // Password user's password
 type Password struct {
-	UserID   string `json:"-"`
-	Password string `json:"-"`
-	ExpireAt int64  `json:"expire_at"`           // 密码过期时间
-	CreateAt int64  `json:"create_at"`           // 密码创建时间
-	UpdateAt int64  `json:"update_at,omitempty"` // 密码更新时间
+	Password string     `bson:"password" json:"password,omitempty" validate:"required,lte=80"` // hash过后的密码
+	ExpireAt ftime.Time `bson:"expire_at" json:"expire_at,omitempty" `                         // 密码过期时间
+	CreateAt ftime.Time `bson:"create_at" json:"create_at,omitempty" `                         // 密码创建时间
+	UpdateAt ftime.Time `bson:"update_at" json:"update_at,omitempty"`                          // 密码更新时间
 }
 
 func (u *User) String() string {

@@ -36,10 +36,15 @@ func (d *Domain) String() string {
 	return fmt.Sprint(*d)
 }
 
+// NewCreateDomainRequst todo
+func NewCreateDomainRequst() *CreateDomainRequst {
+	return &CreateDomainRequst{}
+}
+
 // CreateDomainRequst 创建请求
 type CreateDomainRequst struct {
-	Type           Type   `bson:"type" json:"type,omitempty"`                                         // 域类型: Personal: 个人, Enterprise: 企业, Paterner: 合作伙伴伙伴
-	Name           string `bson:"name" json:"name,omitempty" validate:"required,gte=1,lte=30"`        // 公司或者组织名称
+	Type           Type   `bson:"type" json:"type,omitempty" validate:"required,lte=30"`              // 域类型: Personal: 个人, Enterprise: 企业, Paterner: 合作伙伴伙伴
+	Name           string `bson:"name" json:"name,omitempty" validate:"required,lte=30"`              // 公司或者组织名称
 	DisplayName    string `bson:"display_name" json:"display_name,omitempty" validate:"lte=80"`       // 全称
 	LogoPath       string `bson:"logo_path" json:"logo_path,omitempty" validate:"lte=200"`            // 公司LOGO图片的URL
 	Description    string `bson:"description" json:"description,omitempty" validate:"lte=400"`        // 描述

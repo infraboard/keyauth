@@ -72,7 +72,7 @@ func (h *handler) GetDomain(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) CreateDomain(w http.ResponseWriter, r *http.Request) {
-	req := new(domain.CreateDomainRequst)
+	req := domain.NewCreateDomainRequst()
 	if err := request.GetObjFromReq(r, req); err != nil {
 		response.Failed(w, err)
 		return
