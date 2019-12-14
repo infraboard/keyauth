@@ -53,21 +53,21 @@ func (s *service) CreateDomain(req *domain.CreateDomainRequst) (*domain.Domain, 
 	return d, nil
 }
 
-func (s *service) GetDomainByID(domainID string) (*domain.Domain, error) {
+func (s *service) DescriptionDomain(req *domain.DescriptDomainRequest) (*domain.Domain, error) {
 	d := new(domain.Domain)
 
-	if err := s.dc.FindOne(context.TODO(), bson.M{"_id": domainID}).Decode(d); err != nil {
+	if err := s.dc.FindOne(context.TODO(), bson.M{"_id": req.ID}).Decode(d); err != nil {
 		if err == mongo.ErrNoDocuments {
-			return nil, exception.NewNotFound("domain %s not found", domainID)
+			return nil, exception.NewNotFound("domain %s not found", req.ID)
 		}
 
-		return nil, exception.NewInternalServerError("find domain %s error, %s", domainID, err)
+		return nil, exception.NewInternalServerError("find domain %s error, %s", req.ID, err)
 	}
 
 	return d, nil
 }
 
-func (s *service) ListDomain(req *domain.QueryDomainRequest) (domains []*domain.Domain, totalPage int64, err error) {
+func (s *service) QueryDomain(req *domain.QueryDomainRequest) (domains []*domain.Domain, totalPage int64, err error) {
 	r := request{QueryDomainRequest: req}
 	resp, err := s.dc.Find(context.TODO(), r.FindFilter(), r.FindOptions())
 
@@ -108,7 +108,7 @@ func (s *service) UpdateDomain(d *domain.Domain) error {
 	return nil
 }
 
-func (s *service) DeleteDomainByID(id string) error {
+func (s *service) DeleteDomain(id string) error {
 	_, err := s.dc.DeleteOne(context.TODO(), bson.M{"_id": id})
 	if err != nil {
 		return exception.NewInternalServerError("delete domain(%s) error, %s", id, err)

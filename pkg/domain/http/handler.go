@@ -41,9 +41,9 @@ func (h *handler) Config() error {
 
 func (h *handler) ListDomains(w http.ResponseWriter, r *http.Request) {
 	page := request.LoadPagginFromReq(r)
-	req := domain.NewPageRequest(page)
+	req := domain.NewQueryDomainRequest(page)
 
-	dommains, total, err := h.service.ListDomain(req)
+	dommains, total, err := h.service.QueryDomain(req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -61,7 +61,9 @@ func (h *handler) ListDomains(w http.ResponseWriter, r *http.Request) {
 func (h *handler) GetDomain(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
 
-	d, err := h.service.GetDomainByID(rctx.PS.ByName("id"))
+	req := domain.NewDescriptDomainRequest()
+	req.ID = rctx.PS.ByName("id")
+	d, err := h.service.DescriptionDomain(req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -92,7 +94,9 @@ func (h *handler) UpdateDomain(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
 
 	// 查找出原来的domain
-	d, err := h.service.GetDomainByID(rctx.PS.ByName("id"))
+	req := domain.NewDescriptDomainRequest()
+	req.ID = rctx.PS.ByName("id")
+	d, err := h.service.DescriptionDomain(req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -116,7 +120,7 @@ func (h *handler) UpdateDomain(w http.ResponseWriter, r *http.Request) {
 func (h *handler) DeleteDomain(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
 
-	if err := h.service.DeleteDomainByID(rctx.PS.ByName("id")); err != nil {
+	if err := h.service.DeleteDomain(rctx.PS.ByName("id")); err != nil {
 		response.Failed(w, err)
 		return
 	}
