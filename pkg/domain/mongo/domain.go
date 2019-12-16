@@ -5,8 +5,6 @@ import (
 	"fmt"
 
 	"github.com/infraboard/mcube/exception"
-	"github.com/infraboard/mcube/types/ftime"
-	"github.com/rs/xid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -38,13 +36,7 @@ func (s *service) CreateDomain(req *domain.CreateDomainRequst) (*domain.Domain, 
 		return nil, exception.NewBadRequest(err.Error())
 	}
 
-	d := &domain.Domain{
-		ID:                 xid.New().String(),
-		CreateAt:           ftime.Now(),
-		UpdateAt:           ftime.Now(),
-		CreateDomainRequst: req,
-	}
-
+	d := domain.NewDomain(req)
 	_, err := s.dc.InsertOne(context.TODO(), d)
 	if err != nil {
 		return nil, fmt.Errorf("inserted a domain document error, %s", err)

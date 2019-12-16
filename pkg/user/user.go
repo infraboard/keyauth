@@ -8,11 +8,10 @@ import (
 
 // User info
 type User struct {
-	ID       string     `bson:"_id" json:"id,omitempty"`              // 用户UUID
-	CreateAt ftime.Time `bson:"create_at" json:"create_at,omitempty"` // 用户创建的时间
-	UpdateAt ftime.Time `bson:"update_at" json:"update_at,omitempty"` // 修改时间
-	Primary  bool       `json:"primary,omitempty"`                    // 是否是主账号
-
+	ID                 string     `bson:"_id" json:"id,omitempty"`              // 用户UUID
+	CreateAt           ftime.Time `bson:"create_at" json:"create_at,omitempty"` // 用户创建的时间
+	UpdateAt           ftime.Time `bson:"update_at" json:"update_at,omitempty"` // 修改时间
+	Primary            bool       `json:"primary,omitempty"`                    // 是否是主账号
 	*CreateUserRequest `bson:",inline"`
 
 	Status *Status `bson:"status" json:"status,omitempty"` // 用户状态

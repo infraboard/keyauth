@@ -5,24 +5,35 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/infraboard/mcube/types/ftime"
+	"github.com/rs/xid"
 )
 
 const (
 	// Personal 个人域
-	Personal Type = iota
+	Personal Type = iota + 1
 	// Enterprise 企业域
 	Enterprise
 	// Paterner 合作伙伴域
 	Paterner
 )
 
+// Type 域类型
+type Type int
+
 // use a single instance of Validate, it caches struct info
 var (
 	validate = validator.New()
 )
 
-// Type 域类型
-type Type int
+// NewDomain 新建一个domain
+func NewDomain(req *CreateDomainRequst) *Domain {
+	return &Domain{
+		ID:                 xid.New().String(),
+		CreateAt:           ftime.Now(),
+		UpdateAt:           ftime.Now(),
+		CreateDomainRequst: req,
+	}
+}
 
 // Domain a tenant container, example an company or organization.
 type Domain struct {
@@ -38,12 +49,15 @@ func (d *Domain) String() string {
 
 // NewCreateDomainRequst todo
 func NewCreateDomainRequst() *CreateDomainRequst {
-	return &CreateDomainRequst{}
+	return &CreateDomainRequst{
+		Type:    Personal,
+		Enabled: true,
+	}
 }
 
 // CreateDomainRequst 创建请求
 type CreateDomainRequst struct {
-	Type           Type   `bson:"type" json:"type,omitempty" validate:"required,lte=30"`              // 域类型: Personal: 个人, Enterprise: 企业, Paterner: 合作伙伴伙伴
+	Type           Type   `bson:"type" json:"type,omitempty" validate:"required,max=10"`              // 域类型: Personal: 个人, Enterprise: 企业, Paterner: 合作伙伴伙伴
 	Name           string `bson:"name" json:"name,omitempty" validate:"required,lte=30"`              // 公司或者组织名称
 	DisplayName    string `bson:"display_name" json:"display_name,omitempty" validate:"lte=80"`       // 全称
 	LogoPath       string `bson:"logo_path" json:"logo_path,omitempty" validate:"lte=200"`            // 公司LOGO图片的URL
