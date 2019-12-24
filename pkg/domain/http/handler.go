@@ -75,7 +75,7 @@ func (h *handler) GetDomain(w http.ResponseWriter, r *http.Request) {
 
 func (h *handler) CreateDomain(w http.ResponseWriter, r *http.Request) {
 	req := domain.NewCreateDomainRequst()
-	if err := request.GetObjFromReq(r, req); err != nil {
+	if err := request.GetDataFromRequest(r, req); err != nil {
 		response.Failed(w, err)
 		return
 	}
@@ -103,7 +103,7 @@ func (h *handler) UpdateDomain(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 解析需要更新的数据
-	if err := request.GetObjFromReq(r, d.CreateDomainRequst); err != nil {
+	if err := request.GetDataFromRequest(r, d.CreateDomainRequst); err != nil {
 		response.Failed(w, err)
 		return
 	}

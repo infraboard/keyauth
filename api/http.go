@@ -84,6 +84,6 @@ func (s *HTTPService) Stop() error {
 }
 
 // Endpoints 服务所有的路由条目, 供服务注册时使用
-func (s *HTTPService) Endpoints() []router.Entry {
+func (s *HTTPService) Endpoints() *router.EntrySet {
 	return s.r.GetEndpoints()
 }
