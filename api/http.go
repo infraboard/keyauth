@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/infraboard/mcube/http/middleware/accesslog"
+	"github.com/infraboard/mcube/http/middleware/cors"
 	"github.com/infraboard/mcube/http/middleware/recovery"
 	"github.com/infraboard/mcube/http/router"
 	"github.com/infraboard/mcube/http/router/httprouter"
@@ -22,8 +23,8 @@ func NewHTTPService() *HTTPService {
 	r := httprouter.New()
 	r.Use(recovery.NewWithLogger(zap.L().Named("Recovery")))
 	r.Use(accesslog.NewWithLogger(zap.L().Named("AccessLog")))
+	r.Use(cors.AllowAll())
 	r.EnableAPIRoot()
-
 	server := &http.Server{
 		ReadHeaderTimeout: 20 * time.Second,
 		ReadTimeout:       20 * time.Second,

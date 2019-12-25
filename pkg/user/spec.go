@@ -23,12 +23,12 @@ type PrimaryAccountService interface {
 
 // RAMAccountService 子账号服务
 type RAMAccountService interface {
-	QueryRAMAccount(req *QueryRAMAccountRequest) ([]*User, error)
-	// CreateRAMAccount 创建子账号
-	// RAM (Resource Access Management)提供的用户身份管理与访问控制服务
+	// CreateRAMAccount RAM (Resource Access Management)提供的用户身份管理与访问控制服务
 	CreateRAMAccount(domainID string, req *CreateUserRequest) (*User, error)
 	// 注销子账号
 	DeleteRAMAccount(userID string) error
+	// 查询子账号
+	QueryRAMAccount(req *QueryRAMAccountRequest) ([]*User, error)
 }
 
 // NewDescriptAccountRequest 查询详情请求

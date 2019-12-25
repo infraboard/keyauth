@@ -9,28 +9,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
-	"github.com/infraboard/keyauth/conf"
-	"github.com/infraboard/keyauth/pkg"
-	"github.com/infraboard/keyauth/pkg/domain"
 	"github.com/infraboard/keyauth/pkg/user"
 )
-
-var (
-	// Service 服务实例
-	Service = &service{}
-)
-
-type service struct {
-	uc            *mongo.Collection
-	enableCache   bool
-	notifyCachPre string
-}
-
-func (s *service) Config() error {
-	db := conf.C().Mongo.GetDB()
-	s.uc = db.Collection("user")
-	return nil
-}
 
 func (s *service) CreatePrimayAccount(req *user.CreateUserRequest) (*user.User, error) {
 	if err := req.Validate(); err != nil {
@@ -61,57 +41,16 @@ func (s *service) DescribeAccount(req *user.DescriptAccountRequest) (*user.User,
 	return user, nil
 }
 
-func (s *service) QueryDomain(req *domain.QueryDomainRequest) (domains []*domain.Domain, totalPage int64, err error) {
-	r := request{QueryDomainRequest: req}
-	resp, err := s.uc.Find(context.TODO(), r.FindFilter(), r.FindOptions())
-
-	if err != nil {
-		return nil, 0, exception.NewInternalServerError("find domain error, error is %s", err)
-	}
-
-	// 循环
-	for resp.Next(context.TODO()) {
-		d := new(domain.Domain)
-		if err := resp.Decode(d); err != nil {
-			return nil, 0, exception.NewInternalServerError("decode domain error, error is %s", err)
-		}
-
-		domains = append(domains, d)
-	}
-
-	// count
-	count, err := s.uc.CountDocuments(context.TODO(), r.FindFilter())
-	if err != nil {
-		return nil, 0, exception.NewInternalServerError("get device count error, error is %s", err)
-	}
-	totalPage = count
-
-	return domains, totalPage, nil
-}
-
-func (s *service) UpdateDomain(d *domain.Domain) error {
-	if err := d.CreateDomainRequst.Validate(); err != nil {
-		return exception.NewBadRequest(err.Error())
-	}
-
-	_, err := s.uc.UpdateOne(context.TODO(), bson.M{"_id": d.ID}, bson.M{"$set": d})
-	if err != nil {
-		return exception.NewInternalServerError("update domain(%s) error, %s", d.ID, err)
-	}
-
-	return nil
-}
-
-func (s *service) DeleteDomain(id string) error {
+func (s *service) DeletePrimaryAccount(id string) error {
 	_, err := s.uc.DeleteOne(context.TODO(), bson.M{"_id": id})
 	if err != nil {
-		return exception.NewInternalServerError("delete domain(%s) error, %s", id, err)
+		return exception.NewInternalServerError("delete user(%s) error, %s", id, err)
 	}
 	return nil
 }
 
 type request struct {
-	*domain.QueryDomainRequest
+	*user.QueryRAMAccountRequest
 
 	opt *options.FindOptions
 }
@@ -133,8 +72,4 @@ func (r *request) FindFilter() bson.M {
 	filter := bson.M{}
 
 	return filter
-}
-
-func init() {
-	pkg.RegistryService("mongo", Service)
 }

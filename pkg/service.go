@@ -1,12 +1,17 @@
 package pkg
 
 import (
+	"fmt"
+
 	"github.com/infraboard/keyauth/pkg/domain"
+	"github.com/infraboard/keyauth/pkg/user"
 )
 
 var (
 	// Domain 服务
 	Domain domain.Service
+	// User 用户服务
+	User user.Service
 )
 
 var (
@@ -37,9 +42,15 @@ func RegistryService(name string, svr Service) {
 			panic("service " + name + " has registried")
 		}
 		Domain = value
-		addService(name+"(domain)", svr)
+		addService(name, svr)
+	case user.Service:
+		if User != nil {
+			panic("service " + name + " has registried")
+		}
+		User = value
+		addService(name, svr)
 	default:
-		return
+		panic(fmt.Sprintf("unknown service type %s", name))
 	}
 }
 

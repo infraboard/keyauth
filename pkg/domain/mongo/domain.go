@@ -9,27 +9,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
-	"github.com/infraboard/keyauth/conf"
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/domain"
 )
-
-var (
-	// Service 服务实例
-	Service = &service{}
-)
-
-type service struct {
-	dc            *mongo.Collection
-	enableCache   bool
-	notifyCachPre string
-}
-
-func (s *service) Config() error {
-	db := conf.C().Mongo.GetDB()
-	s.dc = db.Collection("domain")
-	return nil
-}
 
 func (s *service) CreateDomain(req *domain.CreateDomainRequst) (*domain.Domain, error) {
 	if err := req.Validate(); err != nil {
@@ -131,8 +112,4 @@ func (r *request) FindFilter() bson.M {
 	filter := bson.M{}
 
 	return filter
-}
-
-func init() {
-	pkg.RegistryService("mongo", Service)
 }

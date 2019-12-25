@@ -1,43 +1,14 @@
 package http
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
-	"github.com/infraboard/mcube/http/router"
 
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/domain"
 )
-
-var (
-	api = &handler{}
-)
-
-type handler struct {
-	service domain.Service
-}
-
-// Registry 注册HTTP服务路由
-func (h *handler) Registry(router router.SubRouter) {
-	router.AddProtected("POST", "/", h.CreateDomain)
-	router.AddProtected("GET", "/", h.ListDomains)
-	router.AddProtected("GET", "/:id", h.GetDomain)
-	router.AddProtected("PUT", "/:id", h.UpdateDomain)
-	router.AddProtected("DELETE", "/:id", h.DeleteDomain)
-}
-
-func (h *handler) Config() error {
-	if pkg.Domain == nil {
-		return errors.New("denpence Domain service is nil")
-	}
-
-	h.service = pkg.Domain
-	return nil
-}
 
 func (h *handler) ListDomains(w http.ResponseWriter, r *http.Request) {
 	page := request.LoadPagginFromReq(r)
@@ -127,8 +98,4 @@ func (h *handler) DeleteDomain(w http.ResponseWriter, r *http.Request) {
 
 	response.Success(w, "delete ok")
 	return
-}
-
-func init() {
-	pkg.RegistryHTTPV1("domains", api)
 }
