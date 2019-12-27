@@ -19,7 +19,8 @@ type handler struct {
 
 // Registry 注册HTTP服务路由
 func (h *handler) Registry(router router.SubRouter) {
-	domainRouter := router.ResourceRouter("domains")
+	domainRouter := router.ResourceRouter("domain")
+	domainRouter.BasePath("domains")
 	domainRouter.AddProtected("POST", "/", h.CreateDomain)
 	domainRouter.AddProtected("GET", "/", h.ListDomains)
 	domainRouter.AddProtected("GET", "/:id", h.GetDomain)

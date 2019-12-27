@@ -19,8 +19,13 @@ type handler struct {
 
 // Registry 注册HTTP服务路由
 func (h *handler) Registry(router router.SubRouter) {
-	userRouter := router.ResourceRouter("users")
-	userRouter.AddProtected("POST", "/", h.CreatePrimayAccount)
+	prmaryRouter := router.ResourceRouter("primary_account")
+	prmaryRouter.BasePath("users")
+	prmaryRouter.AddProtected("POST", "/", h.CreatePrimayAccount)
+
+	ramRouter := router.ResourceRouter("ram_account")
+	ramRouter.BasePath("domains/:did/users")
+	ramRouter.AddProtected("POST", "/", h.CreateRAMAccount)
 }
 
 func (h *handler) Config() error {

@@ -2,7 +2,6 @@ package mongo
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/infraboard/mcube/exception"
 	"go.mongodb.org/mongo-driver/bson"
@@ -19,7 +18,8 @@ func (s *service) CreatePrimayAccount(req *user.CreateUserRequest) (*user.User, 
 	user.Primary = true
 	_, err := s.uc.InsertOne(context.TODO(), user)
 	if err != nil {
-		return nil, fmt.Errorf("inserted a user document error, %s", err)
+		return nil, exception.NewInternalServerError("inserted user(%s) document error, %s",
+			req.Account, err)
 	}
 
 	return user, nil
