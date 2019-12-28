@@ -12,14 +12,12 @@ import (
 	"github.com/infraboard/keyauth/pkg/domain"
 )
 
-func (s *service) CreateDomain(req *domain.CreateDomainRequst) (*domain.Domain, error) {
-	if err := req.Validate(); err != nil {
+func (s *service) CreateDomain(ownerID string, req *domain.CreateDomainRequst) (*domain.Domain, error) {
+	d, err := domain.NewDomain(ownerID, req)
+	if err != nil {
 		return nil, exception.NewBadRequest(err.Error())
 	}
-
-	d := domain.NewDomain(req)
-	_, err := s.dc.InsertOne(context.TODO(), d)
-	if err != nil {
+	if _, err := s.dc.InsertOne(context.TODO(), d); err != nil {
 		return nil, fmt.Errorf("inserted a domain document error, %s", err)
 	}
 

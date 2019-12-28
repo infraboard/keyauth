@@ -51,7 +51,7 @@ func (h *handler) CreateDomain(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	d, err := h.service.CreateDomain(req)
+	d, err := h.service.CreateDomain("xxx", req)
 	if err != nil {
 		response.Failed(w, err)
 		return

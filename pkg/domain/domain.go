@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/go-playground/validator/v10"
@@ -26,13 +27,22 @@ var (
 )
 
 // NewDomain 新建一个domain
-func NewDomain(req *CreateDomainRequst) *Domain {
+func NewDomain(ownerID string, req *CreateDomainRequst) (*Domain, error) {
+	if ownerID == "" {
+		return nil, errors.New("domain required owner")
+	}
+
+	if err := req.Validate(); err != nil {
+		return nil, err
+	}
+
 	return &Domain{
 		ID:                 xid.New().String(),
 		CreateAt:           ftime.Now(),
 		UpdateAt:           ftime.Now(),
+		OwnerID:            ownerID,
 		CreateDomainRequst: req,
-	}
+	}, nil
 }
 
 // Domain a tenant container, example an company or organization.
@@ -40,6 +50,7 @@ type Domain struct {
 	ID                  string     `bson:"_id" json:"id"`                        // 域ID
 	CreateAt            ftime.Time `bson:"create_at" json:"create_at,omitempty"` // 创建时间
 	UpdateAt            ftime.Time `bson:"update_at" json:"update_at,omitempty"` // 更新时间
+	OwnerID             string     `bson:"owner_id" json:"owner_id,omitempty"`   // 域拥有者
 	*CreateDomainRequst `bson:",inline"`
 }
 

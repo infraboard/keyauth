@@ -10,18 +10,18 @@ import (
 )
 
 func (s *service) CreatePrimayAccount(req *user.CreateUserRequest) (*user.User, error) {
-	if err := req.Validate(); err != nil {
-		return nil, exception.NewBadRequest(err.Error())
+	user, err := user.NewUser(req)
+	if err != nil {
+		return nil, err
 	}
 
-	user := user.NewUser(req)
 	user.Primary = true
-	_, err := s.uc.InsertOne(context.TODO(), user)
-	if err != nil {
+	if _, err := s.uc.InsertOne(context.TODO(), user); err != nil {
 		return nil, exception.NewInternalServerError("inserted user(%s) document error, %s",
 			req.Account, err)
 	}
 
+	user.HashedPassword = nil
 	return user, nil
 }
 
