@@ -26,12 +26,17 @@ func (s *service) Config() error {
 	db := conf.C().Mongo.GetDB()
 	uc := db.Collection("user")
 
-	nameIndex := mongo.IndexModel{
-		Keys:    bsonx.Doc{{Key: "account", Value: bsonx.Int32(-1)}},
-		Options: options.Index().SetUnique(true),
+	indexs := []mongo.IndexModel{
+		mongo.IndexModel{
+			Keys:    bsonx.Doc{{Key: "account", Value: bsonx.Int32(-1)}},
+			Options: options.Index().SetUnique(true),
+		},
+		mongo.IndexModel{
+			Keys: bsonx.Doc{{Key: "create_at", Value: bsonx.Int32(-1)}},
+		},
 	}
 
-	_, err := uc.Indexes().CreateOne(context.Background(), nameIndex)
+	_, err := uc.Indexes().CreateMany(context.Background(), indexs)
 	if err != nil {
 		return err
 	}
