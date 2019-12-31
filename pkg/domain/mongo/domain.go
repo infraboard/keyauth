@@ -2,7 +2,6 @@ package mongo
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/infraboard/mcube/exception"
 	"go.mongodb.org/mongo-driver/bson"
@@ -18,7 +17,7 @@ func (s *service) CreateDomain(ownerID string, req *domain.CreateDomainRequst) (
 		return nil, exception.NewBadRequest(err.Error())
 	}
 	if _, err := s.dc.InsertOne(context.TODO(), d); err != nil {
-		return nil, fmt.Errorf("inserted a domain document error, %s", err)
+		return nil, exception.NewInternalServerError("inserted a domain document error, %s", err)
 	}
 
 	return d, nil
