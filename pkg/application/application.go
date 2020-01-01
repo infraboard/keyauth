@@ -1,6 +1,8 @@
 package application
 
 import (
+	"errors"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/types/ftime"
@@ -92,4 +94,13 @@ type Application struct {
 	ClientSecret             string     `bson:"client_secret" json:"client_secret,omitempty"` // 应用客户端秘钥
 	Locked                   bool       `bson:"locked" json:"locked,omitempty"`               // 是否冻结应用, 冻结应用后, 该应用无法通过凭证获取访问凭证(token)
 	*CreateApplicatonRequest `bson:",inline"`
+}
+
+// CheckClientSecret 判断凭证是否合法
+func (a *Application) CheckClientSecret(secret string) error {
+	if a.ClientSecret != secret {
+		return errors.New("client_secret is not correct")
+	}
+
+	return nil
 }

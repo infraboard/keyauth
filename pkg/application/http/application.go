@@ -10,7 +10,7 @@ import (
 )
 
 // CreateApplication 创建主账号
-func (h *handler) CreateApplication(w http.ResponseWriter, r *http.Request) {
+func (h *handler) CreateUserApplication(w http.ResponseWriter, r *http.Request) {
 	req := application.NewCreateApplicatonRequest()
 	if err := request.GetDataFromRequest(r, req); err != nil {
 		response.Failed(w, err)
