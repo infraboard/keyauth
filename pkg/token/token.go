@@ -52,14 +52,14 @@ type Token struct {
 	Name          string `bson:"name" json:"name,omitempty"`                   // 独立颁发给SDK使用时, 命名token
 	Description   string `bson:"description" json:"description,omitempty"`     // 独立颁发给SDK使用时, 令牌的描述信息, 方便定位与取消
 	ApplicationID string `json:"application_id,omitempty"`                     // 用户应用ID, 如果凭证是颁发给应用的, 应用在删除时需要删除所有的令牌, 应用禁用时, 该应用令牌验证会不通过
-	UserID        string `json:"user_id,omitempty"`                            // 用户ID
 	CreatedAt     int64  `json:"create_at,omitempty"`                          // 凭证创建时间
 	ExpiresIn     int64  `json:"ttl,omitempty"`                                // 凭证过期的时间
 	ExpiresAt     int64  `json:"expires_at,omitempty"`                         // 还有多久过期
 
-	CurrentProject string `json:"current_project,omitempty"` // 当前所在项目
-	DomainID       string `json:"domain_id,omitempty"`       // 用户所在的域的ID, 用户可以切换域(如果用户加入了多个域)
-	ServiceID      string `json:"service_id,omitempty"`      // 服务ID, 如果凭证是颁发给内部服务使用时, 服务删除时,颁发给它的令牌需要删除, 服务禁用时, 令牌验证不通过
+	UserID    string `json:"user_id,omitempty"`    // 用户ID
+	ProjectID string `json:"project_id,omitempty"` // 当前所在项目
+	DomainID  string `json:"domain_id,omitempty"`  // 用户所在的域的ID, 用户可以切换域(如果用户加入了多个域)
+	ServiceID string `json:"service_id,omitempty"` // 服务ID, 如果凭证是颁发给内部服务使用时, 服务删除时,颁发给它的令牌需要删除, 服务禁用时, 令牌验证不通过
 }
 
 // IssueTokenRequest 颁发token请求
@@ -92,6 +92,7 @@ func (req *IssueTokenRequest) Validate() error {
 		if req.RefreshToken == "" || req.AccessToken == "" {
 			return fmt.Errorf("use %s grant type, access_token and refresh_token required", REFRESH)
 		}
+	case CLIENT:
 	case AUTHCODE:
 		if req.AuthCode == "" {
 			return fmt.Errorf("use %s grant type, code required", AUTHCODE)
