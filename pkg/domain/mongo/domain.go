@@ -12,7 +12,7 @@ import (
 )
 
 func (s *service) CreateDomain(ownerID string, req *domain.CreateDomainRequst) (*domain.Domain, error) {
-	d, err := domain.NewDomain(ownerID, req)
+	d, err := domain.New(ownerID, req)
 	if err != nil {
 		return nil, exception.NewBadRequest(err.Error())
 	}

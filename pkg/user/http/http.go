@@ -22,7 +22,7 @@ func (h *handler) Registry(router router.SubRouter) {
 	prmaryRouter := router.ResourceRouter("primary_account")
 	prmaryRouter.BasePath("users")
 	prmaryRouter.AddProtected("POST", "/", h.CreatePrimayAccount)
-	prmaryRouter.AddProtected("DELETE", "/:id", h.DeletePrimaryAccount)
+	prmaryRouter.AddProtected("DELETE", "/", h.DestroyPrimaryAccount)
 
 	ramRouter := router.ResourceRouter("ram_account")
 	ramRouter.BasePath("domains/:did/users")

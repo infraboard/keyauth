@@ -10,6 +10,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/user"
 )
 
+// CreatePrimayAccount 创建主账号
 func (h *handler) CreatePrimayAccount(w http.ResponseWriter, r *http.Request) {
 	req := user.NewCreateUserRequest()
 	if err := request.GetDataFromRequest(r, req); err != nil {
@@ -27,7 +28,8 @@ func (h *handler) CreatePrimayAccount(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func (h *handler) DeletePrimaryAccount(w http.ResponseWriter, r *http.Request) {
+// DestroyPrimaryAccount 注销账号
+func (h *handler) DestroyPrimaryAccount(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
 
 	if err := h.service.DeletePrimaryAccount(rctx.PS.ByName("id")); err != nil {

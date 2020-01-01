@@ -10,7 +10,7 @@ import (
 )
 
 func (s *service) CreatePrimayAccount(req *user.CreateUserRequest) (*user.User, error) {
-	user, err := user.NewUser(req)
+	user, err := user.New(req)
 	if err != nil {
 		return nil, err
 	}

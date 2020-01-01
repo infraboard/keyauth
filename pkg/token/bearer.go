@@ -7,9 +7,9 @@ import (
 	"time"
 )
 
-// MakeBearerToken https://tools.ietf.org/html/rfc6750#section-2.1
+// MakeBearer https://tools.ietf.org/html/rfc6750#section-2.1
 // b64token    = 1*( ALPHA / DIGIT /"-" / "." / "_" / "~" / "+" / "/" ) *"="
-func MakeBearerToken(lenth int) string {
+func MakeBearer(lenth int) string {
 	charlist := "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-._~+/"
 	t := make([]string, lenth)
 	rand.Seed(time.Now().UnixNano() + int64(lenth) + rand.Int63n(10000))

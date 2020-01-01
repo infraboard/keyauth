@@ -26,8 +26,8 @@ var (
 	validate = validator.New()
 )
 
-// NewDomain 新建一个domain
-func NewDomain(ownerID string, req *CreateDomainRequst) (*Domain, error) {
+// New 新建一个domain
+func New(ownerID string, req *CreateDomainRequst) (*Domain, error) {
 	if ownerID == "" {
 		return nil, errors.New("domain required owner")
 	}

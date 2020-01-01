@@ -15,8 +15,8 @@ var (
 	validate = validator.New()
 )
 
-// NewUser 实例
-func NewUser(req *CreateUserRequest) (*User, error) {
+// New 实例
+func New(req *CreateUserRequest) (*User, error) {
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest(err.Error())
 	}
