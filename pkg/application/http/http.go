@@ -22,6 +22,8 @@ func (h *handler) Registry(router router.SubRouter) {
 	appRouter := router.ResourceRouter("application")
 	appRouter.BasePath("applications")
 	appRouter.AddProtected("POST", "/", h.CreateUserApplication)
+	appRouter.AddProtected("GET", "/", h.QueryUserApplication)
+	appRouter.AddProtected("GET", "/:id", h.GetApplication)
 	appRouter.AddProtected("DELETE", "/", h.DestroyApplication)
 
 }

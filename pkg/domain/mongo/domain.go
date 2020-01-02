@@ -16,7 +16,7 @@ func (s *service) CreateDomain(ownerID string, req *domain.CreateDomainRequst) (
 	if err != nil {
 		return nil, exception.NewBadRequest(err.Error())
 	}
-	if _, err := s.dc.InsertOne(context.TODO(), d); err != nil {
+	if _, err := s.col.InsertOne(context.TODO(), d); err != nil {
 		return nil, exception.NewInternalServerError("inserted a domain document error, %s", err)
 	}
 
@@ -26,7 +26,7 @@ func (s *service) CreateDomain(ownerID string, req *domain.CreateDomainRequst) (
 func (s *service) DescriptionDomain(req *domain.DescriptDomainRequest) (*domain.Domain, error) {
 	d := new(domain.Domain)
 
-	if err := s.dc.FindOne(context.TODO(), bson.M{"_id": req.ID}).Decode(d); err != nil {
+	if err := s.col.FindOne(context.TODO(), bson.M{"_id": req.ID}).Decode(d); err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, exception.NewNotFound("domain %s not found", req.ID)
 		}
@@ -38,8 +38,8 @@ func (s *service) DescriptionDomain(req *domain.DescriptDomainRequest) (*domain.
 }
 
 func (s *service) QueryDomain(req *domain.QueryDomainRequest) (domains []*domain.Domain, totalPage int64, err error) {
-	r := request{QueryDomainRequest: req}
-	resp, err := s.dc.Find(context.TODO(), r.FindFilter(), r.FindOptions())
+	r := newPaggingQuery(req)
+	resp, err := s.col.Find(context.TODO(), r.FindFilter(), r.FindOptions())
 
 	if err != nil {
 		return nil, 0, exception.NewInternalServerError("find domain error, error is %s", err)
@@ -56,7 +56,7 @@ func (s *service) QueryDomain(req *domain.QueryDomainRequest) (domains []*domain
 	}
 
 	// count
-	count, err := s.dc.CountDocuments(context.TODO(), r.FindFilter())
+	count, err := s.col.CountDocuments(context.TODO(), r.FindFilter())
 	if err != nil {
 		return nil, 0, exception.NewInternalServerError("get device count error, error is %s", err)
 	}
@@ -70,7 +70,7 @@ func (s *service) UpdateDomain(d *domain.Domain) error {
 		return exception.NewBadRequest(err.Error())
 	}
 
-	_, err := s.dc.UpdateOne(context.TODO(), bson.M{"_id": d.ID}, bson.M{"$set": d})
+	_, err := s.col.UpdateOne(context.TODO(), bson.M{"_id": d.ID}, bson.M{"$set": d})
 	if err != nil {
 		return exception.NewInternalServerError("update domain(%s) error, %s", d.ID, err)
 	}
@@ -79,17 +79,19 @@ func (s *service) UpdateDomain(d *domain.Domain) error {
 }
 
 func (s *service) DeleteDomain(id string) error {
-	_, err := s.dc.DeleteOne(context.TODO(), bson.M{"_id": id})
+	_, err := s.col.DeleteOne(context.TODO(), bson.M{"_id": id})
 	if err != nil {
 		return exception.NewInternalServerError("delete domain(%s) error, %s", id, err)
 	}
 	return nil
 }
 
+func newPaggingQuery(req *domain.QueryDomainRequest) *request {
+	return &request{req}
+}
+
 type request struct {
 	*domain.QueryDomainRequest
-
-	opt *options.FindOptions
 }
 
 func (r *request) FindOptions() *options.FindOptions {

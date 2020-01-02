@@ -33,7 +33,6 @@ func (s *suit) SetUp() {
 	s.service = svr
 
 	s.createReq = &domain.CreateDomainRequst{
-		Type:        domain.Personal,
 		Name:        "test domain01",
 		DisplayName: "仅仅测试",
 	}
@@ -45,7 +44,7 @@ func (s *suit) TearDown() {
 
 func (s *suit) CreateDomain() func(t *testing.T) {
 	return func(t *testing.T) {
-		_, err := s.service.CreateDomain(s.createReq)
+		_, err := s.service.CreateDomain("xxx", s.createReq)
 		s.shoud.NoError(err)
 	}
 }
