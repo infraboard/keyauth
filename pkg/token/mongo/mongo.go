@@ -11,6 +11,7 @@ import (
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/application"
+	"github.com/infraboard/keyauth/pkg/user"
 )
 
 var (
@@ -23,7 +24,8 @@ type service struct {
 	enableCache   bool
 	notifyCachPre string
 
-	app application.Service
+	app  application.Service
+	user user.Service
 }
 
 func (s *service) Config() error {
@@ -31,6 +33,11 @@ func (s *service) Config() error {
 		return errors.New("denpence application service is nil")
 	}
 	s.app = pkg.Application
+
+	if pkg.User == nil {
+		return errors.New("denpence user service is nil")
+	}
+	s.user = pkg.User
 
 	db := conf.C().Mongo.GetDB()
 	col := db.Collection("token")

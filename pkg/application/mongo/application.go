@@ -28,9 +28,13 @@ func (s *service) CreateUserApplication(userID string, req *application.CreateAp
 
 func (s *service) DescriptionApplication(req *application.DescriptApplicationRequest) (
 	*application.Application, error) {
-	app := new(application.Application)
+	r, err := newDescribeQuery(req)
+	if err != nil {
+		return nil, err
+	}
 
-	if err := s.col.FindOne(context.TODO(), bson.M{"_id": req.ID}).Decode(app); err != nil {
+	app := new(application.Application)
+	if err := s.col.FindOne(context.TODO(), r.FindFilter()).Decode(app); err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, exception.NewNotFound("applicaiton %s not found", req.ID)
 		}
@@ -78,15 +82,15 @@ func (s *service) DeleteApplication(id string) error {
 	return nil
 }
 
-func newPaggingQuery(req *application.QueryApplicationRequest) *request {
-	return &request{req}
+func newPaggingQuery(req *application.QueryApplicationRequest) *queryRequest {
+	return &queryRequest{req}
 }
 
-type request struct {
+type queryRequest struct {
 	*application.QueryApplicationRequest
 }
 
-func (r *request) FindOptions() *options.FindOptions {
+func (r *queryRequest) FindOptions() *options.FindOptions {
 	pageSize := int64(r.PageSize)
 	skip := int64(r.PageSize) * int64(r.PageNumber-1)
 
@@ -99,8 +103,33 @@ func (r *request) FindOptions() *options.FindOptions {
 	return opt
 }
 
-func (r *request) FindFilter() bson.M {
+func (r *queryRequest) FindFilter() bson.M {
 	filter := bson.M{}
+
+	return filter
+}
+
+func newDescribeQuery(req *application.DescriptApplicationRequest) (*describeRequest, error) {
+	if err := req.Validate(); err != nil {
+		return nil, exception.NewBadRequest(err.Error())
+	}
+
+	return &describeRequest{req}, nil
+}
+
+type describeRequest struct {
+	*application.DescriptApplicationRequest
+}
+
+func (r *describeRequest) FindFilter() bson.M {
+	filter := bson.M{}
+
+	if r.ID != "" {
+		filter["_id"] = r.ID
+	}
+	if r.ClientID != "" {
+		filter["client_id"] = r.ClientID
+	}
 
 	return filter
 }

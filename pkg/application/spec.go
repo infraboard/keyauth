@@ -1,6 +1,8 @@
 package application
 
 import (
+	"errors"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/infraboard/mcube/http/request"
 )
@@ -27,6 +29,15 @@ func NewDescriptApplicationRequest() *DescriptApplicationRequest {
 type DescriptApplicationRequest struct {
 	ID       string
 	ClientID string
+}
+
+// Validate 校验详情查询请求
+func (req *DescriptApplicationRequest) Validate() error {
+	if req.ID == "" && req.ClientID == "" {
+		return errors.New("id or client_id is required")
+	}
+
+	return nil
 }
 
 // NewQueryApplicationRequest 列表查询请求

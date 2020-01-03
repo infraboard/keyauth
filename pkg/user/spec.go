@@ -1,6 +1,10 @@
 package user
 
-import "github.com/infraboard/mcube/http/request"
+import (
+	"errors"
+
+	"github.com/infraboard/mcube/http/request"
+)
 
 // Service 用户服务
 type Service interface {
@@ -40,6 +44,15 @@ func NewDescriptAccountRequest() *DescriptAccountRequest {
 type DescriptAccountRequest struct {
 	ID      string `json:"id,omitempty"`
 	Account string `json:"account,omitempty"`
+}
+
+// Validate 校验详情查询
+func (req *DescriptAccountRequest) Validate() error {
+	if req.ID == "" && req.Account == "" {
+		return errors.New("id or account is required")
+	}
+
+	return nil
 }
 
 // QueryRAMAccountRequest 获取子账号列表

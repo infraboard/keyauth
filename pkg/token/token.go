@@ -2,7 +2,6 @@ package token
 
 import (
 	"github.com/go-playground/validator/v10"
-	"github.com/infraboard/mcube/exception"
 )
 
 // GrantType is the type for OAuth2 param `grant_type`
@@ -43,15 +42,6 @@ const (
 var (
 	validate = validator.New()
 )
-
-// New Token实例
-func New(req *IssueTokenRequest) (*Token, error) {
-	if err := req.Validate(); err != nil {
-		return nil, exception.NewBadRequest(err.Error())
-	}
-
-	return nil, nil
-}
 
 // Token is user's access resource token
 type Token struct {

@@ -16,9 +16,13 @@ func (s *service) UpdateAccountPassword(userName, oldPass, newPass string) error
 }
 
 func (s *service) DescribeAccount(req *user.DescriptAccountRequest) (*user.User, error) {
+	r, err := newDescribeRequest(req)
+	if err != nil {
+		return nil, err
+	}
 	user := user.NewDescribeUser()
 
-	if err := s.uc.FindOne(context.TODO(), bson.M{"_id": req.ID}).Decode(user); err != nil {
+	if err := s.uc.FindOne(context.TODO(), r.FindFilter()).Decode(user); err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, exception.NewNotFound("user %s not found", req.ID)
 		}
@@ -29,13 +33,11 @@ func (s *service) DescribeAccount(req *user.DescriptAccountRequest) (*user.User,
 	return user, nil
 }
 
-type request struct {
+type queryRequest struct {
 	*user.QueryRAMAccountRequest
-
-	opt *options.FindOptions
 }
 
-func (r *request) FindOptions() *options.FindOptions {
+func (r *queryRequest) FindOptions() *options.FindOptions {
 	pageSize := int64(r.PageSize)
 	skip := int64(r.PageSize) * int64(r.PageNumber-1)
 
@@ -48,8 +50,33 @@ func (r *request) FindOptions() *options.FindOptions {
 	return opt
 }
 
-func (r *request) FindFilter() bson.M {
+func (r *queryRequest) FindFilter() bson.M {
 	filter := bson.M{}
+
+	return filter
+}
+
+func newDescribeRequest(req *user.DescriptAccountRequest) (*describeRequest, error) {
+	if err := req.Validate(); err != nil {
+		return nil, exception.NewBadRequest(err.Error())
+	}
+
+	return &describeRequest{req}, nil
+}
+
+type describeRequest struct {
+	*user.DescriptAccountRequest
+}
+
+func (r *describeRequest) FindFilter() bson.M {
+	filter := bson.M{}
+
+	if r.ID != "" {
+		filter["_id"] = r.ID
+	}
+	if r.Account != "" {
+		filter["account"] = r.Account
+	}
 
 	return filter
 }
