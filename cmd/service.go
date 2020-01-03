@@ -24,6 +24,8 @@ import (
 	_ "github.com/infraboard/keyauth/pkg/user/mongo"
 	_ "github.com/infraboard/keyauth/pkg/application/http"
 	_ "github.com/infraboard/keyauth/pkg/application/mongo"
+	_ "github.com/infraboard/keyauth/pkg/token/http"
+	_ "github.com/infraboard/keyauth/pkg/token/mongo"
 )
 
 var (

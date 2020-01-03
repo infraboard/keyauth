@@ -5,6 +5,7 @@ import (
 
 	"github.com/infraboard/keyauth/pkg/application"
 	"github.com/infraboard/keyauth/pkg/domain"
+	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
 )
 
@@ -15,6 +16,8 @@ var (
 	User user.Service
 	// Application 应用
 	Application application.Service
+	// Token 令牌服务
+	Token token.Service
 )
 
 var (
@@ -42,25 +45,35 @@ func RegistryService(name string, svr Service) {
 	switch value := svr.(type) {
 	case domain.Service:
 		if Domain != nil {
-			panic("service " + name + " has registried")
+			registryError(name)
 		}
 		Domain = value
 		addService(name, svr)
 	case user.Service:
 		if User != nil {
-			panic("service " + name + " has registried")
+			registryError(name)
 		}
 		User = value
 		addService(name, svr)
 	case application.Service:
 		if Application != nil {
-			panic("service " + name + " has registried")
+			registryError(name)
 		}
 		Application = value
+		addService(name, svr)
+	case token.Service:
+		if Token != nil {
+			registryError(name)
+		}
+		Token = value
 		addService(name, svr)
 	default:
 		panic(fmt.Sprintf("unknown service type %s", name))
 	}
+}
+
+func registryError(name string) {
+	panic("service " + name + " has registried")
 }
 
 // InitService 初始化所有服务

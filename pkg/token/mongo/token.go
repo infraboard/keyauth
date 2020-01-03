@@ -10,7 +10,7 @@ import (
 )
 
 func (s *service) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) {
-	issuer, err := s.newIssueTokenRequest(req)
+	issuer, err := s.newTokenIssuer(req)
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +40,7 @@ func (s *service) RevolkToken(accessToken string) error {
 	return nil
 }
 
-func (s *service) newIssueTokenRequest(req *token.IssueTokenRequest) (*TokenIssuer, error) {
+func (s *service) newTokenIssuer(req *token.IssueTokenRequest) (*TokenIssuer, error) {
 	if err := req.Validate(); err != nil {
 		return nil, err
 	}

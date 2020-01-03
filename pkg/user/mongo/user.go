@@ -24,10 +24,10 @@ func (s *service) DescribeAccount(req *user.DescriptAccountRequest) (*user.User,
 
 	if err := s.uc.FindOne(context.TODO(), r.FindFilter()).Decode(user); err != nil {
 		if err == mongo.ErrNoDocuments {
-			return nil, exception.NewNotFound("user %s not found", req.ID)
+			return nil, exception.NewNotFound("user %s not found", req)
 		}
 
-		return nil, exception.NewInternalServerError("find user %s error, %s", req.ID, err)
+		return nil, exception.NewInternalServerError("find user %s error, %s", req, err)
 	}
 
 	return user, nil

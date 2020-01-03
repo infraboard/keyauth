@@ -2,6 +2,7 @@ package user
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/infraboard/mcube/http/request"
 )
@@ -44,6 +45,10 @@ func NewDescriptAccountRequest() *DescriptAccountRequest {
 type DescriptAccountRequest struct {
 	ID      string `json:"id,omitempty"`
 	Account string `json:"account,omitempty"`
+}
+
+func (req *DescriptAccountRequest) String() string {
+	return fmt.Sprint(*req)
 }
 
 // Validate 校验详情查询
