@@ -1,6 +1,8 @@
 package mongo
 
 import (
+	"time"
+
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/types/ftime"
 
@@ -49,6 +51,7 @@ func (i *TokenIssuer) checkUser() (*user.User, error) {
 func (i *TokenIssuer) IssueToken() (tk *token.Token, err error) {
 	app, err := i.checkClient()
 	if err != nil {
+		err = exception.NewUnauthorized(err.Error())
 		return
 	}
 
@@ -74,18 +77,23 @@ func (i *TokenIssuer) IssueToken() (tk *token.Token, err error) {
 }
 
 func (i *TokenIssuer) issuePasswordToken(app *application.Application, u *user.User) *token.Token {
-	tk := i.newToken(app)
+	tk := i.newBearToken(app)
 	tk.UserID = u.ID
 	return tk
 }
 
-func (i *TokenIssuer) newToken(app *application.Application) *token.Token {
+func (i *TokenIssuer) newBearToken(app *application.Application) *token.Token {
+	now := time.Now()
+	expire := now.Add(time.Duration(app.TokenExpireSecond) * time.Second)
 	return &token.Token{
+		Type:          token.Bearer,
 		AccessToken:   token.MakeBearer(24),
 		RefreshToken:  token.MakeBearer(32),
-		CreatedAt:     ftime.Now(),
+		CreatedAt:     ftime.T(now),
 		ClientID:      i.ClientID,
 		GrantType:     i.GrantType,
+		ExpiresAt:     ftime.T(expire),
+		ExpiresIn:     app.TokenExpireSecond,
 		ApplicationID: app.ID,
 	}
 }

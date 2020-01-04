@@ -12,7 +12,7 @@ import (
 func (s *service) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) {
 	issuer, err := s.newTokenIssuer(req)
 	if err != nil {
-		return nil, err
+		return nil, exception.NewUnauthorized(err.Error())
 	}
 
 	tk, err := issuer.IssueToken()

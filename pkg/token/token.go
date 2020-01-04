@@ -46,15 +46,15 @@ var (
 
 // Token is user's access resource token
 type Token struct {
-	UserID        string     `bson:"user_id" json:"user_id,omitempty"`               // 用户ID
 	AccessToken   string     `bson:"access_token" json:"access_token"`               // 服务访问令牌
 	RefreshToken  string     `bson:"refresh_token" json:"refresh_token,omitempty"`   // 用于刷新访问令牌的凭证, 刷新过后, 原先令牌将会被删除
 	Name          string     `bson:"name" json:"name,omitempty"`                     // 独立颁发给SDK使用时, 命名token
 	Description   string     `bson:"description" json:"description,omitempty"`       // 独立颁发给SDK使用时, 令牌的描述信息, 方便定位与取消
+	UserID        string     `bson:"user_id" json:"user_id,omitempty"`               // 用户ID
 	ApplicationID string     `bson:"application_id" json:"application_id,omitempty"` // 用户应用ID, 如果凭证是颁发给应用的, 应用在删除时需要删除所有的令牌, 应用禁用时, 该应用令牌验证会不通过
 	CreatedAt     ftime.Time `bson:"create_at" json:"create_at,omitempty"`           // 凭证创建时间
 	ExpiresAt     ftime.Time `bson:"expires_at" json:"expires_at,omitempty"`         // 还有多久过期
-	ExpiresIn     int64      `bson:"-" json:"ttl,omitempty"`                         // 凭证过期的时间
+	ExpiresIn     int64      `bson:"-" json:"expires_in,omitempty"`                  // 凭证过期的时间
 
 	ClientID  string    `bson:"client_id" json:"client_id,omitempty"`   // 客户端ID
 	GrantType GrantType `bson:"grant_type" json:"grant_type,omitempty"` // 授权的类型
