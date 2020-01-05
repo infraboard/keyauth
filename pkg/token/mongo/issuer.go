@@ -11,26 +11,24 @@ import (
 	"github.com/infraboard/keyauth/pkg/user"
 )
 
+func (s *service) newTokenIssuer(req *token.IssueTokenRequest) (*TokenIssuer, error) {
+	if err := req.Validate(); err != nil {
+		return nil, err
+	}
+
+	issuer := &TokenIssuer{
+		IssueTokenRequest: req,
+		clientChecker:     newClientChecker(s.app),
+		user:              s.user,
+	}
+	return issuer, nil
+}
+
 // TokenIssuer 基于该数据进行扩展
 type TokenIssuer struct {
 	*token.IssueTokenRequest
-	app  application.Service
+	*clientChecker
 	user user.Service
-}
-
-func (i *TokenIssuer) checkClient() (*application.Application, error) {
-	req := application.NewDescriptApplicationRequest()
-	req.ClientID = i.ClientID
-	app, err := i.app.DescriptionApplication(req)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := app.CheckClientSecret(i.ClientSecret); err != nil {
-		return nil, err
-	}
-
-	return app, nil
 }
 
 func (i *TokenIssuer) checkUser() (*user.User, error) {
@@ -49,7 +47,7 @@ func (i *TokenIssuer) checkUser() (*user.User, error) {
 
 // IssueToken 颁发token
 func (i *TokenIssuer) IssueToken() (tk *token.Token, err error) {
-	app, err := i.checkClient()
+	app, err := i.CheckClient(i.ClientID, i.ClientSecret)
 	if err != nil {
 		err = exception.NewUnauthorized(err.Error())
 		return
@@ -96,4 +94,28 @@ func (i *TokenIssuer) newBearToken(app *application.Application) *token.Token {
 		ExpiresIn:     app.TokenExpireSecond,
 		ApplicationID: app.ID,
 	}
+}
+
+func newClientChecker(app application.Service) *clientChecker {
+	return &clientChecker{app}
+}
+
+// clientChecker 检测client正确性
+type clientChecker struct {
+	application.Service
+}
+
+func (ck *clientChecker) CheckClient(clientID, clientSecret string) (*application.Application, error) {
+	req := application.NewDescriptApplicationRequest()
+	req.ClientID = clientID
+	app, err := ck.DescriptionApplication(req)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := app.CheckClientSecret(clientSecret); err != nil {
+		return nil, err
+	}
+
+	return app, nil
 }

@@ -22,6 +22,7 @@ func (h *handler) Registry(router router.SubRouter) {
 	r := router.ResourceRouter("token")
 	r.BasePath("/oauth2/tokens/")
 	r.AddPublict("POST", "/", h.IssueToken)
+
 }
 
 func (h *handler) Config() error {

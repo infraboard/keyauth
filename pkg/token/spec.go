@@ -7,7 +7,7 @@ import (
 // Service token管理服务
 type Service interface {
 	IssueToken(req *IssueTokenRequest) (*Token, error)
-	ValidateToken(accessToken, endpoint string) (*Token, error)
+	ValidateToken(req *ValidateTokenRequest) (*Token, error)
 	RevolkToken(accessToken string) error
 }
 
@@ -53,6 +53,28 @@ func (req *IssueTokenRequest) Validate() error {
 		}
 	default:
 		return fmt.Errorf("unknown grant type %s", req.GrantType)
+	}
+
+	return nil
+}
+
+// NewValidateTokenRequest 实例化
+func NewValidateTokenRequest() *ValidateTokenRequest {
+	return &ValidateTokenRequest{}
+}
+
+// ValidateTokenRequest 校验token
+type ValidateTokenRequest struct {
+	ClientID     string `json:"client_id,omitempty" validate:"required,lte=80"`     // 客户端ID
+	ClientSecret string `json:"client_secret,omitempty" validate:"required,lte=80"` // 客户端凭证
+	AccessToken  string `json:"access_token,omitempty" validate:"required,lte=80"`  // 访问凭证
+	Endpoint     string `json:"endpoint,omitempty" validate:"lte=400"`              // 判断
+}
+
+// Validate 校验参数
+func (req *ValidateTokenRequest) Validate() error {
+	if err := validate.Struct(req); err != nil {
+		return err
 	}
 
 	return nil
