@@ -34,12 +34,9 @@ func (h *handler) IssueToken(w http.ResponseWriter, r *http.Request) {
 func (h *handler) ValidateToken(w http.ResponseWriter, r *http.Request) {
 	req := token.NewValidateTokenRequest()
 
-	// 从Header中获取client凭证, 如果有
 	req.ClientID, req.ClientSecret, _ = r.BasicAuth()
-	if err := request.GetDataFromRequest(r, req); err != nil {
-		response.Failed(w, err)
-		return
-	}
+	req.AccessToken = r.Header.Get("X-OAUTH-ACCESS-TOKEN")
+	req.Endpoint = r.URL.Query().Get("endpoint")
 
 	d, err := h.service.ValidateToken(req)
 	if err != nil {

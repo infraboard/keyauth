@@ -63,9 +63,10 @@ func (i *TokenIssuer) IssueToken() (tk *token.Token, err error) {
 
 		tk = i.issuePasswordToken(app, u)
 		return
+	case token.REFRESH:
+
 	case token.CLIENT:
 	case token.AUTHCODE:
-	case token.REFRESH:
 	default:
 		err = exception.NewInternalServerError("unknown grant type %s", i.GrantType)
 		return
@@ -82,17 +83,18 @@ func (i *TokenIssuer) issuePasswordToken(app *application.Application, u *user.U
 
 func (i *TokenIssuer) newBearToken(app *application.Application) *token.Token {
 	now := time.Now()
-	expire := now.Add(time.Duration(app.TokenExpireSecond) * time.Second)
+	accessExpire := now.Add(time.Duration(app.AccessTokenExpireSecond) * time.Second)
+	refreshExpir := now.Add(time.Duration(app.RefreshTokenExpiredSecond) * time.Second)
 	return &token.Token{
-		Type:          token.Bearer,
-		AccessToken:   token.MakeBearer(24),
-		RefreshToken:  token.MakeBearer(32),
-		CreatedAt:     ftime.T(now),
-		ClientID:      i.ClientID,
-		GrantType:     i.GrantType,
-		ExpiresAt:     ftime.T(expire),
-		ExpiresIn:     app.TokenExpireSecond,
-		ApplicationID: app.ID,
+		Type:             token.Bearer,
+		AccessToken:      token.MakeBearer(24),
+		RefreshToken:     token.MakeBearer(32),
+		CreatedAt:        ftime.T(now),
+		ClientID:         i.ClientID,
+		GrantType:        i.GrantType,
+		AccessExpiredAt:  ftime.T(accessExpire),
+		RefreshExpiredAt: ftime.T(refreshExpir),
+		ApplicationID:    app.ID,
 	}
 }
 

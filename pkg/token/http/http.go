@@ -20,9 +20,9 @@ type handler struct {
 // Registry 注册HTTP服务路由
 func (h *handler) Registry(router router.SubRouter) {
 	r := router.ResourceRouter("token")
-	r.BasePath("/oauth2/tokens/")
+	r.BasePath("/oauth2/tokens")
 	r.AddPublict("POST", "/", h.IssueToken)
-
+	r.AddPublict("GET", "/", h.ValidateToken)
 }
 
 func (h *handler) Config() error {

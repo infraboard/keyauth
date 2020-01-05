@@ -23,7 +23,7 @@ func (s *service) IssueToken(req *token.IssueTokenRequest) (*token.Token, error)
 
 	if _, err := s.col.InsertOne(context.TODO(), tk); err != nil {
 		return nil, exception.NewInternalServerError("inserted token(%s) document error, %s",
-			req.AccessToken, err)
+			tk.AccessToken, err)
 	}
 
 	return tk, nil
@@ -42,6 +42,10 @@ func (s *service) ValidateToken(req *token.ValidateTokenRequest) (*token.Token, 
 	tk, err := s.queryToken(req.AccessToken)
 	if err != nil {
 		return nil, exception.NewUnauthorized(err.Error())
+	}
+
+	if tk.CheckAccessIsExpired() {
+		return nil, exception.NewTokenExpired("access_token: %s has expired", tk.AccessToken)
 	}
 
 	return tk, nil
