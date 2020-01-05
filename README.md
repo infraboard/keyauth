@@ -1,5 +1,8 @@
 # keyauth
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/infraboard/keyauth)](https://goreportcard.com/report/github.com/infraboard/keyauth)
+![](https://img.shields.io/github/license/infraboard/keyauth)
+
 keyauth是一个分布式或者微服务场景下的用户中心和鉴权中心
 
 ## 功能

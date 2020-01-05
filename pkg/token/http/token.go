@@ -35,7 +35,7 @@ func (h *handler) ValidateToken(w http.ResponseWriter, r *http.Request) {
 	req := token.NewValidateTokenRequest()
 
 	req.ClientID, req.ClientSecret, _ = r.BasicAuth()
-	req.AccessToken = r.Header.Get("X-OAUTH-ACCESS-TOKEN")
+	req.AccessToken = r.Header.Get("X-OAUTH-TOKEN")
 	req.Endpoint = r.URL.Query().Get("endpoint")
 
 	d, err := h.service.ValidateToken(req)
