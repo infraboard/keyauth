@@ -39,7 +39,7 @@ func (s *service) ValidateToken(req *token.ValidateTokenRequest) (*token.Token, 
 		return nil, exception.NewUnauthorized(err.Error())
 	}
 
-	tk, err := s.queryToken(req.AccessToken)
+	tk, err := s.queryToken(newQueryTokenRequestWithAccess(req.AccessToken))
 	if err != nil {
 		return nil, exception.NewUnauthorized(err.Error())
 	}
@@ -51,24 +51,53 @@ func (s *service) ValidateToken(req *token.ValidateTokenRequest) (*token.Token, 
 	return tk, nil
 }
 
-func (s *service) RevolkToken(accessToken string) error {
-	_, err := s.col.DeleteOne(context.TODO(), bson.M{"access_token": accessToken})
+func (s *service) RevolkToken(req *queryTokenRequest) error {
+	_, err := s.col.DeleteOne(context.TODO(), req.FindFilter())
 	if err != nil {
-		return exception.NewInternalServerError("delete token(%s) error, %s", accessToken, err)
+		return exception.NewInternalServerError("delete token(%s) error, %s", req, err)
 	}
 	return nil
 }
 
-func (s *service) queryToken(accessToken string) (*token.Token, error) {
+func (s *service) queryToken(req *queryTokenRequest) (*token.Token, error) {
 	tk := new(token.Token)
 
-	if err := s.col.FindOne(context.TODO(), bson.M{"access_token": accessToken}).Decode(tk); err != nil {
+	if err := s.col.FindOne(context.TODO(), req.FindFilter()).Decode(tk); err != nil {
 		if err == mongo.ErrNoDocuments {
-			return nil, exception.NewNotFound("token %s not found", accessToken)
+			return nil, exception.NewNotFound("token %s not found", req)
 		}
 
-		return nil, exception.NewInternalServerError("find token %s error, %s", accessToken, err)
+		return nil, exception.NewInternalServerError("find token %s error, %s", req, err)
 	}
 
 	return tk, nil
+}
+
+func newQueryTokenRequestWithAccess(token string) *queryTokenRequest {
+	return &queryTokenRequest{
+		AccessToken: token,
+	}
+}
+
+func newQueryTokenRequestWithRefresh(token string) *queryTokenRequest {
+	return &queryTokenRequest{
+		RefreshToken: token,
+	}
+}
+
+type queryTokenRequest struct {
+	AccessToken  string
+	RefreshToken string
+}
+
+func (req *queryTokenRequest) FindFilter() bson.M {
+	filter := bson.M{}
+	if req.AccessToken != "" {
+		filter["access_token"] = req.AccessToken
+	}
+	if req.RefreshToken != "" {
+		filter["refresh_token"] = req.RefreshToken
+	}
+
+	return filter
 }

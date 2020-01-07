@@ -20,6 +20,7 @@ func (s *service) newTokenIssuer(req *token.IssueTokenRequest) (*TokenIssuer, er
 		IssueTokenRequest: req,
 		clientChecker:     newClientChecker(s.app),
 		user:              s.user,
+		token:             s,
 	}
 	return issuer, nil
 }
@@ -28,7 +29,8 @@ func (s *service) newTokenIssuer(req *token.IssueTokenRequest) (*TokenIssuer, er
 type TokenIssuer struct {
 	*token.IssueTokenRequest
 	*clientChecker
-	user user.Service
+	token *service
+	user  user.Service
 }
 
 func (i *TokenIssuer) checkUser() (*user.User, error) {
@@ -61,10 +63,19 @@ func (i *TokenIssuer) IssueToken() (tk *token.Token, err error) {
 			return
 		}
 
-		tk = i.issuePasswordToken(app, u)
+		tk = i.issuePasswordToken(app, u.ID)
 		return
 	case token.REFRESH:
-
+		tk, err = i.token.queryToken(newQueryTokenRequestWithRefresh(i.RefreshToken))
+		if err != nil {
+			err = exception.NewUnauthorized(err.Error())
+			return
+		}
+		if tk.CheckRefreshIsExpired() {
+			err = exception.NewUnauthorized("")
+			return
+		}
+		tk = i.issuePasswordToken(app, tk.UserID)
 	case token.CLIENT:
 	case token.AUTHCODE:
 	default:
@@ -75,10 +86,17 @@ func (i *TokenIssuer) IssueToken() (tk *token.Token, err error) {
 	return
 }
 
-func (i *TokenIssuer) issuePasswordToken(app *application.Application, u *user.User) *token.Token {
+func (i *TokenIssuer) issuePasswordToken(app *application.Application, userID string) *token.Token {
 	tk := i.newBearToken(app)
-	tk.UserID = u.ID
+	tk.UserID = userID
 	return tk
+}
+
+func (i *TokenIssuer) refreshToken(tk *token.Token) {
+	now := time.Now()
+	tk.AccessToken = token.MakeBearer(24)
+	tk.RefreshToken = token.MakeBearer(32)
+	tk.CreatedAt = ftime.T(now)
 }
 
 func (i *TokenIssuer) newBearToken(app *application.Application) *token.Token {
