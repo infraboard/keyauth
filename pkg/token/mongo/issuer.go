@@ -66,17 +66,18 @@ func (i *TokenIssuer) IssueToken() (tk *token.Token, err error) {
 		tk = i.issuePasswordToken(app, u.ID)
 		return
 	case token.REFRESH:
-		tk, err = i.token.queryToken(newQueryTokenRequestWithRefresh(i.RefreshToken))
+		descReq := newDescribeTokenRequestWithRefresh(i.RefreshToken)
+		tk, err = i.token.describeToken(descReq)
 		if err != nil {
 			err = exception.NewUnauthorized(err.Error())
 			return
 		}
 		if tk.CheckRefreshIsExpired() {
-			err = exception.NewUnauthorized("refresh token is expoired")
+			err = exception.NewRefreshTokenExpired("refresh token is expoired")
 			return
 		}
 		tk = i.issuePasswordToken(app, tk.UserID)
-		if err := i.token.revolkTokenByRefresh(i.RefreshToken); err != nil {
+		if err := i.token.destoryToken(descReq); err != nil {
 			return nil, err
 		}
 		return

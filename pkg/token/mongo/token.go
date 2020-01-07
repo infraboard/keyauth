@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/infraboard/mcube/exception"
 	"go.mongodb.org/mongo-driver/bson"
@@ -39,35 +40,52 @@ func (s *service) ValidateToken(req *token.ValidateTokenRequest) (*token.Token, 
 		return nil, exception.NewUnauthorized(err.Error())
 	}
 
-	tk, err := s.queryToken(newQueryTokenRequestWithAccess(req.AccessToken))
+	tk, err := s.describeToken(newDescribeTokenRequestWithAccess(req.AccessToken))
 	if err != nil {
 		return nil, exception.NewUnauthorized(err.Error())
 	}
 
 	if tk.CheckAccessIsExpired() {
-		return nil, exception.NewTokenExpired("access_token: %s has expired", tk.AccessToken)
+		return nil, exception.NewAccessTokenExpired("access_token: %s has expired", tk.AccessToken)
+	}
+
+	// 校验用户权限
+	if req.Endpoint != "" {
+		// 找到用户角色
+		// 判断该角色是否有该Endpoint调用权限
 	}
 
 	return tk, nil
 }
 
-func (s *service) RevolkToken(accessToken string) error {
-	_, err := s.col.DeleteOne(context.TODO(), bson.M{"access_token": accessToken})
-	if err != nil {
-		return exception.NewInternalServerError("delete token(%s) error, %s", accessToken, err)
+func (s *service) RevolkToken(req *token.DescribeTokenRequest) error {
+	if err := req.Validate(); err != nil {
+		return exception.NewBadRequest(err.Error())
 	}
+
+	ck := newClientChecker(s.app)
+	if _, err := ck.CheckClient(req.ClientID, req.ClientSecret); err != nil {
+		return exception.NewUnauthorized(err.Error())
+	}
+
+	descReq := newDescribeTokenRequestWithAccess(req.AccessToken)
+	return s.destoryToken(descReq)
+}
+
+func (s *service) destoryToken(req *describeTokenRequest) error {
+	resp, err := s.col.DeleteOne(context.TODO(), req.FindFilter())
+	if err != nil {
+		return exception.NewInternalServerError("delete token(%s) error, %s", req, err)
+	}
+
+	if resp.DeletedCount == 0 {
+		return exception.NewNotFound("token(%s) not found", req)
+	}
+
 	return nil
 }
 
-func (s *service) revolkTokenByRefresh(refreshToken string) error {
-	_, err := s.col.DeleteOne(context.TODO(), bson.M{"refresh_token": refreshToken})
-	if err != nil {
-		return exception.NewInternalServerError("delete token(%s) error, %s", refreshToken, err)
-	}
-	return nil
-}
-
-func (s *service) queryToken(req *queryTokenRequest) (*token.Token, error) {
+func (s *service) describeToken(req *describeTokenRequest) (*token.Token, error) {
 	tk := new(token.Token)
 
 	if err := s.col.FindOne(context.TODO(), req.FindFilter()).Decode(tk); err != nil {
@@ -81,24 +99,29 @@ func (s *service) queryToken(req *queryTokenRequest) (*token.Token, error) {
 	return tk, nil
 }
 
-func newQueryTokenRequestWithAccess(token string) *queryTokenRequest {
-	return &queryTokenRequest{
+func newDescribeTokenRequestWithAccess(token string) *describeTokenRequest {
+	return &describeTokenRequest{
 		AccessToken: token,
 	}
 }
 
-func newQueryTokenRequestWithRefresh(token string) *queryTokenRequest {
-	return &queryTokenRequest{
+func newDescribeTokenRequestWithRefresh(token string) *describeTokenRequest {
+	return &describeTokenRequest{
 		RefreshToken: token,
 	}
 }
 
-type queryTokenRequest struct {
+type describeTokenRequest struct {
 	AccessToken  string
 	RefreshToken string
 }
 
-func (req *queryTokenRequest) FindFilter() bson.M {
+func (req *describeTokenRequest) String() string {
+	return fmt.Sprintf("access_token: %s, refresh_token: %s",
+		req.AccessToken, req.RefreshToken)
+}
+
+func (req *describeTokenRequest) FindFilter() bson.M {
 	filter := bson.M{}
 	if req.AccessToken != "" {
 		filter["access_token"] = req.AccessToken

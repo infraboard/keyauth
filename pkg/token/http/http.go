@@ -23,6 +23,7 @@ func (h *handler) Registry(router router.SubRouter) {
 	r.BasePath("/oauth2/tokens")
 	r.AddPublict("POST", "/", h.IssueToken)
 	r.AddPublict("GET", "/", h.ValidateToken)
+	r.AddPublict("DELETE", "/", h.RevolkToken)
 }
 
 func (h *handler) Config() error {

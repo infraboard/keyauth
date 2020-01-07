@@ -47,3 +47,19 @@ func (h *handler) ValidateToken(w http.ResponseWriter, r *http.Request) {
 	response.Success(w, d)
 	return
 }
+
+// RevolkToken 撤销资源访问令牌
+func (h *handler) RevolkToken(w http.ResponseWriter, r *http.Request) {
+	req := token.NewDescribeTokenRequest()
+
+	req.ClientID, req.ClientSecret, _ = r.BasicAuth()
+	req.AccessToken = r.Header.Get("X-OAUTH-TOKEN")
+
+	if err := h.service.RevolkToken(req); err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	response.Success(w, "revolk ok")
+	return
+}

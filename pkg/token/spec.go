@@ -1,6 +1,7 @@
 package token
 
 import (
+	"errors"
 	"fmt"
 )
 
@@ -8,7 +9,7 @@ import (
 type Service interface {
 	IssueToken(req *IssueTokenRequest) (*Token, error)
 	ValidateToken(req *ValidateTokenRequest) (*Token, error)
-	RevolkToken(accessToken string) error
+	RevolkToken(req *DescribeTokenRequest) error
 }
 
 // NewIssueTokenRequest 默认请求
@@ -59,21 +60,50 @@ func (req *IssueTokenRequest) Validate() error {
 
 // NewValidateTokenRequest 实例化
 func NewValidateTokenRequest() *ValidateTokenRequest {
-	return &ValidateTokenRequest{}
+	return &ValidateTokenRequest{
+		DescribeTokenRequest: NewDescribeTokenRequest(),
+	}
 }
 
 // ValidateTokenRequest 校验token
 type ValidateTokenRequest struct {
-	ClientID     string `json:"client_id,omitempty" validate:"required,lte=80"`     // 客户端ID
-	ClientSecret string `json:"client_secret,omitempty" validate:"required,lte=80"` // 客户端凭证
-	AccessToken  string `json:"access_token,omitempty" validate:"required,lte=80"`  // 访问凭证
-	Endpoint     string `json:"endpoint,omitempty" validate:"lte=400"`              // 判断
+	*DescribeTokenRequest
+	Endpoint string `json:"endpoint,omitempty" validate:"lte=400"` // 判断
 }
 
 // Validate 校验参数
 func (req *ValidateTokenRequest) Validate() error {
+	if req.DescribeTokenRequest == nil {
+		return errors.New("DescribeTokenRequest required")
+	}
+	if err := req.DescribeTokenRequest.Validate(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// NewDescribeTokenRequest 实例化
+func NewDescribeTokenRequest() *DescribeTokenRequest {
+	return &DescribeTokenRequest{}
+}
+
+// DescribeTokenRequest 撤销请求
+type DescribeTokenRequest struct {
+	ClientID     string `json:"client_id,omitempty" validate:"required,lte=80"`     // 客户端ID
+	ClientSecret string `json:"client_secret,omitempty" validate:"required,lte=80"` // 客户端凭证
+	AccessToken  string `json:"access_token,omitempty" validate:"lte=80"`           // 访问凭证
+	RefreshToken string `json:"refresh_token,omitempty" validate:"lte=80"`          // 访问凭证
+}
+
+// Validate 校验
+func (req *DescribeTokenRequest) Validate() error {
 	if err := validate.Struct(req); err != nil {
 		return err
+	}
+
+	if req.AccessToken == "" && req.RefreshToken == "" {
+		return errors.New("access_token and refresh_token required one")
 	}
 
 	return nil
