@@ -51,10 +51,18 @@ func (s *service) ValidateToken(req *token.ValidateTokenRequest) (*token.Token, 
 	return tk, nil
 }
 
-func (s *service) RevolkToken(req *queryTokenRequest) error {
-	_, err := s.col.DeleteOne(context.TODO(), req.FindFilter())
+func (s *service) RevolkToken(accessToken string) error {
+	_, err := s.col.DeleteOne(context.TODO(), bson.M{"access_token": accessToken})
 	if err != nil {
-		return exception.NewInternalServerError("delete token(%s) error, %s", req, err)
+		return exception.NewInternalServerError("delete token(%s) error, %s", accessToken, err)
+	}
+	return nil
+}
+
+func (s *service) revolkTokenByRefresh(refreshToken string) error {
+	_, err := s.col.DeleteOne(context.TODO(), bson.M{"refresh_token": refreshToken})
+	if err != nil {
+		return exception.NewInternalServerError("delete token(%s) error, %s", refreshToken, err)
 	}
 	return nil
 }

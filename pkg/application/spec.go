@@ -11,7 +11,7 @@ const (
 	// DefaultAccessTokenExpireSecond token默认过期时长
 	DefaultAccessTokenExpireSecond = 3600
 	// DefaultRefreshTokenExpiredSecond 刷新token默认过期时间
-	DefaultRefreshTokenExpiredSecond = 3600 * 2
+	DefaultRefreshTokenExpiredSecond = DefaultAccessTokenExpireSecond * 4
 )
 
 // use a single instance of Validate, it caches struct info
@@ -63,7 +63,8 @@ type QueryApplicationRequest struct {
 // NewCreateApplicatonRequest 请求
 func NewCreateApplicatonRequest() *CreateApplicatonRequest {
 	return &CreateApplicatonRequest{
-		AccessTokenExpireSecond: DefaultAccessTokenExpireSecond,
+		AccessTokenExpireSecond:   DefaultAccessTokenExpireSecond,
+		RefreshTokenExpiredSecond: DefaultRefreshTokenExpiredSecond,
 	}
 }
 

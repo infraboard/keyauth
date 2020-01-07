@@ -72,10 +72,14 @@ func (i *TokenIssuer) IssueToken() (tk *token.Token, err error) {
 			return
 		}
 		if tk.CheckRefreshIsExpired() {
-			err = exception.NewUnauthorized("")
+			err = exception.NewUnauthorized("refresh token is expoired")
 			return
 		}
 		tk = i.issuePasswordToken(app, tk.UserID)
+		if err := i.token.revolkTokenByRefresh(i.RefreshToken); err != nil {
+			return nil, err
+		}
+		return
 	case token.CLIENT:
 	case token.AUTHCODE:
 	default:
