@@ -26,7 +26,7 @@ func (h *handler) Registry(router router.SubRouter) {
 
 	ramRouter := router.ResourceRouter("ram_account")
 	ramRouter.BasePath("domains/:did/users")
-	ramRouter.AddProtected("POST", "/", h.CreateRAMAccount)
+	ramRouter.AddProtected("POST", "/", h.CreateSubAccount)
 }
 
 func (h *handler) Config() error {

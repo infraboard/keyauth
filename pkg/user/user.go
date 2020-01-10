@@ -10,6 +10,18 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// Type 用户类型
+type Type string
+
+const (
+	// SupperAdmin 超级管理员
+	SupperAdmin Type = "supper"
+	// PrimaryAccount 主账号
+	PrimaryAccount = "primary"
+	// SubAccount 子账号
+	SubAccount = "sub"
+)
+
 // use a single instance of Validate, it caches struct info
 var (
 	validate = validator.New()
@@ -47,7 +59,7 @@ type User struct {
 	ID                 string     `bson:"_id" json:"id,omitempty"`              // 用户UUID
 	CreateAt           ftime.Time `bson:"create_at" json:"create_at,omitempty"` // 用户创建的时间
 	UpdateAt           ftime.Time `bson:"update_at" json:"update_at,omitempty"` // 修改时间
-	Primary            bool       `bson:"primary"  json:"primary"`              // 是否是主账号
+	Type               Type       `bson:"type"  json:"type"`                    // 是否是主账号
 	*CreateUserRequest `bson:",inline"`
 
 	HashedPassword *Password `bson:"password" json:"password,omitempty"` // 密码相关信息

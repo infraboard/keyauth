@@ -104,7 +104,7 @@ func (i *Initialer) initUser() (*user.User, error) {
 	req := user.NewCreateUserRequest()
 	req.Account = i.username
 	req.Password = i.password
-	return pkg.User.CreatePrimayAccount(req)
+	return pkg.User.CreateSupperAccount(req)
 }
 
 func (i *Initialer) initDomain(ownerID string) (*domain.Domain, error) {
@@ -115,6 +115,7 @@ func (i *Initialer) initDomain(ownerID string) (*domain.Domain, error) {
 
 func (i *Initialer) initApp(ownerID string) (*application.Application, error) {
 	req := application.NewCreateApplicatonRequest()
+	req.Name = "初始化应用"
 	return pkg.Application.CreateUserApplication(ownerID, req)
 }
 

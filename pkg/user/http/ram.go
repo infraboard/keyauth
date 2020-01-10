@@ -10,7 +10,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/user"
 )
 
-func (h *handler) CreateRAMAccount(w http.ResponseWriter, r *http.Request) {
+func (h *handler) CreateSubAccount(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
 	did := rctx.PS.ByName("did")
 
@@ -20,7 +20,7 @@ func (h *handler) CreateRAMAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	d, err := h.service.CreateRAMAccount(did, req)
+	d, err := h.service.CreateSubAccount(did, req)
 	if err != nil {
 		response.Failed(w, err)
 		return

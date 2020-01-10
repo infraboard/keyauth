@@ -22,7 +22,7 @@ func (s *service) DescribeAccount(req *user.DescriptAccountRequest) (*user.User,
 	}
 	user := user.NewDescribeUser()
 
-	if err := s.uc.FindOne(context.TODO(), r.FindFilter()).Decode(user); err != nil {
+	if err := s.col.FindOne(context.TODO(), r.FindFilter()).Decode(user); err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, exception.NewNotFound("user %s not found", req)
 		}
@@ -33,8 +33,15 @@ func (s *service) DescribeAccount(req *user.DescriptAccountRequest) (*user.User,
 	return user, nil
 }
 
+func newPaggingQuery(req *user.QueryAccountRequest) *queryRequest {
+	return &queryRequest{
+		QueryAccountRequest: req,
+	}
+}
+
 type queryRequest struct {
-	*user.QueryRAMAccountRequest
+	userType user.Type
+	*user.QueryAccountRequest
 }
 
 func (r *queryRequest) FindOptions() *options.FindOptions {
@@ -52,6 +59,7 @@ func (r *queryRequest) FindOptions() *options.FindOptions {
 
 func (r *queryRequest) FindFilter() bson.M {
 	filter := bson.M{}
+	filter["type"] = r.userType
 
 	return filter
 }

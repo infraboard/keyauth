@@ -17,7 +17,7 @@ var (
 )
 
 type service struct {
-	uc            *mongo.Collection
+	col           *mongo.Collection
 	enableCache   bool
 	notifyCachPre string
 }
@@ -41,7 +41,7 @@ func (s *service) Config() error {
 		return err
 	}
 
-	s.uc = uc
+	s.col = uc
 	return nil
 }
 

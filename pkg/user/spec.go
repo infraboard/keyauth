@@ -9,13 +9,20 @@ import (
 
 // Service 用户服务
 type Service interface {
+	SupperAccountService
 	PrimaryAccountService
-	RAMAccountService
+	SubAccountService
 
 	// 更新用户密码
 	UpdateAccountPassword(userName, oldPass, newPass string) error
 	// 获取账号Profile
 	DescribeAccount(req *DescriptAccountRequest) (*User, error)
+}
+
+// SupperAccountService 超级管理员账号
+type SupperAccountService interface {
+	// 新建主账号
+	CreateSupperAccount(req *CreateUserRequest) (*User, error)
 }
 
 // PrimaryAccountService 主账号服务
@@ -26,14 +33,14 @@ type PrimaryAccountService interface {
 	DeletePrimaryAccount(userID string) error
 }
 
-// RAMAccountService 子账号服务
-type RAMAccountService interface {
+// SubAccountService 子账号服务
+type SubAccountService interface {
 	// CreateRAMAccount RAM (Resource Access Management)提供的用户身份管理与访问控制服务
-	CreateRAMAccount(domainID string, req *CreateUserRequest) (*User, error)
+	CreateSubAccount(domainID string, req *CreateUserRequest) (*User, error)
 	// 注销子账号
-	DeleteRAMAccount(userID string) error
+	DeleteSubAccount(userID string) error
 	// 查询子账号
-	QueryRAMAccount(req *QueryRAMAccountRequest) ([]*User, error)
+	QuerySubAccount(req *QueryAccountRequest) ([]*User, error)
 }
 
 // NewDescriptAccountRequest 查询详情请求
@@ -60,8 +67,8 @@ func (req *DescriptAccountRequest) Validate() error {
 	return nil
 }
 
-// QueryRAMAccountRequest 获取子账号列表
-type QueryRAMAccountRequest struct {
+// QueryAccountRequest 获取子账号列表
+type QueryAccountRequest struct {
 	*request.PageRequest
 	*DescriptAccountRequest
 
