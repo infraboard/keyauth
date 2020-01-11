@@ -93,19 +93,21 @@ func (i *Initialer) Run() error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("初始化用户%s [成功]\n", u.Account)
+	fmt.Println("初始化用户 [成功]")
 
-	d, err := i.initDomain(u.ID)
+	_, err = i.initDomain(u.ID)
 	if err != nil {
 		return err
 	}
-	fmt.Printf("初始化域%s [成功]\n", d.Name)
+	fmt.Println("初始化域  [成功]")
 
 	a, err := i.initApp(u.ID)
 	if err != nil {
 		return err
 	}
-	fmt.Printf("初始化应用%s [成功]\n", a.Name)
+	fmt.Println("初始化应用 [成功]")
+	fmt.Printf("应用客户端ID: %s\n", a.ClientID)
+	fmt.Printf("应用客户端凭证: %s\n", a.ClientSecret)
 
 	return nil
 }
@@ -116,7 +118,6 @@ func (i *Initialer) checkIsInit() error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(total)
 
 	if total > 0 {
 		return errors.New("supper admin user has exist")
