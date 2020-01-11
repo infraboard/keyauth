@@ -11,7 +11,7 @@ import (
 )
 
 func (h *handler) ListDomains(w http.ResponseWriter, r *http.Request) {
-	page := request.LoadPagginFromReq(r)
+	page := request.NewPageRequestFromHTTP(r)
 	req := domain.NewQueryDomainRequest(page)
 
 	dommains, total, err := h.service.QueryDomain(req)

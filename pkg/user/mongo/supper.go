@@ -13,7 +13,7 @@ func (s *service) CreateSupperAccount(req *user.CreateUserRequest) (*user.User, 
 		return nil, err
 	}
 
-	u.Type = user.SubAccount
+	u.Type = user.SupperAdmin
 	if err := s.saveAccount(u); err != nil {
 		return nil, err
 	}
@@ -22,32 +22,10 @@ func (s *service) CreateSupperAccount(req *user.CreateUserRequest) (*user.User, 
 	return u, nil
 }
 
-func (s *service) QueryAccount(req *user.QueryAccountRequest) (
-	users []*user.User, totalPage int64, err error) {
+func (s *service) QuerySupperAccount(req *user.QueryAccountRequest) ([]*user.User, int64, error) {
 	r := newPaggingQuery(req)
-	resp, err := s.col.Find(context.TODO(), r.FindFilter(), r.FindOptions())
-
-	if err != nil {
-		return nil, 0, exception.NewInternalServerError("find user error, error is %s", err)
-	}
-
-	// 循环
-	for resp.Next(context.TODO()) {
-		u := new(user.User)
-		if err := resp.Decode(u); err != nil {
-			return nil, 0, exception.NewInternalServerError("decode user error, error is %s", err)
-		}
-
-		users = append(users, u)
-	}
-
-	// count
-	count, err := s.col.CountDocuments(context.TODO(), r.FindFilter())
-	if err != nil {
-		return nil, 0, exception.NewInternalServerError("get device count error, error is %s", err)
-	}
-	totalPage = count
-	return users, totalPage, nil
+	r.userType = user.SupperAdmin
+	return s.queryAccount(r)
 }
 
 func (s *service) saveAccount(u *user.User) error {

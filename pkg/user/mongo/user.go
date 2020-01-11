@@ -11,6 +11,33 @@ import (
 	"github.com/infraboard/keyauth/pkg/user"
 )
 
+func (s *service) queryAccount(req *queryRequest) (
+	users []*user.User, totalPage int64, err error) {
+	resp, err := s.col.Find(context.TODO(), req.FindFilter(), req.FindOptions())
+
+	if err != nil {
+		return nil, 0, exception.NewInternalServerError("find user error, error is %s", err)
+	}
+
+	// 循环
+	for resp.Next(context.TODO()) {
+		u := new(user.User)
+		if err := resp.Decode(u); err != nil {
+			return nil, 0, exception.NewInternalServerError("decode user error, error is %s", err)
+		}
+
+		users = append(users, u)
+	}
+
+	// count
+	count, err := s.col.CountDocuments(context.TODO(), req.FindFilter())
+	if err != nil {
+		return nil, 0, exception.NewInternalServerError("get device count error, error is %s", err)
+	}
+	totalPage = count
+	return users, totalPage, nil
+}
+
 func (s *service) UpdateAccountPassword(userName, oldPass, newPass string) error {
 	return nil
 }

@@ -1,14 +1,17 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
+
+	"github.com/infraboard/mcube/http/request"
+	"github.com/spf13/cobra"
+	"golang.org/x/crypto/ssh/terminal"
 
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/application"
 	"github.com/infraboard/keyauth/pkg/domain"
 	"github.com/infraboard/keyauth/pkg/user"
-	"github.com/spf13/cobra"
-	"golang.org/x/crypto/ssh/terminal"
 )
 
 // InitCmd 初始化系统
@@ -46,6 +49,11 @@ var InitCmd = &cobra.Command{
 // NewInitialerFromCLI 初始化
 func NewInitialerFromCLI() (*Initialer, error) {
 	i := new(Initialer)
+
+	if err := i.checkIsInit(); err != nil {
+		return nil, err
+	}
+
 	fmt.Print("请输入公司(组织)名称: ")
 	fmt.Scan(&i.domainName)
 	fmt.Print("请输入admin用户名: ")
@@ -66,6 +74,7 @@ func NewInitialerFromCLI() (*Initialer, error) {
 	}
 
 	i.password = string(bytePassword)
+	fmt.Println()
 
 	return i, nil
 }
@@ -79,24 +88,39 @@ type Initialer struct {
 
 // Run 执行初始化
 func (i *Initialer) Run() error {
+	fmt.Println("开始初始化...")
 	u, err := i.initUser()
 	if err != nil {
 		return err
 	}
-	fmt.Printf("初始化用户%s [成功]", u.Account)
+	fmt.Printf("初始化用户%s [成功]\n", u.Account)
 
 	d, err := i.initDomain(u.ID)
 	if err != nil {
 		return err
 	}
-	fmt.Printf("初始化域%s [成功]", d.Name)
+	fmt.Printf("初始化域%s [成功]\n", d.Name)
 
 	a, err := i.initApp(u.ID)
 	if err != nil {
 		return err
 	}
-	fmt.Printf("初始化应用%s [成功]", a.Name)
+	fmt.Printf("初始化应用%s [成功]\n", a.Name)
 
+	return nil
+}
+
+func (i *Initialer) checkIsInit() error {
+	req := user.NewQueryAccountRequest(request.NewPageRequest(20, 1))
+	_, total, err := pkg.User.QuerySupperAccount(req)
+	if err != nil {
+		return err
+	}
+	fmt.Println(total)
+
+	if total > 0 {
+		return errors.New("supper admin user has exist")
+	}
 	return nil
 }
 

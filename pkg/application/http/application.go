@@ -11,7 +11,7 @@ import (
 )
 
 func (h *handler) QueryUserApplication(w http.ResponseWriter, r *http.Request) {
-	page := request.LoadPagginFromReq(r)
+	page := request.NewPageRequestFromHTTP(r)
 	req := application.NewQueryApplicationRequest(page)
 
 	apps, total, err := h.service.QueryApplication(req)

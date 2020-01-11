@@ -23,6 +23,8 @@ type Service interface {
 type SupperAccountService interface {
 	// 新建主账号
 	CreateSupperAccount(req *CreateUserRequest) (*User, error)
+	// 查询超级账号列表
+	QuerySupperAccount(req *QueryAccountRequest) ([]*User, int64, error)
 }
 
 // PrimaryAccountService 主账号服务
@@ -65,6 +67,13 @@ func (req *DescriptAccountRequest) Validate() error {
 	}
 
 	return nil
+}
+
+// NewQueryAccountRequest 列表查询请求
+func NewQueryAccountRequest(pageReq *request.PageRequest) *QueryAccountRequest {
+	return &QueryAccountRequest{
+		PageRequest: pageReq,
+	}
 }
 
 // QueryAccountRequest 获取子账号列表
