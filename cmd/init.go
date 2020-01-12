@@ -99,7 +99,7 @@ func (i *Initialer) Run() error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("初始化域  [成功]")
+	fmt.Println("初始化域   [成功]")
 
 	a, err := i.initApp(u.ID)
 	if err != nil {

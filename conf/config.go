@@ -92,6 +92,8 @@ func (m *mongodb) GetDB() *mongo.Database {
 }
 
 func (m *mongodb) getClient() (*mongo.Client, error) {
+	opts := options.Client()
+
 	cred := options.Credential{
 		AuthSource: m.Database,
 	}
@@ -100,12 +102,9 @@ func (m *mongodb) getClient() (*mongo.Client, error) {
 		cred.Username = m.UserName
 		cred.Password = m.Password
 		cred.PasswordSet = true
-	} else {
-		cred.PasswordSet = false
+		opts.SetAuth(cred)
 	}
-	opts := options.Client()
 	opts.SetHosts(m.Endpoints)
-	opts.SetAuth(cred)
 	opts.SetConnectTimeout(5 * time.Second)
 
 	// Connect to MongoDB

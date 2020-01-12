@@ -36,7 +36,7 @@ func (s *service) DescriptionApplication(req *application.DescriptApplicationReq
 	app := new(application.Application)
 	if err := s.col.FindOne(context.TODO(), r.FindFilter()).Decode(app); err != nil {
 		if err == mongo.ErrNoDocuments {
-			return nil, exception.NewNotFound("applicaiton %s not found", req.ID)
+			return nil, exception.NewNotFound("applicaiton %s not found", req)
 		}
 
 		return nil, exception.NewInternalServerError("find application %s error, %s", req.ID, err)
