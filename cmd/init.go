@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/AlecAivazis/survey/v2"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/spf13/cobra"
-	"golang.org/x/crypto/ssh/terminal"
 
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/application"
@@ -54,27 +54,57 @@ func NewInitialerFromCLI() (*Initialer, error) {
 		return nil, err
 	}
 
-	fmt.Print("请输入公司(组织)名称: ")
-	fmt.Scan(&i.domainName)
-	fmt.Print("请输入admin用户名: ")
-	fmt.Scan(&i.username)
-	fmt.Print("请输入admin密码: ")
-	bytePassword, err := terminal.ReadPassword(0)
+	err := survey.AskOne(
+		&survey.Input{
+			Message: "请输入公司(组织)名称:",
+			Default: "基础设施服务中心",
+		},
+		&i.domainName,
+		survey.WithValidator(survey.Required),
+	)
 	if err != nil {
-		return nil, fmt.Errorf("read password from cli error, %s", err)
-	}
-	fmt.Println()
-	fmt.Print("请再次输入admin密码: ")
-	checkPassword, err := terminal.ReadPassword(0)
-	if err != nil {
-		return nil, fmt.Errorf("read password from cli error, %s", err)
-	}
-	if string(bytePassword) != string(checkPassword) {
-		return nil, fmt.Errorf("两次密码输入不一致")
+		return nil, err
 	}
 
-	i.password = string(bytePassword)
-	fmt.Println()
+	err = survey.AskOne(
+		&survey.Input{
+			Message: "请输入管理员用户名称:",
+			Default: "admin",
+		},
+		&i.username,
+		survey.WithValidator(survey.Required),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	var repeatPass string
+	err = survey.AskOne(
+		&survey.Password{
+			Message: "请输入管理员密码:",
+		},
+		&i.password,
+		survey.WithValidator(survey.Required),
+	)
+	if err != nil {
+		return nil, err
+	}
+	err = survey.AskOne(
+		&survey.Password{
+			Message: "再次输入管理员密码:",
+		},
+		&repeatPass,
+		survey.WithValidator(survey.Required),
+		survey.WithValidator(func(ans interface{}) error {
+			if ans.(string) != i.password {
+				return fmt.Errorf("两次输入的密码不一致")
+			}
+			return nil
+		}),
+	)
+	if err != nil {
+		return nil, err
+	}
 
 	return i, nil
 }
