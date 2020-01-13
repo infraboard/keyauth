@@ -5,9 +5,11 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/mcube/exception"
+	"github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/router"
+
+	"github.com/infraboard/keyauth/pkg/token"
 )
 
 // NewInternalAuther 内部使用的auther
@@ -63,4 +65,14 @@ func parseBasicAuth(auth string) (username, password string, ok bool) {
 		return
 	}
 	return cs[:s], cs[s+1:], true
+}
+
+// GetTokenFromContext 从上下文中获取Token
+func GetTokenFromContext(r *http.Request) (*token.Token, error) {
+	tk, ok := context.GetContext(r).AuthInfo.(*token.Token)
+	if !ok {
+		return nil, exception.NewInternalServerError("authInfo is not token pointer")
+	}
+
+	return tk, nil
 }

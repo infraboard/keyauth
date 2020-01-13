@@ -7,12 +7,20 @@ import (
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 
+	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/application"
 )
 
 func (h *handler) QueryUserApplication(w http.ResponseWriter, r *http.Request) {
+	tk, err := pkg.GetTokenFromContext(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
 	page := request.NewPageRequestFromHTTP(r)
 	req := application.NewQueryApplicationRequest(page)
+	req.UserID = tk.UserID
 
 	apps, total, err := h.service.QueryApplication(req)
 	if err != nil {
@@ -31,13 +39,19 @@ func (h *handler) QueryUserApplication(w http.ResponseWriter, r *http.Request) {
 
 // CreateApplication 创建主账号
 func (h *handler) CreateUserApplication(w http.ResponseWriter, r *http.Request) {
+	tk, err := pkg.GetTokenFromContext(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
 	req := application.NewCreateApplicatonRequest()
 	if err := request.GetDataFromRequest(r, req); err != nil {
 		response.Failed(w, err)
 		return
 	}
 
-	d, err := h.service.CreateUserApplication("xxx", req)
+	d, err := h.service.CreateUserApplication(tk.UserID, req)
 	if err != nil {
 		response.Failed(w, err)
 		return
