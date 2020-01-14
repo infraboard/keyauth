@@ -118,7 +118,9 @@ type Initialer struct {
 
 // Run 执行初始化
 func (i *Initialer) Run() error {
+	fmt.Println()
 	fmt.Println("开始初始化...")
+
 	u, err := i.initUser()
 	if err != nil {
 		return err

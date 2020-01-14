@@ -24,6 +24,8 @@ func (h *handler) Registry(router router.SubRouter) {
 	r.AddPublict("POST", "/", h.IssueToken)
 	r.AddPublict("GET", "/", h.ValidateToken)
 	r.AddPublict("DELETE", "/", h.RevolkToken)
+	r.BasePath("/applications/:aid")
+	r.AddProtected("GET", "/", h.QueryApplicationToken)
 }
 
 func (h *handler) Config() error {

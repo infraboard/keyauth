@@ -22,10 +22,8 @@ const (
 	CLIENT GrantType = "client_credentials"
 	// REFRESH oauth2 Refreshing an Access Token
 	REFRESH GrantType = "refresh_token"
-	// UPSCOPE is an custom grant for use unscope token acquire scope token
-	UPSCOPE GrantType = "upgrade_scope"
-	// WeChat is an custom grant for use unscope token acquire scope token
-	WeChat GrantType = "wechat"
+	// Access is an custom grant for use use generate personal token
+	Access GrantType = "access_token"
 )
 
 // Type token type

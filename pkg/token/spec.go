@@ -24,6 +24,7 @@ type IssueTokenRequest struct {
 	Username     string    `json:"username,omitempty" validate:"lte=40"`               // 用户名
 	Password     string    `json:"password,omitempty" validate:"lte=100"`              // 密码
 	RefreshToken string    `json:"refresh_token,omitempty" validate:"lte=80"`          // 刷新凭证
+	AccessToken  string    `json:"access_token,omitempty" validate:"lte=80"`           // 访问凭证
 	AuthCode     string    `json:"code,omitempty" validate:"lte=40"`                   // https://tools.ietf.org/html/rfc6749#section-4.1.2
 	State        string    `json:"state,omitempty" validate:"lte=40"`                  // https://tools.ietf.org/html/rfc6749#section-10.12
 	GrantType    GrantType `json:"grant_type,omitempty" validate:"lte=20"`             // 授权的类型
@@ -45,6 +46,10 @@ func (req *IssueTokenRequest) Validate() error {
 	case REFRESH:
 		if req.RefreshToken == "" {
 			return fmt.Errorf("use %s grant type, refresh_token required", REFRESH)
+		}
+	case Access:
+		if req.AccessToken == "" {
+			return fmt.Errorf("use %s grant type, access_token required", Access)
 		}
 	case CLIENT:
 	case AUTHCODE:

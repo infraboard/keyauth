@@ -63,3 +63,8 @@ func (h *handler) RevolkToken(w http.ResponseWriter, r *http.Request) {
 	response.Success(w, "revolk ok")
 	return
 }
+
+// QueryApplicationToken 获取应用访问凭证
+func (h *handler) QueryApplicationToken(w http.ResponseWriter, r *http.Request) {
+	return
+}

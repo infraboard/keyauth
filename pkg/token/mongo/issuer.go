@@ -63,7 +63,7 @@ func (i *TokenIssuer) IssueToken() (tk *token.Token, err error) {
 			return
 		}
 
-		tk = i.issuePasswordToken(app, u.ID)
+		tk = i.issueUserToken(app, u.ID)
 		return
 	case token.REFRESH:
 		descReq := newDescribeTokenRequestWithRefresh(i.RefreshToken)
@@ -76,11 +76,23 @@ func (i *TokenIssuer) IssueToken() (tk *token.Token, err error) {
 			err = exception.NewRefreshTokenExpired("refresh token is expoired")
 			return
 		}
-		tk = i.issuePasswordToken(app, tk.UserID)
+		tk = i.issueUserToken(app, tk.UserID)
 		if err := i.token.destoryToken(descReq); err != nil {
 			return nil, err
 		}
 		return
+	case token.Access:
+		descReq := newDescribeTokenRequestWithAccess(i.AccessToken)
+		tk, err = i.token.describeToken(descReq)
+		if err != nil {
+			err = exception.NewUnauthorized(err.Error())
+			return
+		}
+		if tk.CheckRefreshIsExpired() {
+			err = exception.NewRefreshTokenExpired("access token is expoired")
+			return
+		}
+		tk = i.issueUserToken(app, tk.UserID)
 	case token.CLIENT:
 	case token.AUTHCODE:
 	default:
@@ -91,7 +103,7 @@ func (i *TokenIssuer) IssueToken() (tk *token.Token, err error) {
 	return
 }
 
-func (i *TokenIssuer) issuePasswordToken(app *application.Application, userID string) *token.Token {
+func (i *TokenIssuer) issueUserToken(app *application.Application, userID string) *token.Token {
 	tk := i.newBearToken(app)
 	tk.UserID = userID
 	return tk

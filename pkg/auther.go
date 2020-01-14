@@ -25,14 +25,14 @@ func (i *internal) Auth(header http.Header, entry router.Entry) (
 	authInfo interface{}, err error) {
 	req := token.NewValidateTokenRequest()
 
-	// 获取客户端凭证
+	// 获取客户端凭证(调用服务自己的身份凭证)
 	auth := header.Get("Authorization")
 	if auth == "" {
 		return nil, exception.NewUnauthorized("client crendential missed in basic auth")
 	}
 	req.ClientID, req.ClientSecret, _ = parseBasicAuth(auth)
 
-	// 获取需要校验的access token
+	// 获取需要校验的access token(用户的身份凭证)
 	accessToken := header.Get("x-oauth-token")
 	if accessToken == "" {
 		return nil, exception.NewUnauthorized("x-oauth-token header required")
