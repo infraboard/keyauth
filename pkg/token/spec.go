@@ -3,6 +3,8 @@ package token
 import (
 	"errors"
 	"fmt"
+
+	"github.com/infraboard/mcube/http/request"
 )
 
 // Service token管理服务
@@ -10,6 +12,7 @@ type Service interface {
 	IssueToken(req *IssueTokenRequest) (*Token, error)
 	ValidateToken(req *ValidateTokenRequest) (*Token, error)
 	RevolkToken(req *DescribeTokenRequest) error
+	QueryToken(req *QueryTokenRequest) ([]*Token, int64, error)
 }
 
 // NewIssueTokenRequest 默认请求
@@ -86,6 +89,20 @@ func (req *ValidateTokenRequest) Validate() error {
 	}
 
 	return nil
+}
+
+// NewQueryTokenRequest 请求实例
+func NewQueryTokenRequest(page *request.PageRequest) *QueryTokenRequest {
+	return &QueryTokenRequest{
+		PageRequest: page,
+	}
+}
+
+// QueryTokenRequest 查询Token列表
+type QueryTokenRequest struct {
+	*request.PageRequest
+	ApplicationID string    `json:"application_id,omitempty"`
+	GrantType     GrantType `json:"grant_type,omitempty"`
 }
 
 // NewDescribeTokenRequest 实例化

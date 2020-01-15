@@ -2,10 +2,8 @@ package mongo
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/infraboard/mcube/exception"
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/infraboard/keyauth/pkg/token"
@@ -58,17 +56,62 @@ func (s *service) ValidateToken(req *token.ValidateTokenRequest) (*token.Token, 
 	return tk, nil
 }
 
+func (s *service) QueryToken(req *token.QueryTokenRequest) (tokens []*token.Token, totalPage int64, errr error) {
+	query := newQueryRequest(req)
+	resp, err := s.col.Find(context.TODO(), query.FindFilter(), query.FindOptions())
+
+	if err != nil {
+		return nil, 0, exception.NewInternalServerError("find token error, error is %s", err)
+	}
+
+	// 循环
+	for resp.Next(context.TODO()) {
+		tk := new(token.Token)
+		if err := resp.Decode(tk); err != nil {
+			return nil, 0, exception.NewInternalServerError("decode token error, error is %s", err)
+		}
+
+		tokens = append(tokens, tk)
+	}
+
+	// count
+	count, err := s.col.CountDocuments(context.TODO(), query.FindFilter())
+	if err != nil {
+		return nil, 0, exception.NewInternalServerError("get token count error, error is %s", err)
+	}
+	totalPage = count
+
+	return tokens, totalPage, nil
+
+}
+
 func (s *service) RevolkToken(req *token.DescribeTokenRequest) error {
 	if err := req.Validate(); err != nil {
 		return exception.NewBadRequest(err.Error())
 	}
 
+	// 检测撤销token的客户端是否合法
 	ck := newClientChecker(s.app)
-	if _, err := ck.CheckClient(req.ClientID, req.ClientSecret); err != nil {
+	app, err := ck.CheckClient(req.ClientID, req.ClientSecret)
+	if err != nil {
 		return exception.NewUnauthorized(err.Error())
 	}
 
-	descReq := newDescribeTokenRequestWithAccess(req.AccessToken)
+	// 检测被撤销token的合法性
+	descReq := newDescribeTokenRequest(req)
+	tk, err := s.describeToken(descReq)
+	if err != nil {
+		return err
+	}
+
+	if tk.CheckAccessIsExpired() {
+		return exception.NewAccessTokenExpired("access_token: %s has expired", tk.AccessToken)
+	}
+
+	if err := tk.CheckTokenApplication(app.ID); err != nil {
+		return exception.NewPermissionDeny(err.Error())
+	}
+
 	return s.destoryToken(descReq)
 }
 
@@ -97,38 +140,4 @@ func (s *service) describeToken(req *describeTokenRequest) (*token.Token, error)
 	}
 
 	return tk, nil
-}
-
-func newDescribeTokenRequestWithAccess(token string) *describeTokenRequest {
-	return &describeTokenRequest{
-		AccessToken: token,
-	}
-}
-
-func newDescribeTokenRequestWithRefresh(token string) *describeTokenRequest {
-	return &describeTokenRequest{
-		RefreshToken: token,
-	}
-}
-
-type describeTokenRequest struct {
-	AccessToken  string
-	RefreshToken string
-}
-
-func (req *describeTokenRequest) String() string {
-	return fmt.Sprintf("access_token: %s, refresh_token: %s",
-		req.AccessToken, req.RefreshToken)
-}
-
-func (req *describeTokenRequest) FindFilter() bson.M {
-	filter := bson.M{}
-	if req.AccessToken != "" {
-		filter["access_token"] = req.AccessToken
-	}
-	if req.RefreshToken != "" {
-		filter["refresh_token"] = req.RefreshToken
-	}
-
-	return filter
 }

@@ -1,6 +1,7 @@
 package token
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -70,4 +71,13 @@ func (t *Token) CheckAccessIsExpired() bool {
 // CheckRefreshIsExpired 检测刷新token是否过期
 func (t *Token) CheckRefreshIsExpired() bool {
 	return t.RefreshExpiredAt.T().Before(time.Now())
+}
+
+// CheckTokenApplication 判断token是否属于该应用
+func (t *Token) CheckTokenApplication(applicationID string) error {
+	if t.ApplicationID != applicationID {
+		return fmt.Errorf("the token is not issue by this application %s", applicationID)
+	}
+
+	return nil
 }

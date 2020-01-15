@@ -66,5 +66,20 @@ func (h *handler) RevolkToken(w http.ResponseWriter, r *http.Request) {
 
 // QueryApplicationToken 获取应用访问凭证
 func (h *handler) QueryApplicationToken(w http.ResponseWriter, r *http.Request) {
+	page := request.NewPageRequestFromHTTP(r)
+	req := token.NewQueryTokenRequest(page)
+
+	tks, total, err := h.service.QueryToken(req)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	data := response.PageData{
+		PageRequest: page,
+		TotalCount:  uint(total),
+		List:        tks,
+	}
+	response.Success(w, data)
 	return
 }
