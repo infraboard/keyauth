@@ -3,6 +3,7 @@ package http
 import (
 	"net/http"
 
+	"github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 
@@ -66,8 +67,11 @@ func (h *handler) RevolkToken(w http.ResponseWriter, r *http.Request) {
 
 // QueryApplicationToken 获取应用访问凭证
 func (h *handler) QueryApplicationToken(w http.ResponseWriter, r *http.Request) {
+	rctx := context.GetContext(r)
+
 	page := request.NewPageRequestFromHTTP(r)
 	req := token.NewQueryTokenRequest(page)
+	req.ApplicationID = rctx.PS.ByName("id")
 
 	tks, total, err := h.service.QueryToken(req)
 	if err != nil {

@@ -9,6 +9,7 @@ import (
 
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
+	"github.com/infraboard/keyauth/pkg/user"
 )
 
 var (
@@ -46,5 +47,6 @@ func (s *service) Config() error {
 }
 
 func init() {
+	var _ user.Service = Service
 	pkg.RegistryService("user", Service)
 }

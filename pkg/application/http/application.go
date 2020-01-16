@@ -22,18 +22,13 @@ func (h *handler) QueryUserApplication(w http.ResponseWriter, r *http.Request) {
 	req := application.NewQueryApplicationRequest(page)
 	req.UserID = tk.UserID
 
-	apps, total, err := h.service.QueryApplication(req)
+	apps, err := h.service.QueryApplication(req)
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
 
-	data := response.PageData{
-		PageRequest: page,
-		TotalCount:  uint(total),
-		List:        apps,
-	}
-	response.Success(w, data)
+	response.Success(w, apps)
 	return
 }
 

@@ -9,7 +9,7 @@ import (
 // Service is an domain service
 type Service interface {
 	DescriptionDomain(req *DescriptDomainRequest) (*Domain, error)
-	QueryDomain(req *QueryDomainRequest) (domains []*Domain, totalPage int64, err error)
+	QueryDomain(req *QueryDomainRequest) (*DomainSet, error)
 	CreateDomain(ownerID string, req *CreateDomainRequst) (*Domain, error)
 	UpdateDomain(*Domain) error
 	DeleteDomain(id string) error

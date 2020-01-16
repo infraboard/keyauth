@@ -45,33 +45,33 @@ func (s *service) DescriptionApplication(req *application.DescriptApplicationReq
 	return app, nil
 }
 
-func (s *service) QueryApplication(req *application.QueryApplicationRequest) (
-	apps []*application.Application, totalPage int64, err error) {
+func (s *service) QueryApplication(req *application.QueryApplicationRequest) (*application.ApplicationSet, error) {
 	r := newPaggingQuery(req)
 	resp, err := s.col.Find(context.TODO(), r.FindFilter(), r.FindOptions())
 
 	if err != nil {
-		return nil, 0, exception.NewInternalServerError("find domain error, error is %s", err)
+		return nil, exception.NewInternalServerError("find domain error, error is %s", err)
 	}
 
+	appSet := application.NewApplicationSet(req.PageRequest)
 	// 循环
 	for resp.Next(context.TODO()) {
 		app := new(application.Application)
 		if err := resp.Decode(app); err != nil {
-			return nil, 0, exception.NewInternalServerError("decode domain error, error is %s", err)
+			return nil, exception.NewInternalServerError("decode domain error, error is %s", err)
 		}
 
-		apps = append(apps, app)
+		appSet.Add(app)
 	}
 
 	// count
 	count, err := s.col.CountDocuments(context.TODO(), r.FindFilter())
 	if err != nil {
-		return nil, 0, exception.NewInternalServerError("get device count error, error is %s", err)
+		return nil, exception.NewInternalServerError("get device count error, error is %s", err)
 	}
-	totalPage = count
+	appSet.Total = count
 
-	return apps, totalPage, nil
+	return appSet, nil
 }
 
 func (s *service) DeleteApplication(id string) error {

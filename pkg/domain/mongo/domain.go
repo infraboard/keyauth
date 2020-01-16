@@ -37,32 +37,33 @@ func (s *service) DescriptionDomain(req *domain.DescriptDomainRequest) (*domain.
 	return d, nil
 }
 
-func (s *service) QueryDomain(req *domain.QueryDomainRequest) (domains []*domain.Domain, totalPage int64, err error) {
+func (s *service) QueryDomain(req *domain.QueryDomainRequest) (*domain.DomainSet, error) {
 	r := newPaggingQuery(req)
 	resp, err := s.col.Find(context.TODO(), r.FindFilter(), r.FindOptions())
 
 	if err != nil {
-		return nil, 0, exception.NewInternalServerError("find domain error, error is %s", err)
+		return nil, exception.NewInternalServerError("find domain error, error is %s", err)
 	}
 
+	domainSet := domain.NewDomainSet(req.PageRequest)
 	// 循环
 	for resp.Next(context.TODO()) {
 		d := new(domain.Domain)
 		if err := resp.Decode(d); err != nil {
-			return nil, 0, exception.NewInternalServerError("decode domain error, error is %s", err)
+			return nil, exception.NewInternalServerError("decode domain error, error is %s", err)
 		}
 
-		domains = append(domains, d)
+		domainSet.Add(d)
 	}
 
 	// count
 	count, err := s.col.CountDocuments(context.TODO(), r.FindFilter())
 	if err != nil {
-		return nil, 0, exception.NewInternalServerError("get device count error, error is %s", err)
+		return nil, exception.NewInternalServerError("get device count error, error is %s", err)
 	}
-	totalPage = count
+	domainSet.Total = count
 
-	return domains, totalPage, nil
+	return domainSet, nil
 }
 
 func (s *service) UpdateDomain(d *domain.Domain) error {

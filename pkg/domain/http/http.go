@@ -22,7 +22,7 @@ func (h *handler) Registry(router router.SubRouter) {
 	domainRouter := router.ResourceRouter("domain")
 	domainRouter.BasePath("domains")
 	domainRouter.AddProtected("POST", "/", h.CreateDomain)
-	domainRouter.AddProtected("GET", "/", h.ListDomains)
+	domainRouter.AddPublict("GET", "/", h.ListDomains)
 	domainRouter.AddProtected("GET", "/:id", h.GetDomain)
 	domainRouter.AddProtected("PUT", "/:id", h.UpdateDomain)
 	domainRouter.AddProtected("DELETE", "/:id", h.DeleteDomain)

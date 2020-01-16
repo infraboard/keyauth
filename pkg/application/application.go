@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/infraboard/mcube/exception"
+	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/types/ftime"
 	"github.com/rs/xid"
 
@@ -77,4 +78,24 @@ func (a *Application) CheckClientSecret(secret string) error {
 	}
 
 	return nil
+}
+
+// NewApplicationSet 实例化
+func NewApplicationSet(req *request.PageRequest) *ApplicationSet {
+	return &ApplicationSet{
+		PageRequest: req,
+	}
+}
+
+// ApplicationSet 应用列表
+type ApplicationSet struct {
+	*request.PageRequest
+
+	Total int64          `json:"total"`
+	Items []*Application `json:"items"`
+}
+
+// Add 添加应用
+func (s *ApplicationSet) Add(app *Application) {
+	s.Items = append(s.Items, app)
 }

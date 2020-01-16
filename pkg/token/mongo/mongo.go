@@ -11,6 +11,7 @@ import (
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/application"
+	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
 )
 
@@ -66,5 +67,6 @@ func (s *service) Config() error {
 }
 
 func init() {
+	var _ token.Service = Service
 	pkg.RegistryService("token", Service)
 }

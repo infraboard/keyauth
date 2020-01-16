@@ -24,20 +24,9 @@ type Type string
 // Status 服务状态
 type Status string
 
-// Region 区域
-type Region struct {
-	Name        string
-	Description string
-}
-
 // Service is service provider
 type Service struct {
 	ID               string     `json:"id"`                          // 唯一ID
-	Region           *Region    `json:"region,omitempty"`            // 服务所处区域
-	Type             Type       `json:"type,omitempty"`              // 服务类型
-	Name             string     `json:"name,omitempty"`              // 名称
-	Description      string     `json:"description,omitempty"`       // 描述信息
-	Enabled          bool       `json:"enabled"`                     // 是否启用该服务
 	Status           Status     `json:"status,omitempty"`            // 服务状态(unavailable/avaliable/upgrading/downgrading)
 	StatusUpdateAt   int64      `json:"status_update_at,omitempty"`  // 状态更新的时间
 	CurrentVersion   string     `json:"current_version,omitempty"`   // 当前版本信息, 通过比较获取的实例对应的版本
@@ -47,8 +36,16 @@ type Service struct {
 	UpdateAt         int64      `json:"update_at,omitempty"`         // 更新时间
 	ClientID         string     `json:"client_id,omitempty"`         // 客户端ID
 	ClientSecret     string     `json:"client_secret,omitempty"`     // 客户端秘钥
-	TokenExpireTime  int64      `json:"token_expire_time,omitempty"` // 客户端凭证申请的token的过期时间
 	Features         []*Feature `json:"features,omitempty"`          // 服务功能列表
+}
+
+// CreateServiceRequest 服务创建请求
+type CreateServiceRequest struct {
+	Name            string `json:"name,omitempty"`              // 名称
+	Type            Type   `json:"type,omitempty"`              // 服务类型
+	Description     string `json:"description,omitempty"`       // 描述信息
+	Enabled         bool   `json:"enabled"`                     // 是否启用该服务
+	TokenExpireTime int64  `json:"token_expire_time,omitempty"` // 客户端凭证申请的token的过期时间
 }
 
 // Feature Service's features

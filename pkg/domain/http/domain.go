@@ -14,18 +14,12 @@ func (h *handler) ListDomains(w http.ResponseWriter, r *http.Request) {
 	page := request.NewPageRequestFromHTTP(r)
 	req := domain.NewQueryDomainRequest(page)
 
-	dommains, total, err := h.service.QueryDomain(req)
+	dommains, err := h.service.QueryDomain(req)
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
-
-	data := response.PageData{
-		PageRequest: page,
-		TotalCount:  uint(total),
-		List:        dommains,
-	}
-	response.Success(w, data)
+	response.Success(w, dommains)
 	return
 }
 
