@@ -146,12 +146,12 @@ func (i *Initialer) Run() error {
 
 func (i *Initialer) checkIsInit() error {
 	req := user.NewQueryAccountRequest(request.NewPageRequest(20, 1))
-	_, total, err := pkg.User.QuerySupperAccount(req)
+	userSet, err := pkg.User.QuerySupperAccount(req)
 	if err != nil {
 		return err
 	}
 
-	if total > 0 {
+	if userSet.Total > 0 {
 		return errors.New("supper admin user has exist")
 	}
 	return nil

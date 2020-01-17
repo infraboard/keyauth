@@ -47,6 +47,13 @@ func (s *service) ValidateToken(req *token.ValidateTokenRequest) (*token.Token, 
 		return nil, exception.NewAccessTokenExpired("access_token: %s has expired", tk.AccessToken)
 	}
 
+	// queryUser := user.NewDescriptAccountRequest()
+	// queryUser.ID = tk.UserID
+	// account, err := s.user.DescribeAccount(queryUser)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
 	// 校验用户权限
 	if req.Endpoint != "" {
 		// 找到用户角色

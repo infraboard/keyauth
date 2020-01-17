@@ -5,6 +5,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/infraboard/mcube/exception"
+	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/types/ftime"
 	"github.com/rs/xid"
 	"golang.org/x/crypto/bcrypt"
@@ -103,4 +104,24 @@ type Password struct {
 // CheckPassword 判断password 是否正确
 func (p *Password) CheckPassword(password string) error {
 	return bcrypt.CompareHashAndPassword([]byte(p.Password), []byte(password))
+}
+
+// NewUserSet 实例
+func NewUserSet(req *request.PageRequest) *UserSet {
+	return &UserSet{
+		PageRequest: req,
+	}
+}
+
+// UserSet 用户列表
+type UserSet struct {
+	*request.PageRequest
+
+	Total int64   `json:"total"`
+	Items []*User `json:"items"`
+}
+
+// Add todo
+func (s *UserSet) Add(u *User) {
+	s.Items = append(s.Items, u)
 }
