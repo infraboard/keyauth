@@ -11,8 +11,8 @@ import (
 type Service interface {
 	IssueToken(req *IssueTokenRequest) (*Token, error)
 	ValidateToken(req *ValidateTokenRequest) (*Token, error)
-	RevolkToken(req *DescribeTokenRequest) error
-	QueryToken(req *QueryTokenRequest) ([]*Token, int64, error)
+	RevolkToken(req *RevolkTokenRequest) error
+	QueryToken(req *QueryTokenRequest) (*TokenSet, error)
 }
 
 // NewIssueTokenRequest 默认请求
@@ -75,8 +75,10 @@ func NewValidateTokenRequest() *ValidateTokenRequest {
 
 // ValidateTokenRequest 校验token
 type ValidateTokenRequest struct {
+	ServiceID     string `json:"service_id" validate:"required,lte=80"`      // 服务ID
+	ServiceSecret string `json:"service_secret" validate:"required,lte=100"` // 服务秘钥
+	Endpoint      string `json:"endpoint,omitempty" validate:"lte=400"`      // 接口URL
 	*DescribeTokenRequest
-	Endpoint string `json:"endpoint,omitempty" validate:"lte=400"` // 判断
 }
 
 // Validate 校验参数
@@ -105,6 +107,22 @@ type QueryTokenRequest struct {
 	GrantType     GrantType `json:"grant_type,omitempty"`
 }
 
+// NewRevolkTokenRequest 撤销Token请求
+func NewRevolkTokenRequest(clientID, clientSecret string) *RevolkTokenRequest {
+	return &RevolkTokenRequest{
+		ClientID:             clientID,
+		ClientSecret:         clientSecret,
+		DescribeTokenRequest: NewDescribeTokenRequest(),
+	}
+}
+
+// RevolkTokenRequest 撤销Token的请求
+type RevolkTokenRequest struct {
+	ClientSecret string `json:"client_secret,omitempty" validate:"required,lte=80"` // 客户端凭证
+	ClientID     string `json:"client_id,omitempty" validate:"required,lte=80"`     // 客户端ID
+	*DescribeTokenRequest
+}
+
 // NewDescribeTokenRequest 实例化
 func NewDescribeTokenRequest() *DescribeTokenRequest {
 	return &DescribeTokenRequest{}
@@ -112,10 +130,8 @@ func NewDescribeTokenRequest() *DescribeTokenRequest {
 
 // DescribeTokenRequest 撤销请求
 type DescribeTokenRequest struct {
-	ClientID     string `json:"client_id,omitempty" validate:"required,lte=80"`     // 客户端ID
-	ClientSecret string `json:"client_secret,omitempty" validate:"required,lte=80"` // 客户端凭证
-	AccessToken  string `json:"access_token,omitempty" validate:"lte=80"`           // 访问凭证
-	RefreshToken string `json:"refresh_token,omitempty" validate:"lte=80"`          // 访问凭证
+	AccessToken  string `json:"access_token,omitempty" validate:"lte=80"`  // 访问凭证
+	RefreshToken string `json:"refresh_token,omitempty" validate:"lte=80"` // 访问凭证
 }
 
 // Validate 校验

@@ -33,10 +33,10 @@ func (s *service) ValidateToken(req *token.ValidateTokenRequest) (*token.Token, 
 		return nil, exception.NewBadRequest(err.Error())
 	}
 
-	ck := newClientChecker(s.app)
-	if _, err := ck.CheckClient(req.ClientID, req.ClientSecret); err != nil {
-		return nil, exception.NewUnauthorized(err.Error())
-	}
+	// ck := newClientChecker(s.app)
+	// if _, err := ck.CheckClient(req.ClientID, req.ClientSecret); err != nil {
+	// 	return nil, exception.NewUnauthorized(err.Error())
+	// }
 
 	tk, err := s.describeToken(newDescribeTokenRequestWithAccess(req.AccessToken))
 	if err != nil {
@@ -47,6 +47,7 @@ func (s *service) ValidateToken(req *token.ValidateTokenRequest) (*token.Token, 
 		return nil, exception.NewAccessTokenExpired("access_token: %s has expired", tk.AccessToken)
 	}
 
+	// 查询用户的角色
 	// queryUser := user.NewDescriptAccountRequest()
 	// queryUser.ID = tk.UserID
 	// account, err := s.user.DescribeAccount(queryUser)
@@ -60,39 +61,40 @@ func (s *service) ValidateToken(req *token.ValidateTokenRequest) (*token.Token, 
 		// 判断该角色是否有该Endpoint调用权限
 	}
 
+	tk.Desensitize()
 	return tk, nil
 }
 
-func (s *service) QueryToken(req *token.QueryTokenRequest) (tokens []*token.Token, totalPage int64, errr error) {
+func (s *service) QueryToken(req *token.QueryTokenRequest) (*token.TokenSet, error) {
 	query := newQueryRequest(req)
 	resp, err := s.col.Find(context.TODO(), query.FindFilter(), query.FindOptions())
 
 	if err != nil {
-		return nil, 0, exception.NewInternalServerError("find token error, error is %s", err)
+		return nil, exception.NewInternalServerError("find token error, error is %s", err)
 	}
 
+	tokenSet := token.NewTokenSet(req.PageRequest)
 	// 循环
 	for resp.Next(context.TODO()) {
 		tk := new(token.Token)
 		if err := resp.Decode(tk); err != nil {
-			return nil, 0, exception.NewInternalServerError("decode token error, error is %s", err)
+			return nil, exception.NewInternalServerError("decode token error, error is %s", err)
 		}
-
-		tokens = append(tokens, tk)
+		tokenSet.Add(tk)
 	}
 
 	// count
 	count, err := s.col.CountDocuments(context.TODO(), query.FindFilter())
 	if err != nil {
-		return nil, 0, exception.NewInternalServerError("get token count error, error is %s", err)
+		return nil, exception.NewInternalServerError("get token count error, error is %s", err)
 	}
-	totalPage = count
+	tokenSet.Total = count
 
-	return tokens, totalPage, nil
+	return tokenSet, nil
 
 }
 
-func (s *service) RevolkToken(req *token.DescribeTokenRequest) error {
+func (s *service) RevolkToken(req *token.RevolkTokenRequest) error {
 	if err := req.Validate(); err != nil {
 		return exception.NewBadRequest(err.Error())
 	}
@@ -105,7 +107,7 @@ func (s *service) RevolkToken(req *token.DescribeTokenRequest) error {
 	}
 
 	// 检测被撤销token的合法性
-	descReq := newDescribeTokenRequest(req)
+	descReq := newDescribeTokenRequest(req.DescribeTokenRequest)
 	tk, err := s.describeToken(descReq)
 	if err != nil {
 		return err
