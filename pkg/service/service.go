@@ -1,5 +1,9 @@
 package service
 
+import (
+	"github.com/infraboard/mcube/http/router"
+)
+
 const (
 	// Internal 内部调用的控制面类型的服务, 提供了RPC能力,需要注册到API 网关对内提供服务
 	Internal Type = "internal"
@@ -24,9 +28,10 @@ type Type string
 // Status 服务状态
 type Status string
 
-// Service is service provider
-type Service struct {
-	ID               string     `json:"id"`                          // 唯一ID
+// MicroService is service provider
+type MicroService struct {
+	ID string `json:"id"` // 唯一ID
+
 	Status           Status     `json:"status,omitempty"`            // 服务状态(unavailable/avaliable/upgrading/downgrading)
 	StatusUpdateAt   int64      `json:"status_update_at,omitempty"`  // 状态更新的时间
 	CurrentVersion   string     `json:"current_version,omitempty"`   // 当前版本信息, 通过比较获取的实例对应的版本
@@ -63,4 +68,5 @@ type Feature struct {
 	AddedAt        int64  `json:"when_added_time,omitempty"`      // 功能注册的时间
 	ServiceID      string `json:"service_id,omitempty"`           // 该功能属于那个服务
 	Version        string `json:"-"`                              // 服务那个版本的功能
+	router.Entry
 }
