@@ -57,7 +57,8 @@ func NewQueryApplicationRequest(pageReq *request.PageRequest) *QueryApplicationR
 // QueryApplicationRequest 查询应用列表
 type QueryApplicationRequest struct {
 	*request.PageRequest
-	UserID string
+	UserID  string
+	Account string
 }
 
 // NewCreateApplicatonRequest 请求

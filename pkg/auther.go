@@ -30,7 +30,7 @@ func (i *internal) Auth(header http.Header, entry router.Entry) (
 	if auth == "" {
 		return nil, exception.NewUnauthorized("client crendential missed in basic auth")
 	}
-	req.ClientID, req.ClientSecret, _ = parseBasicAuth(auth)
+	_, _, _ = parseBasicAuth(auth)
 
 	// 获取需要校验的access token(用户的身份凭证)
 	accessToken := header.Get("x-oauth-token")

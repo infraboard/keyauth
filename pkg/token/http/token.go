@@ -35,7 +35,7 @@ func (h *handler) IssueToken(w http.ResponseWriter, r *http.Request) {
 func (h *handler) ValidateToken(w http.ResponseWriter, r *http.Request) {
 	req := token.NewValidateTokenRequest()
 
-	req.ClientID, req.ClientSecret, _ = r.BasicAuth()
+	_, _, _ = r.BasicAuth()
 	req.AccessToken = r.Header.Get("X-OAUTH-TOKEN")
 	req.Endpoint = r.URL.Query().Get("endpoint")
 
@@ -51,9 +51,7 @@ func (h *handler) ValidateToken(w http.ResponseWriter, r *http.Request) {
 
 // RevolkToken 撤销资源访问令牌
 func (h *handler) RevolkToken(w http.ResponseWriter, r *http.Request) {
-	req := token.NewDescribeTokenRequest()
-
-	req.ClientID, req.ClientSecret, _ = r.BasicAuth()
+	req := token.NewRevolkTokenRequest("", "")
 	req.AccessToken = r.Header.Get("X-OAUTH-TOKEN")
 
 	if err := h.service.RevolkToken(req); err != nil {
@@ -73,17 +71,12 @@ func (h *handler) QueryApplicationToken(w http.ResponseWriter, r *http.Request) 
 	req := token.NewQueryTokenRequest(page)
 	req.ApplicationID = rctx.PS.ByName("id")
 
-	tks, total, err := h.service.QueryToken(req)
+	tkSet, err := h.service.QueryToken(req)
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
 
-	data := response.PageData{
-		PageRequest: page,
-		TotalCount:  uint(total),
-		List:        tks,
-	}
-	response.Success(w, data)
+	response.Success(w, tkSet)
 	return
 }

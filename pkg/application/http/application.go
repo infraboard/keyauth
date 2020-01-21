@@ -20,7 +20,7 @@ func (h *handler) QueryUserApplication(w http.ResponseWriter, r *http.Request) {
 
 	page := request.NewPageRequestFromHTTP(r)
 	req := application.NewQueryApplicationRequest(page)
-	req.UserID = tk.UserID
+	req.Account = tk.Account
 
 	apps, err := h.service.QueryApplication(req)
 	if err != nil {
