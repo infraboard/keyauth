@@ -6,6 +6,7 @@ require (
 	github.com/AlecAivazis/survey/v2 v2.0.5
 	github.com/BurntSushi/toml v0.3.1
 	github.com/DataDog/zstd v1.4.4 // indirect
+	github.com/go-playground/validator v9.31.0+incompatible // indirect
 	github.com/go-playground/validator/v10 v10.0.1
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/infraboard/mcube v0.1.2-0.20200111000906-558aea1defd8
