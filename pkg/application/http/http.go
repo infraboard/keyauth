@@ -24,7 +24,7 @@ func (h *handler) Registry(router router.SubRouter) {
 	appRouter.AddProtected("POST", "/", h.CreateUserApplication)
 	appRouter.AddProtected("GET", "/", h.QueryUserApplication)
 	appRouter.AddProtected("GET", "/:id", h.GetApplication)
-	appRouter.AddProtected("DELETE", "/", h.DestroyApplication)
+	appRouter.AddProtected("DELETE", "/:id", h.DestroyApplication)
 
 }
 

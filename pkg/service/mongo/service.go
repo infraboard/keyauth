@@ -5,6 +5,7 @@ import (
 
 	"github.com/infraboard/keyauth/pkg/service"
 	"github.com/infraboard/mcube/exception"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func (s *microService) CreateService(req *service.CreateServiceRequest) (
@@ -28,7 +29,7 @@ func (s *microService) QueryService(req *service.QueryServiceRequest) (*service.
 		return nil, exception.NewInternalServerError("find service error, error is %s", err)
 	}
 
-	set := service.NewApplicationSet(req.PageRequest)
+	set := service.NewMicroServiceSet(req.PageRequest)
 	// 循环
 	for resp.Next(context.TODO()) {
 		ins := new(service.MicroService)
@@ -47,6 +48,24 @@ func (s *microService) QueryService(req *service.QueryServiceRequest) (*service.
 	set.Total = count
 
 	return set, nil
+}
+
+func (s *microService) DescribeService(req *service.DescriptServiceRequest) (
+	*service.MicroService, error) {
+	r, err := newDescribeQuery(req)
+	if err != nil {
+		return nil, err
+	}
+
+	ins := new(service.MicroService)
+	if err := s.col.FindOne(context.TODO(), r.FindFilter()).Decode(ins); err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, exception.NewNotFound("service %s not found", req)
+		}
+
+		return nil, exception.NewInternalServerError("find service %s error, %s", req, err)
+	}
+	return ins, nil
 }
 
 func (s *microService) Registry(req *service.RegistryRequest) error {

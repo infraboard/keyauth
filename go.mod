@@ -9,7 +9,7 @@ require (
 	github.com/go-playground/validator v9.31.0+incompatible // indirect
 	github.com/go-playground/validator/v10 v10.0.1
 	github.com/golang/snappy v0.0.1 // indirect
-	github.com/infraboard/mcube v0.1.2-0.20200111000906-558aea1defd8
+	github.com/infraboard/mcube v0.1.2
 	github.com/rs/xid v1.2.1
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/pflag v1.0.5 // indirect

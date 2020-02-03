@@ -1,6 +1,8 @@
 package service
 
 import (
+	"errors"
+
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/router"
 )
@@ -9,6 +11,7 @@ import (
 type Service interface {
 	CreateService(req *CreateServiceRequest) (*MicroService, error)
 	QueryService(req *QueryServiceRequest) (*MicroServiceSet, error)
+	DescribeService(req *DescriptServiceRequest) (*MicroService, error)
 	Registry(req *RegistryRequest) error
 }
 
@@ -28,4 +31,24 @@ func NewQueryServiceRequest(pageReq *request.PageRequest) *QueryServiceRequest {
 // QueryServiceRequest 查询应用列表
 type QueryServiceRequest struct {
 	*request.PageRequest
+}
+
+// NewDescriptServiceRequest new实例
+func NewDescriptServiceRequest() *DescriptServiceRequest {
+	return &DescriptServiceRequest{}
+}
+
+// DescriptServiceRequest 查询应用详情
+type DescriptServiceRequest struct {
+	Name     string
+	ClientID string
+}
+
+// Validate 校验详情查询请求
+func (req *DescriptServiceRequest) Validate() error {
+	if req.ClientID == "" && req.Name == "" {
+		return errors.New("id, name or client_id is required")
+	}
+
+	return nil
 }
