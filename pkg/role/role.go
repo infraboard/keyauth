@@ -1,3 +1,30 @@
+/*
+admin   管理员
+read_olny:
+	 *
+read_write:
+	 *
+
+ops    运维
+ read_only:
+	<通过Label筛选资源>
+	资源:   a, b, c, d
+	范围:   *
+ read_write:
+	资源:   a, b, c, d
+	范围:   online
+
+policy:
+namespace user     role
+admin     admin    admin
+admin     yumaojun ops
+projectA  yumaojun dev
+projectB  yumaojun visitor
+
+tk
+ namesapce: projectA   role:    dev
+*/
+
 package role
 
 // Role is rbac's role
