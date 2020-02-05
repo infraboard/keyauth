@@ -5,6 +5,7 @@ import (
 
 	"github.com/infraboard/keyauth/pkg/service"
 	"github.com/infraboard/mcube/exception"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -66,6 +67,20 @@ func (s *microService) DescribeService(req *service.DescriptServiceRequest) (
 		return nil, exception.NewInternalServerError("find service %s error, %s", req, err)
 	}
 	return ins, nil
+}
+
+func (s *microService) DeleteService(name string) error {
+	describeReq := service.NewDescriptServiceRequest()
+	describeReq.Name = name
+	if _, err := s.DescribeService(describeReq); err != nil {
+		return err
+	}
+
+	_, err := s.col.DeleteOne(context.TODO(), bson.M{"_id": name})
+	if err != nil {
+		return exception.NewInternalServerError("delete service(%s) error, %s", name, err)
+	}
+	return nil
 }
 
 func (s *microService) Registry(req *service.RegistryRequest) error {

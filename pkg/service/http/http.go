@@ -22,8 +22,9 @@ func (h *handler) Registry(router router.SubRouter) {
 	r := router.ResourceRouter("service")
 	r.BasePath("services")
 	r.AddProtected("GET", "/", h.QueryService)
-	r.AddProtected("GET", "/:name", h.GetService)
 	r.AddProtected("POST", "/", h.CreateService)
+	r.AddProtected("GET", "/:name", h.GetService)
+	r.AddProtected("DELETE", "/:name", h.DestroyService)
 }
 
 func (h *handler) Config() error {

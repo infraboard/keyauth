@@ -64,3 +64,16 @@ func (h *handler) GetService(w http.ResponseWriter, r *http.Request) {
 
 	response.Success(w, d)
 }
+
+// DestroyService 销毁服务
+func (h *handler) DestroyService(w http.ResponseWriter, r *http.Request) {
+	rctx := context.GetContext(r)
+
+	if err := h.service.DeleteService(rctx.PS.ByName("name")); err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	response.Success(w, "delete ok")
+	return
+}

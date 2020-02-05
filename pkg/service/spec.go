@@ -12,6 +12,7 @@ type Service interface {
 	CreateService(req *CreateServiceRequest) (*MicroService, error)
 	QueryService(req *QueryServiceRequest) (*MicroServiceSet, error)
 	DescribeService(req *DescriptServiceRequest) (*MicroService, error)
+	DeleteService(name string) error
 	Registry(req *RegistryRequest) error
 }
 
