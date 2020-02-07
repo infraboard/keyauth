@@ -18,8 +18,9 @@ type Service interface {
 
 // RegistryRequest 服务注册请求
 type RegistryRequest struct {
-	ServiceToken string
-	EntrySet     router.EntrySet
+	ServiceID  string
+	ServiceKey string
+	EntrySet   router.EntrySet
 }
 
 // NewQueryServiceRequest 列表查询请求

@@ -49,13 +49,13 @@ const (
 
 // Role is rbac's role
 type Role struct {
+	Type        Type        `json:"type"`
 	Name        string      `json:"name"`                  // 角色名称
 	Description string      `json:"description,omitempty"` // 角色描述
 	CreateAt    int64       `json:"create_at,omitempty"`   // 创建时间`
 	UpdateAt    int64       `json:"update_at,omitempty"`   // 更新时间
 	Read        *Permission `json:"read,omitempty"`        // 读权限
 	Write       *Permission `json:"write,omitempty"`       // 写权限
-	Type        Type        `json:"type"`
 }
 
 // Permission 权限
