@@ -53,8 +53,8 @@ func (r *describeRequest) FindFilter() bson.M {
 	if r.Name != "" {
 		filter["_id"] = r.Name
 	}
-	if r.ClientID != "" {
-		filter["client_id"] = r.ClientID
+	if r.ServiceID != "" {
+		filter["service_id"] = r.ServiceID
 	}
 
 	return filter

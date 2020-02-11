@@ -84,5 +84,14 @@ func (s *microService) DeleteService(name string) error {
 }
 
 func (s *microService) Registry(req *service.RegistryRequest) error {
+	descReq := service.NewDescriptServiceRequest()
+	descReq.ServiceID = req.ServiceID
+	svr, err := s.DescribeService(descReq)
+	if err != nil {
+		return err
+	}
+	if !svr.CheckKey(req.ServiceKey) {
+		return exception.NewUnauthorized("服务凭证不正确")
+	}
 	return nil
 }

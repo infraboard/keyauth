@@ -20,11 +20,16 @@ type Type string
 // MicroService is service provider
 type MicroService struct {
 	*CreateServiceRequest `bson:",inline"`
-	CreateAt              ftime.Time `bson:"create_at" json:"create_at,omitempty"`         // 创建的时间
-	UpdateAt              ftime.Time `bson:"update_at" json:"update_at,omitempty"`         // 更新时间
-	ClientID              string     `bson:"client_id" json:"client_id,omitempty"`         // 客户端ID
-	ClientSecret          string     `bson:"client_secret" json:"client_secret,omitempty"` // 客户端秘钥
-	Features              []*Feature `bson:"features" json:"features,omitempty"`           // 服务功能列表
+	CreateAt              ftime.Time `bson:"create_at" json:"create_at,omitempty"`     // 创建的时间
+	UpdateAt              ftime.Time `bson:"update_at" json:"update_at,omitempty"`     // 更新时间
+	ServiceID             string     `bson:"service_id" json:"service_id,omitempty"`   // 客户端ID
+	ServiceKey            string     `bson:"service_key" json:"service_key,omitempty"` // 客户端秘钥
+	Features              []*Feature `bson:"features" json:"features,omitempty"`       // 服务功能列表
+}
+
+// CheckKey 校验服务key是否正确
+func (ms *MicroService) CheckKey(key string) bool {
+	return ms.ServiceKey == key
 }
 
 // New 创建服务
@@ -37,8 +42,8 @@ func New(req *CreateServiceRequest) (*MicroService, error) {
 		CreateServiceRequest: req,
 		CreateAt:             ftime.Now(),
 		UpdateAt:             ftime.Now(),
-		ClientID:             token.MakeBearer(24),
-		ClientSecret:         token.MakeBearer(36),
+		ServiceID:            token.MakeBearer(24),
+		ServiceKey:           token.MakeBearer(36),
 	}
 
 	return ins, nil
