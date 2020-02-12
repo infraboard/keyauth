@@ -18,14 +18,20 @@ type Service interface {
 
 // RegistryRequest 服务注册请求
 type RegistryRequest struct {
-	ServiceID  string          `json:"service_id" validate:"required,lte=64"`
-	ServiceKey string          `json:"service_key" validate:"required,lte=64"`
-	Entries    []*router.Entry `json:"entries"`
+	ServiceID      string          `json:"service_id" validate:"required,lte=64"`
+	ServiceKey     string          `json:"service_key" validate:"required,lte=64"`
+	ServiceVersion string          `json:"service_version" validate:"required,lte=32"`
+	Entries        []*router.Entry `json:"entries"`
 }
 
 // Validate 校验注册请求合法性
 func (req *RegistryRequest) Validate() error {
 	return validate.Struct(req)
+}
+
+// Features 功能列表
+func (req *RegistryRequest) Features() []*Feature {
+	return nil
 }
 
 // NewQueryServiceRequest 列表查询请求
