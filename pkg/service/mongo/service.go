@@ -16,7 +16,7 @@ func (s *microService) CreateService(req *service.CreateServiceRequest) (
 		return nil, err
 	}
 
-	if _, err := s.col.InsertOne(context.TODO(), ins); err != nil {
+	if _, err := s.scol.InsertOne(context.TODO(), ins); err != nil {
 		return nil, exception.NewInternalServerError("inserted a service document error, %s", err)
 	}
 	return ins, nil
@@ -24,7 +24,7 @@ func (s *microService) CreateService(req *service.CreateServiceRequest) (
 
 func (s *microService) QueryService(req *service.QueryServiceRequest) (*service.MicroServiceSet, error) {
 	r := newPaggingQuery(req)
-	resp, err := s.col.Find(context.TODO(), r.FindFilter(), r.FindOptions())
+	resp, err := s.scol.Find(context.TODO(), r.FindFilter(), r.FindOptions())
 
 	if err != nil {
 		return nil, exception.NewInternalServerError("find service error, error is %s", err)
@@ -42,7 +42,7 @@ func (s *microService) QueryService(req *service.QueryServiceRequest) (*service.
 	}
 
 	// count
-	count, err := s.col.CountDocuments(context.TODO(), r.FindFilter())
+	count, err := s.scol.CountDocuments(context.TODO(), r.FindFilter())
 	if err != nil {
 		return nil, exception.NewInternalServerError("get device count error, error is %s", err)
 	}
@@ -59,7 +59,7 @@ func (s *microService) DescribeService(req *service.DescriptServiceRequest) (
 	}
 
 	ins := new(service.MicroService)
-	if err := s.col.FindOne(context.TODO(), r.FindFilter()).Decode(ins); err != nil {
+	if err := s.scol.FindOne(context.TODO(), r.FindFilter()).Decode(ins); err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, exception.NewNotFound("service %s not found", req)
 		}
@@ -76,7 +76,7 @@ func (s *microService) DeleteService(name string) error {
 		return err
 	}
 
-	_, err := s.col.DeleteOne(context.TODO(), bson.M{"_id": name})
+	_, err := s.scol.DeleteOne(context.TODO(), bson.M{"_id": name})
 	if err != nil {
 		return exception.NewInternalServerError("delete service(%s) error, %s", name, err)
 	}

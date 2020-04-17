@@ -21,10 +21,11 @@ type handler struct {
 func (h *handler) Registry(router router.SubRouter) {
 	r := router.ResourceRouter("service")
 	r.BasePath("services")
-	r.AddProtected("GET", "/", h.QueryService)
-	r.AddProtected("POST", "/", h.CreateService)
-	r.AddProtected("GET", "/:name", h.GetService)
-	r.AddProtected("DELETE", "/:name", h.DestroyService)
+	r.Permission(true)
+	r.Handle("GET", "/", h.QueryService)
+	r.Handle("POST", "/", h.CreateService)
+	r.Handle("GET", "/:name", h.GetService)
+	r.Handle("DELETE", "/:name", h.DestroyService)
 }
 
 func (h *handler) Config() error {

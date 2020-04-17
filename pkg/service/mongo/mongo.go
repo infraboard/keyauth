@@ -18,16 +18,26 @@ var (
 )
 
 type microService struct {
-	col           *mongo.Collection
+	scol          *mongo.Collection
+	fcol          *mongo.Collection
 	enableCache   bool
 	notifyCachPre string
 }
 
 func (s *microService) Config() error {
-	db := conf.C().Mongo.GetDB()
-	ac := db.Collection("service")
+	if err := s.configService(); err != nil {
+		return err
+	}
+	if err := s.configFeature(); err != nil {
+		return err
+	}
+	return nil
+}
 
-	indexs := []mongo.IndexModel{
+func (s *microService) configService() error {
+	db := conf.C().Mongo.GetDB()
+	sc := db.Collection("service")
+	sIndexs := []mongo.IndexModel{
 		mongo.IndexModel{
 			Keys:    bsonx.Doc{{Key: "client_id", Value: bsonx.Int32(-1)}},
 			Options: options.Index().SetUnique(true),
@@ -37,12 +47,34 @@ func (s *microService) Config() error {
 		},
 	}
 
-	_, err := ac.Indexes().CreateMany(context.Background(), indexs)
+	_, err := sc.Indexes().CreateMany(context.Background(), sIndexs)
 	if err != nil {
 		return err
 	}
+	s.scol = sc
+	return nil
+}
 
-	s.col = ac
+func (s *microService) configFeature() error {
+	db := conf.C().Mongo.GetDB()
+	fc := db.Collection("feature")
+	fIndexs := []mongo.IndexModel{
+		mongo.IndexModel{
+			Keys: bsonx.Doc{
+				{Key: "service_name", Value: bsonx.Int32(-1)},
+				{Key: "path", Value: bsonx.Int32(-1)},
+			},
+			Options: options.Index().SetUnique(true),
+		},
+		mongo.IndexModel{
+			Keys: bsonx.Doc{{Key: "create_at", Value: bsonx.Int32(-1)}},
+		},
+	}
+	_, err := fc.Indexes().CreateMany(context.Background(), fIndexs)
+	if err != nil {
+		return err
+	}
+	s.fcol = fc
 	return nil
 }
 

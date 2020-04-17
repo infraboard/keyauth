@@ -21,10 +21,11 @@ type handler struct {
 func (h *handler) Registry(router router.SubRouter) {
 	appRouter := router.ResourceRouter("application")
 	appRouter.BasePath("applications")
-	appRouter.AddProtected("POST", "/", h.CreateUserApplication)
-	appRouter.AddProtected("GET", "/", h.QueryUserApplication)
-	appRouter.AddProtected("GET", "/:id", h.GetApplication)
-	appRouter.AddProtected("DELETE", "/:id", h.DestroyApplication)
+	appRouter.Permission(true)
+	appRouter.Handle("POST", "/", h.CreateUserApplication)
+	appRouter.Handle("GET", "/", h.QueryUserApplication)
+	appRouter.Handle("GET", "/:id", h.GetApplication)
+	appRouter.Handle("DELETE", "/:id", h.DestroyApplication)
 
 }
 

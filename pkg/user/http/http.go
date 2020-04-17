@@ -21,12 +21,14 @@ type handler struct {
 func (h *handler) Registry(router router.SubRouter) {
 	prmaryRouter := router.ResourceRouter("primary_account")
 	prmaryRouter.BasePath("users")
-	prmaryRouter.AddProtected("POST", "/", h.CreatePrimayAccount)
-	prmaryRouter.AddProtected("DELETE", "/", h.DestroyPrimaryAccount)
+	prmaryRouter.Permission(true)
+	prmaryRouter.Handle("POST", "/", h.CreatePrimayAccount)
+	prmaryRouter.Handle("DELETE", "/", h.DestroyPrimaryAccount)
 
 	ramRouter := router.ResourceRouter("ram_account")
+	ramRouter.Permission(true)
 	ramRouter.BasePath("domains/:did/users")
-	ramRouter.AddProtected("POST", "/", h.CreateSubAccount)
+	ramRouter.Handle("POST", "/", h.CreateSubAccount)
 }
 
 func (h *handler) Config() error {

@@ -21,11 +21,12 @@ type handler struct {
 func (h *handler) Registry(router router.SubRouter) {
 	r := router.ResourceRouter("token")
 	r.BasePath("/oauth2/tokens")
-	r.AddPublict("POST", "/", h.IssueToken)
-	r.AddPublict("GET", "/", h.ValidateToken)
-	r.AddPublict("DELETE", "/", h.RevolkToken)
+	r.Handle("POST", "/", h.IssueToken).DisableAuth()
+	r.Handle("GET", "/", h.ValidateToken)
+	r.Handle("DELETE", "/", h.RevolkToken)
+
 	r.BasePath("/applications/:id")
-	r.AddProtected("GET", "/tokens", h.QueryApplicationToken)
+	r.Handle("GET", "/tokens", h.QueryApplicationToken)
 }
 
 func (h *handler) Config() error {

@@ -1,23 +1,18 @@
 module github.com/infraboard/keyauth
 
-go 1.12
+go 1.13
 
 require (
-	github.com/AlecAivazis/survey/v2 v2.0.5
+	github.com/AlecAivazis/survey/v2 v2.0.7
 	github.com/BurntSushi/toml v0.3.1
-	github.com/DataDog/zstd v1.4.4 // indirect
-	github.com/go-playground/validator v9.31.0+incompatible // indirect
-	github.com/go-playground/validator/v10 v10.0.1
-	github.com/golang/snappy v0.0.1 // indirect
-	github.com/infraboard/mcube v0.1.2
+	github.com/go-playground/validator/v10 v10.2.0
+	github.com/infraboard/mcube v0.2.6
 	github.com/rs/xid v1.2.1
-	github.com/spf13/cobra v0.0.5
+	github.com/spf13/cobra v1.0.0
 	github.com/spf13/pflag v1.0.5 // indirect
-	github.com/stretchr/testify v1.4.0
-	github.com/tidwall/pretty v1.0.0 // indirect
-	github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c // indirect
+	github.com/stretchr/testify v1.5.1
 	github.com/xdg/stringprep v1.0.0 // indirect
-	go.mongodb.org/mongo-driver v1.2.0
+	go.mongodb.org/mongo-driver v1.3.2
 	go.uber.org/atomic v1.5.1 // indirect
 	go.uber.org/multierr v1.4.0 // indirect
 	golang.org/x/crypto v0.0.0-20191219195013-becbf705a915

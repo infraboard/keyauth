@@ -74,10 +74,10 @@ func (req *CreateServiceRequest) Validate() error {
 
 // Feature Service's features
 type Feature struct {
-	CreateAt     ftime.Time `bson:"create_at" json:"create_at,omitempty"`   // 创建时间
-	UpdateAt     ftime.Time `bson:"update_at" json:"update_at,omitempty"`   // 更新时间
-	ServiceID    string     `bson:"service_id" json:"service_id,omitempty"` // 该功能属于那个服务
-	Version      string     `bson:"version" json:"version,omitempty"`       // 服务那个版本的功能
+	CreateAt     ftime.Time `bson:"create_at" json:"create_at,omitempty"`     // 创建时间
+	UpdateAt     ftime.Time `bson:"update_at" json:"update_at,omitempty"`     // 更新时间
+	ServiceName  string     `bson:"service_name" json:"service_id,omitempty"` // 该功能属于那个服务
+	Version      string     `bson:"version" json:"version,omitempty"`         // 服务那个版本的功能
 	router.Entry `bson:",inline"`
 }
 

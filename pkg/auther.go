@@ -21,12 +21,12 @@ func NewInternalAuther() router.Auther {
 type internal struct {
 }
 
-func (i *internal) Auth(header http.Header, entry router.Entry) (
+func (i *internal) Auth(r *http.Request, entry router.Entry) (
 	authInfo interface{}, err error) {
 	req := token.NewValidateTokenRequest()
 
 	// 获取需要校验的access token(用户的身份凭证)
-	accessToken := header.Get("x-oauth-token")
+	accessToken := r.Header.Get("x-oauth-token")
 	if accessToken == "" {
 		return nil, exception.NewUnauthorized("x-oauth-token header required")
 	}
