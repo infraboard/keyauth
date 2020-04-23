@@ -5,6 +5,7 @@ go 1.13
 require (
 	github.com/AlecAivazis/survey/v2 v2.0.7
 	github.com/BurntSushi/toml v0.3.1
+	github.com/caarlos0/env/v6 v6.2.1
 	github.com/go-playground/validator/v10 v10.2.0
 	github.com/infraboard/mcube v0.2.6
 	github.com/rs/xid v1.2.1

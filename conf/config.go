@@ -28,11 +28,25 @@ type Config struct {
 	Mongo *mongodb `toml:"mongodb"`
 }
 
+// InitGloabl 注入全局变量
+func (c *Config) InitGloabl() error {
+	// 加载全局配置单例
+	global = c
+
+	// 加载全局数据量单例
+	mclient, err := c.Mongo.getClient()
+	if err != nil {
+		return err
+	}
+	mgoclient = mclient
+	return nil
+}
+
 type app struct {
-	Name string `toml:"name"`
-	Host string `toml:"host"`
-	Port string `toml:"port"`
-	Key  string `toml:"key"`
+	Name string `toml:"name" env:"K_APP_NAME"`
+	Host string `toml:"host" env:"K_APP_HOST"`
+	Port string `toml:"port" env:"K_APP_PORT"`
+	Key  string `toml:"key" env:"K_APP_KEY"`
 }
 
 func (a *app) Addr() string {
@@ -49,10 +63,10 @@ func newDefaultAPP() *app {
 }
 
 type log struct {
-	Level   string    `toml:"level"`
-	PathDir string    `toml:"path_dir"`
-	Format  LogFormat `toml:"format"`
-	To      LogTo     `toml:"to"`
+	Level   string    `toml:"level" env:"K_LOG_LEVEL"`
+	PathDir string    `toml:"path_dir" env:"K_LOG_PATH"`
+	Format  LogFormat `toml:"format" env:"K_LOG_FORMAT"`
+	To      LogTo     `toml:"to" env:"K_LOG_TO"`
 }
 
 func newDefaultLog() *log {
@@ -65,10 +79,10 @@ func newDefaultLog() *log {
 }
 
 type mongodb struct {
-	Endpoints []string `toml:"endpoints"`
-	UserName  string   `toml:"username"`
-	Password  string   `toml:"password"`
-	Database  string   `toml:"database"`
+	Endpoints []string `toml:"endpoints" env:"K_MONGO_ENDPOINTS" envSeparator:","`
+	UserName  string   `toml:"username" env:"K_MONGO_USERNAME"`
+	Password  string   `toml:"password" env:"K_MONGO_PASSWORD"`
+	Database  string   `toml:"database" env:"K_MONGO_DATABASE"`
 }
 
 func newDefaultMongoDB() *mongodb {

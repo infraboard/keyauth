@@ -1,7 +1,10 @@
 package conf
 
 import (
+	"fmt"
+
 	"github.com/BurntSushi/toml"
+	"github.com/caarlos0/env/v6"
 )
 
 var (
@@ -24,15 +27,15 @@ func LoadConfigFromToml(filePath string) error {
 		return err
 	}
 
-	// 加载全局配置单例
-	global = cfg
+	return cfg.InitGloabl()
+}
 
-	// 加载全局数据量单例
-	mclient, err := cfg.Mongo.getClient()
-	if err != nil {
-		return err
+// LoadConfigFromEnv 从环境变量中加载配置
+func LoadConfigFromEnv() error {
+	cfg := newConfig()
+	if err := env.Parse(cfg); err != nil {
+		return fmt.Errorf("load config from env, %s", err.Error())
 	}
-	mgoclient = mclient
 
-	return nil
+	return cfg.InitGloabl()
 }

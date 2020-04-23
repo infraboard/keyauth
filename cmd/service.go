@@ -22,20 +22,19 @@ import (
 	_ "github.com/infraboard/keyauth/pkg/application/mongo"
 	_ "github.com/infraboard/keyauth/pkg/domain/http"
 	_ "github.com/infraboard/keyauth/pkg/domain/mongo"
+	_ "github.com/infraboard/keyauth/pkg/service/http"
+	_ "github.com/infraboard/keyauth/pkg/service/mongo"
 	_ "github.com/infraboard/keyauth/pkg/token/http"
 	_ "github.com/infraboard/keyauth/pkg/token/mongo"
 	_ "github.com/infraboard/keyauth/pkg/user/http"
 	_ "github.com/infraboard/keyauth/pkg/user/mongo"
-	_ "github.com/infraboard/keyauth/pkg/service/http"
-	_ "github.com/infraboard/keyauth/pkg/service/mongo"
 )
 
 var (
 	// pusher service config option
-	confType   string
-	confFile   string
-	confEtcd   string
-	isEncrypto bool
+	confType string
+	confFile string
+	confEtcd string
 )
 
 // startCmd represents the start command
@@ -126,7 +125,11 @@ func loadGlobalConfig(configType string) error {
 			return err
 		}
 	case "env":
-		return errors.New("not implemented")
+		err := conf.LoadConfigFromEnv()
+		if err != nil {
+			return err
+		}
+		return nil
 	case "etcd":
 		return errors.New("not implemented")
 	default:
@@ -199,6 +202,5 @@ func init() {
 	serviceCmd.Flags().StringVarP(&confType, "config-type", "t", "file", "the service config type [file/env/etcd]")
 	serviceCmd.Flags().StringVarP(&confFile, "config-file", "f", "etc/keyauth.toml", "the service config from file")
 	serviceCmd.Flags().StringVarP(&confEtcd, "config-etcd", "e", "127.0.0.1:2379", "the service config from etcd")
-	serviceCmd.Flags().BoolVarP(&isEncrypto, "is-encrypto", "p", false, "config is encrypto")
 	RootCmd.AddCommand(serviceCmd)
 }
