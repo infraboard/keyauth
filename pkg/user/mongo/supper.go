@@ -22,7 +22,7 @@ func (s *service) CreateSupperAccount(req *user.CreateUserRequest) (*user.User, 
 	return u, nil
 }
 
-func (s *service) QuerySupperAccount(req *user.QueryAccountRequest) (*user.UserSet, error) {
+func (s *service) QuerySupperAccount(req *user.QueryAccountRequest) (*user.Set, error) {
 	r := newPaggingQuery(req)
 	r.userType = user.SupperAccount
 	return s.queryAccount(r)

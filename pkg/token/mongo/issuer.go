@@ -34,79 +34,86 @@ type TokenIssuer struct {
 }
 
 func (i *TokenIssuer) checkUser() (*user.User, error) {
-	req := user.NewDescriptAccountRequest()
-	req.Account = i.Username
-	u, err := i.user.DescribeAccount(req)
+	u, err := i.getUser(i.Username)
 	if err != nil {
 		return nil, err
 	}
 	if err := u.HashedPassword.CheckPassword(i.Password); err != nil {
 		return nil, err
 	}
-
 	return u, nil
 }
 
+func (i *TokenIssuer) getUser(name string) (*user.User, error) {
+	req := user.NewDescriptAccountRequest()
+	req.Account = name
+	return i.user.DescribeAccount(req)
+}
+
 // IssueToken 颁发token
-func (i *TokenIssuer) IssueToken() (tk *token.Token, err error) {
+func (i *TokenIssuer) IssueToken() (*token.Token, error) {
 	app, err := i.CheckClient(i.ClientID, i.ClientSecret)
 	if err != nil {
-		err = exception.NewUnauthorized(err.Error())
-		return
+		return nil, exception.NewUnauthorized(err.Error())
 	}
 
 	switch i.GrantType {
 	case token.PASSWORD:
 		u, checkErr := i.checkUser()
 		if checkErr != nil {
-			err = exception.NewUnauthorized("user or password not connrect")
-			return
+			return nil, exception.NewUnauthorized("user or password not connrect")
 		}
 
-		tk = i.issueUserToken(app, u.ID, u.Account)
-		return
+		tk := i.issueUserToken(app, u)
+		return tk, nil
 	case token.REFRESH:
 		descReq := newDescribeTokenRequestWithRefresh(i.RefreshToken)
-		tk, err = i.token.describeToken(descReq)
+		tk, err := i.token.describeToken(descReq)
 		if err != nil {
 			err = exception.NewUnauthorized(err.Error())
-			return
+			return nil, err
 		}
 		if tk.CheckRefreshIsExpired() {
-			err = exception.NewRefreshTokenExpired("refresh token is expoired")
-			return
+			return nil, exception.NewRefreshTokenExpired("refresh token is expoired")
 		}
-		tk = i.issueUserToken(app, tk.UserID, tk.Account)
+		u, err := i.getUser(tk.Account)
+		if err != nil {
+			return nil, err
+		}
+		tk = i.issueUserToken(app, u)
 		if err := i.token.destoryToken(descReq); err != nil {
 			return nil, err
 		}
-		return
+		return tk, nil
 	case token.Access:
 		descReq := newDescribeTokenRequestWithAccess(i.AccessToken)
-		tk, err = i.token.describeToken(descReq)
+		tk, err := i.token.describeToken(descReq)
 		if err != nil {
-			err = exception.NewUnauthorized(err.Error())
-			return
+			return nil, exception.NewUnauthorized(err.Error())
 		}
 		if tk.CheckRefreshIsExpired() {
-			err = exception.NewRefreshTokenExpired("access token is expoired")
-			return
+			return nil, exception.NewRefreshTokenExpired("access token is expoired")
 		}
-		tk = i.issueUserToken(app, tk.UserID, tk.Account)
+		u, err := i.getUser(tk.Account)
+		if err != nil {
+			return nil, err
+		}
+		tk = i.issueUserToken(app, u)
+		return tk, nil
 	case token.CLIENT:
+		return nil, exception.NewInternalServerError("not impl")
 	case token.AUTHCODE:
+		return nil, exception.NewInternalServerError("not impl")
 	default:
-		err = exception.NewInternalServerError("unknown grant type %s", i.GrantType)
-		return
+		return nil, exception.NewInternalServerError("unknown grant type %s", i.GrantType)
 	}
-
-	return
 }
 
-func (i *TokenIssuer) issueUserToken(app *application.Application, userID, account string) *token.Token {
+func (i *TokenIssuer) issueUserToken(app *application.Application, u *user.User) *token.Token {
 	tk := i.newBearToken(app)
-	tk.Account = account
-	tk.UserID = userID
+	tk.Account = u.Account
+	tk.UserID = u.ID
+	tk.UserType = u.Type
 	return tk
 }
 

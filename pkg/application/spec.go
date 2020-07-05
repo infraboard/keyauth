@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/mcube/http/request"
 )
 
@@ -21,7 +22,7 @@ var (
 
 // Service 用户服务
 type Service interface {
-	CreateUserApplication(userID string, req *CreateApplicatonRequest) (*Application, error)
+	CreateUserApplication(req *CreateApplicatonRequest) (*Application, error)
 	DeleteApplication(id string) error
 	DescriptionApplication(req *DescriptApplicationRequest) (*Application, error)
 	QueryApplication(req *QueryApplicationRequest) (*Set, error)
@@ -29,18 +30,26 @@ type Service interface {
 
 // NewDescriptApplicationRequest new实例
 func NewDescriptApplicationRequest() *DescriptApplicationRequest {
-	return &DescriptApplicationRequest{}
+	return &DescriptApplicationRequest{
+		Session: token.NewSession(),
+	}
 }
 
 // DescriptApplicationRequest 查询应用详情
 type DescriptApplicationRequest struct {
-	ID       string
-	ClientID string
+	*token.Session
+	ID       string `json:"id,omitempty"`
+	ClientID string `json:"client_id,omitempty"`
+	Name     string `json:"name,omitempty"`
 }
 
 // Validate 校验详情查询请求
 func (req *DescriptApplicationRequest) Validate() error {
-	if req.ID == "" && req.ClientID == "" {
+	if req.Session == nil || req.Session.GetToken() == nil {
+		return errors.New("session token must required")
+	}
+
+	if req.ID == "" && req.ClientID == "" && req.Name == "" {
 		return errors.New("id or client_id is required")
 	}
 
@@ -64,6 +73,7 @@ type QueryApplicationRequest struct {
 // NewCreateApplicatonRequest 请求
 func NewCreateApplicatonRequest() *CreateApplicatonRequest {
 	return &CreateApplicatonRequest{
+		Session:                   token.NewSession(),
 		AccessTokenExpireSecond:   DefaultAccessTokenExpireSecond,
 		RefreshTokenExpiredSecond: DefaultRefreshTokenExpiredSecond,
 	}
@@ -71,6 +81,7 @@ func NewCreateApplicatonRequest() *CreateApplicatonRequest {
 
 // CreateApplicatonRequest 创建应用请求
 type CreateApplicatonRequest struct {
+	*token.Session
 	Name                      string `bson:"name" json:"name,omitempty" validate:"required,lte=30"`          // 应用名称
 	Website                   string `bson:"website" json:"website,omitempty" validate:"lte=200"`            // 应用的网站地址
 	LogoImage                 string `bson:"logo_image" json:"logo_image,omitempty" validate:"lte=200"`      // 应用的LOGO

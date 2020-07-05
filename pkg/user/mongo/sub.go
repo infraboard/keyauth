@@ -10,6 +10,6 @@ func (s *service) DeleteSubAccount(userID string) error {
 	return nil
 }
 
-func (s *service) QuerySubAccount(req *user.QueryAccountRequest) (*user.UserSet, error) {
+func (s *service) QuerySubAccount(req *user.QueryAccountRequest) (*user.Set, error) {
 	return nil, nil
 }

@@ -29,7 +29,7 @@ type SupperAccountService interface {
 	// 新建主账号
 	CreateSupperAccount(req *CreateUserRequest) (*User, error)
 	// 查询超级账号列表
-	QuerySupperAccount(req *QueryAccountRequest) (*UserSet, error)
+	QuerySupperAccount(req *QueryAccountRequest) (*Set, error)
 }
 
 // PrimaryAccountService 主账号服务
@@ -47,7 +47,7 @@ type SubAccountService interface {
 	// 注销子账号
 	DeleteSubAccount(userID string) error
 	// 查询子账号
-	QuerySubAccount(req *QueryAccountRequest) (*UserSet, error)
+	QuerySubAccount(req *QueryAccountRequest) (*Set, error)
 }
 
 // ServiceAccountService 服务账号

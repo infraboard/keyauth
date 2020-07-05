@@ -48,6 +48,7 @@ func newDeafultApplication(req *CreateApplicatonRequest) *Application {
 // Application is oauth2's client: https://tools.ietf.org/html/rfc6749#section-2
 type Application struct {
 	ID                       string     `bson:"_id" json:"id,omitempty"`                      // 唯一ID
+	DomainID                 string     `bosn:"domain_id" json:"domain_id,omitempty"`         // 所处于域
 	UserID                   string     `bson:"user_id" json:"user_id,omitempty"`             // 应用属于那个用户
 	CreateAt                 ftime.Time `bson:"create_at" json:"create_at,omitempty"`         // 应用创建的时间
 	UpdateAt                 ftime.Time `bson:"update_at" json:"update_at,omitempty"`         // 应用更新的时间

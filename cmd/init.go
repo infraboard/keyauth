@@ -11,6 +11,7 @@ import (
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/application"
 	"github.com/infraboard/keyauth/pkg/domain"
+	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
 )
 
@@ -174,10 +175,13 @@ func (i *Initialer) initDomain(ownerID string) (*domain.Domain, error) {
 }
 
 func (i *Initialer) initApp(ownerID string) ([]*application.Application, error) {
+	tk := &token.Token{UserID: ownerID}
+
 	req := application.NewCreateApplicatonRequest()
 	req.Name = application.AdminWebApplicationName
 	req.Description = "Admin Web管理端"
-	web, err := pkg.Application.CreateUserApplication(ownerID, req)
+	req.WithToken(tk)
+	web, err := pkg.Application.CreateUserApplication(req)
 	if err != nil {
 		return nil, fmt.Errorf("create admin web applicaton error, %s", err)
 	}
@@ -187,7 +191,8 @@ func (i *Initialer) initApp(ownerID string) ([]*application.Application, error) 
 	req.Description = "Admin Service 内置管理端, 服务注册后, 使用该端管理他们的凭证, 默认token不过期"
 	req.AccessTokenExpireSecond = 0
 	req.RefreshTokenExpiredSecond = 0
-	svr, err := pkg.Application.CreateUserApplication(ownerID, req)
+	req.WithToken(tk)
+	svr, err := pkg.Application.CreateUserApplication(req)
 	if err != nil {
 		return nil, fmt.Errorf("create admin web applicaton error, %s", err)
 	}

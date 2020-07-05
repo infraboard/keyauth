@@ -45,8 +45,9 @@ func (h *handler) CreateUserApplication(w http.ResponseWriter, r *http.Request) 
 		response.Failed(w, err)
 		return
 	}
+	req.WithToken(tk)
 
-	d, err := h.service.CreateUserApplication(tk.UserID, req)
+	d, err := h.service.CreateUserApplication(req)
 	if err != nil {
 		response.Failed(w, err)
 		return

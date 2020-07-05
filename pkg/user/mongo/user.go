@@ -11,7 +11,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/user"
 )
 
-func (s *service) queryAccount(req *queryRequest) (*user.UserSet, error) {
+func (s *service) queryAccount(req *queryRequest) (*user.Set, error) {
 	resp, err := s.col.Find(context.TODO(), req.FindFilter(), req.FindOptions())
 
 	if err != nil {

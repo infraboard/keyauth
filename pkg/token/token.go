@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/infraboard/keyauth/pkg/user"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/types/ftime"
 )
@@ -56,7 +57,9 @@ type Token struct {
 	AccessExpiredAt  ftime.Time `bson:"access_expired_at" json:"access_expires_at,omitempty"`   // 还有多久过期
 	RefreshExpiredAt ftime.Time `bson:"refresh_expired_at" json:"refresh_expired_at,omitempty"` // 刷新token过期时间
 
-	UserID        string    `bson:"user_id" json:"user_id,omitempty"`
+	DomainID      string    `bson:"domain_id" json:"domain_id,omitempty"`           // 用户所处域ID
+	UserType      user.Type `bson:"user_type" json:"user_type,omitempty"`           // 用户类型
+	UserID        string    `bson:"user_id" json:"user_id,omitempty"`               // 用户ID
 	Account       string    `bson:"account" json:"account,omitempty"`               // 账户名称
 	ApplicationID string    `bson:"application_id" json:"application_id,omitempty"` // 用户应用ID, 如果凭证是颁发给应用的, 应用在删除时需要删除所有的令牌, 应用禁用时, 该应用令牌验证会不通过
 	ClientID      string    `bson:"client_id" json:"client_id,omitempty"`           // 客户端ID

@@ -11,20 +11,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// Type 用户类型
-type Type string
-
-const (
-	// SupperAccount 超级管理员
-	SupperAccount Type = "supper"
-	// ServiceAccount 服务账号
-	ServiceAccount = "service"
-	// PrimaryAccount 主账号
-	PrimaryAccount = "primary"
-	// SubAccount 子账号
-	SubAccount = "sub"
-)
-
 // use a single instance of Validate, it caches struct info
 var (
 	validate = validator.New()
@@ -132,14 +118,14 @@ func (p *Password) CheckPassword(password string) error {
 }
 
 // NewUserSet 实例
-func NewUserSet(req *request.PageRequest) *UserSet {
-	return &UserSet{
+func NewUserSet(req *request.PageRequest) *Set {
+	return &Set{
 		PageRequest: req,
 	}
 }
 
-// UserSet 用户列表
-type UserSet struct {
+// Set 用户列表
+type Set struct {
 	*request.PageRequest
 
 	Total int64   `json:"total"`
@@ -147,6 +133,6 @@ type UserSet struct {
 }
 
 // Add todo
-func (s *UserSet) Add(u *User) {
+func (s *Set) Add(u *User) {
 	s.Items = append(s.Items, u)
 }
