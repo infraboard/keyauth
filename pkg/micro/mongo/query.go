@@ -1,19 +1,19 @@
 package mongo
 
 import (
+	"github.com/infraboard/mcube/exception"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
-	"github.com/infraboard/keyauth/pkg/service"
-	"github.com/infraboard/mcube/exception"
+	"github.com/infraboard/keyauth/pkg/micro"
 )
 
-func newPaggingQuery(req *service.QueryServiceRequest) *queryRequest {
+func newPaggingQuery(req *micro.QueryMicroRequest) *queryRequest {
 	return &queryRequest{req}
 }
 
 type queryRequest struct {
-	*service.QueryServiceRequest
+	*micro.QueryMicroRequest
 }
 
 func (r *queryRequest) FindOptions() *options.FindOptions {
@@ -35,7 +35,7 @@ func (r *queryRequest) FindFilter() bson.M {
 	return filter
 }
 
-func newDescribeQuery(req *service.DescriptServiceRequest) (*describeRequest, error) {
+func newDescribeQuery(req *micro.DescribeMicroRequest) (*describeRequest, error) {
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest(err.Error())
 	}
@@ -44,17 +44,17 @@ func newDescribeQuery(req *service.DescriptServiceRequest) (*describeRequest, er
 }
 
 type describeRequest struct {
-	*service.DescriptServiceRequest
+	*micro.DescribeMicroRequest
 }
 
 func (r *describeRequest) FindFilter() bson.M {
 	filter := bson.M{}
 
 	if r.Name != "" {
-		filter["_id"] = r.Name
+		filter["name"] = r.Name
 	}
-	if r.ServiceID != "" {
-		filter["service_id"] = r.ServiceID
+	if r.ID != "" {
+		filter["_id"] = r.ID
 	}
 
 	return filter

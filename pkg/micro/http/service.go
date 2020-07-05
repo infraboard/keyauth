@@ -8,13 +8,12 @@ import (
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 
-	"github.com/infraboard/keyauth/pkg"
-	"github.com/infraboard/keyauth/pkg/service"
+	"github.com/infraboard/keyauth/pkg/micro"
 )
 
 func (h *handler) QueryService(w http.ResponseWriter, r *http.Request) {
 	page := request.NewPageRequestFromHTTP(r)
-	req := service.NewQueryServiceRequest(page)
+	req := micro.NewQueryMicroRequest(page)
 
 	apps, err := h.service.QueryService(req)
 	if err != nil {
@@ -27,18 +26,11 @@ func (h *handler) QueryService(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) CreateService(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromContext(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
-	req := service.NewCreateServiceRequest()
+	req := micro.NewCreateMicroRequest()
 	if err := request.GetDataFromRequest(r, req); err != nil {
 		response.Failed(w, err)
 		return
 	}
-	req.UserID = tk.UserID
 
 	d, err := h.service.CreateService(req)
 	if err != nil {
@@ -52,7 +44,7 @@ func (h *handler) CreateService(w http.ResponseWriter, r *http.Request) {
 func (h *handler) GetService(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
 
-	req := service.NewDescriptServiceRequest()
+	req := micro.NewDescriptServiceRequest()
 	req.Name = rctx.PS.ByName("name")
 	fmt.Println(req.Name)
 

@@ -9,22 +9,22 @@ import (
 
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
-	"github.com/infraboard/keyauth/pkg/service"
+	"github.com/infraboard/keyauth/pkg/micro"
 )
 
 var (
 	// Service 服务实例
-	Service = &microService{}
+	Service = &service{}
 )
 
-type microService struct {
+type service struct {
 	scol          *mongo.Collection
 	fcol          *mongo.Collection
 	enableCache   bool
 	notifyCachPre string
 }
 
-func (s *microService) Config() error {
+func (s *service) Config() error {
 	if err := s.configService(); err != nil {
 		return err
 	}
@@ -34,7 +34,7 @@ func (s *microService) Config() error {
 	return nil
 }
 
-func (s *microService) configService() error {
+func (s *service) configService() error {
 	db := conf.C().Mongo.GetDB()
 	sc := db.Collection("service")
 	sIndexs := []mongo.IndexModel{
@@ -55,7 +55,7 @@ func (s *microService) configService() error {
 	return nil
 }
 
-func (s *microService) configFeature() error {
+func (s *service) configFeature() error {
 	db := conf.C().Mongo.GetDB()
 	fc := db.Collection("feature")
 	fIndexs := []mongo.IndexModel{
@@ -79,6 +79,6 @@ func (s *microService) configFeature() error {
 }
 
 func init() {
-	var _ service.Service = Service
+	var _ micro.Service = Service
 	pkg.RegistryService("service", Service)
 }

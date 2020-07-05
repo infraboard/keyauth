@@ -3,15 +3,15 @@ package mongo
 import (
 	"context"
 
-	"github.com/infraboard/keyauth/pkg/service"
+	"github.com/infraboard/keyauth/pkg/micro"
 	"github.com/infraboard/mcube/exception"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func (s *microService) CreateService(req *service.CreateServiceRequest) (
-	*service.MicroService, error) {
-	ins, err := service.New(req)
+func (s *service) CreateService(req *micro.CreateMicroRequest) (
+	*micro.Micro, error) {
+	ins, err := micro.New(req)
 	if err != nil {
 		return nil, err
 	}
@@ -22,7 +22,7 @@ func (s *microService) CreateService(req *service.CreateServiceRequest) (
 	return ins, nil
 }
 
-func (s *microService) QueryService(req *service.QueryServiceRequest) (*service.MicroServiceSet, error) {
+func (s *service) QueryService(req *micro.QueryMicroRequest) (*micro.Set, error) {
 	r := newPaggingQuery(req)
 	resp, err := s.scol.Find(context.TODO(), r.FindFilter(), r.FindOptions())
 
@@ -30,10 +30,10 @@ func (s *microService) QueryService(req *service.QueryServiceRequest) (*service.
 		return nil, exception.NewInternalServerError("find service error, error is %s", err)
 	}
 
-	set := service.NewMicroServiceSet(req.PageRequest)
+	set := micro.NewMicroSet(req.PageRequest)
 	// 循环
 	for resp.Next(context.TODO()) {
-		ins := new(service.MicroService)
+		ins := new(micro.Micro)
 		if err := resp.Decode(ins); err != nil {
 			return nil, exception.NewInternalServerError("decode service error, error is %s", err)
 		}
@@ -51,14 +51,14 @@ func (s *microService) QueryService(req *service.QueryServiceRequest) (*service.
 	return set, nil
 }
 
-func (s *microService) DescribeService(req *service.DescriptServiceRequest) (
-	*service.MicroService, error) {
+func (s *service) DescribeService(req *micro.DescribeMicroRequest) (
+	*micro.Micro, error) {
 	r, err := newDescribeQuery(req)
 	if err != nil {
 		return nil, err
 	}
 
-	ins := new(service.MicroService)
+	ins := new(micro.Micro)
 	if err := s.scol.FindOne(context.TODO(), r.FindFilter()).Decode(ins); err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, exception.NewNotFound("service %s not found", req)
@@ -69,8 +69,8 @@ func (s *microService) DescribeService(req *service.DescriptServiceRequest) (
 	return ins, nil
 }
 
-func (s *microService) DeleteService(name string) error {
-	describeReq := service.NewDescriptServiceRequest()
+func (s *service) DeleteService(name string) error {
+	describeReq := micro.NewDescriptServiceRequest()
 	describeReq.Name = name
 	if _, err := s.DescribeService(describeReq); err != nil {
 		return err
@@ -83,15 +83,6 @@ func (s *microService) DeleteService(name string) error {
 	return nil
 }
 
-func (s *microService) Registry(req *service.RegistryRequest) error {
-	descReq := service.NewDescriptServiceRequest()
-	descReq.ServiceID = req.ServiceID
-	svr, err := s.DescribeService(descReq)
-	if err != nil {
-		return err
-	}
-	if !svr.CheckKey(req.ServiceKey) {
-		return exception.NewUnauthorized("服务凭证不正确")
-	}
+func (s *service) RegistryEntry(req *micro.RegistryRequest) error {
 	return nil
 }

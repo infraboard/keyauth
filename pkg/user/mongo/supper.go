@@ -13,7 +13,7 @@ func (s *service) CreateSupperAccount(req *user.CreateUserRequest) (*user.User, 
 		return nil, err
 	}
 
-	u.Type = user.SupperAdmin
+	u.Type = user.SupperAccount
 	if err := s.saveAccount(u); err != nil {
 		return nil, err
 	}
@@ -24,7 +24,7 @@ func (s *service) CreateSupperAccount(req *user.CreateUserRequest) (*user.User, 
 
 func (s *service) QuerySupperAccount(req *user.QueryAccountRequest) (*user.UserSet, error) {
 	r := newPaggingQuery(req)
-	r.userType = user.SupperAdmin
+	r.userType = user.SupperAccount
 	return s.queryAccount(r)
 }
 

@@ -9,10 +9,15 @@ import (
 
 // Service 用户服务
 type Service interface {
+	BaseService
 	SupperAccountService
+	ServiceAccountService
 	PrimaryAccountService
 	SubAccountService
+}
 
+// BaseService 基础功能
+type BaseService interface {
 	// 更新用户密码
 	UpdateAccountPassword(userName, oldPass, newPass string) error
 	// 获取账号Profile
@@ -43,6 +48,11 @@ type SubAccountService interface {
 	DeleteSubAccount(userID string) error
 	// 查询子账号
 	QuerySubAccount(req *QueryAccountRequest) (*UserSet, error)
+}
+
+// ServiceAccountService 服务账号
+type ServiceAccountService interface {
+	CreateServiceAccount(req *CreateUserRequest) (*User, error)
 }
 
 // NewDescriptAccountRequest 查询详情请求
@@ -88,27 +98,4 @@ type QueryAccountRequest struct {
 // NewCreateUserRequest 创建请求
 func NewCreateUserRequest() *CreateUserRequest {
 	return &CreateUserRequest{}
-}
-
-// Validate 校验请求是否合法
-func (req *CreateUserRequest) Validate() error {
-	return validate.Struct(req)
-}
-
-// CreateUserRequest 创建用户请求
-type CreateUserRequest struct {
-	Account     string `bson:"account" json:"account,omitempty" validate:"required,lte=60"` // 用户账号名称
-	Mobile      string `bson:"mobile" json:"mobile,omitempty" validate:"lte=30"`            // 手机号码, 用户可以通过手机进行注册和密码找回, 还可以通过手机号进行登录
-	Email       string `bson:"email" json:"email,omitempty" validate:"lte=30"`              // 邮箱, 用户可以通过邮箱进行注册和照明密码
-	Phone       string `bson:"phone" json:"phone,omitempty" validate:"lte=30"`              // 用户的座机号码
-	Address     string `bson:"address" json:"address,omitempty" validate:"lte=120"`         // 用户住址
-	RealName    string `bson:"real_name" json:"real_name,omitempty" validate:"lte=10"`      // 用户真实姓名
-	NickName    string `bson:"nick_name" json:"nick_name,omitempty" validate:"lte=30"`      // 用户昵称, 用于在界面进行展示
-	Gender      string `bson:"gender" json:"gender,omitempty" validate:"lte=10"`            // 性别
-	Avatar      string `bson:"avatar" json:"avatar,omitempty" validate:"lte=300"`           // 头像
-	Language    string `bson:"language" json:"language,omitempty" validate:"lte=40"`        // 用户使用的语言
-	City        string `bson:"city" json:"city,omitempty" validate:"lte=40"`                // 用户所在的城市
-	Province    string `bson:"province" json:"province,omitempty" validate:"lte=40"`        // 用户所在的省
-	ExpiresDays int    `bson:"expires_days" json:"expires_days,omitempty"`                  // 用户多久未登录时(天), 冻结改用户, 防止僵尸用户的账号被利用
-	Password    string `bson:"-" json:"password,omitempty" validate:"required,lte=80"`      // 密码相关信息
 }

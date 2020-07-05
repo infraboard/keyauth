@@ -6,7 +6,7 @@ import (
 	"github.com/infraboard/mcube/http/router"
 
 	"github.com/infraboard/keyauth/pkg"
-	"github.com/infraboard/keyauth/pkg/service"
+	"github.com/infraboard/keyauth/pkg/micro"
 )
 
 var (
@@ -14,7 +14,7 @@ var (
 )
 
 type handler struct {
-	service service.Service
+	service micro.Service
 }
 
 // Registry 注册HTTP服务路由
@@ -33,7 +33,7 @@ func (h *handler) Config() error {
 		return errors.New("denpence application service is nil")
 	}
 
-	h.service = pkg.MicroService
+	h.service = pkg.Micro
 	return nil
 }
 
