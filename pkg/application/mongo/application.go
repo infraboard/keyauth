@@ -45,7 +45,7 @@ func (s *service) DescriptionApplication(req *application.DescriptApplicationReq
 	return app, nil
 }
 
-func (s *service) QueryApplication(req *application.QueryApplicationRequest) (*application.ApplicationSet, error) {
+func (s *service) QueryApplication(req *application.QueryApplicationRequest) (*application.Set, error) {
 	r := newPaggingQuery(req)
 	resp, err := s.col.Find(context.TODO(), r.FindFilter(), r.FindOptions())
 

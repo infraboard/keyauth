@@ -24,7 +24,7 @@ const (
 	CLIENT GrantType = "client_credentials"
 	// REFRESH oauth2 Refreshing an Access Token
 	REFRESH GrantType = "refresh_token"
-	// Access is an custom grant for use use generate personal token
+	// Access is an custom grant for use use generate personal private token
 	Access GrantType = "access_token"
 )
 

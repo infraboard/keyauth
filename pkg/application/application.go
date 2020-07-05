@@ -33,18 +33,6 @@ func NewUserApplicartion(userID string, t ClientType, req *CreateApplicatonReque
 	return app, nil
 }
 
-// NewServiceApplicartion 新建实例
-func NewServiceApplicartion(serviceID string, t ClientType, req *CreateApplicatonRequest) (*Application, error) {
-	if err := req.Validate(); err != nil {
-		return nil, exception.NewBadRequest(err.Error())
-	}
-
-	app := newDeafultApplication(req)
-	app.ServiceID = serviceID
-
-	return app, nil
-}
-
 func newDeafultApplication(req *CreateApplicatonRequest) *Application {
 	return &Application{
 		ID:                      xid.New().String(),
@@ -61,7 +49,6 @@ func newDeafultApplication(req *CreateApplicatonRequest) *Application {
 type Application struct {
 	ID                       string     `bson:"_id" json:"id,omitempty"`                      // 唯一ID
 	UserID                   string     `bson:"user_id" json:"user_id,omitempty"`             // 应用属于那个用户
-	ServiceID                string     `bson:"service_id" json:"service_id,omitempty"`       // 应用属于一个service
 	CreateAt                 ftime.Time `bson:"create_at" json:"create_at,omitempty"`         // 应用创建的时间
 	UpdateAt                 ftime.Time `bson:"update_at" json:"update_at,omitempty"`         // 应用更新的时间
 	ClientType               ClientType `bson:"client_type" json:"client_type,omitempty"`     // 客户端类型
@@ -81,14 +68,14 @@ func (a *Application) CheckClientSecret(secret string) error {
 }
 
 // NewApplicationSet 实例化
-func NewApplicationSet(req *request.PageRequest) *ApplicationSet {
-	return &ApplicationSet{
+func NewApplicationSet(req *request.PageRequest) *Set {
+	return &Set{
 		PageRequest: req,
 	}
 }
 
-// ApplicationSet 应用列表
-type ApplicationSet struct {
+// Set 应用列表
+type Set struct {
 	*request.PageRequest
 
 	Total int64          `json:"total"`
@@ -96,6 +83,6 @@ type ApplicationSet struct {
 }
 
 // Add 添加应用
-func (s *ApplicationSet) Add(app *Application) {
+func (s *Set) Add(app *Application) {
 	s.Items = append(s.Items, app)
 }

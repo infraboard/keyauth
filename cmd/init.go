@@ -59,7 +59,7 @@ func NewInitialerFromCLI() (*Initialer, error) {
 			Message: "请输入公司(组织)名称:",
 			Default: "基础设施服务中心",
 		},
-		&i.domainName,
+		&i.domainDesc,
 		survey.WithValidator(survey.Required),
 	)
 	if err != nil {
@@ -111,7 +111,7 @@ func NewInitialerFromCLI() (*Initialer, error) {
 
 // Initialer 初始化控制器
 type Initialer struct {
-	domainName string
+	domainDesc string
 	username   string
 	password   string
 }
@@ -133,13 +133,15 @@ func (i *Initialer) Run() error {
 	}
 	fmt.Println("初始化域   [成功]")
 
-	a, err := i.initApp(u.ID)
+	apps, err := i.initApp(u.ID)
 	if err != nil {
 		return err
 	}
-	fmt.Println("初始化应用 [成功]")
-	fmt.Printf("应用客户端ID: %s\n", a.ClientID)
-	fmt.Printf("应用客户端凭证: %s\n", a.ClientSecret)
+	for index := range apps {
+		fmt.Printf("初始化应用: %s [成功]\n", apps[index].Name)
+		fmt.Printf("应用客户端ID: %s\n", apps[index].ClientID)
+		fmt.Printf("应用客户端凭证: %s\n", apps[index].ClientSecret)
+	}
 
 	return nil
 }
@@ -166,14 +168,32 @@ func (i *Initialer) initUser() (*user.User, error) {
 
 func (i *Initialer) initDomain(ownerID string) (*domain.Domain, error) {
 	req := domain.NewCreateDomainRequst()
-	req.Name = i.domainName
+	req.Name = domain.AdminDomainName
+	req.Description = i.domainDesc
 	return pkg.Domain.CreateDomain(ownerID, req)
 }
 
-func (i *Initialer) initApp(ownerID string) (*application.Application, error) {
+func (i *Initialer) initApp(ownerID string) ([]*application.Application, error) {
 	req := application.NewCreateApplicatonRequest()
-	req.Name = "初始化应用"
-	return pkg.Application.CreateUserApplication(ownerID, req)
+	req.Name = application.AdminWebApplicationName
+	req.Description = "Admin Web管理端"
+	web, err := pkg.Application.CreateUserApplication(ownerID, req)
+	if err != nil {
+		return nil, fmt.Errorf("create admin web applicaton error, %s", err)
+	}
+
+	req = application.NewCreateApplicatonRequest()
+	req.Name = application.AdminServiceApplicationName
+	req.Description = "Admin Service 内置管理端, 服务注册后, 使用该端管理他们的凭证, 默认token不过期"
+	req.AccessTokenExpireSecond = 0
+	req.RefreshTokenExpiredSecond = 0
+	svr, err := pkg.Application.CreateUserApplication(ownerID, req)
+	if err != nil {
+		return nil, fmt.Errorf("create admin web applicaton error, %s", err)
+	}
+
+	apps := []*application.Application{web, svr}
+	return apps, nil
 }
 
 func init() {

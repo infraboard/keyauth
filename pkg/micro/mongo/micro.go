@@ -3,10 +3,14 @@ package mongo
 import (
 	"context"
 
-	"github.com/infraboard/keyauth/pkg/micro"
 	"github.com/infraboard/mcube/exception"
+	"github.com/rs/xid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+
+	"github.com/infraboard/keyauth/pkg/micro"
+	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/user"
 )
 
 func (s *service) CreateService(req *micro.CreateMicroRequest) (
@@ -16,10 +20,31 @@ func (s *service) CreateService(req *micro.CreateMicroRequest) (
 		return nil, err
 	}
 
+	account, err := s.createServiceAccount(ins.Name, xid.New().String())
+	if err != nil {
+		return nil, exception.NewInternalServerError("create service account error, %s", err)
+	}
+	ins.AccountID = account.ID
+
 	if _, err := s.scol.InsertOne(context.TODO(), ins); err != nil {
 		return nil, exception.NewInternalServerError("inserted a service document error, %s", err)
 	}
 	return ins, nil
+}
+
+func (s *service) createServiceAccount(name, pass string) (*user.User, error) {
+	req := user.NewCreateUserRequest()
+	req.Account = name
+	req.Password = pass
+	return s.user.CreateServiceAccount(req)
+}
+
+func (s *service) createServiceToken(name, pass string) (*token.Token, error) {
+	req := token.NewIssueTokenRequest()
+	req.GrantType = token.PASSWORD
+	req.Username = name
+	req.Password = pass
+	return s.token.IssueToken(req)
 }
 
 func (s *service) QueryService(req *micro.QueryMicroRequest) (*micro.Set, error) {

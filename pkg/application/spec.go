@@ -24,7 +24,7 @@ type Service interface {
 	CreateUserApplication(userID string, req *CreateApplicatonRequest) (*Application, error)
 	DeleteApplication(id string) error
 	DescriptionApplication(req *DescriptApplicationRequest) (*Application, error)
-	QueryApplication(req *QueryApplicationRequest) (*ApplicationSet, error)
+	QueryApplication(req *QueryApplicationRequest) (*Set, error)
 }
 
 // NewDescriptApplicationRequest new实例

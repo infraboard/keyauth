@@ -28,17 +28,17 @@ func (s *service) Config() error {
 	ac := db.Collection("application")
 
 	indexs := []mongo.IndexModel{
-		mongo.IndexModel{
+		{
 			Keys: bsonx.Doc{
 				{Key: "user_id", Value: bsonx.Int32(-1)},
 				{Key: "name", Value: bsonx.Int32(-1)}},
 			Options: options.Index().SetUnique(true),
 		},
-		mongo.IndexModel{
+		{
 			Keys:    bsonx.Doc{{Key: "client_id", Value: bsonx.Int32(-1)}},
 			Options: options.Index().SetUnique(true),
 		},
-		mongo.IndexModel{
+		{
 			Keys: bsonx.Doc{{Key: "create_at", Value: bsonx.Int32(-1)}},
 		},
 	}

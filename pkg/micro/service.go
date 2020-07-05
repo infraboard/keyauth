@@ -24,9 +24,8 @@ type Micro struct {
 	CreaterID           string     `bson:"creater_id" json:"-"`
 	CreateAt            ftime.Time `bson:"create_at" json:"create_at,omitempty"` // 创建的时间
 	UpdateAt            ftime.Time `bson:"update_at" json:"update_at,omitempty"` // 更新时间
-
-	AccountID string     `bson:"account_id" json:"account_id"`       // 服务用户ID
-	Features  []*Feature `bson:"features" json:"features,omitempty"` // 服务功能列表
+	AccountID           string     `bson:"account_id" json:"account_id"`         // 服务用户ID
+	Features            []*Feature `bson:"features" json:"features,omitempty"`   // 服务功能列表
 }
 
 // New 创建服务

@@ -70,6 +70,12 @@ func RegistryService(name string, svr Service) {
 		}
 		Token = value
 		addService(name, svr)
+	case micro.Service:
+		if Micro != nil {
+			registryError(name)
+		}
+		Micro = value
+		addService(name, svr)
 	default:
 		panic(fmt.Sprintf("unknown service type %s", name))
 	}
