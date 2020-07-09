@@ -41,7 +41,7 @@ func (req *describeTokenRequest) String() string {
 func (req *describeTokenRequest) FindFilter() bson.M {
 	filter := bson.M{}
 	if req.AccessToken != "" {
-		filter["access_token"] = req.AccessToken
+		filter["_id"] = req.AccessToken
 	}
 	if req.RefreshToken != "" {
 		filter["refresh_token"] = req.RefreshToken

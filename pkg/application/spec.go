@@ -45,11 +45,7 @@ type DescriptApplicationRequest struct {
 
 // Validate 校验详情查询请求
 func (req *DescriptApplicationRequest) Validate() error {
-	if req.Session == nil || req.Session.GetToken() == nil {
-		return errors.New("session token must required")
-	}
-
-	if req.ID == "" && req.ClientID == "" && req.Name == "" {
+	if req.ID == "" && req.ClientID == "" {
 		return errors.New("id or client_id is required")
 	}
 
@@ -81,7 +77,7 @@ func NewCreateApplicatonRequest() *CreateApplicatonRequest {
 
 // CreateApplicatonRequest 创建应用请求
 type CreateApplicatonRequest struct {
-	*token.Session
+	*token.Session            `bson:"-" json:"-"`
 	Name                      string `bson:"name" json:"name,omitempty" validate:"required,lte=30"`          // 应用名称
 	Website                   string `bson:"website" json:"website,omitempty" validate:"lte=200"`            // 应用的网站地址
 	LogoImage                 string `bson:"logo_image" json:"logo_image,omitempty" validate:"lte=200"`      // 应用的LOGO

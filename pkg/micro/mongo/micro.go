@@ -4,13 +4,11 @@ import (
 	"context"
 
 	"github.com/infraboard/mcube/exception"
-	"github.com/rs/xid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/infraboard/keyauth/pkg/micro"
 	"github.com/infraboard/keyauth/pkg/token"
-	"github.com/infraboard/keyauth/pkg/user"
 )
 
 func (s *service) CreateService(req *micro.CreateMicroRequest) (
@@ -20,17 +18,8 @@ func (s *service) CreateService(req *micro.CreateMicroRequest) (
 		return nil, err
 	}
 
-	user, pass := ins.Name, xid.New().String()
-
-	// 创建服务用户
-	account, err := s.createServiceAccount(user, pass)
-	if err != nil {
-		return nil, exception.NewInternalServerError("create service account error, %s", err)
-	}
-	ins.AccountID = account.ID
-
 	// 使用用户创建服务访问Token
-	tk, err := s.createServiceToken(user, pass)
+	tk, err := s.createServiceToken(req.GetToken().AccessToken)
 	if err != nil {
 		return nil, exception.NewInternalServerError("create service token error, %s", err)
 	}
@@ -43,18 +32,10 @@ func (s *service) CreateService(req *micro.CreateMicroRequest) (
 	return ins, nil
 }
 
-func (s *service) createServiceAccount(name, pass string) (*user.User, error) {
-	req := user.NewCreateUserRequest()
-	req.Account = name
-	req.Password = pass
-	return s.user.CreateServiceAccount(req)
-}
-
-func (s *service) createServiceToken(name, pass string) (*token.Token, error) {
+func (s *service) createServiceToken(tk string) (*token.Token, error) {
 	req := token.NewIssueTokenRequest()
-	req.GrantType = token.PASSWORD
-	req.Username = name
-	req.Password = pass
+	req.GrantType = token.Access
+	req.AccessToken = tk
 	return s.token.IssueToken(req)
 }
 

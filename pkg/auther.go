@@ -23,21 +23,24 @@ type internal struct {
 
 func (i *internal) Auth(r *http.Request, entry router.Entry) (
 	authInfo interface{}, err error) {
-	req := token.NewValidateTokenRequest()
+	if entry.AuthEnable {
+		req := token.NewValidateTokenRequest()
+		// 获取需要校验的access token(用户的身份凭证)
+		accessToken := r.Header.Get("x-oauth-token")
+		if accessToken == "" {
+			return nil, exception.NewUnauthorized("x-oauth-token header required")
+		}
+		req.AccessToken = accessToken
 
-	// 获取需要校验的access token(用户的身份凭证)
-	accessToken := r.Header.Get("x-oauth-token")
-	if accessToken == "" {
-		return nil, exception.NewUnauthorized("x-oauth-token header required")
+		tk, err := Token.ValidateToken(req)
+		if err != nil {
+			return nil, err
+		}
+
+		return tk, nil
 	}
-	req.AccessToken = accessToken
 
-	tk, err := Token.ValidateToken(req)
-	if err != nil {
-		return nil, err
-	}
-
-	return tk, nil
+	return nil, nil
 }
 
 // parseBasicAuth parses an HTTP Basic Authentication string.

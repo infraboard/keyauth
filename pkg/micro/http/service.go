@@ -8,6 +8,7 @@ import (
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 
+	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/micro"
 )
 
@@ -26,12 +27,19 @@ func (h *handler) QueryService(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) CreateService(w http.ResponseWriter, r *http.Request) {
+	tk, err := pkg.GetTokenFromContext(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
 	req := micro.NewCreateMicroRequest()
 	if err := request.GetDataFromRequest(r, req); err != nil {
 		response.Failed(w, err)
 		return
 	}
 
+	req.WithToken(tk)
 	d, err := h.service.CreateService(req)
 	if err != nil {
 		response.Failed(w, err)

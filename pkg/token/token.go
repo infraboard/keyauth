@@ -49,10 +49,8 @@ var (
 
 // Token is user's access resource token
 type Token struct {
-	Name             string     `bson:"name" json:"name,omitempty"`                             // 独立颁发给SDK使用时, 命名token
-	AccessToken      string     `bson:"access_token" json:"access_token"`                       // 服务访问令牌
+	AccessToken      string     `bson:"_id" json:"access_token"`                                // 服务访问令牌
 	RefreshToken     string     `bson:"refresh_token" json:"refresh_token,omitempty"`           // 用于刷新访问令牌的凭证, 刷新过后, 原先令牌将会被删除
-	Description      string     `bson:"description" json:"description,omitempty"`               // 独立颁发给SDK使用时, 令牌的描述信息, 方便定位与取消
 	CreatedAt        ftime.Time `bson:"create_at" json:"create_at,omitempty"`                   // 凭证创建时间
 	AccessExpiredAt  ftime.Time `bson:"access_expired_at" json:"access_expires_at,omitempty"`   // 还有多久过期
 	RefreshExpiredAt ftime.Time `bson:"refresh_expired_at" json:"refresh_expired_at,omitempty"` // 刷新token过期时间
@@ -66,6 +64,7 @@ type Token struct {
 	GrantType     GrantType `bson:"grant_type" json:"grant_type,omitempty"`         // 授权的类型
 	Type          Type      `bson:"type" json:"type,omitempty"`                     // 令牌的类型 类型包含: bearer/jwt  (默认为bearer)
 	Scope         string    `bson:"scope" json:"scope,omitempty"`                   // 令牌的作用范围: detail https://tools.ietf.org/html/rfc6749#section-3.3, 格式 resource-ro@k=*, resource-rw@k=*
+	Description   string    `bson:"description" json:"description,omitempty"`       // 独立颁发给SDK使用时, 令牌的描述信息, 方便定位与取消
 }
 
 // CheckAccessIsExpired 检测token是否过期

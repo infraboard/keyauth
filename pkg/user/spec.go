@@ -10,9 +10,7 @@ import (
 // Service 用户服务
 type Service interface {
 	BaseService
-	AdminService
 	SupperAccountService
-	ServiceAccountService
 	PrimaryAccountService
 	SubAccountService
 }
@@ -23,10 +21,7 @@ type BaseService interface {
 	UpdateAccountPassword(userName, oldPass, newPass string) error
 	// 获取账号Profile
 	DescribeAccount(req *DescriptAccountRequest) (*User, error)
-}
 
-// AdminService admin接口
-type AdminService interface {
 	// 警用账号
 	BlockAccount(id, reason string) error
 }
@@ -55,11 +50,6 @@ type SubAccountService interface {
 	DeleteSubAccount(userID string) error
 	// 查询子账号
 	QuerySubAccount(req *QueryAccountRequest) (*Set, error)
-}
-
-// ServiceAccountService 服务账号
-type ServiceAccountService interface {
-	CreateServiceAccount(req *CreateUserRequest) (*User, error)
 }
 
 // NewDescriptAccountRequest 查询详情请求

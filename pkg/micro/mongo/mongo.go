@@ -12,7 +12,6 @@ import (
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/micro"
 	"github.com/infraboard/keyauth/pkg/token"
-	"github.com/infraboard/keyauth/pkg/user"
 )
 
 var (
@@ -25,7 +24,6 @@ type service struct {
 	fcol          *mongo.Collection
 	enableCache   bool
 	notifyCachPre string
-	user          user.Service
 	token         token.Service
 }
 
@@ -57,11 +55,6 @@ func (s *service) configService() error {
 		return err
 	}
 	s.scol = sc
-
-	if pkg.User == nil {
-		return fmt.Errorf("dependence user service is nil, please load first")
-	}
-	s.user = pkg.User
 
 	if pkg.Token == nil {
 		return fmt.Errorf("dependence token service is nil, please load first")

@@ -1,7 +1,10 @@
 package micro
 
 import (
+	"fmt"
+
 	"github.com/go-playground/validator/v10"
+	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/router"
@@ -49,12 +52,14 @@ func New(req *CreateMicroRequest) (*Micro, error) {
 // NewCreateMicroRequest todo
 func NewCreateMicroRequest() *CreateMicroRequest {
 	return &CreateMicroRequest{
+		Session: token.NewSession(),
 		Enabled: true,
 	}
 }
 
 // CreateMicroRequest 服务创建请求
 type CreateMicroRequest struct {
+	*token.Session
 	Name            string            `bson:"name" json:"name" validate:"required,lte=80"`          // 名称
 	Label           map[string]string `bson:"label" json:"label" validate:"lte=80"`                 // 服务标签
 	Description     string            `bson:"description" json:"description,omitempty"`             // 描述信息
@@ -64,6 +69,10 @@ type CreateMicroRequest struct {
 
 // Validate 校验请求是否合法
 func (req *CreateMicroRequest) Validate() error {
+	if req.GetToken() == nil {
+		return fmt.Errorf("session context required")
+	}
+
 	return validate.Struct(req)
 }
 

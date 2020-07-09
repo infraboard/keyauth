@@ -125,12 +125,9 @@ type describeRequest struct {
 func (r *describeRequest) FindFilter() bson.M {
 	filter := bson.M{}
 
-	filter["user_id"] = r.Session.UserID()
-
 	if r.ID != "" {
 		filter["_id"] = r.ID
 	}
-
 	if r.Name != "" {
 		filter["name"] = r.Name
 	}
