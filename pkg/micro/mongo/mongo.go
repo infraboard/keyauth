@@ -10,6 +10,7 @@ import (
 
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
+	"github.com/infraboard/keyauth/pkg/application"
 	"github.com/infraboard/keyauth/pkg/micro"
 	"github.com/infraboard/keyauth/pkg/token"
 )
@@ -25,6 +26,7 @@ type service struct {
 	enableCache   bool
 	notifyCachPre string
 	token         token.Service
+	app           application.Service
 }
 
 func (s *service) Config() error {
@@ -42,7 +44,7 @@ func (s *service) configService() error {
 	sc := db.Collection("micro")
 	sIndexs := []mongo.IndexModel{
 		{
-			Keys:    bsonx.Doc{{Key: "client_id", Value: bsonx.Int32(-1)}},
+			Keys:    bsonx.Doc{{Key: "name", Value: bsonx.Int32(-1)}},
 			Options: options.Index().SetUnique(true),
 		},
 		{
@@ -60,6 +62,11 @@ func (s *service) configService() error {
 		return fmt.Errorf("dependence token service is nil, please load first")
 	}
 	s.token = pkg.Token
+
+	if pkg.Application == nil {
+		return fmt.Errorf("dependence application service is nil, please load first")
+	}
+	s.app = pkg.Application
 
 	return nil
 }

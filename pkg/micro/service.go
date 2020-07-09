@@ -22,12 +22,11 @@ type Type string
 
 // Micro is service provider
 type Micro struct {
-	ID                  string `bson:"id" json:"id"` // 微服务ID
+	ID                  string `bson:"_id" json:"id"` // 微服务ID
 	*CreateMicroRequest `bson:",inline"`
-	CreaterID           string     `bson:"creater_id" json:"-"`
+	CreaterID           string     `bson:"creater_id" json:"creater_id"`
 	CreateAt            ftime.Time `bson:"create_at" json:"create_at,omitempty"` // 创建的时间
 	UpdateAt            ftime.Time `bson:"update_at" json:"update_at,omitempty"` // 更新时间
-	AccountID           string     `bson:"account_id" json:"account_id"`         // 服务用户ID
 	AccessToken         string     `bson:"access_token" json:"access_token"`     // 服务访问凭证
 	RefreshToken        string     `bson:"refresh_token" json:"-"`               // 服务刷新凭证
 	Features            []*Feature `bson:"features" json:"features,omitempty"`   // 服务功能列表
@@ -44,6 +43,7 @@ func New(req *CreateMicroRequest) (*Micro, error) {
 		CreateAt:           ftime.Now(),
 		UpdateAt:           ftime.Now(),
 		CreateMicroRequest: req,
+		Features:           []*Feature{},
 	}
 
 	return ins, nil
@@ -54,13 +54,14 @@ func NewCreateMicroRequest() *CreateMicroRequest {
 	return &CreateMicroRequest{
 		Session: token.NewSession(),
 		Enabled: true,
+		Label:   map[string]string{},
 	}
 }
 
 // CreateMicroRequest 服务创建请求
 type CreateMicroRequest struct {
-	*token.Session
-	Name            string            `bson:"name" json:"name" validate:"required,lte=80"`          // 名称
+	*token.Session  `bson:"-" json:"-"`
+	Name            string            `bson:"name" json:"name" validate:"required,lte=200"`         // 名称
 	Label           map[string]string `bson:"label" json:"label" validate:"lte=80"`                 // 服务标签
 	Description     string            `bson:"description" json:"description,omitempty"`             // 描述信息
 	Enabled         bool              `bson:"enabled" json:"enabled"`                               // 是否启用该服务

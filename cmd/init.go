@@ -179,20 +179,22 @@ func (i *Initialer) initApp(ownerID string) ([]*application.Application, error) 
 
 	req := application.NewCreateApplicatonRequest()
 	req.Name = application.AdminWebApplicationName
+	req.ClientType = application.Public
 	req.Description = "Admin Web管理端"
 	req.WithToken(tk)
-	web, err := pkg.Application.CreateUserApplication(req)
+	web, err := pkg.Application.CreateBuildInApplication(req)
 	if err != nil {
 		return nil, fmt.Errorf("create admin web applicaton error, %s", err)
 	}
 
 	req = application.NewCreateApplicatonRequest()
 	req.Name = application.AdminServiceApplicationName
+	req.ClientType = application.Confidential
 	req.Description = "Admin Service 内置管理端, 服务注册后, 使用该端管理他们的凭证, 默认token不过期"
 	req.AccessTokenExpireSecond = 0
 	req.RefreshTokenExpiredSecond = 0
 	req.WithToken(tk)
-	svr, err := pkg.Application.CreateUserApplication(req)
+	svr, err := pkg.Application.CreateBuildInApplication(req)
 	if err != nil {
 		return nil, fmt.Errorf("create admin web applicaton error, %s", err)
 	}

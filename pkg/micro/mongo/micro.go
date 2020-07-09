@@ -7,6 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
+	"github.com/infraboard/keyauth/pkg/application"
 	"github.com/infraboard/keyauth/pkg/micro"
 	"github.com/infraboard/keyauth/pkg/token"
 )
@@ -25,6 +26,7 @@ func (s *service) CreateService(req *micro.CreateMicroRequest) (
 	}
 	ins.AccessToken = tk.AccessToken
 	ins.RefreshToken = tk.RefreshToken
+	ins.CreaterID = tk.UserID
 
 	if _, err := s.scol.InsertOne(context.TODO(), ins); err != nil {
 		return nil, exception.NewInternalServerError("inserted a service document error, %s", err)
@@ -33,9 +35,15 @@ func (s *service) CreateService(req *micro.CreateMicroRequest) (
 }
 
 func (s *service) createServiceToken(tk string) (*token.Token, error) {
+	app, err := s.app.GetBuildInApplication(application.AdminServiceApplicationName)
+	if err != nil {
+		return nil, err
+	}
 	req := token.NewIssueTokenRequest()
 	req.GrantType = token.Access
 	req.AccessToken = tk
+	req.ClientID = app.ClientID
+	req.ClientSecret = app.ClientSecret
 	return s.token.IssueToken(req)
 }
 

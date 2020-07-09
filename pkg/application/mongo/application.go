@@ -14,17 +14,12 @@ import (
 func (s *service) CreateUserApplication(req *application.CreateApplicatonRequest) (
 	*application.Application, error) {
 	userID := req.GetToken().UserID
-	app, err := application.NewUserApplicartion(userID, application.Public, req)
+	app, err := application.NewUserApplicartion(userID, req)
 	if err != nil {
 		return nil, err
 	}
 
-	if _, err := s.col.InsertOne(context.TODO(), app); err != nil {
-		return nil, exception.NewInternalServerError("inserted application(%s) document error, %s",
-			req.Name, err)
-	}
-
-	return app, nil
+	return s.save(app)
 }
 
 func (s *service) DescriptionApplication(req *application.DescriptApplicationRequest) (
@@ -127,9 +122,6 @@ func (r *describeRequest) FindFilter() bson.M {
 
 	if r.ID != "" {
 		filter["_id"] = r.ID
-	}
-	if r.Name != "" {
-		filter["name"] = r.Name
 	}
 	if r.ClientID != "" {
 		filter["client_id"] = r.ClientID

@@ -22,10 +22,22 @@ var (
 
 // Service 用户服务
 type Service interface {
+	UserInterface
+	AdminInterface
+}
+
+// UserInterface todo
+type UserInterface interface {
 	CreateUserApplication(req *CreateApplicatonRequest) (*Application, error)
 	DeleteApplication(id string) error
 	DescriptionApplication(req *DescriptApplicationRequest) (*Application, error)
 	QueryApplication(req *QueryApplicationRequest) (*Set, error)
+}
+
+// AdminInterface todo
+type AdminInterface interface {
+	CreateBuildInApplication(req *CreateApplicatonRequest) (*Application, error)
+	GetBuildInApplication(name string) (*Application, error)
 }
 
 // NewDescriptApplicationRequest new实例
@@ -40,7 +52,6 @@ type DescriptApplicationRequest struct {
 	*token.Session
 	ID       string `json:"id,omitempty"`
 	ClientID string `json:"client_id,omitempty"`
-	Name     string `json:"name,omitempty"`
 }
 
 // Validate 校验详情查询请求
@@ -72,19 +83,21 @@ func NewCreateApplicatonRequest() *CreateApplicatonRequest {
 		Session:                   token.NewSession(),
 		AccessTokenExpireSecond:   DefaultAccessTokenExpireSecond,
 		RefreshTokenExpiredSecond: DefaultRefreshTokenExpiredSecond,
+		ClientType:                Public,
 	}
 }
 
 // CreateApplicatonRequest 创建应用请求
 type CreateApplicatonRequest struct {
 	*token.Session            `bson:"-" json:"-"`
-	Name                      string `bson:"name" json:"name,omitempty" validate:"required,lte=30"`          // 应用名称
-	Website                   string `bson:"website" json:"website,omitempty" validate:"lte=200"`            // 应用的网站地址
-	LogoImage                 string `bson:"logo_image" json:"logo_image,omitempty" validate:"lte=200"`      // 应用的LOGO
-	Description               string `bson:"description" json:"description,omitempty" validate:"lte=1000"`   // 应用简单的描述
-	RedirectURI               string `bson:"redirect_uri" json:"redirect_uri,omitempty" validate:"lte=200"`  // 应用重定向URI, Oauht2时需要该参数
-	AccessTokenExpireSecond   int64  `bson:"access_token_expire_second" json:"access_token_expire_second"`   // 应用申请的token的过期时间
-	RefreshTokenExpiredSecond int64  `bson:"refresh_token_expire_second" json:"refresh_token_expire_second"` // 刷新token过期时间
+	Name                      string     `bson:"name" json:"name,omitempty" validate:"required,lte=30"`          // 应用名称
+	Website                   string     `bson:"website" json:"website,omitempty" validate:"lte=200"`            // 应用的网站地址
+	LogoImage                 string     `bson:"logo_image" json:"logo_image,omitempty" validate:"lte=200"`      // 应用的LOGO
+	Description               string     `bson:"description" json:"description,omitempty" validate:"lte=1000"`   // 应用简单的描述
+	RedirectURI               string     `bson:"redirect_uri" json:"redirect_uri,omitempty" validate:"lte=200"`  // 应用重定向URI, Oauht2时需要该参数
+	AccessTokenExpireSecond   int64      `bson:"access_token_expire_second" json:"access_token_expire_second"`   // 应用申请的token的过期时间
+	RefreshTokenExpiredSecond int64      `bson:"refresh_token_expire_second" json:"refresh_token_expire_second"` // 刷新token过期时间
+	ClientType                ClientType `bson:"client_type" json:"client_type,omitempty"`                       // 客户端类型
 }
 
 // Validate 请求校验
