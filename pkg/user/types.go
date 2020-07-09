@@ -1,8 +1,5 @@
 package user
 
-// Type 用户类型
-type Type string
-
 const (
 	// SupperAccount 超级管理员
 	SupperAccount Type = "supper"
@@ -13,3 +10,11 @@ const (
 	// SubAccount 子账号
 	SubAccount = "sub"
 )
+
+// Type 用户类型
+type Type string
+
+// Is todo
+func (t *Type) Is(tp Type) bool {
+	return *t == tp
+}

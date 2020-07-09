@@ -20,11 +20,22 @@ func (s *service) CreateService(req *micro.CreateMicroRequest) (
 		return nil, err
 	}
 
-	account, err := s.createServiceAccount(ins.Name, xid.New().String())
+	user, pass := ins.Name, xid.New().String()
+
+	// 创建服务用户
+	account, err := s.createServiceAccount(user, pass)
 	if err != nil {
 		return nil, exception.NewInternalServerError("create service account error, %s", err)
 	}
 	ins.AccountID = account.ID
+
+	// 使用用户创建服务访问Token
+	tk, err := s.createServiceToken(user, pass)
+	if err != nil {
+		return nil, exception.NewInternalServerError("create service token error, %s", err)
+	}
+	ins.AccessToken = tk.AccessToken
+	ins.RefreshToken = tk.RefreshToken
 
 	if _, err := s.scol.InsertOne(context.TODO(), ins); err != nil {
 		return nil, exception.NewInternalServerError("inserted a service document error, %s", err)

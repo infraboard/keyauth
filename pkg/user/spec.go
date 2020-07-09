@@ -10,6 +10,7 @@ import (
 // Service 用户服务
 type Service interface {
 	BaseService
+	AdminService
 	SupperAccountService
 	ServiceAccountService
 	PrimaryAccountService
@@ -22,6 +23,12 @@ type BaseService interface {
 	UpdateAccountPassword(userName, oldPass, newPass string) error
 	// 获取账号Profile
 	DescribeAccount(req *DescriptAccountRequest) (*User, error)
+}
+
+// AdminService admin接口
+type AdminService interface {
+	// 警用账号
+	BlockAccount(id, reason string) error
 }
 
 // SupperAccountService 超级管理员账号
@@ -58,6 +65,11 @@ type ServiceAccountService interface {
 // NewDescriptAccountRequest 查询详情请求
 func NewDescriptAccountRequest() *DescriptAccountRequest {
 	return &DescriptAccountRequest{}
+}
+
+// NewDescriptAccountRequestWithID 查询详情请求
+func NewDescriptAccountRequestWithID(id string) *DescriptAccountRequest {
+	return &DescriptAccountRequest{ID: id}
 }
 
 // DescriptAccountRequest 查询用户详情请求

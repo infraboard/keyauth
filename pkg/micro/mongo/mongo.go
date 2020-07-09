@@ -25,7 +25,7 @@ type service struct {
 	fcol          *mongo.Collection
 	enableCache   bool
 	notifyCachPre string
-	user          user.ServiceAccountService
+	user          user.Service
 	token         token.Service
 }
 

@@ -25,6 +25,8 @@ type Micro struct {
 	CreateAt            ftime.Time `bson:"create_at" json:"create_at,omitempty"` // 创建的时间
 	UpdateAt            ftime.Time `bson:"update_at" json:"update_at,omitempty"` // 更新时间
 	AccountID           string     `bson:"account_id" json:"account_id"`         // 服务用户ID
+	AccessToken         string     `bson:"access_token" json:"access_token"`     // 服务访问凭证
+	RefreshToken        string     `bson:"refresh_token" json:"-"`               // 服务刷新凭证
 	Features            []*Feature `bson:"features" json:"features,omitempty"`   // 服务功能列表
 }
 

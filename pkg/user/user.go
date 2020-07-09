@@ -36,8 +36,8 @@ func New(req *CreateUserRequest) (*User, error) {
 	}, nil
 }
 
-// NewDescribeUser 实例
-func NewDescribeUser() *User {
+// NewDefaultUser 实例
+func NewDefaultUser() *User {
 	return &User{
 		CreateUserRequest: NewCreateUserRequest(),
 	}
@@ -53,6 +53,13 @@ type User struct {
 
 	HashedPassword *Password `bson:"password" json:"password,omitempty"` // 密码相关信息
 	Status         *Status   `bson:"status" json:"status,omitempty"`     // 用户状态
+}
+
+// Block 锁用户
+func (u *User) Block(reason string) {
+	u.Status.Locked = true
+	u.Status.LockedReson = reason
+	u.Status.LockedTime = ftime.Now()
 }
 
 // CreateUserRequest 创建用户请求

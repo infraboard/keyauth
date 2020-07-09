@@ -1,6 +1,8 @@
 package mongo
 
-import "github.com/infraboard/keyauth/pkg/user"
+import (
+	"github.com/infraboard/keyauth/pkg/user"
+)
 
 func (s *service) CreateServiceAccount(req *user.CreateUserRequest) (*user.User, error) {
 	u, err := user.New(req)
