@@ -3,15 +3,16 @@ package domain
 import (
 	"fmt"
 
+	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/mcube/http/request"
 )
 
 // Service is an domain service
 type Service interface {
-	DescriptionDomain(req *DescriptDomainRequest) (*Domain, error)
-	QueryDomain(req *QueryDomainRequest) (*DomainSet, error)
-	CreateDomain(ownerID string, req *CreateDomainRequst) (*Domain, error)
 	UpdateDomain(*Domain) error
+	CreateDomain(ownerID string, req *CreateDomainRequst) (*Domain, error)
+	DescriptionDomain(req *DescriptDomainRequest) (*Domain, error)
+	QueryDomain(req *QueryDomainRequest) (*Set, error)
 	DeleteDomain(id string) error
 }
 
@@ -19,14 +20,21 @@ type Service interface {
 func NewQueryDomainRequest(page *request.PageRequest) *QueryDomainRequest {
 	return &QueryDomainRequest{
 		PageRequest:           page,
-		DescriptDomainRequest: &DescriptDomainRequest{},
+		Session:               token.NewSession(),
+		DescriptDomainRequest: NewDescriptDomainRequest(),
 	}
 }
 
 // QueryDomainRequest 请求
 type QueryDomainRequest struct {
+	*token.Session
 	*request.PageRequest
 	*DescriptDomainRequest
+}
+
+// Validate 校验请求合法
+func (req *QueryDomainRequest) Validate() error {
+	return nil
 }
 
 // NewDescriptDomainRequest 查询详情请求

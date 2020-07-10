@@ -35,22 +35,27 @@ func New(ownerID string, req *CreateDomainRequst) (*Domain, error) {
 }
 
 // NewDomainSet 实例
-func NewDomainSet(req *request.PageRequest) *DomainSet {
-	return &DomainSet{
+func NewDomainSet(req *request.PageRequest) *Set {
+	return &Set{
 		PageRequest: req,
 	}
 }
 
-// DomainSet domain 列表
-type DomainSet struct {
+// Set domain 列表
+type Set struct {
 	*request.PageRequest
 
 	Total int64     `json:"total"`
 	Items []*Domain `json:"items"`
 }
 
+// Length 总个数
+func (s *Set) Length() int {
+	return len(s.Items)
+}
+
 // Add 添加Item
-func (s *DomainSet) Add(d *Domain) {
+func (s *Set) Add(d *Domain) {
 	s.Items = append(s.Items, d)
 }
 

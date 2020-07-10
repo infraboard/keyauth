@@ -20,6 +20,8 @@ import (
 	// 加载服务模块
 	_ "github.com/infraboard/keyauth/pkg/application/http"
 	_ "github.com/infraboard/keyauth/pkg/application/mongo"
+	_ "github.com/infraboard/keyauth/pkg/department/http"
+	_ "github.com/infraboard/keyauth/pkg/department/mongo"
 	_ "github.com/infraboard/keyauth/pkg/domain/http"
 	_ "github.com/infraboard/keyauth/pkg/domain/mongo"
 	_ "github.com/infraboard/keyauth/pkg/endpoint/mongo"

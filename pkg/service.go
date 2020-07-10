@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/infraboard/keyauth/pkg/application"
+	"github.com/infraboard/keyauth/pkg/department"
 	"github.com/infraboard/keyauth/pkg/domain"
 	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/micro"
@@ -30,6 +31,8 @@ var (
 	Endpoint endpoint.Service
 	// Policy 厕所里
 	Policy policy.Service
+	// Department 部分服务
+	Department department.Service
 )
 
 var (
@@ -102,6 +105,12 @@ func RegistryService(name string, svr Service) {
 			registryError(name)
 		}
 		Policy = value
+		addService(name, svr)
+	case department.Service:
+		if Department != nil {
+			registryError(name)
+		}
+		Department = value
 		addService(name, svr)
 	default:
 		panic(fmt.Sprintf("unknown service type %s", name))

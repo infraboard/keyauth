@@ -6,7 +6,6 @@ import (
 	"github.com/infraboard/mcube/exception"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/infraboard/keyauth/pkg/domain"
 )
@@ -37,7 +36,7 @@ func (s *service) DescriptionDomain(req *domain.DescriptDomainRequest) (*domain.
 	return d, nil
 }
 
-func (s *service) QueryDomain(req *domain.QueryDomainRequest) (*domain.DomainSet, error) {
+func (s *service) QueryDomain(req *domain.QueryDomainRequest) (*domain.Set, error) {
 	r := newPaggingQuery(req)
 	resp, err := s.col.Find(context.TODO(), r.FindFilter(), r.FindOptions())
 
@@ -85,31 +84,4 @@ func (s *service) DeleteDomain(id string) error {
 		return exception.NewInternalServerError("delete domain(%s) error, %s", id, err)
 	}
 	return nil
-}
-
-func newPaggingQuery(req *domain.QueryDomainRequest) *request {
-	return &request{req}
-}
-
-type request struct {
-	*domain.QueryDomainRequest
-}
-
-func (r *request) FindOptions() *options.FindOptions {
-	pageSize := int64(r.PageSize)
-	skip := int64(r.PageSize) * int64(r.PageNumber-1)
-
-	opt := &options.FindOptions{
-		Sort:  bson.D{{"create_at", -1}},
-		Limit: &pageSize,
-		Skip:  &skip,
-	}
-
-	return opt
-}
-
-func (r *request) FindFilter() bson.M {
-	filter := bson.M{}
-
-	return filter
 }

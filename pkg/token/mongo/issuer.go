@@ -1,12 +1,15 @@
 package mongo
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/infraboard/mcube/exception"
+	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/types/ftime"
 
 	"github.com/infraboard/keyauth/pkg/application"
+	"github.com/infraboard/keyauth/pkg/domain"
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
 )
@@ -20,6 +23,7 @@ func (s *service) newTokenIssuer(req *token.IssueTokenRequest) (*TokenIssuer, er
 		IssueTokenRequest: req,
 		clientChecker:     newClientChecker(s.app),
 		user:              s.user,
+		domain:            s.domain,
 		token:             s,
 	}
 	return issuer, nil
@@ -29,8 +33,9 @@ func (s *service) newTokenIssuer(req *token.IssueTokenRequest) (*TokenIssuer, er
 type TokenIssuer struct {
 	*token.IssueTokenRequest
 	*clientChecker
-	token *service
-	user  user.Service
+	token  *service
+	user   user.Service
+	domain domain.Service
 }
 
 func (i *TokenIssuer) checkUser() (*user.User, error) {
@@ -50,6 +55,23 @@ func (i *TokenIssuer) getUser(name string) (*user.User, error) {
 	return i.user.DescribeAccount(req)
 }
 
+func (i *TokenIssuer) setTokenDomain(tk *token.Token) error {
+	// 获取最近1个
+	req := domain.NewQueryDomainRequest(request.NewPageRequest(1, 1))
+	req.WithToken(tk)
+
+	domains, err := i.domain.QueryDomain(req)
+	if err != nil {
+		return err
+	}
+
+	if domains.Length() > 0 {
+		tk.DomainID = domains.Items[0].ID
+	}
+
+	return nil
+}
+
 // IssueToken 颁发token
 func (i *TokenIssuer) IssueToken() (*token.Token, error) {
 	app, err := i.CheckClient(i.ClientID, i.ClientSecret)
@@ -65,6 +87,10 @@ func (i *TokenIssuer) IssueToken() (*token.Token, error) {
 		}
 
 		tk := i.issueUserToken(app, u)
+		err := i.setTokenDomain(tk)
+		if err != nil {
+			return nil, fmt.Errorf("set token domain error, %s", err)
+		}
 		return tk, nil
 	case token.REFRESH:
 		descReq := newDescribeTokenRequestWithRefresh(i.RefreshToken)

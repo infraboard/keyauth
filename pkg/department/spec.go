@@ -3,6 +3,7 @@ package department
 import (
 	"fmt"
 
+	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/mcube/http/request"
 )
 
@@ -11,20 +12,22 @@ type Service interface {
 	QueryDepartment(*QueryDepartmentRequest) (*Set, error)
 	DescribeDepartment(*DescribeDeparmentRequest) (*Department, error)
 	CreateDepartment(*CreateDepartmentRequest) (*Department, error)
-	DelDepartment(id string) error
+	DeleteDepartment(id string) error
 }
 
 // NewQueryDepartmentRequest 列表查询请求
 func NewQueryDepartmentRequest(req *request.PageRequest) *QueryDepartmentRequest {
 	return &QueryDepartmentRequest{
 		PageRequest: req,
+		Session:     token.NewSession(),
 	}
 }
 
 // QueryDepartmentRequest todo
 type QueryDepartmentRequest struct {
+	*token.Session
 	*request.PageRequest
-	parentDepID string
+	ParentID string
 }
 
 // NewDescriptDepartmentRequest new实例
@@ -43,4 +46,6 @@ func (req *DescribeDeparmentRequest) Validate() error {
 	if req.ID == "" && req.Name == "" {
 		return fmt.Errorf("id or name required")
 	}
+
+	return nil
 }

@@ -15,6 +15,12 @@ const (
 type Type string
 
 // Is todo
-func (t *Type) Is(tp Type) bool {
-	return *t == tp
+func (t *Type) Is(tps ...Type) bool {
+	for _, tp := range tps {
+		if *t == tp {
+			return true
+		}
+	}
+
+	return false
 }
