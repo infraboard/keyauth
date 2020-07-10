@@ -125,7 +125,3 @@ func (s *service) DeleteService(name string) error {
 	}
 	return nil
 }
-
-func (s *service) RegistryEntry(req *micro.RegistryRequest) error {
-	return nil
-}

@@ -28,6 +28,8 @@ import (
 	_ "github.com/infraboard/keyauth/pkg/token/mongo"
 	_ "github.com/infraboard/keyauth/pkg/user/http"
 	_ "github.com/infraboard/keyauth/pkg/user/mongo"
+	_ "github.com/infraboard/keyauth/pkg/role/http"
+	_ "github.com/infraboard/keyauth/pkg/role/mongo"
 )
 
 var (

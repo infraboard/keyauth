@@ -1,72 +1,117 @@
-/*
-admin   管理员
-read_olny:
-	 *
-read_write:
-	 *
-
-ops    运维
- read_only:
-	<通过Label筛选资源>
-	资源:   a, b, c, d
-	范围:   *
- read_write:
-	资源:   a, b, c, d
-	范围:   online
-
-policy:
-namespace user     role
-admin     admin    admin
-admin     yumaojun ops
-projectA  yumaojun dev
-projectB  yumaojun visitor
-
-tk
- namesapce: projectA   role:    dev
-*/
-
 package role
 
-// Type 角色类型
-type Type string
+import (
+	"fmt"
 
-const (
-	// BuildInType 内建角色, 系统初始时创建
-	BuildInType Type = "build_in"
-	// CustomType 用户自定义角色
-	CustomType Type = "custom"
+	"github.com/infraboard/mcube/http/request"
+	"github.com/infraboard/mcube/types/ftime"
 )
 
-// EffectType 授权效力包括两种：允许（Allow）和拒绝（Deny）
-type EffectType string
-
 const (
-	// Allow 允许访问
-	Allow EffectType = "allow"
-	// Deny 拒绝访问
-	Deny EffectType = "deny"
+	// MaxPermissionCount 一个角色最多可以容纳的权限条数
+	MaxPermissionCount = 500
 )
+
+// New 新创建一个Role
+func New(t Type, req *CreateRoleRequest) (*Role, error) {
+	if err := req.Validate(); err != nil {
+		return nil, err
+	}
+
+	return &Role{
+		Type:              t,
+		CreateAt:          ftime.Now(),
+		UpdateAt:          ftime.Now(),
+		CreateRoleRequest: req,
+	}, nil
+}
+
+// NewDefaultRole 默认实例
+func NewDefaultRole() *Role {
+	return &Role{
+		CreateRoleRequest: NewCreateRoleRequest(),
+	}
+}
 
 // Role is rbac's role
 type Role struct {
-	Type        Type        `json:"type"`
-	Name        string      `json:"name"`                  // 角色名称
-	Description string      `json:"description,omitempty"` // 角色描述
-	CreateAt    int64       `json:"create_at,omitempty"`   // 创建时间`
-	UpdateAt    int64       `json:"update_at,omitempty"`   // 更新时间
-	Read        *Permission `json:"read,omitempty"`        // 读权限
-	Write       *Permission `json:"write,omitempty"`       // 写权限
+	ID                 string     `bson:"_id" json:"id"`                        // 角色ID
+	Type               Type       `bson:"type" json:"type"`                     // 角色类型
+	CreateAt           ftime.Time `bson:"create_at" json:"create_at,omitempty"` // 创建时间`
+	UpdateAt           ftime.Time `bson:"update_at" json:"update_at,omitempty"` // 更新时间
+	*CreateRoleRequest `bson:",inline"`
 }
 
-// Permission 权限
-type Permission struct {
-	Effect   EffectType `json:"effect,omitempty"`
-	IsALL    bool       `json:"is_all"`
-	Resource []string   `json:"resource,omitempty"` // 资源列表
-	Scope    []string   `json:"scope,omitempty"`    // 范围列表
+// NewCreateRoleRequest 实例化请求
+func NewCreateRoleRequest() *CreateRoleRequest {
+	return &CreateRoleRequest{}
+}
+
+// CreateRoleRequest 创建应用请求
+type CreateRoleRequest struct {
+	Name        string        `bson:"name" json:"name,omitempty" validate:"required,lte=30"`       // 应用名称
+	Description string        `bson:"description" json:"description,omitempty" validate:"lte=400"` // 应用简单的描述
+	Permissions []*Permission `bson:"permissions" json:"permissions,omitempty"`                    // 读权限
+}
+
+// Validate 请求校验
+func (req *CreateRoleRequest) Validate() error {
+	pc := len(req.Permissions)
+	if pc > MaxPermissionCount {
+		return fmt.Errorf("role permission overed max count: %d",
+			MaxPermissionCount)
+	}
+	return validate.Struct(req)
 }
 
 // CheckPermission 检测该角色是否具有该权限
 func (r *Role) CheckPermission() error {
 	return nil
+}
+
+// NewRoleSet 实例化
+func NewRoleSet(req *request.PageRequest) *Set {
+	return &Set{
+		PageRequest: req,
+		Items:       []*Role{},
+	}
+}
+
+// Set 角色集合
+type Set struct {
+	*request.PageRequest
+
+	Total int64   `json:"total"`
+	Items []*Role `json:"items"`
+}
+
+// Add todo
+func (s *Set) Add(item *Role) {
+	s.Items = append(s.Items, item)
+}
+
+// Permission 权限
+type Permission struct {
+	Effect       EffectType `bson:"effect" json:"effect,omitempty"`               // 效力
+	ResourceName string     `bson:"resource_name" json:"resource_name,omitempty"` // 资源列表
+	LabelKey     string     `bson:"label_key" json:"label_key,omitempty"`
+	LabelValues  []string   `bson:"label_values" json:"label_values,omitempty"` // 标识
+}
+
+// ID 计算唯一ID
+func (p *Permission) ID(namespace string) string {
+	return namespace + "." + p.ResourceName
+}
+
+// PermissionSet 用户列表
+type PermissionSet struct {
+	*request.PageRequest
+
+	Total int64         `json:"total"`
+	Items []*Permission `json:"items"`
+}
+
+// Add todo
+func (s *PermissionSet) Add(item *Permission) {
+	s.Items = append(s.Items, item)
 }

@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/infraboard/mcube/http/request"
-	"github.com/infraboard/mcube/http/router"
 )
 
 // Service token管理服务
@@ -13,23 +12,6 @@ type Service interface {
 	QueryService(req *QueryMicroRequest) (*Set, error)
 	DescribeService(req *DescribeMicroRequest) (*Micro, error)
 	DeleteService(name string) error
-	RegistryEntry(req *RegistryRequest) error
-}
-
-// RegistryRequest 服务注册请求
-type RegistryRequest struct {
-	Version string          `json:"version" validate:"required,lte=32"`
-	Entries []*router.Entry `json:"entries"`
-}
-
-// Validate 校验注册请求合法性
-func (req *RegistryRequest) Validate() error {
-	return validate.Struct(req)
-}
-
-// Features 功能列表
-func (req *RegistryRequest) Features() []*Feature {
-	return nil
 }
 
 // NewQueryMicroRequest 列表查询请求
