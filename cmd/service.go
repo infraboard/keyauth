@@ -22,14 +22,16 @@ import (
 	_ "github.com/infraboard/keyauth/pkg/application/mongo"
 	_ "github.com/infraboard/keyauth/pkg/domain/http"
 	_ "github.com/infraboard/keyauth/pkg/domain/mongo"
+	_ "github.com/infraboard/keyauth/pkg/endpoint/mongo"
 	_ "github.com/infraboard/keyauth/pkg/micro/http"
 	_ "github.com/infraboard/keyauth/pkg/micro/mongo"
+	_ "github.com/infraboard/keyauth/pkg/policy/mongo"
+	_ "github.com/infraboard/keyauth/pkg/role/http"
+	_ "github.com/infraboard/keyauth/pkg/role/mongo"
 	_ "github.com/infraboard/keyauth/pkg/token/http"
 	_ "github.com/infraboard/keyauth/pkg/token/mongo"
 	_ "github.com/infraboard/keyauth/pkg/user/http"
 	_ "github.com/infraboard/keyauth/pkg/user/mongo"
-	_ "github.com/infraboard/keyauth/pkg/role/http"
-	_ "github.com/infraboard/keyauth/pkg/role/mongo"
 )
 
 var (

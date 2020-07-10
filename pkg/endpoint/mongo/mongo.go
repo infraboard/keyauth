@@ -8,7 +8,7 @@ import (
 
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
-	"github.com/infraboard/keyauth/pkg/policy"
+	"github.com/infraboard/keyauth/pkg/endpoint"
 )
 
 var (
@@ -24,7 +24,7 @@ type service struct {
 
 func (s *service) Config() error {
 	db := conf.C().Mongo.GetDB()
-	col := db.Collection("policy")
+	col := db.Collection("endpoint")
 
 	indexs := []mongo.IndexModel{
 		{
@@ -42,6 +42,6 @@ func (s *service) Config() error {
 }
 
 func init() {
-	var _ policy.Service = Service
-	pkg.RegistryService("policy", Service)
+	var _ endpoint.Service = Service
+	pkg.RegistryService("endpoint", Service)
 }

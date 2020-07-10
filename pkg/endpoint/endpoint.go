@@ -12,15 +12,17 @@ import (
 
 // Endpoint Service's features
 type Endpoint struct {
-	CreateAt       ftime.Time `json:"create_at,omitempty"`       // 创建时间
-	UpdateAt       ftime.Time `json:"update_at,omitempty"`       // 更新时间
-	ServiceName    string     `json:"service_name,omitempty"`    // 该功能属于那个服务
-	ServiceVersion string     `json:"service_version,omitempty"` // 服务那个版本的功能
-	router.Entry
+	ID             string     `bson:"_id" json:"id" validate:"required,lte=64"`                                    // 端点名称
+	CreateAt       ftime.Time `bson:"create_at" json:"create_at,omitempty"`                                        // 创建时间
+	UpdateAt       ftime.Time `bson:"update_at" json:"update_at,omitempty"`                                        // 更新时间
+	ServiceName    string     `bson:"service_name" json:"service_name,omitempty" validate:"required,lte=64"`       // 该功能属于那个服务
+	ServiceVersion string     `bson:"service_version" json:"service_version,omitempty" validate:"required,lte=64"` // 服务那个版本的功能
+
+	router.Entry `bson:",inline"`
 }
 
-// ID hash id
-func (e *Endpoint) ID() string {
+// GenID hash id
+func (e *Endpoint) GenID() string {
 	inst := sha1.New()
 	hashedStr := fmt.Sprintf("%s-%s-%s", e.ServiceName, e.Path, e.Method)
 	inst.Write([]byte(hashedStr))

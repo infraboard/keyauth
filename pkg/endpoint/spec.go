@@ -66,3 +66,8 @@ func NewQueryEndpointRequest(pageReq *request.PageRequest) *QueryEndpointRequest
 type QueryEndpointRequest struct {
 	*request.PageRequest
 }
+
+// DescribeEndpointRequest todo
+type DescribeEndpointRequest struct {
+	Name string
+}

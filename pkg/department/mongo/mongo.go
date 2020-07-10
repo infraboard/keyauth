@@ -4,11 +4,12 @@ import (
 	"context"
 
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/x/bsonx"
 
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
-	"github.com/infraboard/keyauth/pkg/policy"
+	"github.com/infraboard/keyauth/pkg/department"
 )
 
 var (
@@ -24,24 +25,29 @@ type service struct {
 
 func (s *service) Config() error {
 	db := conf.C().Mongo.GetDB()
-	col := db.Collection("policy")
+	dc := db.Collection("department")
 
 	indexs := []mongo.IndexModel{
-		{
+		mongo.IndexModel{
+			Keys:    bsonx.Doc{{Key: "name", Value: bsonx.Int32(-1)}},
+			Options: options.Index().SetUnique(true),
+		},
+		mongo.IndexModel{
 			Keys: bsonx.Doc{{Key: "create_at", Value: bsonx.Int32(-1)}},
 		},
 	}
 
-	_, err := col.Indexes().CreateMany(context.Background(), indexs)
+	_, err := dc.Indexes().CreateMany(context.Background(), indexs)
 	if err != nil {
 		return err
 	}
 
-	s.col = col
+	s.col = dc
+
 	return nil
 }
 
 func init() {
-	var _ policy.Service = Service
-	pkg.RegistryService("policy", Service)
+	var _ department.Service = Service
+	pkg.RegistryService("department", Service)
 }

@@ -5,7 +5,9 @@ import (
 
 	"github.com/infraboard/keyauth/pkg/application"
 	"github.com/infraboard/keyauth/pkg/domain"
+	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/micro"
+	"github.com/infraboard/keyauth/pkg/policy"
 	"github.com/infraboard/keyauth/pkg/role"
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
@@ -24,6 +26,10 @@ var (
 	Micro micro.Service
 	// Role 角色服务
 	Role role.Service
+	// Endpoint 端点服务
+	Endpoint endpoint.Service
+	// Policy 厕所里
+	Policy policy.Service
 )
 
 var (
@@ -84,6 +90,18 @@ func RegistryService(name string, svr Service) {
 			registryError(name)
 		}
 		Role = value
+		addService(name, svr)
+	case endpoint.Service:
+		if Endpoint != nil {
+			registryError(name)
+		}
+		Endpoint = value
+		addService(name, svr)
+	case policy.Service:
+		if Policy != nil {
+			registryError(name)
+		}
+		Policy = value
 		addService(name, svr)
 	default:
 		panic(fmt.Sprintf("unknown service type %s", name))
