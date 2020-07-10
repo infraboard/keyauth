@@ -11,6 +11,7 @@ import (
 type Service interface {
 	BaseService
 	SupperAccountService
+	ServiceAccountService
 	PrimaryAccountService
 	SubAccountService
 }
@@ -32,6 +33,11 @@ type SupperAccountService interface {
 	CreateSupperAccount(req *CreateUserRequest) (*User, error)
 	// 查询超级账号列表
 	QuerySupperAccount(req *QueryAccountRequest) (*Set, error)
+}
+
+// ServiceAccountService 服务账号
+type ServiceAccountService interface {
+	CreateServiceAccount(req *CreateUserRequest) (*User, error)
 }
 
 // PrimaryAccountService 主账号服务

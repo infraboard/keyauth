@@ -13,6 +13,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/application"
 	"github.com/infraboard/keyauth/pkg/micro"
 	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/user"
 )
 
 var (
@@ -26,6 +27,7 @@ type service struct {
 	enableCache   bool
 	notifyCachPre string
 	token         token.Service
+	user          user.Service
 	app           application.Service
 }
 
@@ -67,6 +69,11 @@ func (s *service) configService() error {
 		return fmt.Errorf("dependence application service is nil, please load first")
 	}
 	s.app = pkg.Application
+
+	if pkg.User == nil {
+		return fmt.Errorf("dependence application service is nil, please load first")
+	}
+	s.user = pkg.User
 
 	return nil
 }
