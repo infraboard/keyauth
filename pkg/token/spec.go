@@ -20,6 +20,17 @@ func NewIssueTokenRequest() *IssueTokenRequest {
 	return &IssueTokenRequest{}
 }
 
+// NewIssueTokenByPassword todo
+func NewIssueTokenByPassword(clientID, clientSecret, user, pass string) *IssueTokenRequest {
+	return &IssueTokenRequest{
+		ClientID:     clientID,
+		ClientSecret: clientSecret,
+		Username:     user,
+		Password:     pass,
+		GrantType:    PASSWORD,
+	}
+}
+
 // IssueTokenRequest 颁发token请求
 type IssueTokenRequest struct {
 	ClientID     string    `json:"client_id,omitempty" validate:"required,lte=80"`     // 客户端ID

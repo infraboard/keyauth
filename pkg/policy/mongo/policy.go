@@ -8,9 +8,9 @@ import (
 	"github.com/infraboard/keyauth/pkg/policy"
 )
 
-func (s *service) CreatePolicy(createrID string, req *policy.CreatePolicyRequest) (
+func (s *service) CreatePolicy(req *policy.CreatePolicyRequest) (
 	*policy.Policy, error) {
-	ins, err := policy.New(createrID, req)
+	ins, err := policy.New(req)
 	if err != nil {
 		return nil, exception.NewBadRequest(err.Error())
 	}

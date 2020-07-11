@@ -10,6 +10,7 @@ import (
 	"github.com/infraboard/mcube/http/router"
 
 	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/user"
 )
 
 // NewInternalAuther 内部使用的auther
@@ -23,6 +24,7 @@ type internal struct {
 
 func (i *internal) Auth(r *http.Request, entry router.Entry) (
 	authInfo interface{}, err error) {
+	var tk *token.Token
 	if entry.AuthEnable {
 		req := token.NewValidateTokenRequest()
 		// 获取需要校验的access token(用户的身份凭证)
@@ -32,12 +34,20 @@ func (i *internal) Auth(r *http.Request, entry router.Entry) (
 		}
 		req.AccessToken = accessToken
 
-		tk, err := Token.ValidateToken(req)
+		tk, err = Token.ValidateToken(req)
 		if err != nil {
 			return nil, err
 		}
+	}
 
-		return tk, nil
+	if entry.PermissionEnable && tk != nil {
+		// 如果是超级管理员不做权限校验, 直接放行
+		if tk.UserType.Is(user.SupperAccount) {
+			return tk, nil
+		}
+
+		// 其他比如服务类型, 主账号类型, 子账号类型
+		// 如果开启权限认证都需要检查
 	}
 
 	return nil, nil

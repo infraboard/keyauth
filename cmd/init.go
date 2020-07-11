@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/AlecAivazis/survey/v2"
+	"github.com/infraboard/mcube/http/label"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/spf13/cobra"
 
@@ -128,13 +129,13 @@ func (i *Initialer) Run() error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("初始化用户 [成功]")
+	fmt.Printf("初始化用户: %s [成功]\n", i.username)
 
 	_, err = i.initDomain(u.ID)
 	if err != nil {
 		return err
 	}
-	fmt.Println("初始化域   [成功]")
+	fmt.Printf("初始化域: %s   [成功]\n", i.domainDesc)
 
 	apps, err := i.initApp(u.ID)
 	if err != nil {
@@ -144,6 +145,18 @@ func (i *Initialer) Run() error {
 		fmt.Printf("初始化应用: %s [成功]\n", apps[index].Name)
 		fmt.Printf("应用客户端ID: %s\n", apps[index].ClientID)
 		fmt.Printf("应用客户端凭证: %s\n", apps[index].ClientSecret)
+	}
+
+	if err := i.getAdminToken(apps[0], u); err != nil {
+		return err
+	}
+
+	roles, err := i.initRole()
+	if err != nil {
+		return err
+	}
+	for index := range roles {
+		fmt.Printf("初始化角色: %s [成功]\n", roles[index].Name)
 	}
 
 	return nil
@@ -205,26 +218,52 @@ func (i *Initialer) initApp(ownerID string) ([]*application.Application, error) 
 	return apps, nil
 }
 
+func (i *Initialer) getAdminToken(app *application.Application, u *user.User) error {
+	if app == nil || u == nil {
+		return fmt.Errorf("get admin token need app and admin user")
+	}
+
+	req := token.NewIssueTokenByPassword(app.ClientID, app.ClientSecret, u.Account, u.Password)
+	tk, err := pkg.Token.IssueToken(req)
+	if err != nil {
+		return err
+	}
+	i.tk = tk
+	return nil
+}
+
 func (i *Initialer) initRole() ([]*role.Role, error) {
-	perm := role.NewDefaultPermission()
-	perm.ResourceName = "*"
-	perm.LabelKey = "*"
-	perm.LabelValues = []string{"*"}
+	admin := role.NewDefaultPermission()
+	admin.ResourceName = "*"
+	admin.LabelKey = "*"
+	admin.LabelValues = []string{"*"}
 
 	req := role.NewCreateRoleRequest()
-	req.Name = "system_admin"
+	req.WithToken(i.tk)
+	req.Name = "admin"
 	req.Description = "系统管理员, 有系统所有功能的访问权限"
-	req.Permissions = []*role.Permission{}
-	sysAdmin, err := pkg.Role.CreateRole(role.BuildInType, req)
+	req.Permissions = []*role.Permission{admin}
+	adminRole, err := pkg.Role.CreateRole(role.BuildInType, req)
 	if err != nil {
 		return nil, err
 	}
 
-	return []*role.Role{sysAdmin}, nil
-}
+	vistor := role.NewDefaultPermission()
+	vistor.ResourceName = "*"
+	vistor.LabelKey = label.ActionLableKey
+	vistor.LabelValues = []string{label.Get.Value(), label.List.Value()}
 
-func (i *Initialer) getAdminToken() {
+	req = role.NewCreateRoleRequest()
+	req.WithToken(i.tk)
+	req.Name = "visitor"
+	req.Description = "访客, 登录系统后, 默认的权限"
+	req.Permissions = []*role.Permission{vistor}
+	vistorRole, err := pkg.Role.CreateRole(role.BuildInType, req)
+	if err != nil {
+		return nil, err
+	}
 
+	return []*role.Role{adminRole, vistorRole}, nil
 }
 
 func init() {

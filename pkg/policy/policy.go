@@ -4,21 +4,25 @@ import (
 	"crypto/sha1"
 	"fmt"
 
+	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/types/ftime"
 )
 
 // New 新实例
-func New(createrID string, req *CreatePolicyRequest) (*Policy, error) {
+func New(req *CreatePolicyRequest) (*Policy, error) {
 	if err := req.Validate(); err != nil {
 		return nil, err
 	}
+
+	tk := req.GetToken()
+
 	return &Policy{
 		ID:                  req.hashedID(),
 		CreateAt:            ftime.Now(),
 		UpdateAt:            ftime.Now(),
-		CreaterID:           createrID,
+		CreaterID:           tk.UserID,
 		CreatePolicyRequest: req,
 	}, nil
 }
@@ -32,26 +36,30 @@ func NewDefaultPolicy() *Policy {
 
 // Policy 权限策略
 type Policy struct {
-	ID        string     `bson:"_id" json:"id"`                // 策略ID
-	CreateAt  ftime.Time `bson:"create_at" json:"create_at"`   // 创建时间
-	UpdateAt  ftime.Time `bson:"update_at" json:"update_at"`   // 更新时间
-	CreaterID string     `bson:"creater_id" json:"creater_id"` // 创建者ID
-	UserType  user.Type  `bson:"user_type" json:"user_type"`   // 用户类型
-
+	ID                   string     `bson:"_id" json:"id"`                // 策略ID
+	CreateAt             ftime.Time `bson:"create_at" json:"create_at"`   // 创建时间
+	UpdateAt             ftime.Time `bson:"update_at" json:"update_at"`   // 更新时间
+	DomainID             string     `bson:"domain_id" json:"domain_id"`   // 策略所属域
+	CreaterID            string     `bson:"creater_id" json:"creater_id"` // 创建者ID
+	UserType             user.Type  `bson:"user_type" json:"user_type"`   // 用户类型
 	*CreatePolicyRequest `bson:",inline"`
 }
 
 // NewCreatePolicyRequest 请求实例
 func NewCreatePolicyRequest() *CreatePolicyRequest {
-	return &CreatePolicyRequest{}
+	return &CreatePolicyRequest{
+		Session: token.NewSession(),
+	}
 }
 
 // CreatePolicyRequest 创建策略的请求
 type CreatePolicyRequest struct {
-	UserID      string      `bson:"user_id" json:"user_id" validate:"required,lte=120"`    // 用户ID
-	RoleName    string      `bson:"role_name" json:"role_name" validate:"required,lte=40"` // 角色名称
-	ExpiredTime *ftime.Time `bson:"expired_time" json:"expired_time"`                      // 策略过期时间
-	Namespace   string      `bson:"namespace" json:"namespace" validate:"lte=120"`         // 范围
+	*token.Session `bson:"-" json:"-"`
+	Namespace      string      `bson:"namespace" json:"namespace" validate:"lte=120"`         // 范围
+	UserID         string      `bson:"user_id" json:"user_id" validate:"required,lte=120"`    // 用户ID
+	RoleName       string      `bson:"role_name" json:"role_name" validate:"required,lte=40"` // 角色名称
+	Scope          string      `bson:"scope" json:"scope"`                                    // 范围控制
+	ExpiredTime    *ftime.Time `bson:"expired_time" json:"expired_time"`                      // 策略过期时间
 }
 
 // Validate 校验请求合法

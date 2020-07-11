@@ -3,8 +3,10 @@ package role
 import (
 	"fmt"
 
+	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/types/ftime"
+	"github.com/rs/xid"
 )
 
 const (
@@ -18,10 +20,14 @@ func New(t Type, req *CreateRoleRequest) (*Role, error) {
 		return nil, err
 	}
 
+	tk := req.GetToken()
+
 	return &Role{
+		ID:                xid.New().String(),
 		Type:              t,
 		CreateAt:          ftime.Now(),
 		UpdateAt:          ftime.Now(),
+		CreaterID:         tk.UserID,
 		CreateRoleRequest: req,
 	}, nil
 }
@@ -39,19 +45,24 @@ type Role struct {
 	Type               Type       `bson:"type" json:"type"`                     // 角色类型
 	CreateAt           ftime.Time `bson:"create_at" json:"create_at,omitempty"` // 创建时间`
 	UpdateAt           ftime.Time `bson:"update_at" json:"update_at,omitempty"` // 更新时间
+	CreaterID          string     `bson:"creater_id" json:"creater_id"`         // 创建人
 	*CreateRoleRequest `bson:",inline"`
 }
 
 // NewCreateRoleRequest 实例化请求
 func NewCreateRoleRequest() *CreateRoleRequest {
-	return &CreateRoleRequest{}
+	return &CreateRoleRequest{
+		Session:     token.NewSession(),
+		Permissions: []*Permission{},
+	}
 }
 
 // CreateRoleRequest 创建应用请求
 type CreateRoleRequest struct {
-	Name        string        `bson:"name" json:"name,omitempty" validate:"required,lte=30"`       // 应用名称
-	Description string        `bson:"description" json:"description,omitempty" validate:"lte=400"` // 应用简单的描述
-	Permissions []*Permission `bson:"permissions" json:"permissions,omitempty"`                    // 读权限
+	*token.Session `bson:"-" json:"-"`
+	Name           string        `bson:"name" json:"name,omitempty" validate:"required,lte=30"`       // 应用名称
+	Description    string        `bson:"description" json:"description,omitempty" validate:"lte=400"` // 应用简单的描述
+	Permissions    []*Permission `bson:"permissions" json:"permissions,omitempty"`                    // 读权限
 }
 
 // Validate 请求校验

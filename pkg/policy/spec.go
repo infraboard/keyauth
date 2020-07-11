@@ -12,7 +12,7 @@ var (
 
 // Service 策略服务
 type Service interface {
-	CreatePolicy(createrID string, req *CreatePolicyRequest) (*Policy, error)
+	CreatePolicy(req *CreatePolicyRequest) (*Policy, error)
 	QueryPolicy(req *QueryPolicyRequest) (*Set, error)
 }
 
