@@ -90,12 +90,19 @@ func (s *Set) Add(item *Role) {
 	s.Items = append(s.Items, item)
 }
 
+// NewDefaultPermission todo
+func NewDefaultPermission() *Permission {
+	return &Permission{
+		Effect: Allow,
+	}
+}
+
 // Permission 权限
 type Permission struct {
 	Effect       EffectType `bson:"effect" json:"effect,omitempty"`               // 效力
 	ResourceName string     `bson:"resource_name" json:"resource_name,omitempty"` // 资源列表
-	LabelKey     string     `bson:"label_key" json:"label_key,omitempty"`
-	LabelValues  []string   `bson:"label_values" json:"label_values,omitempty"` // 标识
+	LabelKey     string     `bson:"label_key" json:"label_key,omitempty"`         // 维度
+	LabelValues  []string   `bson:"label_values" json:"label_values,omitempty"`   // 标识值
 }
 
 // ID 计算唯一ID

@@ -11,6 +11,7 @@ import (
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/application"
 	"github.com/infraboard/keyauth/pkg/domain"
+	"github.com/infraboard/keyauth/pkg/role"
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
 )
@@ -115,6 +116,7 @@ type Initialer struct {
 	domainDesc string
 	username   string
 	password   string
+	tk         *token.Token
 }
 
 // Run 执行初始化
@@ -201,6 +203,28 @@ func (i *Initialer) initApp(ownerID string) ([]*application.Application, error) 
 
 	apps := []*application.Application{web, svr}
 	return apps, nil
+}
+
+func (i *Initialer) initRole() ([]*role.Role, error) {
+	perm := role.NewDefaultPermission()
+	perm.ResourceName = "*"
+	perm.LabelKey = "*"
+	perm.LabelValues = []string{"*"}
+
+	req := role.NewCreateRoleRequest()
+	req.Name = "system_admin"
+	req.Description = "系统管理员, 有系统所有功能的访问权限"
+	req.Permissions = []*role.Permission{}
+	sysAdmin, err := pkg.Role.CreateRole(role.BuildInType, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return []*role.Role{sysAdmin}, nil
+}
+
+func (i *Initialer) getAdminToken() {
+
 }
 
 func init() {

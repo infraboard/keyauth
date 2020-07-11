@@ -35,9 +35,6 @@ func (s *service) Config() error {
 	if err := s.configService(); err != nil {
 		return err
 	}
-	if err := s.configFeature(); err != nil {
-		return err
-	}
 	return nil
 }
 
@@ -75,29 +72,6 @@ func (s *service) configService() error {
 	}
 	s.user = pkg.User
 
-	return nil
-}
-
-func (s *service) configFeature() error {
-	db := conf.C().Mongo.GetDB()
-	fc := db.Collection("feature")
-	fIndexs := []mongo.IndexModel{
-		{
-			Keys: bsonx.Doc{
-				{Key: "service_name", Value: bsonx.Int32(-1)},
-				{Key: "path", Value: bsonx.Int32(-1)},
-			},
-			Options: options.Index().SetUnique(true),
-		},
-		{
-			Keys: bsonx.Doc{{Key: "create_at", Value: bsonx.Int32(-1)}},
-		},
-	}
-	_, err := fc.Indexes().CreateMany(context.Background(), fIndexs)
-	if err != nil {
-		return err
-	}
-	s.fcol = fc
 	return nil
 }
 
