@@ -12,10 +12,12 @@ import (
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/application"
 	"github.com/infraboard/keyauth/pkg/domain"
+	"github.com/infraboard/keyauth/pkg/micro"
 	"github.com/infraboard/keyauth/pkg/role"
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
 	"github.com/infraboard/keyauth/pkg/user/types"
+	"github.com/infraboard/keyauth/version"
 )
 
 // InitCmd 初始化系统
@@ -160,6 +162,12 @@ func (i *Initialer) Run() error {
 		fmt.Printf("初始化角色: %s [成功]\n", roles[index].Name)
 	}
 
+	svr, err := i.initService()
+	if err != nil {
+		return err
+	}
+	fmt.Printf("初始化服务: %s   [成功]\n", svr.Name)
+
 	return nil
 }
 
@@ -265,6 +273,15 @@ func (i *Initialer) initRole() ([]*role.Role, error) {
 	}
 
 	return []*role.Role{adminRole, vistorRole}, nil
+}
+
+func (i *Initialer) initService() (*micro.Micro, error) {
+	req := micro.NewCreateMicroRequest()
+	req.WithToken(i.tk)
+	req.Name = version.ServiceName
+	req.Description = version.Description
+	req.Label = map[string]string{"type": "build_in"}
+	return pkg.Micro.CreateService(req)
 }
 
 func init() {

@@ -16,6 +16,11 @@ import (
 
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
+	"github.com/infraboard/keyauth/pkg/endpoint"
+	"github.com/infraboard/keyauth/pkg/micro"
+	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/user/types"
+	"github.com/infraboard/keyauth/version"
 )
 
 // NewHTTPService 构建函数
@@ -60,6 +65,12 @@ func (s *HTTPService) Start() error {
 		return err
 	}
 
+	// 注册服务
+	if err := s.RegistryEndpoints(); err != nil {
+		s.l.Warnf("registry endpoints error, %s", err)
+	}
+	s.l.Infof("service endpoints registry success: %s", s.r.GetEndpoints())
+
 	// 启动HTTP服务
 	s.l.Infof("服务启动成功, 监听地址: %s", s.server.Addr)
 	if err := s.server.ListenAndServe(); err != nil {
@@ -86,7 +97,28 @@ func (s *HTTPService) Stop() error {
 	return nil
 }
 
-// Endpoints 服务所有的路由条目, 供服务注册时使用
-func (s *HTTPService) Endpoints() *router.EntrySet {
-	return s.r.GetEndpoints()
+// RegistryEndpoints 注册条目
+func (s *HTTPService) RegistryEndpoints() error {
+	if pkg.Micro == nil {
+		return fmt.Errorf("dependence micro service is nil")
+	}
+
+	desc := micro.NewDescriptServiceRequest()
+	desc.Name = version.ServiceName
+	svr, err := pkg.Micro.DescribeService(desc)
+	if err != nil {
+		return err
+	}
+
+	if pkg.Endpoint == nil {
+		return fmt.Errorf("dependence endpoint service is nil")
+	}
+
+	tk := token.NewDefaultToken()
+	tk.AccessToken = svr.AccessToken
+	tk.RefreshToken = svr.RefreshToken
+	tk.UserType = types.ServiceAccount
+	req := endpoint.NewRegistryRequest(version.Short(), s.r.GetEndpoints().Items)
+	req.WithToken(tk)
+	return pkg.Endpoint.Registry(req)
 }

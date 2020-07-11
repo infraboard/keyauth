@@ -3,6 +3,7 @@ package http
 import (
 	"errors"
 
+	"github.com/infraboard/mcube/http/label"
 	"github.com/infraboard/mcube/http/router"
 
 	"github.com/infraboard/keyauth/pkg"
@@ -22,11 +23,11 @@ func (h *handler) Registry(router router.SubRouter) {
 	domainRouter := router.ResourceRouter("domain")
 	domainRouter.BasePath("domains")
 	domainRouter.Permission(true)
-	domainRouter.Handle("POST", "/", h.CreateDomain)
-	domainRouter.Handle("GET", "/", h.ListDomains)
-	domainRouter.Handle("GET", "/:id", h.GetDomain)
-	domainRouter.Handle("PUT", "/:id", h.UpdateDomain)
-	domainRouter.Handle("DELETE", "/:id", h.DeleteDomain)
+	domainRouter.Handle("POST", "/", h.CreateDomain).AddLabel(label.Create)
+	domainRouter.Handle("GET", "/", h.ListDomains).AddLabel(label.List)
+	domainRouter.Handle("GET", "/:id", h.GetDomain).AddLabel(label.Get)
+	domainRouter.Handle("PUT", "/:id", h.UpdateDomain).AddLabel(label.Update)
+	domainRouter.Handle("DELETE", "/:id", h.DeleteDomain).AddLabel(label.Delete)
 }
 
 func (h *handler) Config() error {

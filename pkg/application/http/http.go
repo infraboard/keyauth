@@ -3,6 +3,7 @@ package http
 import (
 	"errors"
 
+	"github.com/infraboard/mcube/http/label"
 	"github.com/infraboard/mcube/http/router"
 
 	"github.com/infraboard/keyauth/pkg"
@@ -22,10 +23,10 @@ func (h *handler) Registry(router router.SubRouter) {
 	appRouter := router.ResourceRouter("application")
 	appRouter.BasePath("applications")
 	appRouter.Permission(true)
-	appRouter.Handle("POST", "/", h.CreateUserApplication)
-	appRouter.Handle("GET", "/", h.QueryUserApplication)
-	appRouter.Handle("GET", "/:id", h.GetApplication)
-	appRouter.Handle("DELETE", "/:id", h.DestroyApplication)
+	appRouter.Handle("POST", "/", h.CreateUserApplication).AddLabel(label.Create)
+	appRouter.Handle("GET", "/", h.QueryUserApplication).AddLabel(label.List)
+	appRouter.Handle("GET", "/:id", h.GetApplication).AddLabel(label.Get)
+	appRouter.Handle("DELETE", "/:id", h.DestroyApplication).AddLabel(label.Delete)
 
 }
 

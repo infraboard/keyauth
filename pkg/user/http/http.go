@@ -3,6 +3,7 @@ package http
 import (
 	"errors"
 
+	"github.com/infraboard/mcube/http/label"
 	"github.com/infraboard/mcube/http/router"
 
 	"github.com/infraboard/keyauth/pkg"
@@ -22,13 +23,13 @@ func (h *handler) Registry(router router.SubRouter) {
 	prmaryRouter := router.ResourceRouter("primary_account")
 	prmaryRouter.BasePath("users")
 	prmaryRouter.Permission(true)
-	prmaryRouter.Handle("POST", "/", h.CreatePrimayAccount)
-	prmaryRouter.Handle("DELETE", "/", h.DestroyPrimaryAccount)
+	prmaryRouter.Handle("POST", "/", h.CreatePrimayAccount).AddLabel(label.Create)
+	prmaryRouter.Handle("DELETE", "/", h.DestroyPrimaryAccount).AddLabel(label.Delete)
 
 	ramRouter := router.ResourceRouter("ram_account")
 	ramRouter.Permission(true)
 	ramRouter.BasePath("domains/:did/users")
-	ramRouter.Handle("POST", "/", h.CreateSubAccount)
+	ramRouter.Handle("POST", "/", h.CreateSubAccount).AddLabel(label.Create)
 }
 
 func (h *handler) Config() error {

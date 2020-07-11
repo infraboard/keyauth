@@ -4,6 +4,8 @@ import (
 	"context"
 
 	"github.com/infraboard/mcube/exception"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/infraboard/keyauth/pkg/endpoint"
 )
@@ -44,13 +46,23 @@ func (s *service) Registry(req *endpoint.RegistryRequest) error {
 	}
 
 	endpoints := req.Endpoints()
-	many := make([]interface{}, 0, len(endpoints))
+	// 更新已有的记录
+	news := make([]interface{}, 0, len(endpoints))
 	for i := range endpoints {
-		many = append(many, endpoints[i])
+		if err := s.col.FindOneAndReplace(context.TODO(), bson.M{"_id": endpoints[i].ID}, endpoints[i]).Err(); err != nil {
+			if err == mongo.ErrNoDocuments {
+				news = append(news, endpoints[i])
+			} else {
+				return err
+			}
+		}
 	}
 
-	if _, err := s.col.InsertMany(context.TODO(), many); err != nil {
-		return exception.NewInternalServerError("inserted a service document error, %s", err)
+	// 插入新增记录
+	if len(news) > 0 {
+		if _, err := s.col.InsertMany(context.TODO(), news); err != nil {
+			return exception.NewInternalServerError("inserted a service document error, %s", err)
+		}
 	}
 
 	return nil

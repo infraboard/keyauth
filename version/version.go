@@ -7,6 +7,9 @@ import (
 const (
 	// ServiceName 服务名称
 	ServiceName = "keyauth"
+
+	// Description 服务描述
+	Description = "微服务权限中心"
 )
 
 var (
@@ -25,5 +28,9 @@ func FullVersion() string {
 
 // Short 版本缩写
 func Short() string {
-	return fmt.Sprintf("%s[%s %s]", GIT_TAG, BUILD_TIME, GIT_COMMIT[:8])
+	commit := ""
+	if len(GIT_COMMIT) > 8 {
+		commit = GIT_COMMIT[:8]
+	}
+	return fmt.Sprintf("%s[%s %s]", GIT_TAG, GIT_BRANCH, commit)
 }

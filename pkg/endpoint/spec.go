@@ -24,11 +24,11 @@ type Service interface {
 }
 
 // NewRegistryRequest 注册请求
-func NewRegistryRequest(name, version string, entries []*router.Entry) *RegistryRequest {
+func NewRegistryRequest(version string, entries []*router.Entry) *RegistryRequest {
 	return &RegistryRequest{
-		Service: name,
 		Version: version,
 		Entries: entries,
+		Session: token.NewSession(),
 	}
 }
 
@@ -43,14 +43,21 @@ func NewDefaultRegistryRequest() *RegistryRequest {
 // RegistryRequest 服务注册请求
 type RegistryRequest struct {
 	*token.Session
-	Service string          `json:"service" validate:"required,lte=64"`
-	Version string          `json:"version" validate:"lte=32"`
+	Version string          `json:"version" validate:"required,lte=32"`
 	Entries []*router.Entry `json:"entries"`
 }
 
 // Validate 校验注册请求合法性
 func (req *RegistryRequest) Validate() error {
+	if len(req.Entries) == 0 {
+		return fmt.Errorf("must require *router.Entry")
+	}
+
 	tk := req.GetToken()
+	if tk == nil {
+		return fmt.Errorf("token required when service endpoints registry")
+	}
+
 	if !tk.UserType.Is(types.ServiceAccount) {
 		return fmt.Errorf("only service account can registry endpoints")
 	}
@@ -62,14 +69,14 @@ func (req *RegistryRequest) Validate() error {
 func (req *RegistryRequest) Endpoints() []*Endpoint {
 	eps := make([]*Endpoint, 0, len(req.Entries))
 	for i := range req.Entries {
-		et := req.Entries[i]
-		eps = append(eps, &Endpoint{
+		ep := &Endpoint{
 			CreateAt: ftime.Now(),
 			UpdateAt: ftime.Now(),
-			Service:  req.Service,
 			Version:  req.Version,
-			Entry:    *et,
-		})
+			Entry:    *req.Entries[i],
+		}
+		ep.GenID()
+		eps = append(eps, ep)
 	}
 	return eps
 }

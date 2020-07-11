@@ -3,6 +3,7 @@ package http
 import (
 	"errors"
 
+	"github.com/infraboard/mcube/http/label"
 	"github.com/infraboard/mcube/http/router"
 
 	"github.com/infraboard/keyauth/pkg"
@@ -26,7 +27,7 @@ func (h *handler) Registry(router router.SubRouter) {
 	r.Handle("DELETE", "/", h.RevolkToken)
 
 	r.BasePath("/applications/:id")
-	r.Handle("GET", "/tokens", h.QueryApplicationToken)
+	r.Handle("GET", "/tokens", h.QueryApplicationToken).AddLabel(label.List)
 }
 
 func (h *handler) Config() error {

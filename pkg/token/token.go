@@ -48,6 +48,11 @@ var (
 	validate = validator.New()
 )
 
+// NewDefaultToken todo
+func NewDefaultToken() *Token {
+	return &Token{}
+}
+
 // Token is user's access resource token
 type Token struct {
 	AccessToken      string     `bson:"_id" json:"access_token"`                                // 服务访问令牌
@@ -70,6 +75,10 @@ type Token struct {
 
 // CheckAccessIsExpired 检测token是否过期
 func (t *Token) CheckAccessIsExpired() bool {
+	if t.AccessExpiredAt.Timestamp() == 0 {
+		return false
+	}
+
 	return t.AccessExpiredAt.T().Before(time.Now())
 }
 
