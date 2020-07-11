@@ -85,7 +85,7 @@ function main() {
     BRANCH=$(get_branch)
     COMMIT=$(get_commit)
     DATE=$(date '+%Y-%m-%d %H:%M:%S')
-    Path="keyauth/version"
+    Path="github.com/infraboard/keyauth/version"
     _version "构建版本的时间(Build Time): $DATE"
     _version "当前构建的版本(Git   Tag ): $TAG"
     _version "当前构建的分支(Git Branch): $BRANCH"
