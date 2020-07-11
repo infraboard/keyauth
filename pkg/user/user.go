@@ -4,11 +4,15 @@ import (
 	"fmt"
 
 	"github.com/go-playground/validator/v10"
+
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/types/ftime"
 	"github.com/rs/xid"
 	"golang.org/x/crypto/bcrypt"
+
+	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
 // use a single instance of Validate, it caches struct info
@@ -48,7 +52,8 @@ type User struct {
 	ID                 string     `bson:"_id" json:"id,omitempty"`              // 用户UUID
 	CreateAt           ftime.Time `bson:"create_at" json:"create_at,omitempty"` // 用户创建的时间
 	UpdateAt           ftime.Time `bson:"update_at" json:"update_at,omitempty"` // 修改时间
-	Type               Type       `bson:"type"  json:"type"`                    // 是否是主账号
+	DomainID           string     `bson:"domain_id" json:"domain_id,omitempty"` // 如果是子账号和服务账号 都需要继承主用户Domain
+	Type               types.Type `bson:"type"  json:"type"`                    // 是否是主账号
 	*CreateUserRequest `bson:",inline"`
 
 	HashedPassword *Password `bson:"password" json:"password,omitempty"` // 密码相关信息
@@ -64,6 +69,7 @@ func (u *User) Block(reason string) {
 
 // CreateUserRequest 创建用户请求
 type CreateUserRequest struct {
+	*token.Session
 	Account     string `bson:"account" json:"account,omitempty" validate:"required,lte=60"` // 用户账号名称
 	Mobile      string `bson:"mobile" json:"mobile,omitempty" validate:"lte=30"`            // 手机号码, 用户可以通过手机进行注册和密码找回, 还可以通过手机号进行登录
 	Email       string `bson:"email" json:"email,omitempty" validate:"lte=30"`              // 邮箱, 用户可以通过邮箱进行注册和照明密码

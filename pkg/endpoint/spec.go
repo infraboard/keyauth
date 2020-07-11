@@ -1,10 +1,15 @@
 package endpoint
 
 import (
+	"fmt"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/router"
 	"github.com/infraboard/mcube/types/ftime"
+
+	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
 // use a single instance of Validate, it caches struct info
@@ -21,21 +26,35 @@ type Service interface {
 // NewRegistryRequest 注册请求
 func NewRegistryRequest(name, version string, entries []*router.Entry) *RegistryRequest {
 	return &RegistryRequest{
-		ServiceName:    name,
-		ServiceVersion: version,
-		Entries:        entries,
+		Service: name,
+		Version: version,
+		Entries: entries,
+	}
+}
+
+// NewDefaultRegistryRequest todo
+func NewDefaultRegistryRequest() *RegistryRequest {
+	return &RegistryRequest{
+		Session: token.NewSession(),
+		Entries: []*router.Entry{},
 	}
 }
 
 // RegistryRequest 服务注册请求
 type RegistryRequest struct {
-	ServiceName    string          `json:"service_name" validate:"required,lte=64"`
-	ServiceVersion string          `json:"service_version" validate:"lte=32"`
-	Entries        []*router.Entry `json:"entries"`
+	*token.Session
+	Service string          `json:"service" validate:"required,lte=64"`
+	Version string          `json:"version" validate:"lte=32"`
+	Entries []*router.Entry `json:"entries"`
 }
 
 // Validate 校验注册请求合法性
 func (req *RegistryRequest) Validate() error {
+	tk := req.GetToken()
+	if !tk.UserType.Is(types.ServiceAccount) {
+		return fmt.Errorf("only service account can registry endpoints")
+	}
+
 	return validate.Struct(req)
 }
 
@@ -45,11 +64,11 @@ func (req *RegistryRequest) Endpoints() []*Endpoint {
 	for i := range req.Entries {
 		et := req.Entries[i]
 		eps = append(eps, &Endpoint{
-			CreateAt:       ftime.Now(),
-			UpdateAt:       ftime.Now(),
-			ServiceName:    req.ServiceName,
-			ServiceVersion: req.ServiceVersion,
-			Entry:          *et,
+			CreateAt: ftime.Now(),
+			UpdateAt: ftime.Now(),
+			Service:  req.Service,
+			Version:  req.Version,
+			Entry:    *et,
 		})
 	}
 	return eps

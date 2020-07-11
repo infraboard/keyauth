@@ -8,6 +8,7 @@ import (
 	"github.com/infraboard/mcube/http/response"
 
 	"github.com/infraboard/keyauth/pkg/user"
+	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
 // CreatePrimayAccount 创建主账号
@@ -18,7 +19,7 @@ func (h *handler) CreatePrimayAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	d, err := h.service.CreatePrimayAccount(req)
+	d, err := h.service.CreateAccount(types.PrimaryAccount, req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -32,7 +33,7 @@ func (h *handler) CreatePrimayAccount(w http.ResponseWriter, r *http.Request) {
 func (h *handler) DestroyPrimaryAccount(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
 
-	if err := h.service.DeletePrimaryAccount(rctx.PS.ByName("id")); err != nil {
+	if err := h.service.DeleteAccount(rctx.PS.ByName("id")); err != nil {
 		response.Failed(w, err)
 		return
 	}

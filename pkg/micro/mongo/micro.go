@@ -12,6 +12,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/micro"
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
+	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
 func (s *service) CreateService(req *micro.CreateMicroRequest) (
@@ -23,7 +24,7 @@ func (s *service) CreateService(req *micro.CreateMicroRequest) (
 
 	user, pass := ins.Name, xid.New().String()
 	// 创建服务用户
-	account, err := s.createServiceAccount(user, pass)
+	account, err := s.createServiceAccount(req.GetToken(), user, pass)
 	if err != nil {
 		return nil, exception.NewInternalServerError("create service account error, %s", err)
 	}
@@ -44,11 +45,12 @@ func (s *service) CreateService(req *micro.CreateMicroRequest) (
 	return ins, nil
 }
 
-func (s *service) createServiceAccount(name, pass string) (*user.User, error) {
+func (s *service) createServiceAccount(tk *token.Token, name, pass string) (*user.User, error) {
 	req := user.NewCreateUserRequest()
+	req.WithToken(tk)
 	req.Account = name
 	req.Password = pass
-	return s.user.CreateServiceAccount(req)
+	return s.user.CreateAccount(types.ServiceAccount, req)
 }
 
 func (s *service) createServiceToken(user, pass string) (*token.Token, error) {

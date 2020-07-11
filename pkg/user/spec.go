@@ -5,57 +5,25 @@ import (
 	"fmt"
 
 	"github.com/infraboard/mcube/http/request"
+
+	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
 // Service 用户服务
 type Service interface {
-	BaseService
-	SupperAccountService
-	ServiceAccountService
-	PrimaryAccountService
-	SubAccountService
-}
-
-// BaseService 基础功能
-type BaseService interface {
+	// 查询用户
+	QueryAccount(types.Type, *QueryAccountRequest) (*Set, error)
+	// 创建用户
+	CreateAccount(types.Type, *CreateUserRequest) (*User, error)
 	// 更新用户密码
 	UpdateAccountPassword(userName, oldPass, newPass string) error
 	// 获取账号Profile
 	DescribeAccount(req *DescriptAccountRequest) (*User, error)
-
 	// 警用账号
 	BlockAccount(id, reason string) error
-}
-
-// SupperAccountService 超级管理员账号
-type SupperAccountService interface {
-	// 新建主账号
-	CreateSupperAccount(req *CreateUserRequest) (*User, error)
-	// 查询超级账号列表
-	QuerySupperAccount(req *QueryAccountRequest) (*Set, error)
-}
-
-// ServiceAccountService 服务账号
-type ServiceAccountService interface {
-	CreateServiceAccount(req *CreateUserRequest) (*User, error)
-}
-
-// PrimaryAccountService 主账号服务
-type PrimaryAccountService interface {
-	// 新建主账号
-	CreatePrimayAccount(req *CreateUserRequest) (*User, error)
-	// 注销主账号
-	DeletePrimaryAccount(userID string) error
-}
-
-// SubAccountService 子账号服务
-type SubAccountService interface {
-	// CreateRAMAccount RAM (Resource Access Management)提供的用户身份管理与访问控制服务
-	CreateSubAccount(domainID string, req *CreateUserRequest) (*User, error)
-	// 注销子账号
-	DeleteSubAccount(userID string) error
-	// 查询子账号
-	QuerySubAccount(req *QueryAccountRequest) (*Set, error)
+	// DeleteAccount 删除用户
+	DeleteAccount(id string) error
 }
 
 // NewDescriptAccountRequest 查询详情请求
@@ -105,5 +73,7 @@ type QueryAccountRequest struct {
 
 // NewCreateUserRequest 创建请求
 func NewCreateUserRequest() *CreateUserRequest {
-	return &CreateUserRequest{}
+	return &CreateUserRequest{
+		Session: token.NewSession(),
+	}
 }

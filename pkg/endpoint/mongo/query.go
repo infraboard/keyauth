@@ -30,7 +30,7 @@ func (req *describeEndpointRequest) FindFilter() bson.M {
 	return filter
 }
 
-func newQueryRequest(req *endpoint.QueryEndpointRequest) *queryEndpointRequest {
+func newQueryEndpointRequest(req *endpoint.QueryEndpointRequest) *queryEndpointRequest {
 	return &queryEndpointRequest{req}
 }
 

@@ -15,6 +15,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/role"
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
+	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
 // InitCmd 初始化系统
@@ -164,7 +165,7 @@ func (i *Initialer) Run() error {
 
 func (i *Initialer) checkIsInit() error {
 	req := user.NewQueryAccountRequest(request.NewPageRequest(20, 1))
-	userSet, err := pkg.User.QuerySupperAccount(req)
+	userSet, err := pkg.User.QueryAccount(types.SupperAccount, req)
 	if err != nil {
 		return err
 	}
@@ -179,7 +180,7 @@ func (i *Initialer) initUser() (*user.User, error) {
 	req := user.NewCreateUserRequest()
 	req.Account = i.username
 	req.Password = i.password
-	return pkg.User.CreateSupperAccount(req)
+	return pkg.User.CreateAccount(types.SupperAccount, req)
 }
 
 func (i *Initialer) initDomain(ownerID string) (*domain.Domain, error) {

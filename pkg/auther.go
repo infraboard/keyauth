@@ -10,7 +10,7 @@ import (
 	"github.com/infraboard/mcube/http/router"
 
 	"github.com/infraboard/keyauth/pkg/token"
-	"github.com/infraboard/keyauth/pkg/user"
+	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
 // NewInternalAuther 内部使用的auther
@@ -42,7 +42,7 @@ func (i *internal) Auth(r *http.Request, entry router.Entry) (
 
 	if entry.PermissionEnable && tk != nil {
 		// 如果是超级管理员不做权限校验, 直接放行
-		if tk.UserType.Is(user.SupperAccount) {
+		if tk.UserType.Is(types.SupperAccount) {
 			return tk, nil
 		}
 
@@ -50,7 +50,7 @@ func (i *internal) Auth(r *http.Request, entry router.Entry) (
 		// 如果开启权限认证都需要检查
 	}
 
-	return nil, nil
+	return tk, nil
 }
 
 // parseBasicAuth parses an HTTP Basic Authentication string.
@@ -75,6 +75,12 @@ func parseBasicAuth(auth string) (username, password string, ok bool) {
 
 // GetTokenFromContext 从上下文中获取Token
 func GetTokenFromContext(r *http.Request) (*token.Token, error) {
+	ctx := context.GetContext(r)
+
+	if ctx.AuthInfo == nil {
+		return nil, exception.NewInternalServerError("authInfo is not in request context, please check auth middleware")
+	}
+
 	tk, ok := context.GetContext(r).AuthInfo.(*token.Token)
 	if !ok {
 		return nil, exception.NewInternalServerError("authInfo is not token pointer")

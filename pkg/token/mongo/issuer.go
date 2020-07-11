@@ -12,6 +12,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/domain"
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
+	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
 func (s *service) newTokenIssuer(req *token.IssueTokenRequest) (*TokenIssuer, error) {
@@ -87,10 +88,16 @@ func (i *TokenIssuer) IssueToken() (*token.Token, error) {
 		}
 
 		tk := i.issueUserToken(app, u)
-		err := i.setTokenDomain(tk)
-		if err != nil {
-			return nil, fmt.Errorf("set token domain error, %s", err)
+		switch u.Type {
+		case types.SupperAccount, types.PrimaryAccount:
+			err := i.setTokenDomain(tk)
+			if err != nil {
+				return nil, fmt.Errorf("set token domain error, %s", err)
+			}
+		case types.ServiceAccount, types.SubAccount:
+			tk.DomainID = u.DomainID
 		}
+
 		return tk, nil
 	case token.REFRESH:
 		descReq := newDescribeTokenRequestWithRefresh(i.RefreshToken)
@@ -152,19 +159,27 @@ func (i *TokenIssuer) refreshToken(tk *token.Token) {
 
 func (i *TokenIssuer) newBearToken(app *application.Application) *token.Token {
 	now := time.Now()
-	accessExpire := now.Add(time.Duration(app.AccessTokenExpireSecond) * time.Second)
-	refreshExpir := now.Add(time.Duration(app.RefreshTokenExpiredSecond) * time.Second)
-	return &token.Token{
-		Type:             token.Bearer,
-		AccessToken:      token.MakeBearer(24),
-		RefreshToken:     token.MakeBearer(32),
-		CreatedAt:        ftime.T(now),
-		ClientID:         i.ClientID,
-		GrantType:        i.GrantType,
-		AccessExpiredAt:  ftime.T(accessExpire),
-		RefreshExpiredAt: ftime.T(refreshExpir),
-		ApplicationID:    app.ID,
+	tk := &token.Token{
+		Type:          token.Bearer,
+		AccessToken:   token.MakeBearer(24),
+		RefreshToken:  token.MakeBearer(32),
+		CreatedAt:     ftime.T(now),
+		ClientID:      i.ClientID,
+		GrantType:     i.GrantType,
+		ApplicationID: app.ID,
 	}
+
+	if app.AccessTokenExpireSecond != 0 {
+		accessExpire := now.Add(time.Duration(app.AccessTokenExpireSecond) * time.Second)
+		tk.AccessExpiredAt = ftime.T(accessExpire)
+	}
+
+	if app.RefreshTokenExpiredSecond != 0 {
+		refreshExpir := now.Add(time.Duration(app.RefreshTokenExpiredSecond) * time.Second)
+		tk.RefreshExpiredAt = ftime.T(refreshExpir)
+	}
+
+	return tk
 }
 
 func newClientChecker(app application.Service) *clientChecker {

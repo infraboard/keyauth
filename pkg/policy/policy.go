@@ -4,10 +4,11 @@ import (
 	"crypto/sha1"
 	"fmt"
 
-	"github.com/infraboard/keyauth/pkg/token"
-	"github.com/infraboard/keyauth/pkg/user"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/types/ftime"
+
+	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
 // New 新实例
@@ -41,7 +42,7 @@ type Policy struct {
 	UpdateAt             ftime.Time `bson:"update_at" json:"update_at"`   // 更新时间
 	DomainID             string     `bson:"domain_id" json:"domain_id"`   // 策略所属域
 	CreaterID            string     `bson:"creater_id" json:"creater_id"` // 创建者ID
-	UserType             user.Type  `bson:"user_type" json:"user_type"`   // 用户类型
+	UserType             types.Type `bson:"user_type" json:"user_type"`   // 用户类型
 	*CreatePolicyRequest `bson:",inline"`
 }
 

@@ -12,7 +12,7 @@ type Service interface {
 	IssueToken(req *IssueTokenRequest) (*Token, error)
 	ValidateToken(req *ValidateTokenRequest) (*Token, error)
 	RevolkToken(req *RevolkTokenRequest) error
-	QueryToken(req *QueryTokenRequest) (*TokenSet, error)
+	QueryToken(req *QueryTokenRequest) (*Set, error)
 }
 
 // NewIssueTokenRequest 默认请求

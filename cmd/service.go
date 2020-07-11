@@ -24,6 +24,7 @@ import (
 	_ "github.com/infraboard/keyauth/pkg/department/mongo"
 	_ "github.com/infraboard/keyauth/pkg/domain/http"
 	_ "github.com/infraboard/keyauth/pkg/domain/mongo"
+	_ "github.com/infraboard/keyauth/pkg/endpoint/http"
 	_ "github.com/infraboard/keyauth/pkg/endpoint/mongo"
 	_ "github.com/infraboard/keyauth/pkg/micro/http"
 	_ "github.com/infraboard/keyauth/pkg/micro/mongo"

@@ -5,9 +5,10 @@ import (
 	"time"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/infraboard/keyauth/pkg/user"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/types/ftime"
+
+	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
 // GrantType is the type for OAuth2 param `grant_type`
@@ -55,16 +56,16 @@ type Token struct {
 	AccessExpiredAt  ftime.Time `bson:"access_expired_at" json:"access_expires_at,omitempty"`   // 还有多久过期
 	RefreshExpiredAt ftime.Time `bson:"refresh_expired_at" json:"refresh_expired_at,omitempty"` // 刷新token过期时间
 
-	DomainID      string    `bson:"domain_id" json:"domain_id,omitempty"`           // 用户所处域ID
-	UserType      user.Type `bson:"user_type" json:"user_type,omitempty"`           // 用户类型
-	UserID        string    `bson:"user_id" json:"user_id,omitempty"`               // 用户ID
-	Account       string    `bson:"account" json:"account,omitempty"`               // 账户名称
-	ApplicationID string    `bson:"application_id" json:"application_id,omitempty"` // 用户应用ID, 如果凭证是颁发给应用的, 应用在删除时需要删除所有的令牌, 应用禁用时, 该应用令牌验证会不通过
-	ClientID      string    `bson:"client_id" json:"client_id,omitempty"`           // 客户端ID
-	GrantType     GrantType `bson:"grant_type" json:"grant_type,omitempty"`         // 授权的类型
-	Type          Type      `bson:"type" json:"type,omitempty"`                     // 令牌的类型 类型包含: bearer/jwt  (默认为bearer)
-	Scope         string    `bson:"scope" json:"scope,omitempty"`                   // 令牌的作用范围: detail https://tools.ietf.org/html/rfc6749#section-3.3, 格式 resource-ro@k=*, resource-rw@k=*
-	Description   string    `bson:"description" json:"description,omitempty"`       // 独立颁发给SDK使用时, 令牌的描述信息, 方便定位与取消
+	DomainID      string     `bson:"domain_id" json:"domain_id,omitempty"`           // 用户所处域ID
+	UserType      types.Type `bson:"user_type" json:"user_type,omitempty"`           // 用户类型
+	UserID        string     `bson:"user_id" json:"user_id,omitempty"`               // 用户ID
+	Account       string     `bson:"account" json:"account,omitempty"`               // 账户名称
+	ApplicationID string     `bson:"application_id" json:"application_id,omitempty"` // 用户应用ID, 如果凭证是颁发给应用的, 应用在删除时需要删除所有的令牌, 应用禁用时, 该应用令牌验证会不通过
+	ClientID      string     `bson:"client_id" json:"client_id,omitempty"`           // 客户端ID
+	GrantType     GrantType  `bson:"grant_type" json:"grant_type,omitempty"`         // 授权的类型
+	Type          Type       `bson:"type" json:"type,omitempty"`                     // 令牌的类型 类型包含: bearer/jwt  (默认为bearer)
+	Scope         string     `bson:"scope" json:"scope,omitempty"`                   // 令牌的作用范围: detail https://tools.ietf.org/html/rfc6749#section-3.3, 格式 resource-ro@k=*, resource-rw@k=*
+	Description   string     `bson:"description" json:"description,omitempty"`       // 独立颁发给SDK使用时, 令牌的描述信息, 方便定位与取消
 }
 
 // CheckAccessIsExpired 检测token是否过期
@@ -92,14 +93,14 @@ func (t *Token) Desensitize() {
 }
 
 // NewTokenSet 实例化
-func NewTokenSet(req *request.PageRequest) *TokenSet {
-	return &TokenSet{
+func NewTokenSet(req *request.PageRequest) *Set {
+	return &Set{
 		PageRequest: req,
 	}
 }
 
-// TokenSet token列表
-type TokenSet struct {
+// Set token列表
+type Set struct {
 	*request.PageRequest
 
 	Total int64    `json:"total"`
@@ -107,6 +108,6 @@ type TokenSet struct {
 }
 
 // Add 添加
-func (s *TokenSet) Add(tk *Token) {
+func (s *Set) Add(tk *Token) {
 	s.Items = append(s.Items, tk)
 }

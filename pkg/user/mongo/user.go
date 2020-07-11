@@ -5,36 +5,37 @@ import (
 	"fmt"
 
 	"github.com/infraboard/mcube/exception"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/infraboard/keyauth/pkg/user"
+	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
-func (s *service) queryAccount(req *queryRequest) (*user.Set, error) {
-	resp, err := s.col.Find(context.TODO(), req.FindFilter(), req.FindOptions())
+func (s *service) QueryAccount(t types.Type, req *user.QueryAccountRequest) (*user.Set, error) {
+	r := newPaggingQuery(req)
+	r.userType = t
+	return s.queryAccount(r)
+}
 
+func (s *service) CreateAccount(t types.Type, req *user.CreateUserRequest) (*user.User, error) {
+	u, err := user.New(req)
 	if err != nil {
-		return nil, exception.NewInternalServerError("find user error, error is %s", err)
+		return nil, err
 	}
 
-	userSet := user.NewUserSet(req.PageRequest)
-	// 循环
-	for resp.Next(context.TODO()) {
-		u := new(user.User)
-		if err := resp.Decode(u); err != nil {
-			return nil, exception.NewInternalServerError("decode user error, error is %s", err)
-		}
-		userSet.Add(u)
+	tk := req.GetToken()
+	if tk != nil {
+		u.DomainID = tk.DomainID
 	}
 
-	// count
-	count, err := s.col.CountDocuments(context.TODO(), req.FindFilter())
-	if err != nil {
-		return nil, exception.NewInternalServerError("get device count error, error is %s", err)
+	u.Type = t
+	if err := s.saveAccount(u); err != nil {
+		return nil, err
 	}
-	userSet.Total = count
 
-	return userSet, nil
+	u.HashedPassword = nil
+	return u, nil
 }
 
 func (s *service) UpdateAccountPassword(userName, oldPass, newPass string) error {
@@ -68,4 +69,12 @@ func (s *service) BlockAccount(id, reason string) error {
 
 	user.Block(reason)
 	return s.saveAccount(user)
+}
+
+func (s *service) DeleteAccount(id string) error {
+	_, err := s.col.DeleteOne(context.TODO(), bson.M{"_id": id})
+	if err != nil {
+		return exception.NewInternalServerError("delete user(%s) error, %s", id, err)
+	}
+	return nil
 }

@@ -65,7 +65,7 @@ func (s *service) ValidateToken(req *token.ValidateTokenRequest) (*token.Token, 
 	return tk, nil
 }
 
-func (s *service) QueryToken(req *token.QueryTokenRequest) (*token.TokenSet, error) {
+func (s *service) QueryToken(req *token.QueryTokenRequest) (*token.Set, error) {
 	query := newQueryRequest(req)
 	resp, err := s.col.Find(context.TODO(), query.FindFilter(), query.FindOptions())
 

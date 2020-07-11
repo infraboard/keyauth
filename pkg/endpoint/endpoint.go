@@ -10,13 +10,18 @@ import (
 	"github.com/infraboard/mcube/types/ftime"
 )
 
+// NewDefaultEndpoint todo
+func NewDefaultEndpoint() *Endpoint {
+	return &Endpoint{}
+}
+
 // Endpoint Service's features
 type Endpoint struct {
-	ID             string     `bson:"_id" json:"id" validate:"required,lte=64"`                                    // 端点名称
-	CreateAt       ftime.Time `bson:"create_at" json:"create_at,omitempty"`                                        // 创建时间
-	UpdateAt       ftime.Time `bson:"update_at" json:"update_at,omitempty"`                                        // 更新时间
-	ServiceName    string     `bson:"service_name" json:"service_name,omitempty" validate:"required,lte=64"`       // 该功能属于那个服务
-	ServiceVersion string     `bson:"service_version" json:"service_version,omitempty" validate:"required,lte=64"` // 服务那个版本的功能
+	ID       string     `bson:"_id" json:"id" validate:"required,lte=64"`                    // 端点名称
+	CreateAt ftime.Time `bson:"create_at" json:"create_at,omitempty"`                        // 创建时间
+	UpdateAt ftime.Time `bson:"update_at" json:"update_at,omitempty"`                        // 更新时间
+	Service  string     `bson:"service" json:"service,omitempty" validate:"required,lte=64"` // 该功能属于那个服务
+	Version  string     `bson:"version" json:"version,omitempty" validate:"required,lte=64"` // 服务那个版本的功能
 
 	router.Entry `bson:",inline"`
 }
@@ -24,7 +29,7 @@ type Endpoint struct {
 // GenID hash id
 func (e *Endpoint) GenID() string {
 	inst := sha1.New()
-	hashedStr := fmt.Sprintf("%s-%s-%s", e.ServiceName, e.Path, e.Method)
+	hashedStr := fmt.Sprintf("%s-%s-%s", e.Service, e.Path, e.Method)
 	inst.Write([]byte(hashedStr))
 	return fmt.Sprintf("%x", inst.Sum([]byte("")))
 }
@@ -55,6 +60,7 @@ func (e *Endpoint) ParseLabels(labels string) error {
 func NewEndpointSet(req *request.PageRequest) *Set {
 	return &Set{
 		PageRequest: req,
+		Items:       []*Endpoint{},
 	}
 }
 

@@ -6,20 +6,21 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/infraboard/keyauth/pkg/user"
+	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
-func newPaggingQuery(req *user.QueryAccountRequest) *queryRequest {
-	return &queryRequest{
+func newPaggingQuery(req *user.QueryAccountRequest) *queryUserRequest {
+	return &queryUserRequest{
 		QueryAccountRequest: req,
 	}
 }
 
-type queryRequest struct {
-	userType user.Type
+type queryUserRequest struct {
+	userType types.Type
 	*user.QueryAccountRequest
 }
 
-func (r *queryRequest) FindOptions() *options.FindOptions {
+func (r *queryUserRequest) FindOptions() *options.FindOptions {
 	pageSize := int64(r.PageSize)
 	skip := int64(r.PageSize) * int64(r.PageNumber-1)
 
@@ -32,26 +33,26 @@ func (r *queryRequest) FindOptions() *options.FindOptions {
 	return opt
 }
 
-func (r *queryRequest) FindFilter() bson.M {
+func (r *queryUserRequest) FindFilter() bson.M {
 	filter := bson.M{}
 	filter["type"] = r.userType
 
 	return filter
 }
 
-func newDescribeRequest(req *user.DescriptAccountRequest) (*describeRequest, error) {
+func newDescribeRequest(req *user.DescriptAccountRequest) (*describeUserRequest, error) {
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest(err.Error())
 	}
 
-	return &describeRequest{req}, nil
+	return &describeUserRequest{req}, nil
 }
 
-type describeRequest struct {
+type describeUserRequest struct {
 	*user.DescriptAccountRequest
 }
 
-func (r *describeRequest) FindFilter() bson.M {
+func (r *describeUserRequest) FindFilter() bson.M {
 	filter := bson.M{}
 
 	if r.ID != "" {

@@ -1,4 +1,4 @@
-package user
+package types
 
 const (
 	// SupperAccount 超级管理员
