@@ -27,30 +27,33 @@ func NewTokenIssuer() (Issuer, error) {
 	if pkg.Domain == nil {
 		return nil, fmt.Errorf("dependence domain application is nil")
 	}
+	if pkg.Token == nil {
+		return nil, fmt.Errorf("dependence token application is nil")
+	}
 
 	issuer := &issuer{
 		user:   pkg.User,
 		domain: pkg.Domain,
 		token:  pkg.Token,
+		app:    pkg.Application,
 	}
 	return issuer, nil
 }
 
 // TokenIssuer 基于该数据进行扩展
 type issuer struct {
-	*token.IssueTokenRequest
 	app    application.Service
 	token  token.Service
 	user   user.Service
 	domain domain.Service
 }
 
-func (i *issuer) checkUser() (*user.User, error) {
-	u, err := i.getUser(i.Username)
+func (i *issuer) checkUser(user, pass string) (*user.User, error) {
+	u, err := i.getUser(user)
 	if err != nil {
 		return nil, err
 	}
-	if err := u.HashedPassword.CheckPassword(i.Password); err != nil {
+	if err := u.HashedPassword.CheckPassword(pass); err != nil {
 		return nil, err
 	}
 	return u, nil
@@ -85,19 +88,19 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 		return nil, err
 	}
 
-	app, err := i.CheckClient(i.ClientID, i.ClientSecret)
+	app, err := i.CheckClient(req.ClientID, req.ClientSecret)
 	if err != nil {
 		return nil, exception.NewUnauthorized(err.Error())
 	}
 
-	switch i.GrantType {
+	switch req.GrantType {
 	case token.PASSWORD:
-		u, checkErr := i.checkUser()
+		u, checkErr := i.checkUser(req.Username, req.Password)
 		if checkErr != nil {
 			return nil, exception.NewUnauthorized("user or password not connrect")
 		}
 
-		tk := i.issueUserToken(app, u)
+		tk := i.issueUserToken(app, u, token.PASSWORD)
 		switch u.Type {
 		case types.SupperAccount, types.PrimaryAccount:
 			err := i.setTokenDomain(tk)
@@ -111,7 +114,7 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 		return tk, nil
 	case token.REFRESH:
 		validateReq := token.NewValidateTokenRequest()
-		validateReq.RefreshToken = i.RefreshToken
+		validateReq.RefreshToken = req.RefreshToken
 		tk, err := i.token.ValidateToken(validateReq)
 		if err != nil {
 			err = exception.NewUnauthorized(err.Error())
@@ -124,7 +127,7 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 		if err != nil {
 			return nil, err
 		}
-		tk = i.issueUserToken(app, u)
+		tk = i.issueUserToken(app, u, token.REFRESH)
 		revolkReq := token.NewRevolkTokenRequest(app.ClientID, app.ClientSecret)
 		if err := i.token.RevolkToken(revolkReq); err != nil {
 			return nil, err
@@ -132,7 +135,7 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 		return tk, nil
 	case token.Access:
 		validateReq := token.NewValidateTokenRequest()
-		validateReq.AccessToken = i.AccessToken
+		validateReq.AccessToken = req.AccessToken
 		tk, err := i.token.ValidateToken(validateReq)
 		if err != nil {
 			return nil, exception.NewUnauthorized(err.Error())
@@ -144,19 +147,19 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 		if err != nil {
 			return nil, err
 		}
-		tk = i.issueUserToken(app, u)
+		tk = i.issueUserToken(app, u, token.Access)
 		return tk, nil
 	case token.CLIENT:
 		return nil, exception.NewInternalServerError("not impl")
 	case token.AUTHCODE:
 		return nil, exception.NewInternalServerError("not impl")
 	default:
-		return nil, exception.NewInternalServerError("unknown grant type %s", i.GrantType)
+		return nil, exception.NewInternalServerError("unknown grant type %s", req.GrantType)
 	}
 }
 
-func (i *issuer) issueUserToken(app *application.Application, u *user.User) *token.Token {
-	tk := i.newBearToken(app)
+func (i *issuer) issueUserToken(app *application.Application, u *user.User, gt token.GrantType) *token.Token {
+	tk := i.newBearToken(app, gt)
 	tk.Account = u.Account
 	tk.UserID = u.ID
 	tk.UserType = u.Type
@@ -170,15 +173,15 @@ func (i *issuer) refreshToken(tk *token.Token) {
 	tk.CreatedAt = ftime.T(now)
 }
 
-func (i *issuer) newBearToken(app *application.Application) *token.Token {
+func (i *issuer) newBearToken(app *application.Application, gt token.GrantType) *token.Token {
 	now := time.Now()
 	tk := &token.Token{
 		Type:          token.Bearer,
 		AccessToken:   token.MakeBearer(24),
 		RefreshToken:  token.MakeBearer(32),
 		CreatedAt:     ftime.T(now),
-		ClientID:      i.ClientID,
-		GrantType:     i.GrantType,
+		ClientID:      app.ClientID,
+		GrantType:     gt,
 		ApplicationID: app.ID,
 	}
 

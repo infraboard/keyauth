@@ -7,10 +7,15 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/infraboard/keyauth/pkg/endpoint"
+	"github.com/infraboard/mcube/exception"
 )
 
-func newDescribeEndpointRequest(req *endpoint.DescribeEndpointRequest) *describeEndpointRequest {
-	return &describeEndpointRequest{req}
+func newDescribeEndpointRequest(req *endpoint.DescribeEndpointRequest) (*describeEndpointRequest, error) {
+	if err := req.Validate(); err != nil {
+		return nil, exception.NewBadRequest(err.Error())
+	}
+
+	return &describeEndpointRequest{req}, nil
 }
 
 type describeEndpointRequest struct {
@@ -18,13 +23,13 @@ type describeEndpointRequest struct {
 }
 
 func (req *describeEndpointRequest) String() string {
-	return fmt.Sprintf("role: %s", req.Name)
+	return fmt.Sprintf("endpoint: %s", req.ID)
 }
 
 func (req *describeEndpointRequest) FindFilter() bson.M {
 	filter := bson.M{}
-	if req.Name != "" {
-		filter["name"] = req.Name
+	if req.ID != "" {
+		filter["_id"] = req.ID
 	}
 
 	return filter

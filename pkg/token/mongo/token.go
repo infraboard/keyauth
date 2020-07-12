@@ -2,11 +2,14 @@ package mongo
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/infraboard/mcube/exception"
 	"go.mongodb.org/mongo-driver/mongo"
 
+	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
 func (s *service) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) {
@@ -28,11 +31,6 @@ func (s *service) ValidateToken(req *token.ValidateTokenRequest) (*token.Token, 
 		return nil, exception.NewBadRequest(err.Error())
 	}
 
-	// ck := newClientChecker(s.app)
-	// if _, err := ck.CheckClient(req.ClientID, req.ClientSecret); err != nil {
-	// 	return nil, exception.NewUnauthorized(err.Error())
-	// }
-
 	tk, err := s.describeToken(newDescribeTokenRequestWithAccess(req.AccessToken))
 	if err != nil {
 		return nil, exception.NewUnauthorized(err.Error())
@@ -42,16 +40,20 @@ func (s *service) ValidateToken(req *token.ValidateTokenRequest) (*token.Token, 
 		return nil, exception.NewAccessTokenExpired("access_token: %s has expired", tk.AccessToken)
 	}
 
-	// 查询用户的角色
-	// queryUser := user.NewDescriptAccountRequest()
-	// queryUser.ID = tk.UserID
-	// account, err := s.user.DescribeAccount(queryUser)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
 	// 校验用户权限
 	if req.Endpoint != "" {
+		descEP := endpoint.NewDescribeEndpointRequestWithID(req.Endpoint)
+		ep, err := s.endpoint.DescribeEndpoint(descEP)
+		if err != nil {
+			return nil, err
+		}
+
+		// 如果是超级管理员不做权限校验, 直接放行
+		if tk.UserType.Is(types.SupperAccount) {
+			return tk, nil
+		}
+
+		fmt.Println(ep)
 		// 找到用户角色
 		// 判断该角色是否有该Endpoint调用权限
 	}

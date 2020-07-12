@@ -19,6 +19,7 @@ var (
 
 // Service token管理服务
 type Service interface {
+	DescribeEndpoint(req *DescribeEndpointRequest) (*Endpoint, error)
 	QueryEndpoints(req *QueryEndpointRequest) (*Set, error)
 	Registry(req *RegistryRequest) error
 }
@@ -94,7 +95,21 @@ type QueryEndpointRequest struct {
 	*request.PageRequest
 }
 
+// NewDescribeEndpointRequestWithID todo
+func NewDescribeEndpointRequestWithID(id string) *DescribeEndpointRequest {
+	return &DescribeEndpointRequest{ID: id}
+}
+
 // DescribeEndpointRequest todo
 type DescribeEndpointRequest struct {
-	Name string
+	ID string
+}
+
+// Validate 校验
+func (req *DescribeEndpointRequest) Validate() error {
+	if req.ID == "" {
+		return fmt.Errorf("endpoint id is required")
+	}
+
+	return nil
 }

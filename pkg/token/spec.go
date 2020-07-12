@@ -86,9 +86,7 @@ func NewValidateTokenRequest() *ValidateTokenRequest {
 
 // ValidateTokenRequest 校验token
 type ValidateTokenRequest struct {
-	ClientID     string `json:"client_id" validate:"required,lte=80"`      // 服务ID
-	ClientSecret string `json:"client_secret" validate:"required,lte=100"` // 服务秘钥
-	Endpoint     string `json:"endpoint,omitempty" validate:"lte=400"`     // 接口URL
+	Endpoint string `json:"endpoint,omitempty" validate:"lte=400"` // 接口URL
 	*DescribeTokenRequest
 }
 

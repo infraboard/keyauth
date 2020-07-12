@@ -12,6 +12,7 @@ import (
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/application"
 	"github.com/infraboard/keyauth/pkg/domain"
+	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/token/issuer"
 	"github.com/infraboard/keyauth/pkg/user"
@@ -27,10 +28,11 @@ type service struct {
 	enableCache   bool
 	notifyCachPre string
 
-	app    application.Service
-	user   user.Service
-	domain domain.Service
-	issuer issuer.Issuer
+	app      application.Service
+	user     user.Service
+	domain   domain.Service
+	issuer   issuer.Issuer
+	endpoint endpoint.Service
 }
 
 func (s *service) Config() error {
@@ -48,6 +50,11 @@ func (s *service) Config() error {
 		return errors.New("denpence domain service is nil")
 	}
 	s.domain = pkg.Domain
+
+	if pkg.Endpoint == nil {
+		return errors.New("denpence endpoint service is nil")
+	}
+	s.endpoint = pkg.Endpoint
 
 	issuer, err := issuer.NewTokenIssuer()
 	if err != nil {

@@ -10,6 +10,25 @@ import (
 	"github.com/infraboard/keyauth/pkg/endpoint"
 )
 
+func (s *service) DescribeEndpoint(req *endpoint.DescribeEndpointRequest) (
+	*endpoint.Endpoint, error) {
+	r, err := newDescribeEndpointRequest(req)
+	if err != nil {
+		return nil, err
+	}
+
+	ins := endpoint.NewDefaultEndpoint()
+	if err := s.col.FindOne(context.TODO(), r.FindFilter()).Decode(ins); err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, exception.NewNotFound("endpoint %s not found", req)
+		}
+
+		return nil, exception.NewInternalServerError("find endpoint %s error, %s", req.ID, err)
+	}
+
+	return ins, nil
+}
+
 func (s *service) QueryEndpoints(req *endpoint.QueryEndpointRequest) (
 	*endpoint.Set, error) {
 	r := newQueryEndpointRequest(req)

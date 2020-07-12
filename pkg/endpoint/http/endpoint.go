@@ -3,6 +3,7 @@ package http
 import (
 	"net/http"
 
+	"github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 
@@ -46,5 +47,20 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, set)
+	return
+}
+
+func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
+	rctx := context.GetContext(r)
+
+	id := rctx.PS.ByName("id")
+	req := endpoint.NewDescribeEndpointRequestWithID(id)
+	d, err := h.endpoint.DescribeEndpoint(req)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	response.Success(w, d)
 	return
 }
