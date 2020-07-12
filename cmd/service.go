@@ -30,6 +30,7 @@ import (
 	_ "github.com/infraboard/keyauth/pkg/micro/mongo"
 	_ "github.com/infraboard/keyauth/pkg/namespace/http"
 	_ "github.com/infraboard/keyauth/pkg/namespace/mongo"
+	_ "github.com/infraboard/keyauth/pkg/policy/http"
 	_ "github.com/infraboard/keyauth/pkg/policy/mongo"
 	_ "github.com/infraboard/keyauth/pkg/role/http"
 	_ "github.com/infraboard/keyauth/pkg/role/mongo"

@@ -28,8 +28,9 @@ func (h *handler) Registry(router router.SubRouter) {
 
 	ramRouter := router.ResourceRouter("ram_account")
 	ramRouter.Permission(true)
-	ramRouter.BasePath("domains/:did/users")
+	ramRouter.BasePath("sub_users")
 	ramRouter.Handle("POST", "/", h.CreateSubAccount).AddLabel(label.Create)
+	ramRouter.Handle("GET", "/", h.QuerySubAccount).AddLabel(label.List)
 }
 
 func (h *handler) Config() error {

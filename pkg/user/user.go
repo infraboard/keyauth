@@ -88,6 +88,13 @@ type CreateUserRequest struct {
 
 // Validate 校验请求是否合法
 func (req *CreateUserRequest) Validate() error {
+	tk := req.GetToken()
+
+	// 非管理员, 主账号 可以创建子账号
+	if !tk.UserType.Is(types.SupperAccount, types.PrimaryAccount) {
+		return fmt.Errorf("%s user can't create sub account", tk.UserType)
+	}
+
 	return validate.Struct(req)
 }
 
@@ -134,6 +141,7 @@ func (p *Password) CheckPassword(password string) error {
 func NewUserSet(req *request.PageRequest) *Set {
 	return &Set{
 		PageRequest: req,
+		Items:       []*User{},
 	}
 }
 

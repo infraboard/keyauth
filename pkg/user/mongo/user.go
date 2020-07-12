@@ -13,7 +13,11 @@ import (
 )
 
 func (s *service) QueryAccount(t types.Type, req *user.QueryAccountRequest) (*user.Set, error) {
-	r := newPaggingQuery(req)
+	r, err := newQueryUserRequest(req)
+	if err != nil {
+		return nil, err
+	}
+
 	r.userType = t
 	return s.queryAccount(r)
 }

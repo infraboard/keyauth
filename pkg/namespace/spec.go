@@ -30,6 +30,13 @@ type QueryNamespaceRequest struct {
 	*request.PageRequest
 }
 
+// NewNewDescriptNamespaceRequestWithID todo
+func NewNewDescriptNamespaceRequestWithID(id string) *DescriptNamespaceRequest {
+	req := NewDescriptNamespaceRequest()
+	req.ID = id
+	return req
+}
+
 // NewDescriptNamespaceRequest new实例
 func NewDescriptNamespaceRequest() *DescriptNamespaceRequest {
 	return &DescriptNamespaceRequest{

@@ -59,16 +59,24 @@ func (req *DescriptAccountRequest) Validate() error {
 func NewQueryAccountRequest(pageReq *request.PageRequest) *QueryAccountRequest {
 	return &QueryAccountRequest{
 		PageRequest: pageReq,
+		Session:     token.NewSession(),
 	}
 }
 
 // QueryAccountRequest 获取子账号列表
 type QueryAccountRequest struct {
+	*token.Session
 	*request.PageRequest
-	*DescriptAccountRequest
+}
 
-	DomainID  string `json:"domain_id,omitempty"`
-	ProjectID string `json:"project_id,omitempty"`
+// Validate 校验查询参数
+func (req *QueryAccountRequest) Validate() error {
+	tk := req.GetToken()
+	if tk == nil {
+		return fmt.Errorf("token required")
+	}
+
+	return nil
 }
 
 // NewCreateUserRequest 创建请求

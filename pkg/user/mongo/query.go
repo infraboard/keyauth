@@ -9,10 +9,14 @@ import (
 	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
-func newPaggingQuery(req *user.QueryAccountRequest) *queryUserRequest {
+func newQueryUserRequest(req *user.QueryAccountRequest) (*queryUserRequest, error) {
+	if err := req.Validate(); err != nil {
+		return nil, err
+	}
+
 	return &queryUserRequest{
 		QueryAccountRequest: req,
-	}
+	}, nil
 }
 
 type queryUserRequest struct {
@@ -37,6 +41,8 @@ func (r *queryUserRequest) FindFilter() bson.M {
 	filter := bson.M{}
 	filter["type"] = r.userType
 
+	tk := r.GetToken()
+	filter["domain_id"] = tk.DomainID
 	return filter
 }
 

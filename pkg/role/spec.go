@@ -33,7 +33,15 @@ type QueryRoleRequest struct {
 	Type Type
 }
 
+// NewDescribeRoleRequestWithID todo
+func NewDescribeRoleRequestWithID(id string) *DescribeRoleRequest {
+	return &DescribeRoleRequest{
+		ID: id,
+	}
+}
+
 // DescribeRoleRequest role详情
 type DescribeRoleRequest struct {
+	ID   string `json:"id"`
 	Name string `json:"name,omitempty" validate:"required,lte=64"`
 }

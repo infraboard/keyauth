@@ -7,7 +7,10 @@ import (
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/types/ftime"
 
+	"github.com/infraboard/keyauth/pkg/namespace"
+	"github.com/infraboard/keyauth/pkg/role"
 	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/user"
 	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
@@ -24,6 +27,8 @@ func New(req *CreatePolicyRequest) (*Policy, error) {
 		CreateAt:            ftime.Now(),
 		UpdateAt:            ftime.Now(),
 		CreaterID:           tk.UserID,
+		UserType:            tk.UserType,
+		DomainID:            tk.DomainID,
 		CreatePolicyRequest: req,
 	}, nil
 }
@@ -46,6 +51,26 @@ type Policy struct {
 	*CreatePolicyRequest `bson:",inline"`
 }
 
+// CheckDependence todo
+func (req *CreatePolicyRequest) CheckDependence(u user.Service, r role.Service, ns namespace.Service) error {
+	_, err := u.DescribeAccount(user.NewDescriptAccountRequestWithID(req.UserID))
+	if err != nil {
+		return fmt.Errorf("check user error, %s", err)
+	}
+
+	_, err = r.DescribeRole(role.NewDescribeRoleRequestWithID(req.RoleID))
+	if err != nil {
+		return fmt.Errorf("check role error, %s", err)
+	}
+
+	_, err = ns.DescribeNamespace(namespace.NewNewDescriptNamespaceRequestWithID(req.NamespaceID))
+	if err != nil {
+		return fmt.Errorf("check role error, %s", err)
+	}
+
+	return nil
+}
+
 // NewCreatePolicyRequest 请求实例
 func NewCreatePolicyRequest() *CreatePolicyRequest {
 	return &CreatePolicyRequest{
@@ -56,11 +81,11 @@ func NewCreatePolicyRequest() *CreatePolicyRequest {
 // CreatePolicyRequest 创建策略的请求
 type CreatePolicyRequest struct {
 	*token.Session `bson:"-" json:"-"`
-	Namespace      string      `bson:"namespace" json:"namespace" validate:"lte=120"`         // 范围
-	UserID         string      `bson:"user_id" json:"user_id" validate:"required,lte=120"`    // 用户ID
-	RoleName       string      `bson:"role_name" json:"role_name" validate:"required,lte=40"` // 角色名称
-	Scope          string      `bson:"scope" json:"scope"`                                    // 范围控制
-	ExpiredTime    *ftime.Time `bson:"expired_time" json:"expired_time"`                      // 策略过期时间
+	NamespaceID    string      `bson:"namespace_id" json:"namespace_id" validate:"lte=120"` // 范围
+	UserID         string      `bson:"user_id" json:"user_id" validate:"required,lte=120"`  // 用户ID
+	RoleID         string      `bson:"role_id" json:"role_id" validate:"required,lte=40"`   // 角色名称
+	Scope          string      `bson:"scope" json:"scope"`                                  // 范围控制
+	ExpiredTime    *ftime.Time `bson:"expired_time" json:"expired_time"`                    // 策略过期时间
 }
 
 // Validate 校验请求合法
@@ -71,7 +96,7 @@ func (req *CreatePolicyRequest) Validate() error {
 func (req *CreatePolicyRequest) hashedID() string {
 	inst := sha1.New()
 	hashedStr := fmt.Sprintf("%s-%s-%s",
-		req.Namespace, req.UserID, req.RoleName)
+		req.NamespaceID, req.UserID, req.RoleID)
 	inst.Write([]byte(hashedStr))
 	return fmt.Sprintf("%x", inst.Sum([]byte("")))
 }
@@ -102,7 +127,7 @@ func (s *Set) UserRoles(userID string) []string {
 	for i := range s.Items {
 		item := s.Items[i]
 		if item.UserID == userID {
-			rns = append(rns, item.RoleName)
+			rns = append(rns, item.RoleID)
 		}
 	}
 

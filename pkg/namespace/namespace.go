@@ -31,7 +31,11 @@ func NewNamespace(req *CreateNamespaceRequest) (*Namespace, error) {
 		CreaterID:              tk.UserID,
 		CreateAt:               ftime.Now(),
 		UpdateAt:               ftime.Now(),
-		CreateNamespaceRequest: NewCreateNamespaceRequest(),
+		CreateNamespaceRequest: req,
+	}
+
+	if ins.OwnerID == "" {
+		ins.OwnerID = tk.UserID
 	}
 
 	return ins, nil
@@ -65,11 +69,11 @@ func NewCreateNamespaceRequest() *CreateNamespaceRequest {
 // CreateNamespaceRequest 创建项目请求
 type CreateNamespaceRequest struct {
 	*token.Session `bson:"-" json:"-"`
-	Name           string `bson:"name" json:"name,omitempty" validate:"required,lte=80"` // 项目名称
-	Picture        string `bson:"picture" json:"picture,omitempty"`                      // 项目描述图片
-	Enabled        bool   `bson:"enabled" json:"enabled,omitempty"`                      // 禁用项目, 该项目所有人暂时都无法访问
-	OwnerID        string `bson:"owner_id" json:"owner_id,omitempty"`                    // 项目所有者, PMO
-	Description    string `bson:"description" json:"description,omitempty"`              // 项目描述
+	Name           string `bson:"name" json:"name" validate:"required,lte=80"` // 项目名称
+	Picture        string `bson:"picture" json:"picture,omitempty"`            // 项目描述图片
+	Enabled        bool   `bson:"enabled" json:"enabled,omitempty"`            // 禁用项目, 该项目所有人暂时都无法访问
+	OwnerID        string `bson:"owner_id" json:"owner_id,omitempty"`          // 项目所有者, PMO
+	Description    string `bson:"description" json:"description,omitempty"`    // 项目描述
 }
 
 // Validate todo

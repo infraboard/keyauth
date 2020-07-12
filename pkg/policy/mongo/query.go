@@ -3,14 +3,18 @@ package mongo
 import (
 	"fmt"
 
+	"github.com/infraboard/mcube/exception"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/infraboard/keyauth/pkg/policy"
 )
 
-func newDescribeEndpointRequest(req *policy.DescribePolicyRequest) *describePolicyRequest {
-	return &describePolicyRequest{req}
+func newDescribePolicyRequest(req *policy.DescribePolicyRequest) (*describePolicyRequest, error) {
+	if err := req.Validate(); err != nil {
+		return nil, exception.NewBadRequest(err.Error())
+	}
+	return &describePolicyRequest{req}, nil
 }
 
 type describePolicyRequest struct {

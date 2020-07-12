@@ -34,3 +34,28 @@ func (h *handler) CreateSubAccount(w http.ResponseWriter, r *http.Request) {
 	response.Success(w, d)
 	return
 }
+
+func (h *handler) QuerySubAccount(w http.ResponseWriter, r *http.Request) {
+	tk, err := pkg.GetTokenFromContext(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	page := request.NewPageRequestFromHTTP(r)
+	req := user.NewQueryAccountRequest(page)
+	req.WithToken(tk)
+	if err := request.GetDataFromRequest(r, req); err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	d, err := h.service.QueryAccount(types.SubAccount, req)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	response.Success(w, d)
+	return
+}
