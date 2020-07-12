@@ -1,6 +1,8 @@
 package role
 
 import (
+	"fmt"
+
 	"github.com/go-playground/validator"
 	"github.com/infraboard/mcube/http/request"
 )
@@ -21,16 +23,19 @@ type Service interface {
 // NewQueryRoleRequest 列表查询请求
 func NewQueryRoleRequest(pageReq *request.PageRequest) *QueryRoleRequest {
 	return &QueryRoleRequest{
-		PageRequest:         pageReq,
-		DescribeRoleRequest: &DescribeRoleRequest{},
+		PageRequest: pageReq,
 	}
 }
 
 // QueryRoleRequest 查询请求
 type QueryRoleRequest struct {
 	*request.PageRequest
-	*DescribeRoleRequest
 	Type Type
+}
+
+// Validate todo
+func (req *QueryRoleRequest) Validate() error {
+	return nil
 }
 
 // NewDescribeRoleRequestWithID todo
@@ -44,4 +49,13 @@ func NewDescribeRoleRequestWithID(id string) *DescribeRoleRequest {
 type DescribeRoleRequest struct {
 	ID   string `json:"id"`
 	Name string `json:"name,omitempty" validate:"required,lte=64"`
+}
+
+// Valiate todo
+func (req *DescribeRoleRequest) Valiate() error {
+	if req.ID == "" && req.Name == "" {
+		return fmt.Errorf("id or name required")
+	}
+
+	return nil
 }

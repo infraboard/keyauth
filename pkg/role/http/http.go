@@ -22,7 +22,7 @@ type handler struct {
 func (h *handler) Registry(router router.SubRouter) {
 	r := router.ResourceRouter("role")
 	r.BasePath("roles")
-	r.Handle("POST", "/", h.CreateCustomRole).AddLabel(label.Create)
+	r.Handle("POST", "/", h.CreateRole).AddLabel(label.Create)
 	r.Handle("GET", "/", h.QueryRole).AddLabel(label.List)
 }
 

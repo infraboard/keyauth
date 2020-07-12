@@ -24,7 +24,10 @@ func (s *service) CreateRole(t role.Type, req *role.CreateRoleRequest) (*role.Ro
 }
 
 func (s *service) QueryRole(req *role.QueryRoleRequest) (*role.Set, error) {
-	query := newQueryRequest(req)
+	query, err := newQueryRoleRequest(req)
+	if err != nil {
+		return nil, err
+	}
 
 	resp, err := s.col.Find(context.TODO(), query.FindFilter(), query.FindOptions())
 
@@ -52,7 +55,10 @@ func (s *service) QueryRole(req *role.QueryRoleRequest) (*role.Set, error) {
 }
 
 func (s *service) DescribeRole(req *role.DescribeRoleRequest) (*role.Role, error) {
-	query := newDescribeRoleRequest(req)
+	query, err := newDescribeRoleRequest(req)
+	if err != nil {
+		return nil, err
+	}
 
 	ins := role.NewDefaultRole()
 	if err := s.col.FindOne(context.TODO(), query.FindFilter()).Decode(ins); err != nil {

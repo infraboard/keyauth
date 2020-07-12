@@ -27,6 +27,7 @@ func New(t Type, req *CreateRoleRequest) (*Role, error) {
 		Type:              t,
 		CreateAt:          ftime.Now(),
 		UpdateAt:          ftime.Now(),
+		DomainID:          tk.DomainID,
 		CreaterID:         tk.UserID,
 		CreateRoleRequest: req,
 	}, nil
@@ -45,6 +46,7 @@ type Role struct {
 	Type               Type       `bson:"type" json:"type"`                     // 角色类型
 	CreateAt           ftime.Time `bson:"create_at" json:"create_at,omitempty"` // 创建时间`
 	UpdateAt           ftime.Time `bson:"update_at" json:"update_at,omitempty"` // 更新时间
+	DomainID           string     `bson:"domain_id" json:"domain_id,omitempty"` // 角色所属域
 	CreaterID          string     `bson:"creater_id" json:"creater_id"`         // 创建人
 	*CreateRoleRequest `bson:",inline"`
 }
@@ -67,6 +69,11 @@ type CreateRoleRequest struct {
 
 // Validate 请求校验
 func (req *CreateRoleRequest) Validate() error {
+	tk := req.GetToken()
+	if tk == nil {
+		return fmt.Errorf("token required")
+	}
+
 	pc := len(req.Permissions)
 	if pc > MaxPermissionCount {
 		return fmt.Errorf("role permission overed max count: %d",

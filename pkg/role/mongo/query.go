@@ -9,8 +9,11 @@ import (
 	"github.com/infraboard/keyauth/pkg/role"
 )
 
-func newDescribeRoleRequest(req *role.DescribeRoleRequest) *describeRoleRequest {
-	return &describeRoleRequest{req}
+func newDescribeRoleRequest(req *role.DescribeRoleRequest) (*describeRoleRequest, error) {
+	if err := req.Valiate(); err != nil {
+		return nil, err
+	}
+	return &describeRoleRequest{req}, nil
 }
 
 type describeRoleRequest struct {
@@ -23,6 +26,11 @@ func (req *describeRoleRequest) String() string {
 
 func (req *describeRoleRequest) FindFilter() bson.M {
 	filter := bson.M{}
+
+	if req.ID != "" {
+		filter["_id"] = req.ID
+	}
+
 	if req.Name != "" {
 		filter["name"] = req.Name
 	}
@@ -30,8 +38,11 @@ func (req *describeRoleRequest) FindFilter() bson.M {
 	return filter
 }
 
-func newQueryRequest(req *role.QueryRoleRequest) *queryRoleRequest {
-	return &queryRoleRequest{req}
+func newQueryRoleRequest(req *role.QueryRoleRequest) (*queryRoleRequest, error) {
+	if err := req.Validate(); err != nil {
+		return nil, err
+	}
+	return &queryRoleRequest{req}, nil
 }
 
 type queryRoleRequest struct {
@@ -53,7 +64,7 @@ func (r *queryRoleRequest) FindOptions() *options.FindOptions {
 
 func (r *queryRoleRequest) FindFilter() bson.M {
 	filter := bson.M{}
-	if r.Type.String() != "" {
+	if r.Type.String() != "unknown" {
 		filter["type"] = r.Type.String()
 	}
 
