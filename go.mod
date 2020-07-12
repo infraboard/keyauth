@@ -8,7 +8,7 @@ require (
 	github.com/caarlos0/env/v6 v6.3.0
 	github.com/go-playground/validator v9.31.0+incompatible
 	github.com/go-playground/validator/v10 v10.3.0
-	github.com/infraboard/mcube v0.3.6
+	github.com/infraboard/mcube v0.3.7
 	github.com/rs/xid v1.2.1
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/pflag v1.0.5 // indirect

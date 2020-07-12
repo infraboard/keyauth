@@ -13,6 +13,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/application"
 	"github.com/infraboard/keyauth/pkg/domain"
 	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/token/issuer"
 	"github.com/infraboard/keyauth/pkg/user"
 )
 
@@ -29,6 +30,7 @@ type service struct {
 	app    application.Service
 	user   user.Service
 	domain domain.Service
+	issuer issuer.Issuer
 }
 
 func (s *service) Config() error {
@@ -47,6 +49,12 @@ func (s *service) Config() error {
 	}
 	s.domain = pkg.Domain
 
+	issuer, err := issuer.NewTokenIssuer()
+	if err != nil {
+		return err
+	}
+	s.issuer = issuer
+
 	db := conf.C().Mongo.GetDB()
 	col := db.Collection("token")
 
@@ -60,7 +68,7 @@ func (s *service) Config() error {
 		},
 	}
 
-	_, err := col.Indexes().CreateMany(context.Background(), indexs)
+	_, err = col.Indexes().CreateMany(context.Background(), indexs)
 	if err != nil {
 		return err
 	}

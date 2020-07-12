@@ -69,7 +69,7 @@ func (s *HTTPService) Start() error {
 	if err := s.RegistryEndpoints(); err != nil {
 		s.l.Warnf("registry endpoints error, %s", err)
 	}
-	s.l.Infof("service endpoints registry success: %s", s.r.GetEndpoints())
+	s.l.Infof("service endpoints registry success: \n%s", s.r.GetEndpoints())
 
 	// 启动HTTP服务
 	s.l.Infof("服务启动成功, 监听地址: %s", s.server.Addr)
@@ -118,6 +118,7 @@ func (s *HTTPService) RegistryEndpoints() error {
 	tk.AccessToken = svr.AccessToken
 	tk.RefreshToken = svr.RefreshToken
 	tk.UserType = types.ServiceAccount
+	tk.Account = svr.Name
 	req := endpoint.NewRegistryRequest(version.Short(), s.r.GetEndpoints().Items)
 	req.WithToken(tk)
 	return pkg.Endpoint.Registry(req)

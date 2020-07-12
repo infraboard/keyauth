@@ -10,12 +10,7 @@ import (
 )
 
 func (s *service) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) {
-	issuer, err := s.newTokenIssuer(req)
-	if err != nil {
-		return nil, exception.NewUnauthorized(err.Error())
-	}
-
-	tk, err := issuer.IssueToken()
+	tk, err := s.issuer.IssueToken(req)
 	if err != nil {
 		return nil, err
 	}
@@ -100,8 +95,7 @@ func (s *service) RevolkToken(req *token.RevolkTokenRequest) error {
 	}
 
 	// 检测撤销token的客户端是否合法
-	ck := newClientChecker(s.app)
-	app, err := ck.CheckClient(req.ClientID, req.ClientSecret)
+	app, err := s.issuer.CheckClient(req.ClientID, req.ClientSecret)
 	if err != nil {
 		return exception.NewUnauthorized(err.Error())
 	}

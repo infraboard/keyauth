@@ -1,4 +1,4 @@
-package mongo
+package issuer
 
 import (
 	"fmt"
@@ -8,6 +8,7 @@ import (
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/types/ftime"
 
+	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/application"
 	"github.com/infraboard/keyauth/pkg/domain"
 	"github.com/infraboard/keyauth/pkg/token"
@@ -15,31 +16,36 @@ import (
 	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
-func (s *service) newTokenIssuer(req *token.IssueTokenRequest) (*TokenIssuer, error) {
-	if err := req.Validate(); err != nil {
-		return nil, err
+// NewTokenIssuer todo
+func NewTokenIssuer() (Issuer, error) {
+	if pkg.Application == nil {
+		return nil, fmt.Errorf("dependence service application is nil")
+	}
+	if pkg.User == nil {
+		return nil, fmt.Errorf("dependence user application is nil")
+	}
+	if pkg.Domain == nil {
+		return nil, fmt.Errorf("dependence domain application is nil")
 	}
 
-	issuer := &TokenIssuer{
-		IssueTokenRequest: req,
-		clientChecker:     newClientChecker(s.app),
-		user:              s.user,
-		domain:            s.domain,
-		token:             s,
+	issuer := &issuer{
+		user:   pkg.User,
+		domain: pkg.Domain,
+		token:  pkg.Token,
 	}
 	return issuer, nil
 }
 
 // TokenIssuer 基于该数据进行扩展
-type TokenIssuer struct {
+type issuer struct {
 	*token.IssueTokenRequest
-	*clientChecker
-	token  *service
+	app    application.Service
+	token  token.Service
 	user   user.Service
 	domain domain.Service
 }
 
-func (i *TokenIssuer) checkUser() (*user.User, error) {
+func (i *issuer) checkUser() (*user.User, error) {
 	u, err := i.getUser(i.Username)
 	if err != nil {
 		return nil, err
@@ -50,13 +56,13 @@ func (i *TokenIssuer) checkUser() (*user.User, error) {
 	return u, nil
 }
 
-func (i *TokenIssuer) getUser(name string) (*user.User, error) {
+func (i *issuer) getUser(name string) (*user.User, error) {
 	req := user.NewDescriptAccountRequest()
 	req.Account = name
 	return i.user.DescribeAccount(req)
 }
 
-func (i *TokenIssuer) setTokenDomain(tk *token.Token) error {
+func (i *issuer) setTokenDomain(tk *token.Token) error {
 	// 获取最近1个
 	req := domain.NewQueryDomainRequest(request.NewPageRequest(1, 1))
 	req.WithToken(tk)
@@ -74,7 +80,11 @@ func (i *TokenIssuer) setTokenDomain(tk *token.Token) error {
 }
 
 // IssueToken 颁发token
-func (i *TokenIssuer) IssueToken() (*token.Token, error) {
+func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) {
+	if err := req.Validate(); err != nil {
+		return nil, err
+	}
+
 	app, err := i.CheckClient(i.ClientID, i.ClientSecret)
 	if err != nil {
 		return nil, exception.NewUnauthorized(err.Error())
@@ -100,8 +110,9 @@ func (i *TokenIssuer) IssueToken() (*token.Token, error) {
 
 		return tk, nil
 	case token.REFRESH:
-		descReq := newDescribeTokenRequestWithRefresh(i.RefreshToken)
-		tk, err := i.token.describeToken(descReq)
+		validateReq := token.NewValidateTokenRequest()
+		validateReq.RefreshToken = i.RefreshToken
+		tk, err := i.token.ValidateToken(validateReq)
 		if err != nil {
 			err = exception.NewUnauthorized(err.Error())
 			return nil, err
@@ -114,13 +125,15 @@ func (i *TokenIssuer) IssueToken() (*token.Token, error) {
 			return nil, err
 		}
 		tk = i.issueUserToken(app, u)
-		if err := i.token.destoryToken(descReq); err != nil {
+		revolkReq := token.NewRevolkTokenRequest(app.ClientID, app.ClientSecret)
+		if err := i.token.RevolkToken(revolkReq); err != nil {
 			return nil, err
 		}
 		return tk, nil
 	case token.Access:
-		descReq := newDescribeTokenRequestWithAccess(i.AccessToken)
-		tk, err := i.token.describeToken(descReq)
+		validateReq := token.NewValidateTokenRequest()
+		validateReq.AccessToken = i.AccessToken
+		tk, err := i.token.ValidateToken(validateReq)
 		if err != nil {
 			return nil, exception.NewUnauthorized(err.Error())
 		}
@@ -142,7 +155,7 @@ func (i *TokenIssuer) IssueToken() (*token.Token, error) {
 	}
 }
 
-func (i *TokenIssuer) issueUserToken(app *application.Application, u *user.User) *token.Token {
+func (i *issuer) issueUserToken(app *application.Application, u *user.User) *token.Token {
 	tk := i.newBearToken(app)
 	tk.Account = u.Account
 	tk.UserID = u.ID
@@ -150,14 +163,14 @@ func (i *TokenIssuer) issueUserToken(app *application.Application, u *user.User)
 	return tk
 }
 
-func (i *TokenIssuer) refreshToken(tk *token.Token) {
+func (i *issuer) refreshToken(tk *token.Token) {
 	now := time.Now()
 	tk.AccessToken = token.MakeBearer(24)
 	tk.RefreshToken = token.MakeBearer(32)
 	tk.CreatedAt = ftime.T(now)
 }
 
-func (i *TokenIssuer) newBearToken(app *application.Application) *token.Token {
+func (i *issuer) newBearToken(app *application.Application) *token.Token {
 	now := time.Now()
 	tk := &token.Token{
 		Type:          token.Bearer,
@@ -180,28 +193,4 @@ func (i *TokenIssuer) newBearToken(app *application.Application) *token.Token {
 	}
 
 	return tk
-}
-
-func newClientChecker(app application.Service) *clientChecker {
-	return &clientChecker{app}
-}
-
-// clientChecker 检测client正确性
-type clientChecker struct {
-	application.Service
-}
-
-func (ck *clientChecker) CheckClient(clientID, clientSecret string) (*application.Application, error) {
-	req := application.NewDescriptApplicationRequest()
-	req.ClientID = clientID
-	app, err := ck.DescriptionApplication(req)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := app.CheckClientSecret(clientSecret); err != nil {
-		return nil, err
-	}
-
-	return app, nil
 }
