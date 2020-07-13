@@ -120,19 +120,23 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 			err = exception.NewUnauthorized(err.Error())
 			return nil, err
 		}
-		if tk.CheckRefreshIsExpired() {
-			return nil, exception.NewRefreshTokenExpired("refresh token is expoired")
+		if tk.AccessToken != req.AccessToken {
+			return nil, exception.NewPermissionDeny("refresh_token's access_tken not connrect")
 		}
+
 		u, err := i.getUser(tk.Account)
 		if err != nil {
 			return nil, err
 		}
-		tk = i.issueUserToken(app, u, token.REFRESH)
+		newTk := i.issueUserToken(app, u, token.REFRESH)
+		newTk.DomainID = tk.DomainID
+
 		revolkReq := token.NewRevolkTokenRequest(app.ClientID, app.ClientSecret)
+		revolkReq.AccessToken = req.AccessToken
 		if err := i.token.RevolkToken(revolkReq); err != nil {
 			return nil, err
 		}
-		return tk, nil
+		return newTk, nil
 	case token.Access:
 		validateReq := token.NewValidateTokenRequest()
 		validateReq.AccessToken = req.AccessToken
@@ -164,13 +168,6 @@ func (i *issuer) issueUserToken(app *application.Application, u *user.User, gt t
 	tk.UserID = u.ID
 	tk.UserType = u.Type
 	return tk
-}
-
-func (i *issuer) refreshToken(tk *token.Token) {
-	now := time.Now()
-	tk.AccessToken = token.MakeBearer(24)
-	tk.RefreshToken = token.MakeBearer(32)
-	tk.CreatedAt = ftime.T(now)
 }
 
 func (i *issuer) newBearToken(app *application.Application, gt token.GrantType) *token.Token {

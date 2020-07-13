@@ -11,9 +11,6 @@ import (
 	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
-// GrantType is the type for OAuth2 param `grant_type`
-type GrantType string
-
 // oauth2 Authorization Grant: https://tools.ietf.org/html/rfc6749#section-1.3
 const (
 	// AUTHCODE oauth2 Authorization Code Grant
@@ -30,8 +27,18 @@ const (
 	Access GrantType = "access_token"
 )
 
-// Type token type
-type Type string
+// GrantType is the type for OAuth2 param `grant_type`
+type GrantType string
+
+// Is 判断类型
+func (t GrantType) Is(tps ...GrantType) bool {
+	for i := range tps {
+		if tps[i] == t {
+			return true
+		}
+	}
+	return false
+}
 
 // oauth2 Token Type: https://tools.ietf.org/html/rfc6749#section-7.1
 const (
@@ -42,6 +49,9 @@ const (
 	// JWT detail:  https://tools.ietf.org/html/rfc7519
 	JWT Type = "jwt"
 )
+
+// Type token type
+type Type string
 
 // use a single instance of Validate, it caches struct info
 var (

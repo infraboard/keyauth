@@ -31,13 +31,22 @@ func (s *service) ValidateToken(req *token.ValidateTokenRequest) (*token.Token, 
 		return nil, exception.NewBadRequest(err.Error())
 	}
 
-	tk, err := s.describeToken(newDescribeTokenRequestWithAccess(req.AccessToken))
+	tk, err := s.describeToken(newDescribeTokenRequest(req.DescribeTokenRequest))
 	if err != nil {
 		return nil, exception.NewUnauthorized(err.Error())
 	}
 
-	if tk.CheckAccessIsExpired() {
-		return nil, exception.NewAccessTokenExpired("access_token: %s has expired", tk.AccessToken)
+	// 校验Token是否过期
+	if req.AccessToken != "" {
+		if tk.CheckAccessIsExpired() {
+			return nil, exception.NewRefreshTokenExpired("access_token: %s has expired", tk.AccessToken)
+		}
+	}
+
+	if req.RefreshToken != "" {
+		if tk.CheckRefreshIsExpired() {
+			return nil, exception.NewRefreshTokenExpired("refresh_token: %s expoired", tk.RefreshToken)
+		}
 	}
 
 	// 校验用户权限
