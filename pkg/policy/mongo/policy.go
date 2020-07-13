@@ -30,9 +30,12 @@ func (s *service) CreatePolicy(req *policy.CreatePolicyRequest) (
 
 func (s *service) QueryPolicy(req *policy.QueryPolicyRequest) (
 	*policy.Set, error) {
-	r := newQueryRequest(req)
-	resp, err := s.col.Find(context.TODO(), r.FindFilter(), r.FindOptions())
+	r, err := newQueryPolicyRequest(req)
+	if err != nil {
+		return nil, err
+	}
 
+	resp, err := s.col.Find(context.TODO(), r.FindFilter(), r.FindOptions())
 	if err != nil {
 		return nil, exception.NewInternalServerError("find policy error, error is %s", err)
 	}
@@ -40,12 +43,12 @@ func (s *service) QueryPolicy(req *policy.QueryPolicyRequest) (
 	set := policy.NewPolicySet(req.PageRequest)
 	// 循环
 	for resp.Next(context.TODO()) {
-		app := policy.NewDefaultPolicy()
-		if err := resp.Decode(app); err != nil {
+		ins := policy.NewDefaultPolicy()
+		if err := resp.Decode(ins); err != nil {
 			return nil, exception.NewInternalServerError("decode policy error, error is %s", err)
 		}
 
-		set.Add(app)
+		set.Add(ins)
 	}
 
 	// count

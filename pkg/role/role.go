@@ -2,6 +2,7 @@ package role
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/mcube/http/request"
@@ -79,6 +80,18 @@ func (req *CreateRoleRequest) Validate() error {
 		return fmt.Errorf("role permission overed max count: %d",
 			MaxPermissionCount)
 	}
+
+	errs := []string{}
+	for i := range req.Permissions {
+		if err := req.Permissions[i].Validate(); err != nil {
+			errs = append(errs, err.Error())
+		}
+	}
+
+	if len(errs) > 0 {
+		return fmt.Errorf("validate permission error, %s", strings.Join(errs, ","))
+	}
+
 	return validate.Struct(req)
 }
 
@@ -132,6 +145,19 @@ type Permission struct {
 	ResourceName string     `bson:"resource_name" json:"resource_name,omitempty"` // 资源列表
 	LabelKey     string     `bson:"label_key" json:"label_key,omitempty"`         // 维度
 	LabelValues  []string   `bson:"label_values" json:"label_values,omitempty"`   // 标识值
+}
+
+// Validate todo
+func (p *Permission) Validate() error {
+	if p.ResourceName == "" || p.LabelKey == "" {
+		return fmt.Errorf("permisson required resource_name and label_key")
+	}
+
+	if len(p.LabelValues) == 0 {
+		return fmt.Errorf("permission label_values required")
+	}
+
+	return nil
 }
 
 // ID 计算唯一ID

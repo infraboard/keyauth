@@ -81,11 +81,11 @@ func NewCreatePolicyRequest() *CreatePolicyRequest {
 // CreatePolicyRequest 创建策略的请求
 type CreatePolicyRequest struct {
 	*token.Session `bson:"-" json:"-"`
-	NamespaceID    string      `bson:"namespace_id" json:"namespace_id" validate:"lte=120"` // 范围
-	UserID         string      `bson:"user_id" json:"user_id" validate:"required,lte=120"`  // 用户ID
-	RoleID         string      `bson:"role_id" json:"role_id" validate:"required,lte=40"`   // 角色名称
-	Scope          string      `bson:"scope" json:"scope"`                                  // 范围控制
-	ExpiredTime    *ftime.Time `bson:"expired_time" json:"expired_time"`                    // 策略过期时间
+	NamespaceID    string     `bson:"namespace_id" json:"namespace_id" validate:"lte=120"` // 范围
+	UserID         string     `bson:"user_id" json:"user_id" validate:"required,lte=120"`  // 用户ID
+	RoleID         string     `bson:"role_id" json:"role_id" validate:"required,lte=40"`   // 角色名称
+	Scope          string     `bson:"scope" json:"scope"`                                  // 范围控制
+	ExpiredTime    ftime.Time `bson:"expired_time" json:"expired_time"`                    // 策略过期时间
 }
 
 // Validate 校验请求合法

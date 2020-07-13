@@ -30,7 +30,6 @@ func (s *service) QueryRole(req *role.QueryRoleRequest) (*role.Set, error) {
 	}
 
 	resp, err := s.col.Find(context.TODO(), query.FindFilter(), query.FindOptions())
-
 	if err != nil {
 		return nil, exception.NewInternalServerError("find role error, error is %s", err)
 	}

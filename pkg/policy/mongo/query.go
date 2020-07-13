@@ -34,8 +34,12 @@ func (req *describePolicyRequest) FindFilter() bson.M {
 	return filter
 }
 
-func newQueryRequest(req *policy.QueryPolicyRequest) *queryPolicyRequest {
-	return &queryPolicyRequest{req}
+func newQueryPolicyRequest(req *policy.QueryPolicyRequest) (*queryPolicyRequest, error) {
+	if err := req.Validate(); err != nil {
+		return nil, exception.NewBadRequest(err.Error())
+	}
+
+	return &queryPolicyRequest{req}, nil
 }
 
 type queryPolicyRequest struct {
