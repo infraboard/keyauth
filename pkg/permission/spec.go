@@ -3,7 +3,6 @@ package permission
 import (
 	"fmt"
 
-	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/role"
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/mcube/http/request"
@@ -12,7 +11,8 @@ import (
 // Service 权限查询API
 type Service interface {
 	QueryPermission(req *QueryPermissionRequest) (*role.PermissionSet, error)
-	CheckPermission(req *CheckPermissionrequest) (*endpoint.Endpoint, error)
+	QueryRoles(req *QueryPermissionRequest) (*role.Set, error)
+	CheckPermission(req *CheckPermissionrequest) (*role.Permission, error)
 }
 
 // NewQueryPermissionRequest todo
@@ -46,27 +46,26 @@ func (req *QueryPermissionRequest) Validate() error {
 
 // NewCheckPermissionrequest todo
 func NewCheckPermissionrequest() *CheckPermissionrequest {
+	query := NewQueryPermissionRequest(request.NewPageRequest(100, 1))
 	return &CheckPermissionrequest{
-		Session: token.NewSession(),
+		QueryPermissionRequest: query,
 	}
 }
 
 // CheckPermissionrequest todo
 type CheckPermissionrequest struct {
-	*token.Session
-	NamespaceID string
-	EnpointID   string
+	*QueryPermissionRequest
+	EnpointID string
 }
 
 // Validate 校验请求合法
 func (req *CheckPermissionrequest) Validate() error {
-	tk := req.GetToken()
-	if tk == nil {
-		return fmt.Errorf("token required")
+	if err := req.QueryPermissionRequest.Validate(); err != nil {
+		return err
 	}
 
-	if req.NamespaceID == "" || req.EnpointID == "" {
-		return fmt.Errorf("namespace_id and endpoint_id required")
+	if req.EnpointID == "" {
+		return fmt.Errorf("endpoint_id required when check")
 	}
 
 	return nil

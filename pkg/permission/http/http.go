@@ -21,10 +21,9 @@ type handler struct {
 // Registry 注册HTTP服务路由
 func (h *handler) Registry(router router.SubRouter) {
 	r := router.ResourceRouter("permission")
-	r.BasePath("permissions")
-	r.Permission(true)
-	r.Handle("GET", "/", h.List).AddLabel(label.List)
-	r.Handle("GET", "/:id", h.Get).AddLabel(label.Get)
+	r.BasePath("namespaces")
+	r.Handle("GET", "/:id/permissions", h.List).AddLabel(label.List)
+	r.Handle("GET", "/:id/permissions/endpoints/:eid", h.Get).AddLabel(label.Get)
 }
 
 func (h *handler) Config() error {

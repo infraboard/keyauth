@@ -8,6 +8,8 @@ import (
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/types/ftime"
 	"github.com/rs/xid"
+
+	"github.com/infraboard/keyauth/pkg/endpoint"
 )
 
 const (
@@ -50,6 +52,21 @@ type Role struct {
 	DomainID           string     `bson:"domain_id" json:"domain_id,omitempty"` // 角色所属域
 	CreaterID          string     `bson:"creater_id" json:"creater_id"`         // 创建人
 	*CreateRoleRequest `bson:",inline"`
+}
+
+// HasPermission 权限判断
+func (r *Role) HasPermission(ep *endpoint.Endpoint) (*Permission, bool, error) {
+	var (
+		rok, lok bool
+	)
+	for i := range r.Permissions {
+		rok = r.Permissions[i].MatchResource(ep.Resource)
+		lok = r.Permissions[i].MatchLabel(ep.Labels)
+		if rok && lok {
+			return r.Permissions[i], true, nil
+		}
+	}
+	return nil, false, nil
 }
 
 // NewCreateRoleRequest 实例化请求
@@ -100,7 +117,7 @@ func (r *Role) CheckPermission() error {
 	return nil
 }
 
-// NewRoleSet 实例化
+// NewRoleSet 实例化make
 func NewRoleSet(req *request.PageRequest) *Set {
 	return &Set{
 		PageRequest: req,
@@ -132,6 +149,21 @@ func (s *Set) Add(item *Role) {
 	s.Items = append(s.Items, item)
 }
 
+// HasPermission todo
+func (s *Set) HasPermission(ep *endpoint.Endpoint) (*Permission, bool, error) {
+	for i := range s.Items {
+		p, ok, err := s.Items[i].HasPermission(ep)
+		if err != nil {
+			return nil, false, err
+		}
+		if ok {
+			return p, ok, nil
+		}
+	}
+
+	return nil, false, nil
+}
+
 // NewDefaultPermission todo
 func NewDefaultPermission() *Permission {
 	return &Permission{
@@ -144,6 +176,7 @@ type Permission struct {
 	Effect       EffectType `bson:"effect" json:"effect,omitempty"`               // 效力
 	ResourceName string     `bson:"resource_name" json:"resource_name,omitempty"` // 资源列表
 	LabelKey     string     `bson:"label_key" json:"label_key,omitempty"`         // 维度
+	MatchAll     bool       `bson:"match_all" json:"match_all"`                   // 适配所有值
 	LabelValues  []string   `bson:"label_values" json:"label_values,omitempty"`   // 标识值
 }
 
@@ -163,6 +196,32 @@ func (p *Permission) Validate() error {
 // ID 计算唯一ID
 func (p *Permission) ID(namespace string) string {
 	return namespace + "." + p.ResourceName
+}
+
+// MatchResource 检测资源是否匹配
+func (p *Permission) MatchResource(r string) bool {
+	if p.ResourceName == "*" {
+		return true
+	}
+	return p.ResourceName == r
+}
+
+// MatchLabel 匹配Label
+func (p *Permission) MatchLabel(label map[string]string) bool {
+	for k, v := range label {
+		if p.LabelKey == "*" || p.LabelKey == k {
+			if p.MatchAll {
+				return true
+			}
+			for i := range p.LabelValues {
+				if p.LabelValues[i] == v {
+					return true
+				}
+			}
+		}
+	}
+
+	return false
 }
 
 // NewPermissionSet todo

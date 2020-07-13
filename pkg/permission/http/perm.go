@@ -3,6 +3,7 @@ package http
 import (
 	"net/http"
 
+	"github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 
@@ -17,8 +18,10 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	page := request.NewPageRequestFromHTTP(r)
-	req := permission.NewQueryPermissionRequest(page)
+	rctx := context.GetContext(r)
+
+	req := permission.NewQueryPermissionRequest(request.NewPageRequestFromHTTP(r))
+	req.NamespaceID = rctx.PS.ByName("id")
 	req.WithToken(tk)
 
 	set, err := h.service.QueryPermission(req)
@@ -38,7 +41,11 @@ func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	rctx := context.GetContext(r)
+
 	req := permission.NewCheckPermissionrequest()
+	req.NamespaceID = rctx.PS.ByName("id")
+	req.EnpointID = rctx.PS.ByName("eid")
 	req.WithToken(tk)
 
 	d, err := h.service.CheckPermission(req)
