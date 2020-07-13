@@ -66,6 +66,7 @@ func (s *HTTPService) Start() error {
 	}
 
 	// 注册服务
+	s.l.Info("start registry endpoints ...")
 	if err := s.RegistryEndpoints(); err != nil {
 		s.l.Warnf("registry endpoints error, %s", err)
 	}

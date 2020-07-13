@@ -89,7 +89,8 @@ func NewValidateTokenRequest() *ValidateTokenRequest {
 
 // ValidateTokenRequest 校验token
 type ValidateTokenRequest struct {
-	Endpoint string `json:"endpoint,omitempty" validate:"lte=400"` // 接口URL
+	NamesapceID string `json:"namespace_id,omitempty" validate:"lte=100"` // Namespace ID
+	EndpointID  string `json:"endpoint_id,omitempty" validate:"lte=400"`  // Endpoint ID(hash ID)
 	*DescribeTokenRequest
 }
 

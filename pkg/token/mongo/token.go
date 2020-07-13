@@ -50,8 +50,8 @@ func (s *service) ValidateToken(req *token.ValidateTokenRequest) (*token.Token, 
 	}
 
 	// 校验用户权限
-	if req.Endpoint != "" {
-		descEP := endpoint.NewDescribeEndpointRequestWithID(req.Endpoint)
+	if req.EndpointID != "" {
+		descEP := endpoint.NewDescribeEndpointRequestWithID(req.EndpointID)
 		ep, err := s.endpoint.DescribeEndpoint(descEP)
 		if err != nil {
 			return nil, err

@@ -121,6 +121,26 @@ func (s *Set) Add(e *Policy) {
 	s.Items = append(s.Items, e)
 }
 
+// Length todo
+func (s *Set) Length() int {
+	return len(s.Items)
+}
+
+// GetRoles todo
+func (s *Set) GetRoles(r role.Service) (*role.Set, error) {
+	set := role.NewRoleSet(nil)
+	for i := range s.Items {
+		req := role.NewDescribeRoleRequestWithID(s.Items[i].RoleID)
+
+		ins, err := r.DescribeRole(req)
+		if err != nil {
+			return nil, err
+		}
+		set.Add(ins)
+	}
+	return set, nil
+}
+
 // UserRoles 获取用户的角色
 func (s *Set) UserRoles(userID string) []string {
 	rns := []string{}

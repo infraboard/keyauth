@@ -67,6 +67,7 @@ func (s *service) Registry(req *endpoint.RegistryRequest) error {
 	tk := req.GetToken()
 
 	endpoints := req.Endpoints(tk.Account)
+
 	// 更新已有的记录
 	news := make([]interface{}, 0, len(endpoints))
 	for i := range endpoints {

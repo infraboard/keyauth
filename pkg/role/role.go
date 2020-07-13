@@ -103,6 +103,17 @@ type Set struct {
 	Items []*Role `json:"items"`
 }
 
+// Permissions todo
+func (s *Set) Permissions() *PermissionSet {
+	ps := NewPermissionSet(nil)
+
+	for i := range s.Items {
+		ps.Add(s.Items[i].Permissions...)
+	}
+
+	return ps
+}
+
 // Add todo
 func (s *Set) Add(item *Role) {
 	s.Items = append(s.Items, item)
@@ -128,6 +139,14 @@ func (p *Permission) ID(namespace string) string {
 	return namespace + "." + p.ResourceName
 }
 
+// NewPermissionSet todo
+func NewPermissionSet(req *request.PageRequest) *PermissionSet {
+	return &PermissionSet{
+		PageRequest: req,
+		Items:       []*Permission{},
+	}
+}
+
 // PermissionSet 用户列表
 type PermissionSet struct {
 	*request.PageRequest
@@ -137,6 +156,6 @@ type PermissionSet struct {
 }
 
 // Add todo
-func (s *PermissionSet) Add(item *Permission) {
-	s.Items = append(s.Items, item)
+func (s *PermissionSet) Add(items ...*Permission) {
+	s.Items = append(s.Items, items...)
 }

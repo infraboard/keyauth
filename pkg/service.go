@@ -9,6 +9,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/micro"
 	"github.com/infraboard/keyauth/pkg/namespace"
+	"github.com/infraboard/keyauth/pkg/permission"
 	"github.com/infraboard/keyauth/pkg/policy"
 	"github.com/infraboard/keyauth/pkg/role"
 	"github.com/infraboard/keyauth/pkg/token"
@@ -36,6 +37,8 @@ var (
 	Department department.Service
 	// Namespace todo
 	Namespace namespace.Service
+	// Permission 权限服务
+	Permission permission.Service
 )
 
 var (
@@ -120,6 +123,12 @@ func RegistryService(name string, svr Service) {
 			registryError(name)
 		}
 		Namespace = value
+		addService(name, svr)
+	case permission.Service:
+		if Permission != nil {
+			registryError(name)
+		}
+		Permission = value
 		addService(name, svr)
 	default:
 		panic(fmt.Sprintf("unknown service type %s", name))

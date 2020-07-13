@@ -34,9 +34,11 @@ func (h *handler) IssueToken(w http.ResponseWriter, r *http.Request) {
 // IssueToken 颁发资源访问令牌
 func (h *handler) ValidateToken(w http.ResponseWriter, r *http.Request) {
 	req := token.NewValidateTokenRequest()
+	qs := r.URL.Query()
 
 	req.AccessToken = r.Header.Get("X-OAUTH-TOKEN")
-	req.Endpoint = r.URL.Query().Get("endpoint")
+	req.EndpointID = qs.Get("endpoint_id")
+	req.NamesapceID = qs.Get("namespace_id")
 
 	d, err := h.service.ValidateToken(req)
 	if err != nil {
