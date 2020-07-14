@@ -35,6 +35,11 @@ func NewDescriptDepartmentRequest() *DescribeDeparmentRequest {
 	return &DescribeDeparmentRequest{}
 }
 
+// NewDescriptDepartmentRequestWithID new实例
+func NewDescriptDepartmentRequestWithID(id string) *DescribeDeparmentRequest {
+	return &DescribeDeparmentRequest{ID: id}
+}
+
 // DescribeDeparmentRequest 详情查询
 type DescribeDeparmentRequest struct {
 	ID   string

@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"fmt"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -9,6 +10,7 @@ import (
 
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
+	"github.com/infraboard/keyauth/pkg/counter"
 	"github.com/infraboard/keyauth/pkg/department"
 )
 
@@ -21,15 +23,24 @@ type service struct {
 	col           *mongo.Collection
 	enableCache   bool
 	notifyCachPre string
+	counter       counter.Service
 }
 
 func (s *service) Config() error {
+	if pkg.Counter == nil {
+		return fmt.Errorf("dependence counter service is nil")
+	}
+	s.counter = pkg.Counter
+
 	db := conf.C().Mongo.GetDB()
 	dc := db.Collection("department")
 
 	indexs := []mongo.IndexModel{
 		{
-			Keys:    bsonx.Doc{{Key: "name", Value: bsonx.Int32(-1)}},
+			Keys: bsonx.Doc{
+				{Key: "domain_id", Value: bsonx.Int32(-1)},
+				{Key: "name", Value: bsonx.Int32(-1)},
+			},
 			Options: options.Index().SetUnique(true),
 		},
 		{
@@ -43,7 +54,6 @@ func (s *service) Config() error {
 	}
 
 	s.col = dc
-
 	return nil
 }
 

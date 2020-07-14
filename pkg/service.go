@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/infraboard/keyauth/pkg/application"
+	"github.com/infraboard/keyauth/pkg/counter"
 	"github.com/infraboard/keyauth/pkg/department"
 	"github.com/infraboard/keyauth/pkg/domain"
 	"github.com/infraboard/keyauth/pkg/endpoint"
@@ -39,6 +40,8 @@ var (
 	Namespace namespace.Service
 	// Permission 权限服务
 	Permission permission.Service
+	// Counter 自增ID服务
+	Counter counter.Service
 )
 
 var (
@@ -129,6 +132,12 @@ func RegistryService(name string, svr Service) {
 			registryError(name)
 		}
 		Permission = value
+		addService(name, svr)
+	case counter.Service:
+		if Counter != nil {
+			registryError(name)
+		}
+		Counter = value
 		addService(name, svr)
 	default:
 		panic(fmt.Sprintf("unknown service type %s", name))

@@ -5,6 +5,7 @@ import (
 	"strings"
 )
 
+// LDAPMatchingRuleInChain todo
 const LDAPMatchingRuleInChain = "1.2.840.113556.1.4.1941"
 
 //GroupDN returns the DN of the group with the given cn or an error if one occurred.
