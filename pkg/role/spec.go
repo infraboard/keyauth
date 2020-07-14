@@ -3,7 +3,7 @@ package role
 import (
 	"fmt"
 
-	"github.com/go-playground/validator"
+	"github.com/go-playground/validator/v10"
 	"github.com/infraboard/mcube/http/request"
 )
 

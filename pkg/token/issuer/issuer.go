@@ -12,6 +12,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/application"
 	"github.com/infraboard/keyauth/pkg/domain"
 	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/token/ldap"
 	"github.com/infraboard/keyauth/pkg/user"
 	"github.com/infraboard/keyauth/pkg/user/types"
 )
@@ -151,6 +152,9 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 		newTK := i.issueUserToken(app, u, token.Access)
 		newTK.DomainID = tk.DomainID
 		return newTK, nil
+	case token.LDAP:
+		fmt.Println(ldap.Config{})
+		return nil, exception.NewInternalServerError("not impl")
 	case token.CLIENT:
 		return nil, exception.NewInternalServerError("not impl")
 	case token.AUTHCODE:

@@ -6,6 +6,17 @@ import (
 	"github.com/infraboard/keyauth/pkg/token/ldap"
 )
 
+var testConfig struct {
+	Server       string
+	Port         int
+	TLSPort      int
+	BindUPN      string
+	BindPass     string
+	BindSecurity ldap.SecurityType
+	BaseDN       string
+	PasswordUPN  string
+}
+
 func TestConfigDomain(t *testing.T) {
 	tests := []string{
 		"dc=example,dc=com",
@@ -62,4 +73,13 @@ func TestConfigUPN(t *testing.T) {
 	if _, err := (&ldap.Config{BaseDN: "Bad OU"}).UPN("Test"); err == nil {
 		t.Error("Expected configuration error but got nil")
 	}
+}
+
+func init() {
+	testConfig.Server = "127.0.0.1"
+	testConfig.Port = 389
+	testConfig.BindUPN = "cn=admin,dc=example,dc=org"
+	testConfig.BindPass = "admin"
+	testConfig.BindSecurity = ldap.SecurityNone
+	testConfig.BaseDN = "dc=example,dc=org"
 }

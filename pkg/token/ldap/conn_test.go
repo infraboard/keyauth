@@ -6,17 +6,6 @@ import (
 	"github.com/infraboard/keyauth/pkg/token/ldap"
 )
 
-var testConfig struct {
-	Server       string
-	Port         int
-	TLSPort      int
-	BindUPN      string
-	BindPass     string
-	BindSecurity ldap.SecurityType
-	BaseDN       string
-	PasswordUPN  string
-}
-
 func TestConfigConnect(t *testing.T) {
 	if _, err := (&ldap.Config{Server: "127.0.0.1", Port: 1, Security: ldap.SecurityNone}).Connect(); err == nil {
 		t.Error("SecurityNone: Expected connect error but got nil")
@@ -39,7 +28,7 @@ func TestConfigConnect(t *testing.T) {
 	}
 
 	if testConfig.Server == "" {
-		t.Skip("ADTEST_SERVER not set")
+		t.Skip("LDAP_SERVER not set")
 		return
 	}
 
@@ -62,7 +51,7 @@ func TestConfigConnect(t *testing.T) {
 
 func TestConnBind(t *testing.T) {
 	if testConfig.Server == "" {
-		t.Skip("ADTEST_SERVER not set")
+		t.Skip("LDAP_SERVER not set")
 		return
 	}
 
@@ -77,16 +66,16 @@ func TestConnBind(t *testing.T) {
 		t.Error("Empty password: Expected authentication status to be false")
 	}
 
-	if status, _ := conn.Bind("go-ad-auth", "invalid_password"); status {
+	if status, _ := conn.Bind("ladp-auth", "invalid_password"); status {
 		t.Error("Invalid credentials: Expected authentication status to be false")
 	}
 
 	if testConfig.BindUPN == "" || testConfig.BindPass == "" {
-		t.Skip("ADTEST_BIND_UPN or ADTEST_BIND_PASS not set")
+		t.Skip("LDAP_BIND_UPN or LDAP_BIND_PASS not set")
 		return
 	}
 
-	if status, _ := conn.Bind(testConfig.BindUPN, testConfig.BindPass); !status {
-		t.Error("Valid credentials: Expected authentication status to be true")
+	if status, err := conn.Bind(testConfig.BindUPN, testConfig.BindPass); !status {
+		t.Error("Valid credentials: Expected authentication status to be true", err)
 	}
 }
