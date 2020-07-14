@@ -6,6 +6,7 @@ require (
 	github.com/AlecAivazis/survey/v2 v2.0.7
 	github.com/BurntSushi/toml v0.3.1
 	github.com/caarlos0/env/v6 v6.3.0
+	github.com/go-ldap/ldap/v3 v3.2.2
 	github.com/go-playground/validator v9.31.0+incompatible
 	github.com/go-playground/validator/v10 v10.3.0
 	github.com/infraboard/mcube v0.3.7

@@ -128,15 +128,15 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 		if err != nil {
 			return nil, err
 		}
-		newTk := i.issueUserToken(app, u, token.REFRESH)
-		newTk.DomainID = tk.DomainID
+		newTK := i.issueUserToken(app, u, token.REFRESH)
+		newTK.DomainID = tk.DomainID
 
 		revolkReq := token.NewRevolkTokenRequest(app.ClientID, app.ClientSecret)
 		revolkReq.AccessToken = req.AccessToken
 		if err := i.token.RevolkToken(revolkReq); err != nil {
 			return nil, err
 		}
-		return newTk, nil
+		return newTK, nil
 	case token.Access:
 		validateReq := token.NewValidateTokenRequest()
 		validateReq.AccessToken = req.AccessToken
@@ -144,15 +144,13 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 		if err != nil {
 			return nil, exception.NewUnauthorized(err.Error())
 		}
-		if tk.CheckRefreshIsExpired() {
-			return nil, exception.NewRefreshTokenExpired("access token is expoired")
-		}
 		u, err := i.getUser(tk.Account)
 		if err != nil {
 			return nil, err
 		}
-		tk = i.issueUserToken(app, u, token.Access)
-		return tk, nil
+		newTK := i.issueUserToken(app, u, token.Access)
+		newTK.DomainID = tk.DomainID
+		return newTK, nil
 	case token.CLIENT:
 		return nil, exception.NewInternalServerError("not impl")
 	case token.AUTHCODE:

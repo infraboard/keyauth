@@ -25,9 +25,11 @@ const (
 	REFRESH GrantType = "refresh_token"
 	// Access is an custom grant for use use generate personal private token
 	Access GrantType = "access_token"
+	// LDAP 通过ldap认证
+	LDAP GrantType = "ldap"
 )
 
-// GrantType is the type for OAuth2 param `grant_type`
+// GrantType is the type for OAuth2 param ` grant_type`
 type GrantType string
 
 // Is 判断类型
