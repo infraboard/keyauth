@@ -1,8 +1,8 @@
 package policy
 
 import (
-	"crypto/sha1"
 	"fmt"
+	"hash/fnv"
 
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/types/ftime"
@@ -21,16 +21,17 @@ func New(req *CreatePolicyRequest) (*Policy, error) {
 	}
 
 	tk := req.GetToken()
-
-	return &Policy{
-		ID:                  req.hashedID(),
+	p := &Policy{
 		CreateAt:            ftime.Now(),
 		UpdateAt:            ftime.Now(),
 		CreaterID:           tk.UserID,
 		UserType:            tk.UserType,
 		DomainID:            tk.DomainID,
 		CreatePolicyRequest: req,
-	}, nil
+	}
+	p.genID()
+
+	return p, nil
 }
 
 // NewDefaultPolicy todo
@@ -49,6 +50,15 @@ type Policy struct {
 	CreaterID            string     `bson:"creater_id" json:"creater_id"` // 创建者ID
 	UserType             types.Type `bson:"user_type" json:"user_type"`   // 用户类型
 	*CreatePolicyRequest `bson:",inline"`
+}
+
+func (p *Policy) genID() {
+	h := fnv.New32a()
+	hashedStr := fmt.Sprintf("%s-%s-%s-%s",
+		p.DomainID, p.NamespaceID, p.UserID, p.RoleID)
+
+	h.Write([]byte(hashedStr))
+	p.ID = fmt.Sprintf("%x", h.Sum32())
 }
 
 // CheckDependence todo
@@ -91,14 +101,6 @@ type CreatePolicyRequest struct {
 // Validate 校验请求合法
 func (req *CreatePolicyRequest) Validate() error {
 	return validate.Struct(req)
-}
-
-func (req *CreatePolicyRequest) hashedID() string {
-	inst := sha1.New()
-	hashedStr := fmt.Sprintf("%s-%s-%s",
-		req.NamespaceID, req.UserID, req.RoleID)
-	inst.Write([]byte(hashedStr))
-	return fmt.Sprintf("%x", inst.Sum([]byte("")))
 }
 
 // NewPolicySet todo
