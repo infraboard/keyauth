@@ -67,6 +67,8 @@ func NewQueryAccountRequest(pageReq *request.PageRequest) *QueryAccountRequest {
 type QueryAccountRequest struct {
 	*token.Session
 	*request.PageRequest
+	IDs         []string
+	NamespaceID string
 }
 
 // Validate 校验查询参数

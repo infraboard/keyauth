@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"fmt"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -9,6 +10,7 @@ import (
 
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
+	"github.com/infraboard/keyauth/pkg/policy"
 	"github.com/infraboard/keyauth/pkg/user"
 )
 
@@ -21,9 +23,15 @@ type service struct {
 	col           *mongo.Collection
 	enableCache   bool
 	notifyCachPre string
+	policy        policy.Service
 }
 
 func (s *service) Config() error {
+	if pkg.Namespace == nil {
+		return fmt.Errorf("dependence namespace service is nil")
+	}
+	s.policy = pkg.Policy
+
 	db := conf.C().Mongo.GetDB()
 	uc := db.Collection("user")
 

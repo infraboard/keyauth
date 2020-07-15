@@ -114,16 +114,16 @@ func (s *service) DescribeService(req *micro.DescribeMicroRequest) (
 	return ins, nil
 }
 
-func (s *service) DeleteService(name string) error {
+func (s *service) DeleteService(id string) error {
 	describeReq := micro.NewDescriptServiceRequest()
-	describeReq.Name = name
+	describeReq.ID = id
 	if _, err := s.DescribeService(describeReq); err != nil {
 		return err
 	}
 
-	_, err := s.scol.DeleteOne(context.TODO(), bson.M{"_id": name})
+	_, err := s.scol.DeleteOne(context.TODO(), bson.M{"_id": id})
 	if err != nil {
-		return exception.NewInternalServerError("delete service(%s) error, %s", name, err)
+		return exception.NewInternalServerError("delete service(%s) error, %s", id, err)
 	}
 	return nil
 }

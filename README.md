@@ -3,14 +3,14 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/infraboard/keyauth)](https://goreportcard.com/report/github.com/infraboard/keyauth)
 ![](https://img.shields.io/github/license/infraboard/keyauth)
 
-keyauth是一个分布式或者微服务场景下的用户中心和鉴权中心
+keyauth是一个微服务权限治理中心, 提供用户认证与授权管理.
 
 ## 功能
 
 + 认证
-    + 用户认证：提供用户名密码认证和API Key认证
-    + 服务认证: 提供Service Key接入凭证
-    + 第三方应用认证: Oauth2.0 auth code认证 （比如gitlab, github)
+    + 用户认证: Web用户访问(Password模式/LDAP模式)/API访问(AccessToken模式)
+    + 内部服务认证: AccessToken模式
+    + 第三方应用认证: Oauth2.0 auth code认证(比如gitlab, github)
 
 + 鉴权: 服务将功能注册到keyauth, keyauth基于这些服务功能提供RBAC鉴权机制, 系统角色分类如下
     + 超级管理员: 访问系统所有功能的权限

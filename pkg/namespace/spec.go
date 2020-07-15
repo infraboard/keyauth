@@ -2,6 +2,7 @@ package namespace
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/infraboard/mcube/http/request"
 
@@ -59,7 +60,30 @@ func (req *DescriptNamespaceRequest) Validate() error {
 	return nil
 }
 
+// NewDeleteNamespaceRequestWithID todo
+func NewDeleteNamespaceRequestWithID(id string) *DeleteNamespaceRequest {
+	return &DeleteNamespaceRequest{
+		Session: token.NewSession(),
+		ID:      id,
+	}
+}
+
 // DeleteNamespaceRequest todo
 type DeleteNamespaceRequest struct {
+	*token.Session
 	ID string
+}
+
+// Validate todo
+func (req *DeleteNamespaceRequest) Validate() error {
+	tk := req.GetToken()
+	if tk == nil {
+		return fmt.Errorf("token required")
+	}
+
+	if req.ID == "" {
+		return fmt.Errorf("id required")
+	}
+
+	return nil
 }

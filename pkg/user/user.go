@@ -54,6 +54,7 @@ type User struct {
 	UpdateAt           ftime.Time `bson:"update_at" json:"update_at,omitempty"` // 修改时间
 	DomainID           string     `bson:"domain_id" json:"domain_id,omitempty"` // 如果是子账号和服务账号 都需要继承主用户Domain
 	Type               types.Type `bson:"type"  json:"type"`                    // 是否是主账号
+	Roles              []string   `bson:"-" json:"roles,omitempty"`             // 用户的角色(当携带Namesapce查询时会有)
 	*CreateUserRequest `bson:",inline"`
 
 	HashedPassword *Password `bson:"password" json:"password,omitempty"` // 密码相关信息
@@ -65,6 +66,14 @@ func (u *User) Block(reason string) {
 	u.Status.Locked = true
 	u.Status.LockedReson = reason
 	u.Status.LockedTime = ftime.Now()
+}
+
+// Desensitize 关键数据脱敏
+func (u *User) Desensitize() {
+	if u.HashedPassword != nil {
+		u.HashedPassword.Password = ""
+	}
+	return
 }
 
 // CreateUserRequest 创建用户请求

@@ -71,3 +71,23 @@ func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 	response.Success(w, d)
 	return
 }
+
+func (h *handler) Delete(w http.ResponseWriter, r *http.Request) {
+	tk, err := pkg.GetTokenFromContext(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	rctx := context.GetContext(r)
+
+	req := namespace.NewDeleteNamespaceRequestWithID(rctx.PS.ByName("id"))
+	req.WithToken(tk)
+	if err := h.service.DeleteNamespace(req); err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	response.Success(w, "delete ok")
+	return
+}

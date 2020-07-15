@@ -56,3 +56,26 @@ func (r *describeNamespaceRequest) FindFilter() bson.M {
 
 	return filter
 }
+
+func newDeleteRequest(req *namespace.DeleteNamespaceRequest) (*deleteNamespaceRequest, error) {
+	if err := req.Validate(); err != nil {
+		return nil, exception.NewBadRequest(err.Error())
+	}
+
+	return &deleteNamespaceRequest{req}, nil
+}
+
+type deleteNamespaceRequest struct {
+	*namespace.DeleteNamespaceRequest
+}
+
+func (r *deleteNamespaceRequest) FindFilter() bson.M {
+	tk := r.GetToken()
+
+	filter := bson.M{
+		"domain_id": tk.DomainID,
+		"_id":       r.ID,
+	}
+
+	return filter
+}

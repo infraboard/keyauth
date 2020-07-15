@@ -53,7 +53,7 @@ func (h *handler) GetService(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
 
 	req := micro.NewDescriptServiceRequest()
-	req.Name = rctx.PS.ByName("name")
+	req.ID = rctx.PS.ByName("id")
 	fmt.Println(req.Name)
 
 	d, err := h.service.DescribeService(req)
@@ -69,7 +69,7 @@ func (h *handler) GetService(w http.ResponseWriter, r *http.Request) {
 func (h *handler) DestroyService(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
 
-	if err := h.service.DeleteService(rctx.PS.ByName("name")); err != nil {
+	if err := h.service.DeleteService(rctx.PS.ByName("id")); err != nil {
 		response.Failed(w, err)
 		return
 	}

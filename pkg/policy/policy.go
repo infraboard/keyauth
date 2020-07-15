@@ -107,6 +107,7 @@ func (req *CreatePolicyRequest) Validate() error {
 func NewPolicySet(req *request.PageRequest) *Set {
 	return &Set{
 		PageRequest: req,
+		Items:       []*Policy{},
 	}
 }
 
@@ -116,6 +117,21 @@ type Set struct {
 
 	Total int64     `json:"total"`
 	Items []*Policy `json:"items"`
+}
+
+// UserIDs 策略包含的所有用户ID, 已去重
+func (s *Set) UserIDs() []string {
+	ids := map[string]struct{}{}
+	for i := range s.Items {
+		ids[s.Items[i].UserID] = struct{}{}
+	}
+
+	set := make([]string, 0, len(ids))
+	for k := range ids {
+		set = append(set, k)
+	}
+
+	return set
 }
 
 // Add 添加

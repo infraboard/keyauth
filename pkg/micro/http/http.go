@@ -25,8 +25,8 @@ func (h *handler) Registry(router router.SubRouter) {
 	r.Permission(true)
 	r.Handle("GET", "/", h.QueryService).AddLabel(label.List)
 	r.Handle("POST", "/", h.CreateService).AddLabel(label.Create)
-	r.Handle("GET", "/:name", h.GetService).AddLabel(label.Get)
-	r.Handle("DELETE", "/:name", h.DestroyService).AddLabel(label.Delete)
+	r.Handle("GET", "/:id", h.GetService).AddLabel(label.Get)
+	r.Handle("DELETE", "/:id", h.DestroyService).AddLabel(label.Delete)
 }
 
 func (h *handler) Config() error {

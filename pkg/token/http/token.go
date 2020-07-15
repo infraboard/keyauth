@@ -54,6 +54,7 @@ func (h *handler) ValidateToken(w http.ResponseWriter, r *http.Request) {
 func (h *handler) RevolkToken(w http.ResponseWriter, r *http.Request) {
 	req := token.NewRevolkTokenRequest("", "")
 	req.AccessToken = r.Header.Get("X-OAUTH-TOKEN")
+	req.ClientID, req.ClientSecret, _ = r.BasicAuth()
 
 	if err := h.service.RevolkToken(req); err != nil {
 		response.Failed(w, err)

@@ -70,9 +70,13 @@ func (s *service) QueryApplication(req *application.QueryApplicationRequest) (*a
 }
 
 func (s *service) DeleteApplication(id string) error {
-	_, err := s.col.DeleteOne(context.TODO(), bson.M{"_id": id})
+	result, err := s.col.DeleteOne(context.TODO(), bson.M{"_id": id})
 	if err != nil {
 		return exception.NewInternalServerError("delete application(%s) error, %s", id, err)
+	}
+
+	if result.DeletedCount == 0 {
+		return exception.NewNotFound("app %s not found", id)
 	}
 	return nil
 }

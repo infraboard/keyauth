@@ -81,9 +81,14 @@ func (s *service) CreateDepartment(req *department.CreateDepartmentRequest) (
 }
 
 func (s *service) DeleteDepartment(id string) error {
-	_, err := s.col.DeleteOne(context.TODO(), bson.M{"_id": id})
+	result, err := s.col.DeleteOne(context.TODO(), bson.M{"_id": id})
 	if err != nil {
 		return exception.NewInternalServerError("delete department(%s) error, %s", id, err)
 	}
+
+	if result.DeletedCount == 0 {
+		return exception.NewNotFound("department %s not found", id)
+	}
+
 	return nil
 }

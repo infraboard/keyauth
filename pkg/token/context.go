@@ -15,6 +15,11 @@ func (s *Session) WithToken(tk *Token) {
 	s.tk = tk
 }
 
+// WithTokenGetter geter
+func (s *Session) WithTokenGetter(gt Getter) {
+	s.tk = gt.GetToken()
+}
+
 // GetToken 获取token
 func (s *Session) GetToken() *Token {
 	return s.tk
@@ -27,4 +32,9 @@ func (s *Session) UserID() string {
 	}
 
 	return s.tk.UserID
+}
+
+// Getter 获取token
+type Getter interface {
+	GetToken() *Token
 }

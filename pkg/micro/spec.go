@@ -11,7 +11,7 @@ type Service interface {
 	CreateService(req *CreateMicroRequest) (*Micro, error)
 	QueryService(req *QueryMicroRequest) (*Set, error)
 	DescribeService(req *DescribeMicroRequest) (*Micro, error)
-	DeleteService(name string) error
+	DeleteService(id string) error
 }
 
 // NewQueryMicroRequest 列表查询请求

@@ -38,11 +38,16 @@ func (r *queryUserRequest) FindOptions() *options.FindOptions {
 }
 
 func (r *queryUserRequest) FindFilter() bson.M {
-	filter := bson.M{}
-	filter["type"] = r.userType
-
 	tk := r.GetToken()
-	filter["domain_id"] = tk.DomainID
+	filter := bson.M{
+		"type":      r.userType,
+		"domain_id": tk.DomainID,
+	}
+
+	if len(r.IDs) > 0 {
+		filter["_id"] = bson.M{"$in": r.IDs}
+	}
+
 	return filter
 }
 

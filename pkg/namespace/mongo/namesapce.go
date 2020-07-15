@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/infraboard/mcube/exception"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -74,5 +75,19 @@ func (s *service) DescribeNamespace(req *namespace.DescriptNamespaceRequest) (
 }
 
 func (s *service) DeleteNamespace(req *namespace.DeleteNamespaceRequest) error {
+	r, err := newDeleteRequest(req)
+	if err != nil {
+		return err
+	}
+
+	result, err := s.col.DeleteOne(context.TODO(), r.FindFilter())
+	if err != nil {
+		return exception.NewInternalServerError("delete namespace(%s) error, %s", req.ID, err)
+	}
+
+	if result.DeletedCount == 0 {
+		return fmt.Errorf("namespace %s not found", req.ID)
+	}
+
 	return nil
 }

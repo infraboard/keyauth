@@ -3,11 +3,11 @@ package mongo
 import (
 	"fmt"
 
-	"github.com/infraboard/mcube/exception"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/infraboard/keyauth/pkg/policy"
+	"github.com/infraboard/mcube/exception"
 )
 
 func newDescribePolicyRequest(req *policy.DescribePolicyRequest) (*describePolicyRequest, error) {
@@ -60,9 +60,14 @@ func (r *queryPolicyRequest) FindOptions() *options.FindOptions {
 }
 
 func (r *queryPolicyRequest) FindFilter() bson.M {
-	filter := bson.M{}
+	tk := r.GetToken()
 
-	filter["namespace_id"] = r.NamespaceID
+	filter := bson.M{}
+	filter["domain_id"] = tk.DomainID
+
+	if r.NamespaceID != "" {
+		filter["namespace_id"] = r.NamespaceID
+	}
 
 	return filter
 }

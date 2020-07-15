@@ -2,6 +2,7 @@ package http
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
@@ -42,8 +43,14 @@ func (h *handler) QuerySubAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	qs := r.URL.Query()
+	ids := qs.Get("ids")
+
 	page := request.NewPageRequestFromHTTP(r)
 	req := user.NewQueryAccountRequest(page)
+	if ids != "" {
+		req.IDs = strings.Split(ids, ",")
+	}
 	req.WithToken(tk)
 	if err := request.GetDataFromRequest(r, req); err != nil {
 		response.Failed(w, err)
