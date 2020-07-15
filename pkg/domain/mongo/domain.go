@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/infraboard/mcube/exception"
+	"github.com/infraboard/mcube/types/ftime"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
@@ -70,6 +71,7 @@ func (s *service) UpdateDomain(d *domain.Domain) error {
 		return exception.NewBadRequest(err.Error())
 	}
 
+	d.UpdateAt = ftime.Now()
 	_, err := s.col.UpdateOne(context.TODO(), bson.M{"_id": d.ID}, bson.M{"$set": d})
 	if err != nil {
 		return exception.NewInternalServerError("update domain(%s) error, %s", d.ID, err)

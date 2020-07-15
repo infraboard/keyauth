@@ -25,13 +25,19 @@ func New(ownerID string, req *CreateDomainRequst) (*Domain, error) {
 		return nil, err
 	}
 
-	return &Domain{
+	d := &Domain{
 		ID:                 xid.New().String(),
 		CreateAt:           ftime.Now(),
 		UpdateAt:           ftime.Now(),
 		OwnerID:            ownerID,
 		CreateDomainRequst: req,
-	}, nil
+	}
+
+	if d.LDAPConfig.BaseDN == "" {
+		d.LDAPConfig.BaseDN = d.ID
+	}
+
+	return d, nil
 }
 
 // NewDomainSet 实例

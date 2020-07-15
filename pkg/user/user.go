@@ -107,6 +107,11 @@ func (req *CreateUserRequest) Validate() error {
 	return validate.Struct(req)
 }
 
+// ValidateUpdate 校验请求是否合法
+func (req *CreateUserRequest) ValidateUpdate() error {
+	return nil
+}
+
 func (u *User) String() string {
 	return fmt.Sprint(*u)
 }

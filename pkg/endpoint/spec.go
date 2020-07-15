@@ -71,13 +71,13 @@ func (req *RegistryRequest) Endpoints(svr string) []*Endpoint {
 	eps := make([]*Endpoint, 0, len(req.Entries))
 	for i := range req.Entries {
 		ep := &Endpoint{
+			ID:       GenHashID(svr, req.Entries[i].Path, req.Entries[i].Method),
 			CreateAt: ftime.Now(),
 			UpdateAt: ftime.Now(),
 			Service:  svr,
 			Version:  req.Version,
 			Entry:    *req.Entries[i],
 		}
-		ep.GenID()
 		eps = append(eps, ep)
 	}
 	return eps

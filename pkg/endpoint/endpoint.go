@@ -15,6 +15,26 @@ func NewDefaultEndpoint() *Endpoint {
 	return &Endpoint{}
 }
 
+// NewEndpoint todo
+func NewEndpoint(serviceName, version string, entry router.Entry) *Endpoint {
+	return &Endpoint{
+		ID:       GenHashID(serviceName, entry.Path, entry.Method),
+		CreateAt: ftime.Now(),
+		UpdateAt: ftime.Now(),
+		Service:  serviceName,
+		Version:  version,
+		Entry:    entry,
+	}
+}
+
+// GenHashID hash id
+func GenHashID(service, path, method string) string {
+	hashedStr := fmt.Sprintf("%s-%s-%s", service, path, method)
+	h := fnv.New32a()
+	h.Write([]byte(hashedStr))
+	return fmt.Sprintf("%x", h.Sum32())
+}
+
 // Endpoint Service's features
 type Endpoint struct {
 	ID       string     `bson:"_id" json:"id" validate:"required,lte=64"`                    // 端点名称
@@ -24,15 +44,6 @@ type Endpoint struct {
 	Version  string     `bson:"version" json:"version,omitempty" validate:"required,lte=64"` // 服务那个版本的功能
 
 	router.Entry `bson:",inline"`
-}
-
-// GenID hash id
-func (e *Endpoint) GenID() {
-	hashedStr := fmt.Sprintf("%s-%s-%s", e.Service, e.Path, e.Method)
-	h := fnv.New32a()
-	h.Write([]byte(hashedStr))
-	e.ID = fmt.Sprintf("%x", h.Sum32())
-	return
 }
 
 // LabelsToStr 扁平化标签  action:get;action:list;action-list-echo

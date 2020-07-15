@@ -2,6 +2,7 @@ package pkg
 
 import (
 	"encoding/base64"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -9,8 +10,11 @@ import (
 	"github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/router"
 
+	"github.com/infraboard/keyauth/pkg/endpoint"
+	"github.com/infraboard/keyauth/pkg/permission"
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user/types"
+	"github.com/infraboard/keyauth/version"
 )
 
 // NewInternalAuther 内部使用的auther
@@ -48,9 +52,23 @@ func (i *internal) Auth(r *http.Request, entry router.Entry) (
 
 		// 其他比如服务类型, 主账号类型, 子账号类型
 		// 如果开启权限认证都需要检查
+		if Permission == nil {
+			return nil, fmt.Errorf("permission service not load")
+		}
+
+		req := permission.NewCheckPermissionrequest()
+		req.EnpointID = i.endpointHashID(entry)
+		_, err = Permission.CheckPermission(req)
+		if err != nil {
+			return nil, exception.NewPermissionDeny("no permission")
+		}
 	}
 
 	return tk, nil
+}
+
+func (i *internal) endpointHashID(entry router.Entry) string {
+	return endpoint.GenHashID(version.ServiceName, entry.Path, entry.Method)
 }
 
 // parseBasicAuth parses an HTTP Basic Authentication string.

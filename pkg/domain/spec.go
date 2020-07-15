@@ -74,7 +74,8 @@ type CreateDomainRequst struct {
 	ContactsTitle  string      `bson:"contacts_title" json:"contacts_title,omitempty" validate:"lte=40"`   // 联系人职位
 	ContactsMobile string      `bson:"contacts_mobile" json:"contacts_mobile,omitempty" validate:"lte=20"` // 联系人电话
 	ContactsEmail  string      `bson:"contacts_email" json:"contacts_email,omitempty" validate:"lte=40"`   // 联系人邮箱
-	LDAP           ldap.Config `bson:"ldap" json:"ldap"`
+	LADPEnable     bool        `bson:"ldap_enable" json:"ldap_enable"`
+	LDAPConfig     ldap.Config `bson:"ldap_config" json:"ldap_config"`
 }
 
 // Validate 校验请求是否合法

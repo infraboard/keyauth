@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"github.com/infraboard/mcube/exception"
+	"github.com/infraboard/mcube/types/ftime"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
@@ -71,6 +72,58 @@ func (r *describeUserRequest) FindFilter() bson.M {
 	}
 	if r.Account != "" {
 		filter["account"] = r.Account
+	}
+
+	return filter
+}
+
+func newUpdateUserRequest(u *user.User) (*updateUserRequest, error) {
+	if err := u.ValidateUpdate(); err != nil {
+		return nil, exception.NewBadRequest(err.Error())
+	}
+	return &updateUserRequest{u}, nil
+}
+
+type updateUserRequest struct {
+	*user.User
+}
+
+func (r *updateUserRequest) updateData() bson.M {
+	filter := bson.M{}
+	filter["update_at"] = ftime.Now()
+
+	if r.Mobile != "" {
+		filter["mobile"] = r.Mobile
+	}
+	if r.Email != "" {
+		filter["email"] = r.Email
+	}
+	if r.Phone != "" {
+		filter["phone"] = r.Phone
+	}
+	if r.Address != "" {
+		filter["address"] = r.Address
+	}
+	if r.RealName != "" {
+		filter["real_name"] = r.RealName
+	}
+	if r.NickName != "" {
+		filter["nick_name"] = r.NickName
+	}
+	if r.Gender != "" {
+		filter["gender"] = r.Gender
+	}
+	if r.Avatar != "" {
+		filter["avatar"] = r.Avatar
+	}
+	if r.Language != "" {
+		filter["language"] = r.Language
+	}
+	if r.City != "" {
+		filter["city"] = r.City
+	}
+	if r.Province != "" {
+		filter["province"] = r.Province
 	}
 
 	return filter

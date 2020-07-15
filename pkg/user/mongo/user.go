@@ -42,6 +42,20 @@ func (s *service) CreateAccount(t types.Type, req *user.CreateUserRequest) (*use
 	return u, nil
 }
 
+func (s *service) UpdateUser(u *user.User) error {
+	req, err := newUpdateUserRequest(u)
+	if err != nil {
+		return err
+	}
+
+	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": u.ID}, bson.M{"$set": req.updateData()})
+	if err != nil {
+		return exception.NewInternalServerError("update user(%s) error, %s", u.ID, err)
+	}
+
+	return nil
+}
+
 func (s *service) UpdateAccountPassword(userName, oldPass, newPass string) error {
 	return nil
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/infraboard/mcube/http/router"
 
 	"github.com/infraboard/keyauth/pkg"
+	"github.com/infraboard/keyauth/pkg/domain"
 	"github.com/infraboard/keyauth/pkg/user"
 )
 
@@ -16,6 +17,7 @@ var (
 
 type handler struct {
 	service user.Service
+	domain  domain.Service
 }
 
 // Registry 注册HTTP服务路由
@@ -31,6 +33,14 @@ func (h *handler) Registry(router router.SubRouter) {
 	ramRouter.BasePath("sub_users")
 	ramRouter.Handle("POST", "/", h.CreateSubAccount).AddLabel(label.Create)
 	ramRouter.Handle("GET", "/", h.QuerySubAccount).AddLabel(label.List)
+
+	portalRouter := router.ResourceRouter("profile")
+	portalRouter.BasePath("profile")
+	portalRouter.Handle("GET", "/", h.QueryProfile).AddLabel(label.Get)
+	portalRouter.Handle("GET", "/domain", h.QueryDomain).AddLabel(label.Get)
+	portalRouter.Permission(true)
+	portalRouter.Handle("PUT", "/", h.UpdateProfile).AddLabel(label.Create)
+	portalRouter.Handle("PUT", "/domain", h.UpdateDomain).AddLabel(label.Create)
 }
 
 func (h *handler) Config() error {
@@ -38,7 +48,12 @@ func (h *handler) Config() error {
 		return errors.New("denpence user service is nil")
 	}
 
+	if pkg.Domain == nil {
+		return errors.New("denpence domain service is nil")
+	}
+
 	h.service = pkg.User
+	h.domain = pkg.Domain
 	return nil
 }
 

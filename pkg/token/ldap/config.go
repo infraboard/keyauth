@@ -21,10 +21,10 @@ const (
 
 //Config contains settings for connecting to an Active Directory server.
 type Config struct {
-	Server   string
-	Port     int
-	BaseDN   string
-	Security SecurityType
+	Server   string       `bson:"server" json:"server,omitempty"`
+	Port     int          `bson:"port" json:"port,omitempty"`
+	BaseDN   string       `bson:"base_dn" json:"base_dn,omitempty"`
+	Security SecurityType `bson:"security" json:"security,omitempty"`
 }
 
 //Domain returns the domain derived from BaseDN or an error if misconfigured.

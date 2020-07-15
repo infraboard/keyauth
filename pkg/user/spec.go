@@ -24,6 +24,8 @@ type Service interface {
 	BlockAccount(id, reason string) error
 	// DeleteAccount 删除用户
 	DeleteAccount(id string) error
+	// 更新用户
+	UpdateUser(u *User) error
 }
 
 // NewDescriptAccountRequest 查询详情请求
