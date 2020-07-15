@@ -12,7 +12,7 @@ import (
 
 func (s *service) QueryDepartment(req *department.QueryDepartmentRequest) (
 	*department.Set, error) {
-	r := newPaggingQuery(req)
+	r := newQueryDepartmentRequest(req)
 	resp, err := s.col.Find(context.TODO(), r.FindFilter(), r.FindOptions())
 
 	if err != nil {

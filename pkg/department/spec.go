@@ -27,7 +27,7 @@ func NewQueryDepartmentRequest(req *request.PageRequest) *QueryDepartmentRequest
 type QueryDepartmentRequest struct {
 	*token.Session
 	*request.PageRequest
-	ParentID string
+	ParentID *string
 }
 
 // NewDescriptDepartmentRequest new实例

@@ -72,6 +72,31 @@ func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+func (h *handler) GetSub(w http.ResponseWriter, r *http.Request) {
+	tk, err := pkg.GetTokenFromContext(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	rctx := context.GetContext(r)
+	pid := rctx.PS.ByName("id")
+
+	page := request.NewPageRequestFromHTTP(r)
+	req := department.NewQueryDepartmentRequest(page)
+	req.ParentID = &pid
+	req.WithToken(tk)
+
+	ins, err := h.service.QueryDepartment(req)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	response.Success(w, ins)
+	return
+}
+
 // DestroyPrimaryAccount 注销账号
 func (h *handler) Delete(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)

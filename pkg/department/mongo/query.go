@@ -8,7 +8,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/department"
 )
 
-func newPaggingQuery(req *department.QueryDepartmentRequest) *queryDepartmentRequest {
+func newQueryDepartmentRequest(req *department.QueryDepartmentRequest) *queryDepartmentRequest {
 	return &queryDepartmentRequest{req}
 }
 
@@ -29,8 +29,14 @@ func (r *queryDepartmentRequest) FindOptions() *options.FindOptions {
 	return opt
 }
 
-func (r *queryDepartmentRequest) FindFilter() bson.M {
+func (req *queryDepartmentRequest) FindFilter() bson.M {
 	filter := bson.M{}
+
+	tk := req.GetToken()
+	filter["domain_id"] = tk.DomainID
+	if req.ParentID != nil {
+		filter["parent_id"] = req.ParentID
+	}
 
 	return filter
 }

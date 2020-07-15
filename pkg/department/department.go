@@ -43,6 +43,8 @@ func NewDepartment(req *CreateDepartmentRequest, d Service) (*Department, error)
 		}
 		ins.ParentPath = pd.Path()
 		ins.Grade = len(strings.Split(pd.Path(), "."))
+	} else {
+		req.ParentID = "/"
 	}
 
 	if req.ManagerID == "" {
