@@ -16,8 +16,6 @@ type Service interface {
 	QueryAccount(types.Type, *QueryAccountRequest) (*Set, error)
 	// 创建用户
 	CreateAccount(types.Type, *CreateUserRequest) (*User, error)
-	// 更新用户密码
-	UpdateAccountPassword(userName, oldPass, newPass string) error
 	// 获取账号Profile
 	DescribeAccount(req *DescriptAccountRequest) (*User, error)
 	// 警用账号
@@ -25,7 +23,8 @@ type Service interface {
 	// DeleteAccount 删除用户
 	DeleteAccount(id string) error
 	// 更新用户
-	UpdateUser(u *User) error
+	UpdateAccountProfile(u *User) error
+	UpdateAccountPassword(req *UpdatePasswordRequest) error
 }
 
 // NewDescriptAccountRequest 查询详情请求
@@ -88,4 +87,11 @@ func NewCreateUserRequest() *CreateUserRequest {
 	return &CreateUserRequest{
 		Session: token.NewSession(),
 	}
+}
+
+// UpdatePasswordRequest todo
+type UpdatePasswordRequest struct {
+	Account string
+	OldPass string
+	NewPass string
 }

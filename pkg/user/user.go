@@ -76,6 +76,22 @@ func (u *User) Desensitize() {
 	return
 }
 
+// ChangePassword 修改用户密码
+func (u *User) ChangePassword(old, new string) error {
+	// 确认旧密码
+	if err := u.HashedPassword.CheckPassword(old); err != nil {
+		return err
+	}
+
+	// 修改新密码
+	pass, err := NewHashedPassword(new)
+	if err != nil {
+		return exception.NewBadRequest(err.Error())
+	}
+	u.HashedPassword.Update(pass)
+	return nil
+}
+
 // CreateUserRequest 创建用户请求
 type CreateUserRequest struct {
 	*token.Session
@@ -149,6 +165,12 @@ type Password struct {
 // CheckPassword 判断password 是否正确
 func (p *Password) CheckPassword(password string) error {
 	return bcrypt.CompareHashAndPassword([]byte(p.Password), []byte(password))
+}
+
+// Update 更新密码
+func (p *Password) Update(new *Password) {
+	p.Password = new.Password
+	p.UpdateAt = ftime.Now()
 }
 
 // NewUserSet 实例

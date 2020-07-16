@@ -42,7 +42,7 @@ func (s *service) CreateAccount(t types.Type, req *user.CreateUserRequest) (*use
 	return u, nil
 }
 
-func (s *service) UpdateUser(u *user.User) error {
+func (s *service) UpdateAccountProfile(u *user.User) error {
 	req, err := newUpdateUserRequest(u)
 	if err != nil {
 		return err
@@ -56,7 +56,26 @@ func (s *service) UpdateUser(u *user.User) error {
 	return nil
 }
 
-func (s *service) UpdateAccountPassword(userName, oldPass, newPass string) error {
+func (s *service) UpdateAccountPassword(req *user.UpdatePasswordRequest) error {
+	descReq := user.NewDescriptAccountRequest()
+	descReq.Account = req.Account
+	u, err := s.DescribeAccount(descReq)
+	if err != nil {
+		return err
+	}
+
+	u.ChangePassword(req.OldPass, req.NewPass)
+	if err := u.HashedPassword.CheckPassword(req.OldPass); err != nil {
+		return err
+	}
+
+	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": u.ID}, bson.M{"$set": bson.M{
+		"password": u.HashedPassword,
+	}})
+	if err != nil {
+		return exception.NewInternalServerError("update user(%s) password error, %s", u.ID, err)
+	}
+
 	return nil
 }
 

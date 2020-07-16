@@ -53,7 +53,7 @@ func (h *handler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := h.service.UpdateUser(ins); err != nil {
+	if err := h.service.UpdateAccountProfile(ins); err != nil {
 		response.Failed(w, err)
 		return
 	}
