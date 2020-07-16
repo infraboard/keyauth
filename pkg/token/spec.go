@@ -68,6 +68,10 @@ func (req *IssueTokenRequest) Validate() error {
 		if req.AccessToken == "" {
 			return fmt.Errorf("use %s grant type, access_token required", Access)
 		}
+	case LDAP:
+		if req.Username == "" || req.Password == "" {
+			return fmt.Errorf("use %s grant type, username and password required", LDAP)
+		}
 	case CLIENT:
 	case AUTHCODE:
 		if req.AuthCode == "" {

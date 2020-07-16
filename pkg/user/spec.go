@@ -24,7 +24,7 @@ type Service interface {
 	DeleteAccount(id string) error
 	// 更新用户
 	UpdateAccountProfile(u *User) error
-	UpdateAccountPassword(req *UpdatePasswordRequest) error
+	UpdateAccountPassword(req *UpdatePasswordRequest) (*Password, error)
 }
 
 // NewDescriptAccountRequest 查询详情请求
@@ -89,9 +89,34 @@ func NewCreateUserRequest() *CreateUserRequest {
 	}
 }
 
+// NewUpdatePasswordRequest todo
+func NewUpdatePasswordRequest() *UpdatePasswordRequest {
+	return &UpdatePasswordRequest{
+		Session: token.NewSession(),
+	}
+}
+
 // UpdatePasswordRequest todo
 type UpdatePasswordRequest struct {
-	Account string
-	OldPass string
-	NewPass string
+	*token.Session `json:"-"`
+	OldPass        string `json:"old_pass,omitempty"`
+	NewPass        string `json:"new_pass,omitempty"`
+}
+
+// Validate tood
+func (req *UpdatePasswordRequest) Validate() error {
+	tk := req.GetToken()
+	if tk == nil {
+		return fmt.Errorf("token required")
+	}
+
+	if req.OldPass == req.NewPass {
+		return fmt.Errorf("old_pass equal new_pass")
+	}
+
+	if req.NewPass == "" || req.OldPass == "" {
+		return fmt.Errorf("old_pass and new_pass required")
+	}
+
+	return nil
 }

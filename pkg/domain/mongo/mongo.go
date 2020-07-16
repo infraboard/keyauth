@@ -33,6 +33,10 @@ func (s *service) Config() error {
 			Options: options.Index().SetUnique(true),
 		},
 		{
+			Keys:    bsonx.Doc{{Key: "ldap_config.base_dn", Value: bsonx.Int32(-1)}},
+			Options: options.Index().SetUnique(true),
+		},
+		{
 			Keys: bsonx.Doc{{Key: "create_at", Value: bsonx.Int32(-1)}},
 		},
 	}

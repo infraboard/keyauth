@@ -8,6 +8,7 @@ require (
 	github.com/caarlos0/env/v6 v6.3.0
 	github.com/go-ldap/ldap/v3 v3.2.2
 	github.com/go-playground/validator/v10 v10.3.0
+	github.com/googleapis/gax-go v2.0.2+incompatible // indirect
 	github.com/infraboard/mcube v0.3.7
 	github.com/rs/xid v1.2.1
 	github.com/spf13/cobra v1.0.0

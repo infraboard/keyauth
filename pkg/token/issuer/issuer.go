@@ -2,6 +2,8 @@ package issuer
 
 import (
 	"fmt"
+	"regexp"
+	"strings"
 	"time"
 
 	"github.com/infraboard/mcube/exception"
@@ -12,7 +14,6 @@ import (
 	"github.com/infraboard/keyauth/pkg/application"
 	"github.com/infraboard/keyauth/pkg/domain"
 	"github.com/infraboard/keyauth/pkg/token"
-	"github.com/infraboard/keyauth/pkg/token/ldap"
 	"github.com/infraboard/keyauth/pkg/user"
 	"github.com/infraboard/keyauth/pkg/user/types"
 )
@@ -33,20 +34,22 @@ func NewTokenIssuer() (Issuer, error) {
 	}
 
 	issuer := &issuer{
-		user:   pkg.User,
-		domain: pkg.Domain,
-		token:  pkg.Token,
-		app:    pkg.Application,
+		user:    pkg.User,
+		domain:  pkg.Domain,
+		token:   pkg.Token,
+		app:     pkg.Application,
+		emailRE: regexp.MustCompile(`([a-zA-Z0-9]+)@([a-zA-Z0-9\.]+)\.([a-zA-Z0-9]+)`),
 	}
 	return issuer, nil
 }
 
 // TokenIssuer 基于该数据进行扩展
 type issuer struct {
-	app    application.Service
-	token  token.Service
-	user   user.Service
-	domain domain.Service
+	app     application.Service
+	token   token.Service
+	user    user.Service
+	domain  domain.Service
+	emailRE *regexp.Regexp
 }
 
 func (i *issuer) checkUser(user, pass string) (*user.User, error) {
@@ -153,7 +156,11 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 		newTK.DomainID = tk.DomainID
 		return newTK, nil
 	case token.LDAP:
-		fmt.Println(ldap.Config{})
+		cn, dn, err := i.genBaseDN(req.Username)
+		if err != nil {
+			return nil, err
+		}
+		fmt.Println(dn, cn)
 		return nil, exception.NewInternalServerError("not impl")
 	case token.CLIENT:
 		return nil, exception.NewInternalServerError("not impl")
@@ -162,6 +169,28 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 	default:
 		return nil, exception.NewInternalServerError("unknown grant type %s", req.GrantType)
 	}
+}
+
+func (i *issuer) genBaseDN(username string) (string, string, error) {
+	match := i.emailRE.FindAllStringSubmatch(username, -1)
+	if len(match) == 0 {
+		return "", "", exception.NewBadRequest("ldap user name must like username@company.com")
+	}
+
+	sub := match[0]
+	if len(sub) < 4 {
+		return "", "", exception.NewBadRequest("ldap user name must like username@company.com")
+	}
+
+	upn := []string{}
+	dns := []string{}
+	upn = append(upn, "cn="+sub[1])
+	for _, dn := range sub[2:] {
+		dns = append(dns, "dc="+dn)
+		upn = append(upn, "dc="+dn)
+	}
+
+	return strings.Join(upn, ","), strings.Join(dns, ","), nil
 }
 
 func (i *issuer) issueUserToken(app *application.Application, u *user.User, gt token.GrantType) *token.Token {

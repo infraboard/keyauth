@@ -56,27 +56,31 @@ func (s *service) UpdateAccountProfile(u *user.User) error {
 	return nil
 }
 
-func (s *service) UpdateAccountPassword(req *user.UpdatePasswordRequest) error {
-	descReq := user.NewDescriptAccountRequest()
-	descReq.Account = req.Account
-	u, err := s.DescribeAccount(descReq)
-	if err != nil {
-		return err
+func (s *service) UpdateAccountPassword(req *user.UpdatePasswordRequest) (*user.Password, error) {
+	if err := req.Validate(); err != nil {
+		return nil, exception.NewBadRequest("check update pass request error, %s", err)
 	}
 
-	u.ChangePassword(req.OldPass, req.NewPass)
-	if err := u.HashedPassword.CheckPassword(req.OldPass); err != nil {
-		return err
+	descReq := user.NewDescriptAccountRequest()
+	descReq.ID = req.GetToken().UserID
+	u, err := s.DescribeAccount(descReq)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := u.ChangePassword(req.OldPass, req.NewPass); err != nil {
+		return nil, err
 	}
 
 	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": u.ID}, bson.M{"$set": bson.M{
 		"password": u.HashedPassword,
 	}})
+
 	if err != nil {
-		return exception.NewInternalServerError("update user(%s) password error, %s", u.ID, err)
+		return nil, exception.NewInternalServerError("update user(%s) password error, %s", u.ID, err)
 	}
 
-	return nil
+	return u.HashedPassword, nil
 }
 
 func (s *service) DescribeAccount(req *user.DescriptAccountRequest) (*user.User, error) {

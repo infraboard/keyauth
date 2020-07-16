@@ -84,11 +84,11 @@ func (u *User) ChangePassword(old, new string) error {
 	}
 
 	// 修改新密码
-	pass, err := NewHashedPassword(new)
+	newPass, err := NewHashedPassword(new)
 	if err != nil {
 		return exception.NewBadRequest(err.Error())
 	}
-	u.HashedPassword.Update(pass)
+	u.HashedPassword.Update(newPass)
 	return nil
 }
 
@@ -164,7 +164,11 @@ type Password struct {
 
 // CheckPassword 判断password 是否正确
 func (p *Password) CheckPassword(password string) error {
-	return bcrypt.CompareHashAndPassword([]byte(p.Password), []byte(password))
+	err := bcrypt.CompareHashAndPassword([]byte(p.Password), []byte(password))
+	if err != nil {
+		return exception.NewUnauthorized("user or password not connrect")
+	}
+	return nil
 }
 
 // Update 更新密码

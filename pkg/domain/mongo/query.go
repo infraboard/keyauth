@@ -7,7 +7,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/domain"
 )
 
-func newPaggingQuery(req *domain.QueryDomainRequest) *request {
+func newQueryDomainRequest(req *domain.QueryDomainRequest) *request {
 	return &request{req}
 }
 
@@ -33,6 +33,30 @@ func (r *request) FindFilter() bson.M {
 
 	tk := r.GetToken()
 	filter["owner_id"] = tk.UserID
+
+	return filter
+}
+
+func newDescDomainRequest(req *domain.DescriptDomainRequest) (*descDomain, error) {
+	if err := req.Validate(); err != nil {
+		return nil, err
+	}
+	return &descDomain{req}, nil
+}
+
+type descDomain struct {
+	*domain.DescriptDomainRequest
+}
+
+func (req *descDomain) FindFilter() bson.M {
+	filter := bson.M{}
+
+	if req.ID != "" {
+		filter["_id"] = req.ID
+	}
+	if req.Name != "" {
+		filter["name"] = req.Name
+	}
 
 	return filter
 }

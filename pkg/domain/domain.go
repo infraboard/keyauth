@@ -33,11 +33,14 @@ func New(ownerID string, req *CreateDomainRequst) (*Domain, error) {
 		CreateDomainRequst: req,
 	}
 
-	if d.LDAPConfig.BaseDN == "" {
-		d.LDAPConfig.BaseDN = d.ID
-	}
-
 	return d, nil
+}
+
+// NewDefault todo
+func NewDefault() *Domain {
+	return &Domain{
+		CreateDomainRequst: NewCreateDomainRequst(),
+	}
 }
 
 // NewDomainSet 实例
