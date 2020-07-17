@@ -37,6 +37,11 @@ func NewDescriptAccountRequestWithID(id string) *DescriptAccountRequest {
 	return &DescriptAccountRequest{ID: id}
 }
 
+// NewDescriptAccountRequestWithAccount 查询详情请求
+func NewDescriptAccountRequestWithAccount(accout string) *DescriptAccountRequest {
+	return &DescriptAccountRequest{Account: accout}
+}
+
 // DescriptAccountRequest 查询用户详情请求
 type DescriptAccountRequest struct {
 	ID      string `json:"id,omitempty"`

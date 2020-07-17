@@ -181,7 +181,14 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 		if !ok {
 			return nil, exception.NewUnauthorized("用户名或者密码不对")
 		}
-		return nil, exception.NewInternalServerError("not impl")
+		mockPrimary := i.mockBuildInToken(app, userName, ldapConf.DomainID)
+		u, err := i.syncLDAPUser(mockPrimary, userName)
+		if err != nil {
+			return nil, err
+		}
+		newTK := i.issueUserToken(app, u, token.LDAP)
+		newTK.DomainID = ldapConf.DomainID
+		return newTK, nil
 	case token.CLIENT:
 		return nil, exception.NewInternalServerError("not impl")
 	case token.AUTHCODE:
@@ -208,6 +215,36 @@ func (i *issuer) genBaseDN(username string) (string, string, error) {
 	}
 
 	return sub[1], strings.Join(dns, ","), nil
+}
+
+func (i *issuer) syncLDAPUser(tk *token.Token, userName string) (*user.User, error) {
+	descUser := user.NewDescriptAccountRequestWithAccount(userName)
+	u, err := i.user.DescribeAccount(descUser)
+	if u.Type.Is(types.PrimaryAccount, types.SupperAccount) {
+		return nil, exception.NewBadRequest("用户名和主账号用户名冲突, 请修改")
+	}
+	if err != nil {
+		if exception.IsNotFoundError(err) {
+			req := user.NewCreateUserRequest()
+			req.WithToken(tk)
+			u, err = i.user.CreateAccount(types.SubAccount, req)
+			if err != nil {
+				return nil, err
+			}
+		}
+		return nil, err
+	}
+
+	return u, nil
+}
+
+func (i *issuer) mockBuildInToken(app *application.Application, userName, domainID string) *token.Token {
+	tk := i.newBearToken(app, token.LDAP)
+	tk.Account = userName
+	tk.UserID = "build_in"
+	tk.UserType = types.PrimaryAccount
+	tk.DomainID = domainID
+	return tk
 }
 
 func (i *issuer) issueUserToken(app *application.Application, u *user.User, gt token.GrantType) *token.Token {
