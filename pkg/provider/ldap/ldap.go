@@ -10,33 +10,29 @@ import (
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
+
+	"github.com/infraboard/keyauth/pkg/provider"
 )
 
 // OWASP recommends to escape some special characters.
 // https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/LDAP_Injection_Prevention_Cheat_Sheet.md
 const specialLDAPRunes = ",#+<>;\"="
 
-// Provider LDAP provider
-type Provider interface {
-	CheckUserPassword(username string, password string) (bool, error)
-	GetDetails(username string) (*UserDetails, error)
-	UpdatePassword(username string, newPassword string) error
-}
-
 // NewProvider todo
-func NewProvider(conf *Config) Provider {
-	return &ldapProvider{
+func NewProvider(conf *provider.LDAPConfig) *Provider {
+	return &Provider{
 		conf: conf,
 		log:  zap.L().Named("LDAP"),
 	}
 }
 
-type ldapProvider struct {
-	conf *Config
+// Provider todo
+type Provider struct {
+	conf *provider.LDAPConfig
 	log  logger.Logger
 }
 
-func (p *ldapProvider) dialTLS(network, addr string, config *tls.Config) (Connection, error) {
+func (p *Provider) dialTLS(network, addr string, config *tls.Config) (Connection, error) {
 	conn, err := ldap.DialTLS(network, addr, config)
 	if err != nil {
 		return nil, err
@@ -45,7 +41,7 @@ func (p *ldapProvider) dialTLS(network, addr string, config *tls.Config) (Connec
 	return NewLDAPConnectionImpl(conn), nil
 }
 
-func (p *ldapProvider) dial(network, addr string) (Connection, error) {
+func (p *Provider) dial(network, addr string) (Connection, error) {
 	conn, err := ldap.Dial(network, addr)
 	if err != nil {
 		return nil, err
@@ -54,7 +50,7 @@ func (p *ldapProvider) dial(network, addr string) (Connection, error) {
 	return NewLDAPConnectionImpl(conn), nil
 }
 
-func (p *ldapProvider) connect(userDN string, password string) (Connection, error) {
+func (p *Provider) connect(userDN string, password string) (Connection, error) {
 	var conn Connection
 
 	url, err := url.Parse(p.conf.URL)
@@ -89,7 +85,7 @@ func (p *ldapProvider) connect(userDN string, password string) (Connection, erro
 }
 
 // CheckUserPassword checks if provided password matches for the given user.
-func (p *ldapProvider) CheckUserPassword(inputUsername string, password string) (bool, error) {
+func (p *Provider) CheckUserPassword(inputUsername string, password string) (bool, error) {
 	adminClient, err := p.connect(p.conf.User, p.conf.Password)
 	if err != nil {
 		return false, err
@@ -110,7 +106,7 @@ func (p *ldapProvider) CheckUserPassword(inputUsername string, password string) 
 	return true, nil
 }
 
-func (p *ldapProvider) ldapEscape(inputUsername string) string {
+func (p *Provider) ldapEscape(inputUsername string) string {
 	inputUsername = ldap.EscapeFilter(inputUsername)
 	for _, c := range specialLDAPRunes {
 		inputUsername = strings.ReplaceAll(inputUsername, string(c), fmt.Sprintf("\\%c", c))
@@ -119,7 +115,7 @@ func (p *ldapProvider) ldapEscape(inputUsername string) string {
 	return inputUsername
 }
 
-func (p *ldapProvider) resolveUsersFilter(userFilter string, inputUsername string) string {
+func (p *Provider) resolveUsersFilter(userFilter string, inputUsername string) string {
 	inputUsername = p.ldapEscape(inputUsername)
 
 	// We temporarily keep placeholder {0} for backward compatibility.
@@ -136,7 +132,7 @@ func (p *ldapProvider) resolveUsersFilter(userFilter string, inputUsername strin
 	return userFilter
 }
 
-func (p *ldapProvider) getUserProfile(conn Connection, inputUsername string) (*UserProfile, error) {
+func (p *Provider) getUserProfile(conn Connection, inputUsername string) (*provider.UserProfile, error) {
 	userFilter := p.resolveUsersFilter(p.conf.UsersFilter, inputUsername)
 	p.log.Debugf("Computed user filter is %s", userFilter)
 
@@ -168,7 +164,7 @@ func (p *ldapProvider) getUserProfile(conn Connection, inputUsername string) (*U
 		return nil, fmt.Errorf("Multiple users %s found", inputUsername)
 	}
 
-	userProfile := UserProfile{
+	userProfile := provider.UserProfile{
 		DN: sr.Entries[0].DN,
 	}
 
@@ -194,7 +190,7 @@ func (p *ldapProvider) getUserProfile(conn Connection, inputUsername string) (*U
 	return &userProfile, nil
 }
 
-func (p *ldapProvider) resolveGroupsFilter(inputUsername string, profile *UserProfile) (string, error) { //nolint:unparam
+func (p *Provider) resolveGroupsFilter(inputUsername string, profile *provider.UserProfile) (string, error) { //nolint:unparam
 	inputUsername = p.ldapEscape(inputUsername)
 
 	// We temporarily keep placeholder {0} for backward compatibility.
@@ -212,7 +208,7 @@ func (p *ldapProvider) resolveGroupsFilter(inputUsername string, profile *UserPr
 }
 
 // GetDetails retrieve the groups a user belongs to.
-func (p *ldapProvider) GetDetails(inputUsername string) (*UserDetails, error) {
+func (p *Provider) GetDetails(inputUsername string) (*provider.UserDetails, error) {
 	conn, err := p.connect(p.conf.User, p.conf.Password)
 	if err != nil {
 		return nil, err
@@ -259,7 +255,7 @@ func (p *ldapProvider) GetDetails(inputUsername string) (*UserDetails, error) {
 		groups = append(groups, res.Attributes[0].Values...)
 	}
 
-	return &UserDetails{
+	return &provider.UserDetails{
 		Username: profile.Username,
 		Emails:   profile.Emails,
 		Groups:   groups,
@@ -267,7 +263,7 @@ func (p *ldapProvider) GetDetails(inputUsername string) (*UserDetails, error) {
 }
 
 // UpdatePassword update the password of the given user.
-func (p *ldapProvider) UpdatePassword(inputUsername string, newPassword string) error {
+func (p *Provider) UpdatePassword(inputUsername string, newPassword string) error {
 	client, err := p.connect(p.conf.User, p.conf.Password)
 
 	if err != nil {

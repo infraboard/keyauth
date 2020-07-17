@@ -1,8 +1,8 @@
-package ldap
+package provider
 
-// NewDefaultConfig represents the default LDAP config.
-func NewDefaultConfig() *Config {
-	return &Config{
+// NewDefaultLDAPConfig represents the default LDAP config.
+func NewDefaultLDAPConfig() *LDAPConfig {
+	return &LDAPConfig{
 		URL:                  "ldap://127.0.0.1:389",
 		MailAttribute:        "mail",
 		DisplayNameAttribute: "displayname",
@@ -15,8 +15,8 @@ func NewDefaultConfig() *Config {
 	}
 }
 
-// Config represents the configuration related to LDAP server.
-type Config struct {
+// LDAPConfig represents the configuration related to LDAP server.
+type LDAPConfig struct {
 	URL                  string `bson:"url" json:"url"`
 	SkipVerify           bool   `bson:"skip_verify" json:"skip_verify"`
 	BaseDN               string `bson:"base_dn" json:"base_dn"`
