@@ -1,4 +1,4 @@
-package provider
+package ldap
 
 // UserProfile todo
 type UserProfile struct {

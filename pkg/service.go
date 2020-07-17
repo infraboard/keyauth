@@ -12,6 +12,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/namespace"
 	"github.com/infraboard/keyauth/pkg/permission"
 	"github.com/infraboard/keyauth/pkg/policy"
+	"github.com/infraboard/keyauth/pkg/provider"
 	"github.com/infraboard/keyauth/pkg/role"
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
@@ -42,6 +43,8 @@ var (
 	Permission permission.Service
 	// Counter 自增ID服务
 	Counter counter.Service
+	// LDAP ldap服务
+	LDAP provider.LDAP
 )
 
 var (
@@ -138,6 +141,12 @@ func RegistryService(name string, svr Service) {
 			registryError(name)
 		}
 		Counter = value
+		addService(name, svr)
+	case provider.LDAP:
+		if LDAP != nil {
+			registryError(name)
+		}
+		LDAP = value
 		addService(name, svr)
 	default:
 		panic(fmt.Sprintf("unknown service type %s", name))

@@ -35,6 +35,8 @@ import (
 	_ "github.com/infraboard/keyauth/pkg/permission/http"
 	_ "github.com/infraboard/keyauth/pkg/policy/http"
 	_ "github.com/infraboard/keyauth/pkg/policy/mongo"
+	_ "github.com/infraboard/keyauth/pkg/provider/http"
+	_ "github.com/infraboard/keyauth/pkg/provider/mongo"
 	_ "github.com/infraboard/keyauth/pkg/role/http"
 	_ "github.com/infraboard/keyauth/pkg/role/mongo"
 	_ "github.com/infraboard/keyauth/pkg/token/http"

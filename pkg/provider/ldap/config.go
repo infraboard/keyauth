@@ -1,22 +1,20 @@
-package provider
+package ldap
 
-// NewDefaultLDAPConfig represents the default LDAP config.
-func NewDefaultLDAPConfig() *LDAPConfig {
-	return &LDAPConfig{
-		URL:                  "ldap://127.0.0.1:389",
+import "fmt"
+
+// NewDefaultConfig represents the default LDAP config.
+func NewDefaultConfig() *Config {
+	return &Config{
 		MailAttribute:        "mail",
 		DisplayNameAttribute: "displayname",
 		GroupNameAttribute:   "cn",
-		User:                 "cn=admin,dc=example,dc=org",
-		Password:             "admin",
-		BaseDN:               "dc=example,dc=org",
 		UsersFilter:          "(objectclass=simpleSecurityObject)",
 		UsernameAttribute:    "uid",
 	}
 }
 
-// LDAPConfig represents the configuration related to LDAP server.
-type LDAPConfig struct {
+// Config represents the configuration related to LDAP server.
+type Config struct {
 	URL                  string `bson:"url" json:"url"`
 	SkipVerify           bool   `bson:"skip_verify" json:"skip_verify"`
 	BaseDN               string `bson:"base_dn" json:"base_dn"`
@@ -30,4 +28,17 @@ type LDAPConfig struct {
 	DisplayNameAttribute string `bson:"display_name_attribute" json:"display_name_attribute"`
 	User                 string `bson:"user" json:"user"`
 	Password             string `bson:"password" json:"password"`
+}
+
+// Validate todo
+func (c *Config) Validate() error {
+	if c.URL == "" || c.BaseDN == "" {
+		return fmt.Errorf("url and base_dn required")
+	}
+
+	if c.User == "" || c.Password == "" {
+		return fmt.Errorf("user and password required")
+	}
+
+	return nil
 }

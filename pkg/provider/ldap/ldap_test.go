@@ -5,7 +5,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/infraboard/keyauth/pkg/provider"
 	"github.com/infraboard/keyauth/pkg/provider/ldap"
 	"github.com/infraboard/mcube/logger/zap"
 )
@@ -13,7 +12,7 @@ import (
 func TestConn(t *testing.T) {
 	should := assert.New(t)
 
-	conf := provider.NewDefaultLDAPConfig()
+	conf := ldap.NewDefaultConfig()
 
 	p := ldap.NewProvider(conf)
 	ok, err := p.CheckUserPassword("admin", "admin")

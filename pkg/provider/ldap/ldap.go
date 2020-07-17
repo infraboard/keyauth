@@ -10,16 +10,21 @@ import (
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
-
-	"github.com/infraboard/keyauth/pkg/provider"
 )
 
 // OWASP recommends to escape some special characters.
 // https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/LDAP_Injection_Prevention_Cheat_Sheet.md
 const specialLDAPRunes = ",#+<>;\"="
 
+// UserProvider LDAP provider
+type UserProvider interface {
+	CheckUserPassword(username string, password string) (bool, error)
+	GetDetails(username string) (*UserDetails, error)
+	UpdatePassword(username string, newPassword string) error
+}
+
 // NewProvider todo
-func NewProvider(conf *provider.LDAPConfig) *Provider {
+func NewProvider(conf *Config) *Provider {
 	return &Provider{
 		conf: conf,
 		log:  zap.L().Named("LDAP"),
@@ -28,7 +33,7 @@ func NewProvider(conf *provider.LDAPConfig) *Provider {
 
 // Provider todo
 type Provider struct {
-	conf *provider.LDAPConfig
+	conf *Config
 	log  logger.Logger
 }
 
@@ -132,7 +137,7 @@ func (p *Provider) resolveUsersFilter(userFilter string, inputUsername string) s
 	return userFilter
 }
 
-func (p *Provider) getUserProfile(conn Connection, inputUsername string) (*provider.UserProfile, error) {
+func (p *Provider) getUserProfile(conn Connection, inputUsername string) (*UserProfile, error) {
 	userFilter := p.resolveUsersFilter(p.conf.UsersFilter, inputUsername)
 	p.log.Debugf("Computed user filter is %s", userFilter)
 
@@ -164,7 +169,7 @@ func (p *Provider) getUserProfile(conn Connection, inputUsername string) (*provi
 		return nil, fmt.Errorf("Multiple users %s found", inputUsername)
 	}
 
-	userProfile := provider.UserProfile{
+	userProfile := UserProfile{
 		DN: sr.Entries[0].DN,
 	}
 
@@ -190,7 +195,7 @@ func (p *Provider) getUserProfile(conn Connection, inputUsername string) (*provi
 	return &userProfile, nil
 }
 
-func (p *Provider) resolveGroupsFilter(inputUsername string, profile *provider.UserProfile) (string, error) { //nolint:unparam
+func (p *Provider) resolveGroupsFilter(inputUsername string, profile *UserProfile) (string, error) { //nolint:unparam
 	inputUsername = p.ldapEscape(inputUsername)
 
 	// We temporarily keep placeholder {0} for backward compatibility.
@@ -208,7 +213,7 @@ func (p *Provider) resolveGroupsFilter(inputUsername string, profile *provider.U
 }
 
 // GetDetails retrieve the groups a user belongs to.
-func (p *Provider) GetDetails(inputUsername string) (*provider.UserDetails, error) {
+func (p *Provider) GetDetails(inputUsername string) (*UserDetails, error) {
 	conn, err := p.connect(p.conf.User, p.conf.Password)
 	if err != nil {
 		return nil, err
@@ -255,7 +260,7 @@ func (p *Provider) GetDetails(inputUsername string) (*provider.UserDetails, erro
 		groups = append(groups, res.Attributes[0].Values...)
 	}
 
-	return &provider.UserDetails{
+	return &UserDetails{
 		Username: profile.Username,
 		Emails:   profile.Emails,
 		Groups:   groups,

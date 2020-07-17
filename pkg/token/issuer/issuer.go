@@ -13,6 +13,8 @@ import (
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/application"
 	"github.com/infraboard/keyauth/pkg/domain"
+	"github.com/infraboard/keyauth/pkg/provider"
+	"github.com/infraboard/keyauth/pkg/provider/ldap"
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
 	"github.com/infraboard/keyauth/pkg/user/types"
@@ -32,11 +34,15 @@ func NewTokenIssuer() (Issuer, error) {
 	if pkg.Token == nil {
 		return nil, fmt.Errorf("dependence token application is nil")
 	}
+	if pkg.LDAP == nil {
+		return nil, fmt.Errorf("dependence ldap application is nil")
+	}
 
 	issuer := &issuer{
 		user:    pkg.User,
 		domain:  pkg.Domain,
 		token:   pkg.Token,
+		ldap:    pkg.LDAP,
 		app:     pkg.Application,
 		emailRE: regexp.MustCompile(`([a-zA-Z0-9]+)@([a-zA-Z0-9\.]+)\.([a-zA-Z0-9]+)`),
 	}
@@ -49,6 +55,7 @@ type issuer struct {
 	token   token.Service
 	user    user.Service
 	domain  domain.Service
+	ldap    provider.LDAP
 	emailRE *regexp.Regexp
 }
 
@@ -156,11 +163,24 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 		newTK.DomainID = tk.DomainID
 		return newTK, nil
 	case token.LDAP:
-		cn, dn, err := i.genBaseDN(req.Username)
+		userName, dn, err := i.genBaseDN(req.Username)
 		if err != nil {
 			return nil, err
 		}
-		fmt.Println(dn, cn)
+
+		descReq := provider.NewDescribeLDAPConfigWithBaseDN(dn)
+		ldapConf, err := i.ldap.DescribeConfig(descReq)
+		if err != nil {
+			return nil, err
+		}
+		pv := ldap.NewProvider(ldapConf.Config)
+		ok, err := pv.CheckUserPassword(userName, req.Password)
+		if err != nil {
+			return nil, err
+		}
+		if !ok {
+			return nil, exception.NewUnauthorized("用户名或者密码不对")
+		}
 		return nil, exception.NewInternalServerError("not impl")
 	case token.CLIENT:
 		return nil, exception.NewInternalServerError("not impl")
@@ -182,15 +202,12 @@ func (i *issuer) genBaseDN(username string) (string, string, error) {
 		return "", "", exception.NewBadRequest("ldap user name must like username@company.com")
 	}
 
-	upn := []string{}
 	dns := []string{}
-	upn = append(upn, "cn="+sub[1])
 	for _, dn := range sub[2:] {
 		dns = append(dns, "dc="+dn)
-		upn = append(upn, "dc="+dn)
 	}
 
-	return strings.Join(upn, ","), strings.Join(dns, ","), nil
+	return sub[1], strings.Join(dns, ","), nil
 }
 
 func (i *issuer) issueUserToken(app *application.Application, u *user.User, gt token.GrantType) *token.Token {
