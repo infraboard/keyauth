@@ -37,6 +37,9 @@ func New(req *CreateUserRequest) (*User, error) {
 		UpdateAt:          ftime.Now(),
 		CreateUserRequest: req,
 		HashedPassword:    pass,
+		Status: &Status{
+			Locked: false,
+		},
 	}, nil
 }
 
@@ -44,6 +47,9 @@ func New(req *CreateUserRequest) (*User, error) {
 func NewDefaultUser() *User {
 	return &User{
 		CreateUserRequest: NewCreateUserRequest(),
+		Status: &Status{
+			Locked: false,
+		},
 	}
 }
 

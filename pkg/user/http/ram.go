@@ -52,10 +52,6 @@ func (h *handler) QuerySubAccount(w http.ResponseWriter, r *http.Request) {
 		req.IDs = strings.Split(ids, ",")
 	}
 	req.WithToken(tk)
-	if err := request.GetDataFromRequest(r, req); err != nil {
-		response.Failed(w, err)
-		return
-	}
 
 	d, err := h.service.QueryAccount(types.SubAccount, req)
 	if err != nil {
