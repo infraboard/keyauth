@@ -89,9 +89,9 @@ func NewCreateDepartmentRequest() *CreateDepartmentRequest {
 // CreateDepartmentRequest 创建部门请求
 type CreateDepartmentRequest struct {
 	*token.Session `bson:"-" json:"-"`
-	Name           string `bson:"name" json:"name,omitempty" validate:"required,lte=60"`     // 部门名称
-	ParentID       string `bson:"parent_id" json:"parent_id,omitempty" validate:"lte=200"`   // 上级部门ID
-	ManagerID      string `bson:"manager_id" json:"manager_id,omitempty" validate:"lte=200"` // 部门管理者ID
+	Name           string `bson:"name" json:"name,omitempty" validate:"required,lte=60"` // 部门名称
+	ParentID       string `bson:"parent_id" json:"parent_id" validate:"lte=200"`         // 上级部门ID
+	ManagerID      string `bson:"manager_id" json:"manager_id" validate:"lte=200"`       // 部门管理者ID
 }
 
 // Validate 校验参数的合法性
