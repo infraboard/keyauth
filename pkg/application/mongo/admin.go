@@ -25,8 +25,8 @@ func (s *service) GetBuildInApplication(name string) (*application.Application, 
 
 func (s *service) CreateBuildInApplication(req *application.CreateApplicatonRequest) (
 	*application.Application, error) {
-	userID := req.GetToken().UserID
-	app, err := application.NewBuildInApplication(userID, req)
+	account := req.GetToken().Account
+	app, err := application.NewBuildInApplication(account, req)
 	if err != nil {
 		return nil, err
 	}

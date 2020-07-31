@@ -18,8 +18,7 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	page := request.NewPageRequestFromHTTP(r)
-	req := department.NewQueryDepartmentRequest(page)
+	req := department.NewQueryDepartmentRequestFromHTTP(r)
 	req.WithToken(tk)
 
 	apps, err := h.service.QueryDepartment(req)
@@ -82,8 +81,7 @@ func (h *handler) GetSub(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
 	pid := rctx.PS.ByName("id")
 
-	page := request.NewPageRequestFromHTTP(r)
-	req := department.NewQueryDepartmentRequest(page)
+	req := department.NewQueryDepartmentRequestFromHTTP(r)
 	req.ParentID = &pid
 	req.WithToken(tk)
 

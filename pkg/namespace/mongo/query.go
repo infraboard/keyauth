@@ -73,8 +73,8 @@ func (r *deleteNamespaceRequest) FindFilter() bson.M {
 	tk := r.GetToken()
 
 	filter := bson.M{
-		"domain_id": tk.DomainID,
-		"_id":       r.ID,
+		"domain": tk.Domain,
+		"_id":    r.ID,
 	}
 
 	return filter

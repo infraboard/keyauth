@@ -12,8 +12,8 @@ import (
 
 func (s *service) CreateUserApplication(req *application.CreateApplicatonRequest) (
 	*application.Application, error) {
-	userID := req.GetToken().UserID
-	app, err := application.NewUserApplicartion(userID, req)
+	account := req.GetToken().Account
+	app, err := application.NewUserApplicartion(account, req)
 	if err != nil {
 		return nil, err
 	}

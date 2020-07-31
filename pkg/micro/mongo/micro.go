@@ -37,7 +37,7 @@ func (s *service) CreateService(req *micro.CreateMicroRequest) (
 	}
 	ins.AccessToken = tk.AccessToken
 	ins.RefreshToken = tk.RefreshToken
-	ins.CreaterID = tk.UserID
+	ins.Creater = tk.Account
 
 	if _, err := s.scol.InsertOne(context.TODO(), ins); err != nil {
 		return nil, exception.NewInternalServerError("inserted a service document error, %s", err)

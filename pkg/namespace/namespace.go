@@ -27,15 +27,15 @@ func NewNamespace(req *CreateNamespaceRequest) (*Namespace, error) {
 
 	ins := &Namespace{
 		ID:                     xid.New().String(),
-		DomainID:               tk.DomainID,
-		CreaterID:              tk.UserID,
+		Domain:                 tk.Domain,
+		Creater:                tk.Account,
 		CreateAt:               ftime.Now(),
 		UpdateAt:               ftime.Now(),
 		CreateNamespaceRequest: req,
 	}
 
-	if ins.OwnerID == "" {
-		ins.OwnerID = tk.UserID
+	if ins.Owner == "" {
+		ins.Owner = tk.Account
 	}
 
 	return ins, nil
@@ -50,11 +50,11 @@ func NewDefaultNamespace() *Namespace {
 
 // Namespace tenant resource container
 type Namespace struct {
-	ID                      string     `bson:"_id" json:"id,omitempty"`                // 项目唯一ID
-	DomainID                string     `bson:"domain_id" json:"domain_id,omitempty"`   // 所属域ID
-	CreaterID               string     `bson:"creater_id" json:"creater_id,omitempty"` // 创建人
-	CreateAt                ftime.Time `bson:"create_at" json:"create_at,omitempty"`   // 创建时间
-	UpdateAt                ftime.Time `bson:"update_at" json:"update_at,omitempty"`   // 项目修改时间
+	ID                      string     `bson:"_id" json:"id,omitempty"`              // 项目唯一ID
+	Domain                  string     `bson:"domain" json:"domain,omitempty"`       // 所属域ID
+	Creater                 string     `bson:"creater" json:"creater,omitempty"`     // 创建人
+	CreateAt                ftime.Time `bson:"create_at" json:"create_at,omitempty"` // 创建时间
+	UpdateAt                ftime.Time `bson:"update_at" json:"update_at,omitempty"` // 项目修改时间
 	*CreateNamespaceRequest `bson:",inline"`
 }
 
@@ -72,7 +72,7 @@ type CreateNamespaceRequest struct {
 	Name           string `bson:"name" json:"name" validate:"required,lte=80"` // 项目名称
 	Picture        string `bson:"picture" json:"picture,omitempty"`            // 项目描述图片
 	Enabled        bool   `bson:"enabled" json:"enabled,omitempty"`            // 禁用项目, 该项目所有人暂时都无法访问
-	OwnerID        string `bson:"owner_id" json:"owner_id,omitempty"`          // 项目所有者, PMO
+	Owner          string `bson:"owner" json:"owner,omitempty"`                // 项目所有者, PMO
 	Description    string `bson:"description" json:"description,omitempty"`    // 项目描述
 }
 

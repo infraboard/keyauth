@@ -21,12 +21,12 @@ func NewLDAPConfig(tk *token.Token, conf *ldap.Config) (*LDAPConfig, error) {
 		return nil, err
 	}
 	ins := &LDAPConfig{
-		ID:        xid.New().String(),
-		DomainID:  tk.DomainID,
-		CreaterID: tk.UserID,
-		CreateAt:  ftime.Now(),
-		UpdateAt:  ftime.Now(),
-		Config:    conf,
+		ID:       xid.New().String(),
+		Domain:   tk.Domain,
+		Creater:  tk.Account,
+		CreateAt: ftime.Now(),
+		UpdateAt: ftime.Now(),
+		Config:   conf,
 	}
 	return ins, nil
 }
@@ -40,11 +40,11 @@ func NewDefaultLDAPConfig() *LDAPConfig {
 
 // LDAPConfig todo
 type LDAPConfig struct {
-	ID           string     `bson:"_id" json:"id,omitempty"`                // 唯一ID
-	DomainID     string     `bson:"domain_id" json:"domain_id,omitempty"`   // 所属域ID
-	CreaterID    string     `bson:"creater_id" json:"creater_id,omitempty"` // 创建人
-	CreateAt     ftime.Time `bson:"create_at" json:"create_at,omitempty"`   // 创建时间
-	UpdateAt     ftime.Time `bson:"update_at" json:"update_at,omitempty"`   // 更新时间
+	ID           string     `bson:"_id" json:"id,omitempty"`              // 唯一ID
+	Domain       string     `bson:"domain" json:"domain_id,omitempty"`    // 所属域ID
+	Creater      string     `bson:"creater" json:"creater,omitempty"`     // 创建人
+	CreateAt     ftime.Time `bson:"create_at" json:"create_at,omitempty"` // 创建时间
+	UpdateAt     ftime.Time `bson:"update_at" json:"update_at,omitempty"` // 更新时间
 	*ldap.Config `bson:",inline"`
 }
 

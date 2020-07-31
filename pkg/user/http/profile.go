@@ -18,7 +18,7 @@ func (h *handler) QueryProfile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	req := user.NewDescriptAccountRequest()
-	req.ID = tk.UserID
+	req.Account = tk.Account
 
 	ins, err := h.service.DescribeAccount(req)
 	if err != nil {
@@ -39,7 +39,7 @@ func (h *handler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	req := user.NewDescriptAccountRequest()
-	req.ID = tk.UserID
+	req.Account = tk.Account
 
 	ins, err := h.service.DescribeAccount(req)
 	if err != nil {
@@ -71,7 +71,7 @@ func (h *handler) QueryDomain(w http.ResponseWriter, r *http.Request) {
 	}
 
 	req := domain.NewDescriptDomainRequest()
-	req.ID = tk.DomainID
+	req.Name = tk.Domain
 
 	ins, err := h.domain.DescriptionDomain(req)
 	if err != nil {
@@ -92,7 +92,7 @@ func (h *handler) UpdateDomain(w http.ResponseWriter, r *http.Request) {
 
 	// 查找出原来的domain
 	req := domain.NewDescriptDomainRequest()
-	req.ID = tk.DomainID
+	req.Name = tk.Domain
 	d, err := h.domain.DescriptionDomain(req)
 	if err != nil {
 		response.Failed(w, err)

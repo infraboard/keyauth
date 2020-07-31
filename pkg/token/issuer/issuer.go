@@ -87,7 +87,7 @@ func (i *issuer) setTokenDomain(tk *token.Token) error {
 	}
 
 	if domains.Length() > 0 {
-		tk.DomainID = domains.Items[0].ID
+		tk.Domain = domains.Items[0].Name
 	}
 
 	return nil
@@ -119,7 +119,7 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 				return nil, fmt.Errorf("set token domain error, %s", err)
 			}
 		case types.ServiceAccount, types.SubAccount:
-			tk.DomainID = u.DomainID
+			tk.Domain = u.Domain
 		}
 
 		return tk, nil
@@ -140,7 +140,7 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 			return nil, err
 		}
 		newTK := i.issueUserToken(app, u, token.REFRESH)
-		newTK.DomainID = tk.DomainID
+		newTK.Domain = tk.Domain
 
 		revolkReq := token.NewRevolkTokenRequest(app.ClientID, app.ClientSecret)
 		revolkReq.AccessToken = req.AccessToken
@@ -160,7 +160,7 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 			return nil, err
 		}
 		newTK := i.issueUserToken(app, u, token.Access)
-		newTK.DomainID = tk.DomainID
+		newTK.Domain = tk.Domain
 		return newTK, nil
 	case token.LDAP:
 		userName, dn, err := i.genBaseDN(req.Username)
@@ -181,13 +181,13 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 		if !ok {
 			return nil, exception.NewUnauthorized("用户名或者密码不对")
 		}
-		mockPrimary := i.mockBuildInToken(app, userName, ldapConf.DomainID)
+		mockPrimary := i.mockBuildInToken(app, userName, ldapConf.Domain)
 		u, err := i.syncLDAPUser(mockPrimary, userName)
 		if err != nil {
 			return nil, err
 		}
 		newTK := i.issueUserToken(app, u, token.LDAP)
-		newTK.DomainID = ldapConf.DomainID
+		newTK.Domain = ldapConf.Domain
 		return newTK, nil
 	case token.CLIENT:
 		return nil, exception.NewInternalServerError("not impl")
@@ -241,16 +241,14 @@ func (i *issuer) syncLDAPUser(tk *token.Token, userName string) (*user.User, err
 func (i *issuer) mockBuildInToken(app *application.Application, userName, domainID string) *token.Token {
 	tk := i.newBearToken(app, token.LDAP)
 	tk.Account = userName
-	tk.UserID = "build_in"
 	tk.UserType = types.PrimaryAccount
-	tk.DomainID = domainID
+	tk.Domain = domainID
 	return tk
 }
 
 func (i *issuer) issueUserToken(app *application.Application, u *user.User, gt token.GrantType) *token.Token {
 	tk := i.newBearToken(app, gt)
 	tk.Account = u.Account
-	tk.UserID = u.ID
 	tk.UserType = u.Type
 	return tk
 }

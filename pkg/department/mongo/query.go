@@ -21,7 +21,7 @@ func (r *queryDepartmentRequest) FindOptions() *options.FindOptions {
 	skip := int64(r.PageSize) * int64(r.PageNumber-1)
 
 	opt := &options.FindOptions{
-		Sort:  bson.D{{"create_at", -1}},
+		Sort:  bson.D{{Key: "create_at", Value: -1}},
 		Limit: &pageSize,
 		Skip:  &skip,
 	}
@@ -29,13 +29,13 @@ func (r *queryDepartmentRequest) FindOptions() *options.FindOptions {
 	return opt
 }
 
-func (req *queryDepartmentRequest) FindFilter() bson.M {
+func (r *queryDepartmentRequest) FindFilter() bson.M {
 	filter := bson.M{}
 
-	tk := req.GetToken()
-	filter["domain_id"] = tk.DomainID
-	if req.ParentID != nil {
-		filter["parent_id"] = req.ParentID
+	tk := r.GetToken()
+	filter["domain"] = tk.Domain
+	if r.ParentID != nil {
+		filter["parent_id"] = r.ParentID
 	}
 
 	return filter

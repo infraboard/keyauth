@@ -58,7 +58,7 @@ type User struct {
 	ID                 string     `bson:"_id" json:"id,omitempty"`              // 用户UUID
 	CreateAt           ftime.Time `bson:"create_at" json:"create_at,omitempty"` // 用户创建的时间
 	UpdateAt           ftime.Time `bson:"update_at" json:"update_at,omitempty"` // 修改时间
-	DomainID           string     `bson:"domain_id" json:"domain_id,omitempty"` // 如果是子账号和服务账号 都需要继承主用户Domain
+	Domain             string     `bson:"domain" json:"domain,omitempty"`       // 如果是子账号和服务账号 都需要继承主用户Domain
 	Type               types.Type `bson:"type"  json:"type"`                    // 是否是主账号
 	Roles              []string   `bson:"-" json:"roles,omitempty"`             // 用户的角色(当携带Namesapce查询时会有)
 	*CreateUserRequest `bson:",inline"`

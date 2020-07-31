@@ -23,8 +23,8 @@ type Type string
 // Micro is service provider
 type Micro struct {
 	ID                  string     `bson:"_id" json:"id"`                        // 微服务ID
-	DomainID            string     `bson:"domain_id" json:"domain_id"`           // 服务所属域
-	CreaterID           string     `bson:"creater_id" json:"creater_id"`         // 创建人
+	Domain              string     `bson:"domain" json:"domain"`                 // 服务所属域
+	Creater             string     `bson:"creater" json:"creater"`               // 创建人
 	CreateAt            ftime.Time `bson:"create_at" json:"create_at,omitempty"` // 创建的时间
 	UpdateAt            ftime.Time `bson:"update_at" json:"update_at,omitempty"` // 更新时间
 	AccountID           string     `bson:"account_id" json:"account_id"`         // 服务账号

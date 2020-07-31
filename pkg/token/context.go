@@ -25,13 +25,13 @@ func (s *Session) GetToken() *Token {
 	return s.tk
 }
 
-// UserID todo
-func (s *Session) UserID() string {
+// Account todo
+func (s *Session) Account() string {
 	if s.tk == nil {
 		return "Nil"
 	}
 
-	return s.tk.UserID
+	return s.tk.Account
 }
 
 // Getter 获取token

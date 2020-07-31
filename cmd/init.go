@@ -199,7 +199,7 @@ func (i *Initialer) initDomain(ownerID string) (*domain.Domain, error) {
 }
 
 func (i *Initialer) initApp(ownerID string) ([]*application.Application, error) {
-	tk := &token.Token{UserID: ownerID}
+	tk := &token.Token{Account: ownerID}
 
 	req := application.NewCreateApplicatonRequest()
 	req.Name = application.AdminWebApplicationName

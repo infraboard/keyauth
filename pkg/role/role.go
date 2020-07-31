@@ -30,8 +30,8 @@ func New(t Type, req *CreateRoleRequest) (*Role, error) {
 		Type:              t,
 		CreateAt:          ftime.Now(),
 		UpdateAt:          ftime.Now(),
-		DomainID:          tk.DomainID,
-		CreaterID:         tk.UserID,
+		Domain:            tk.Domain,
+		Creater:           tk.Account,
 		CreateRoleRequest: req,
 	}, nil
 }
@@ -49,8 +49,8 @@ type Role struct {
 	Type               Type       `bson:"type" json:"type"`                     // 角色类型
 	CreateAt           ftime.Time `bson:"create_at" json:"create_at,omitempty"` // 创建时间`
 	UpdateAt           ftime.Time `bson:"update_at" json:"update_at,omitempty"` // 更新时间
-	DomainID           string     `bson:"domain_id" json:"domain_id,omitempty"` // 角色所属域
-	CreaterID          string     `bson:"creater_id" json:"creater_id"`         // 创建人
+	Domain             string     `bson:"domain" json:"domain,omitempty"`       // 角色所属域
+	Creater            string     `bson:"creater" json:"creater"`               // 创建人
 	*CreateRoleRequest `bson:",inline"`
 }
 

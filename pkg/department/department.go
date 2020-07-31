@@ -30,8 +30,8 @@ func NewDepartment(req *CreateDepartmentRequest, d Service) (*Department, error)
 		ID:                      xid.New().String(),
 		CreateAt:                ftime.Now(),
 		UpdateAt:                ftime.Now(),
-		CreaterID:               tk.UserID,
-		DomainID:                tk.DomainID,
+		Creater:                 tk.Account,
+		Domain:                  tk.Domain,
 		Grade:                   1,
 		CreateDepartmentRequest: req,
 	}
@@ -47,8 +47,8 @@ func NewDepartment(req *CreateDepartmentRequest, d Service) (*Department, error)
 		req.ParentID = "/"
 	}
 
-	if req.ManagerID == "" {
-		req.ManagerID = tk.UserID
+	if req.Manager == "" {
+		req.Manager = tk.Account
 	}
 
 	return ins, nil
@@ -63,14 +63,14 @@ func NewDefaultDepartment() *Department {
 
 // Department user's department
 type Department struct {
-	ID                       string     `bson:"_id" json:"id"`                          // 部门ID
-	ParentPath               string     `bson:"parent_path" json:"parent_path"`         // 路径
-	Number                   uint64     `bson:"number" json:"number,omitempty"`         // 部门编号
-	CreateAt                 ftime.Time `bson:"create_at" json:"create_at,omitempty"`   // 部门创建时间
-	UpdateAt                 ftime.Time `bson:"update_at" json:"update_at,omitempty"`   // 更新时间
-	CreaterID                string     `bson:"creater_id" json:"creater_id,omitempty"` // 创建人
-	DomainID                 string     `bson:"domain_id" json:"domain_id,omitempty"`   // 部门所属域
-	Grade                    int        `bson:"grade" json:"grade,omitempty"`           // 第几级部门, 由层数决定
+	ID                       string     `bson:"_id" json:"id"`                        // 部门ID
+	ParentPath               string     `bson:"parent_path" json:"parent_path"`       // 路径
+	Number                   uint64     `bson:"number" json:"number,omitempty"`       // 部门编号
+	CreateAt                 ftime.Time `bson:"create_at" json:"create_at,omitempty"` // 部门创建时间
+	UpdateAt                 ftime.Time `bson:"update_at" json:"update_at,omitempty"` // 更新时间
+	Creater                  string     `bson:"creater" json:"creater,omitempty"`     // 创建人
+	Domain                   string     `bson:"domain" json:"domain,omitempty"`       // 部门所属域
+	Grade                    int        `bson:"grade" json:"grade,omitempty"`         // 第几级部门, 由层数决定
 	*CreateDepartmentRequest `bson:",inline"`
 }
 
@@ -91,7 +91,7 @@ type CreateDepartmentRequest struct {
 	*token.Session `bson:"-" json:"-"`
 	Name           string `bson:"name" json:"name,omitempty" validate:"required,lte=60"` // 部门名称
 	ParentID       string `bson:"parent_id" json:"parent_id" validate:"lte=200"`         // 上级部门ID
-	ManagerID      string `bson:"manager_id" json:"manager_id" validate:"lte=200"`       // 部门管理者ID
+	Manager        string `bson:"manager" json:"manager" validate:"lte=200"`             // 部门管理者ID
 }
 
 // Validate 校验参数的合法性
@@ -105,7 +105,7 @@ func (req *CreateDepartmentRequest) Validate() error {
 	if tk == nil {
 		return fmt.Errorf("session token required")
 	}
-	if tk.DomainID == "" {
+	if tk.Domain == "" {
 		return fmt.Errorf("user must create domain first")
 	}
 

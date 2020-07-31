@@ -30,7 +30,7 @@ func (r *queryUserRequest) FindOptions() *options.FindOptions {
 	skip := int64(r.PageSize) * int64(r.PageNumber-1)
 
 	opt := &options.FindOptions{
-		Sort:  bson.D{{"create_at", -1}},
+		Sort:  bson.D{{Key: "create_at", Value: -1}},
 		Limit: &pageSize,
 		Skip:  &skip,
 	}
@@ -41,8 +41,8 @@ func (r *queryUserRequest) FindOptions() *options.FindOptions {
 func (r *queryUserRequest) FindFilter() bson.M {
 	tk := r.GetToken()
 	filter := bson.M{
-		"type":      r.userType,
-		"domain_id": tk.DomainID,
+		"type":   r.userType,
+		"domain": tk.Domain,
 	}
 
 	if len(r.IDs) > 0 {

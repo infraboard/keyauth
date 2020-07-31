@@ -30,7 +30,7 @@ func (s *service) CreateAccount(t types.Type, req *user.CreateUserRequest) (*use
 
 	tk := req.GetToken()
 	if tk != nil {
-		u.DomainID = tk.DomainID
+		u.Domain = tk.Domain
 	}
 
 	u.Type = t
@@ -62,7 +62,7 @@ func (s *service) UpdateAccountPassword(req *user.UpdatePasswordRequest) (*user.
 	}
 
 	descReq := user.NewDescriptAccountRequest()
-	descReq.ID = req.GetToken().UserID
+	descReq.Account = req.GetToken().Account
 	u, err := s.DescribeAccount(descReq)
 	if err != nil {
 		return nil, err

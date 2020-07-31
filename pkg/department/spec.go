@@ -2,6 +2,7 @@ package department
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/mcube/http/request"
@@ -15,12 +16,20 @@ type Service interface {
 	DeleteDepartment(id string) error
 }
 
-// NewQueryDepartmentRequest 列表查询请求
-func NewQueryDepartmentRequest(req *request.PageRequest) *QueryDepartmentRequest {
-	return &QueryDepartmentRequest{
-		PageRequest: req,
+// NewQueryDepartmentRequestFromHTTP 列表查询请求
+func NewQueryDepartmentRequestFromHTTP(r *http.Request) *QueryDepartmentRequest {
+	req := &QueryDepartmentRequest{
+		PageRequest: request.NewPageRequestFromHTTP(r),
 		Session:     token.NewSession(),
 	}
+
+	qs := r.URL.Query()
+	pid := qs.Get("parent_id")
+	if pid != "" {
+		req.ParentID = &pid
+	}
+
+	return req
 }
 
 // QueryDepartmentRequest todo

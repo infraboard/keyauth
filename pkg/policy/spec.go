@@ -33,7 +33,7 @@ type QueryPolicyRequest struct {
 	*request.PageRequest
 	*token.Session
 
-	UserID      string `json:"user_id,omitempty"`
+	User        string `json:"user,omitempty"`
 	RoleID      string `json:"role_id,omitempty"`
 	NamespaceID string `json:"namespace_id,omitempty"`
 }

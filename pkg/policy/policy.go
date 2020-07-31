@@ -24,9 +24,9 @@ func New(req *CreatePolicyRequest) (*Policy, error) {
 	p := &Policy{
 		CreateAt:            ftime.Now(),
 		UpdateAt:            ftime.Now(),
-		CreaterID:           tk.UserID,
+		Creater:             tk.Account,
 		UserType:            tk.UserType,
-		DomainID:            tk.DomainID,
+		Domain:              tk.Domain,
 		CreatePolicyRequest: req,
 	}
 	p.genID()
@@ -43,19 +43,19 @@ func NewDefaultPolicy() *Policy {
 
 // Policy 权限策略
 type Policy struct {
-	ID                   string     `bson:"_id" json:"id"`                // 策略ID
-	CreateAt             ftime.Time `bson:"create_at" json:"create_at"`   // 创建时间
-	UpdateAt             ftime.Time `bson:"update_at" json:"update_at"`   // 更新时间
-	DomainID             string     `bson:"domain_id" json:"domain_id"`   // 策略所属域
-	CreaterID            string     `bson:"creater_id" json:"creater_id"` // 创建者ID
-	UserType             types.Type `bson:"user_type" json:"user_type"`   // 用户类型
+	ID                   string     `bson:"_id" json:"id"`              // 策略ID
+	CreateAt             ftime.Time `bson:"create_at" json:"create_at"` // 创建时间
+	UpdateAt             ftime.Time `bson:"update_at" json:"update_at"` // 更新时间
+	Domain               string     `bson:"domain" json:"domain"`       // 策略所属域
+	Creater              string     `bson:"creater" json:"creater"`     // 创建者ID
+	UserType             types.Type `bson:"user_type" json:"user_type"` // 用户类型
 	*CreatePolicyRequest `bson:",inline"`
 }
 
 func (p *Policy) genID() {
 	h := fnv.New32a()
 	hashedStr := fmt.Sprintf("%s-%s-%s-%s",
-		p.DomainID, p.NamespaceID, p.UserID, p.RoleID)
+		p.Domain, p.NamespaceID, p.UserID, p.RoleID)
 
 	h.Write([]byte(hashedStr))
 	p.ID = fmt.Sprintf("%x", h.Sum32())
