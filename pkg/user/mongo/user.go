@@ -48,9 +48,9 @@ func (s *service) UpdateAccountProfile(u *user.User) error {
 		return err
 	}
 
-	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": u.ID}, bson.M{"$set": req.updateData()})
+	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": u.Account}, bson.M{"$set": req.updateData()})
 	if err != nil {
-		return exception.NewInternalServerError("update user(%s) error, %s", u.ID, err)
+		return exception.NewInternalServerError("update user(%s) error, %s", u.Account, err)
 	}
 
 	return nil
@@ -72,12 +72,12 @@ func (s *service) UpdateAccountPassword(req *user.UpdatePasswordRequest) (*user.
 		return nil, err
 	}
 
-	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": u.ID}, bson.M{"$set": bson.M{
+	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": u.Account}, bson.M{"$set": bson.M{
 		"password": u.HashedPassword,
 	}})
 
 	if err != nil {
-		return nil, exception.NewInternalServerError("update user(%s) password error, %s", u.ID, err)
+		return nil, exception.NewInternalServerError("update user(%s) password error, %s", u.Account, err)
 	}
 
 	return u.HashedPassword, nil
@@ -112,10 +112,10 @@ func (s *service) BlockAccount(id, reason string) error {
 	return s.saveAccount(user)
 }
 
-func (s *service) DeleteAccount(id string) error {
-	_, err := s.col.DeleteOne(context.TODO(), bson.M{"_id": id})
+func (s *service) DeleteAccount(account string) error {
+	_, err := s.col.DeleteOne(context.TODO(), bson.M{"_id": account})
 	if err != nil {
-		return exception.NewInternalServerError("delete user(%s) error, %s", id, err)
+		return exception.NewInternalServerError("delete user(%s) error, %s", account, err)
 	}
 	return nil
 }

@@ -8,7 +8,6 @@ import (
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/types/ftime"
-	"github.com/rs/xid"
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/infraboard/keyauth/pkg/token"
@@ -32,7 +31,6 @@ func New(req *CreateUserRequest) (*User, error) {
 	}
 
 	return &User{
-		ID:                xid.New().String(),
 		CreateAt:          ftime.Now(),
 		UpdateAt:          ftime.Now(),
 		CreateUserRequest: req,
@@ -55,7 +53,6 @@ func NewDefaultUser() *User {
 
 // User info
 type User struct {
-	ID                 string     `bson:"_id" json:"id,omitempty"`              // 用户UUID
 	CreateAt           ftime.Time `bson:"create_at" json:"create_at,omitempty"` // 用户创建的时间
 	UpdateAt           ftime.Time `bson:"update_at" json:"update_at,omitempty"` // 修改时间
 	Domain             string     `bson:"domain" json:"domain,omitempty"`       // 如果是子账号和服务账号 都需要继承主用户Domain
@@ -102,7 +99,7 @@ func (u *User) ChangePassword(old, new string) error {
 type CreateUserRequest struct {
 	*token.Session `bson:"-" json:"-"`
 	DepartmentID   string `bson:"department_id" json:"department_id" validate:"lte=200"` // 用户所属部门
-	Account        string `bson:"account" json:"account" validate:"required,lte=60"`     // 用户账号名称
+	Account        string `bson:"_id" json:"account" validate:"required,lte=60"`         // 用户账号名称
 	Mobile         string `bson:"mobile" json:"mobile" validate:"lte=30"`                // 手机号码, 用户可以通过手机进行注册和密码找回, 还可以通过手机号进行登录
 	Email          string `bson:"email" json:"email" validate:"lte=30"`                  // 邮箱, 用户可以通过邮箱进行注册和照明密码
 	Phone          string `bson:"phone" json:"phone" validate:"lte=30"`                  // 用户的座机号码
@@ -121,6 +118,10 @@ type CreateUserRequest struct {
 // Validate 校验请求是否合法
 func (req *CreateUserRequest) Validate() error {
 	tk := req.GetToken()
+
+	if tk == nil {
+		return fmt.Errorf("token required")
+	}
 
 	// 非管理员, 主账号 可以创建子账号
 	if !tk.UserType.Is(types.SupperAccount, types.PrimaryAccount) {

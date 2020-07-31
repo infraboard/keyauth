@@ -54,7 +54,7 @@ var InitCmd = &cobra.Command{
 
 // NewInitialerFromCLI 初始化
 func NewInitialerFromCLI() (*Initialer, error) {
-	i := new(Initialer)
+	i := NewInitialer()
 
 	if err := i.checkIsInit(); err != nil {
 		return nil, err
@@ -115,12 +115,23 @@ func NewInitialerFromCLI() (*Initialer, error) {
 	return i, nil
 }
 
+// NewInitialer todo
+func NewInitialer() *Initialer {
+	return &Initialer{
+		mockTK: &token.Token{
+			UserType: types.SupperAccount,
+			Domain:   domain.AdminDomainName,
+		},
+	}
+}
+
 // Initialer 初始化控制器
 type Initialer struct {
 	domainDesc string
 	username   string
 	password   string
 	tk         *token.Token
+	mockTK     *token.Token
 }
 
 // Run 执行初始化
@@ -134,13 +145,13 @@ func (i *Initialer) Run() error {
 	}
 	fmt.Printf("初始化用户: %s [成功]\n", i.username)
 
-	_, err = i.initDomain(u.ID)
+	_, err = i.initDomain(u.Account)
 	if err != nil {
 		return err
 	}
 	fmt.Printf("初始化域: %s   [成功]\n", i.domainDesc)
 
-	apps, err := i.initApp(u.ID)
+	apps, err := i.initApp(u.Account)
 	if err != nil {
 		return err
 	}
@@ -173,6 +184,7 @@ func (i *Initialer) Run() error {
 
 func (i *Initialer) checkIsInit() error {
 	req := user.NewQueryAccountRequest(request.NewPageRequest(20, 1))
+	req.WithToken(i.mockTK)
 	userSet, err := pkg.User.QueryAccount(types.SupperAccount, req)
 	if err != nil {
 		return err
@@ -186,6 +198,7 @@ func (i *Initialer) checkIsInit() error {
 
 func (i *Initialer) initUser() (*user.User, error) {
 	req := user.NewCreateUserRequest()
+	req.WithToken(i.mockTK)
 	req.Account = i.username
 	req.Password = i.password
 	return pkg.User.CreateAccount(types.SupperAccount, req)

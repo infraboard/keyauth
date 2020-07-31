@@ -28,7 +28,7 @@ func (s *service) CreateService(req *micro.CreateMicroRequest) (
 	if err != nil {
 		return nil, exception.NewInternalServerError("create service account error, %s", err)
 	}
-	ins.AccountID = account.ID
+	ins.Account = account.Account
 
 	// 使用用户创建服务访问Token
 	tk, err := s.createServiceToken(user, pass)

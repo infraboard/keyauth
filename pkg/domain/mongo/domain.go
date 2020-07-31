@@ -76,9 +76,9 @@ func (s *service) UpdateDomain(d *domain.Domain) error {
 	}
 
 	d.UpdateAt = ftime.Now()
-	_, err := s.col.UpdateOne(context.TODO(), bson.M{"_id": d.ID}, bson.M{"$set": d})
+	_, err := s.col.UpdateOne(context.TODO(), bson.M{"_id": d.Name}, bson.M{"$set": d})
 	if err != nil {
-		return exception.NewInternalServerError("update domain(%s) error, %s", d.ID, err)
+		return exception.NewInternalServerError("update domain(%s) error, %s", d.Name, err)
 	}
 
 	return nil

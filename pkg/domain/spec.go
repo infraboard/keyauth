@@ -67,7 +67,7 @@ func NewCreateDomainRequst() *CreateDomainRequst {
 
 // CreateDomainRequst 创建请求
 type CreateDomainRequst struct {
-	Name           string `bson:"name" json:"name" validate:"required,lte=60"`                        // 公司或者组织名称
+	Name           string `bson:"_id" json:"name" validate:"required,lte=60"`                         // 公司或者组织名称
 	DisplayName    string `bson:"display_name" json:"display_name,omitempty" validate:"lte=80"`       // 全称
 	LogoPath       string `bson:"logo_path" json:"logo_path,omitempty" validate:"lte=200"`            // 公司LOGO图片的URL
 	Description    string `bson:"description" json:"description,omitempty" validate:"lte=400"`        // 描述

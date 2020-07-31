@@ -88,6 +88,7 @@ func (i *issuer) setTokenDomain(tk *token.Token) error {
 
 	if domains.Length() > 0 {
 		tk.Domain = domains.Items[0].Name
+		fmt.Println(tk.Domain)
 	}
 
 	return nil
