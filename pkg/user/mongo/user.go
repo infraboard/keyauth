@@ -101,8 +101,8 @@ func (s *service) DescribeAccount(req *user.DescriptAccountRequest) (*user.User,
 	return user, nil
 }
 
-func (s *service) BlockAccount(id, reason string) error {
-	desc := user.NewDescriptAccountRequestWithID(id)
+func (s *service) BlockAccount(account, reason string) error {
+	desc := user.NewDescriptAccountRequestWithAccount(account)
 	user, err := s.DescribeAccount(desc)
 	if err != nil {
 		return fmt.Errorf("describe user error, %s", err)

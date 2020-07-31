@@ -32,11 +32,6 @@ func NewDescriptAccountRequest() *DescriptAccountRequest {
 	return &DescriptAccountRequest{}
 }
 
-// NewDescriptAccountRequestWithID 查询详情请求
-func NewDescriptAccountRequestWithID(id string) *DescriptAccountRequest {
-	return &DescriptAccountRequest{ID: id}
-}
-
 // NewDescriptAccountRequestWithAccount 查询详情请求
 func NewDescriptAccountRequestWithAccount(accout string) *DescriptAccountRequest {
 	return &DescriptAccountRequest{Account: accout}

@@ -55,7 +55,7 @@ type Policy struct {
 func (p *Policy) genID() {
 	h := fnv.New32a()
 	hashedStr := fmt.Sprintf("%s-%s-%s-%s",
-		p.Domain, p.NamespaceID, p.UserID, p.RoleID)
+		p.Domain, p.NamespaceID, p.User, p.RoleID)
 
 	h.Write([]byte(hashedStr))
 	p.ID = fmt.Sprintf("%x", h.Sum32())
@@ -63,7 +63,7 @@ func (p *Policy) genID() {
 
 // CheckDependence todo
 func (req *CreatePolicyRequest) CheckDependence(u user.Service, r role.Service, ns namespace.Service) error {
-	_, err := u.DescribeAccount(user.NewDescriptAccountRequestWithID(req.UserID))
+	_, err := u.DescribeAccount(user.NewDescriptAccountRequestWithAccount(req.Account()))
 	if err != nil {
 		return fmt.Errorf("check user error, %s", err)
 	}
@@ -92,7 +92,7 @@ func NewCreatePolicyRequest() *CreatePolicyRequest {
 type CreatePolicyRequest struct {
 	*token.Session `bson:"-" json:"-"`
 	NamespaceID    string     `bson:"namespace_id" json:"namespace_id" validate:"lte=120"` // 范围
-	UserID         string     `bson:"user_id" json:"user_id" validate:"required,lte=120"`  // 用户ID
+	User           string     `bson:"user" json:"user" validate:"required,lte=120"`        // 用户ID
 	RoleID         string     `bson:"role_id" json:"role_id" validate:"required,lte=40"`   // 角色名称
 	Scope          string     `bson:"scope" json:"scope"`                                  // 范围控制
 	ExpiredTime    ftime.Time `bson:"expired_time" json:"expired_time"`                    // 策略过期时间
@@ -119,15 +119,15 @@ type Set struct {
 	Items []*Policy `json:"items"`
 }
 
-// UserIDs 策略包含的所有用户ID, 已去重
-func (s *Set) UserIDs() []string {
-	ids := map[string]struct{}{}
+// Users 策略包含的所有用户ID, 已去重
+func (s *Set) Users() []string {
+	users := map[string]struct{}{}
 	for i := range s.Items {
-		ids[s.Items[i].UserID] = struct{}{}
+		users[s.Items[i].Account()] = struct{}{}
 	}
 
-	set := make([]string, 0, len(ids))
-	for k := range ids {
+	set := make([]string, 0, len(users))
+	for k := range users {
 		set = append(set, k)
 	}
 
@@ -160,11 +160,11 @@ func (s *Set) GetRoles(r role.Service) (*role.Set, error) {
 }
 
 // UserRoles 获取用户的角色
-func (s *Set) UserRoles(userID string) []string {
+func (s *Set) UserRoles(account string) []string {
 	rns := []string{}
 	for i := range s.Items {
 		item := s.Items[i]
-		if item.UserID == userID {
+		if item.Account() == account {
 			rns = append(rns, item.RoleID)
 		}
 	}
