@@ -20,3 +20,4 @@ log/
 .DS_Store
 etc
 keyauth
+dist/*

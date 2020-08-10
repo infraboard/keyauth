@@ -1,21 +1,40 @@
-BINARY_NAME=keyauth
-MAIN_FILE_PAHT=main.go
+PROJECT_NAME=keyauth
+MAIN_FILE=main.go
+PKG := "github.com/infraboard/$(PROJECT_NAME)"
+PKG_LIST := $(shell go list ${PKG}/... | grep -v /vendor/)
+GO_FILES := $(shell find . -name '*.go' | grep -v /vendor/ | grep -v _test.go)
 
-all: test build
-run:
-		@go build -o ${BINARY_NAME} ${MAIN_FILE_PAHT}
-		@./${BINARY_NAME} service start
-clean:
-		@go clean .
-		@rm -f ${BINARY_NAME}
-test:
-		go test -v ./...
-build: local
-linux:
-		@sh ./build/build.sh linux ${BINARY_NAME} ${MAIN_FILE_PAHT}
-local:
-		@sh ./build/build.sh local ${BINARY_NAME} ${MAIN_FILE_PAHT}
-docker:
-		@sh ./build/build.sh docker ${BINARY_NAME} ${MAIN_FILE_PAHT}
-image:
-		@sh ./build/build.sh image ${BINARY_NAME} ${MAIN_FILE_PAHT} ${IMAGE_PREFIX}
+.PHONY: all dep lint vet test test-coverage build clean
+
+all: build
+
+dep: ## Get the dependencies
+	@go mod download
+
+lint: ## Lint Golang files
+	@golint -set_exit_status ${PKG_LIST}
+
+vet: ## Run go vet
+	@go vet ${PKG_LIST}
+
+test: ## Run unittests
+	@go test -short ${PKG_LIST}
+
+test-coverage: ## Run tests with coverage
+	@go test -short -coverprofile cover.out -covermode=atomic ${PKG_LIST} 
+	@cat cover.out >> coverage.txt
+
+build: dep ## Build the binary file
+	@go build -i -o dist/$(PROJECT_NAME) $(MAIN_FILE)
+
+run: # Run Develop server
+	@go run $(MAIN_FILE) service start
+
+init: # Init Service
+	@go run $(MAIN_FILE) init
+
+clean: ## Remove previous build
+	@rm -f dist/*
+
+help: ## Display this help screen
+	@grep -h -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
