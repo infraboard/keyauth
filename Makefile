@@ -28,7 +28,7 @@ build: dep ## Build the binary file
 	@go build -i -o dist/$(PROJECT_NAME) $(MAIN_FILE)
 
 run: # Run Develop server
-	@go run $(MAIN_FILE) service start
+	@go run $(MAIN_FILE) start
 
 init: # Init Service
 	@go run $(MAIN_FILE) init

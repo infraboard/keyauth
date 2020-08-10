@@ -19,9 +19,9 @@ type Service interface {
 	// 获取账号Profile
 	DescribeAccount(req *DescriptAccountRequest) (*User, error)
 	// 警用账号
-	BlockAccount(id, reason string) error
+	BlockAccount(account, reason string) error
 	// DeleteAccount 删除用户
-	DeleteAccount(id string) error
+	DeleteAccount(account string) error
 	// 更新用户
 	UpdateAccountProfile(u *User) error
 	UpdateAccountPassword(req *UpdatePasswordRequest) (*Password, error)
@@ -39,7 +39,6 @@ func NewDescriptAccountRequestWithAccount(accout string) *DescriptAccountRequest
 
 // DescriptAccountRequest 查询用户详情请求
 type DescriptAccountRequest struct {
-	ID      string `json:"id,omitempty"`
 	Account string `json:"account,omitempty"`
 }
 
@@ -49,7 +48,7 @@ func (req *DescriptAccountRequest) String() string {
 
 // Validate 校验详情查询
 func (req *DescriptAccountRequest) Validate() error {
-	if req.ID == "" && req.Account == "" {
+	if req.Account == "" {
 		return errors.New("id or account is required")
 	}
 
@@ -68,7 +67,7 @@ func NewQueryAccountRequest(pageReq *request.PageRequest) *QueryAccountRequest {
 type QueryAccountRequest struct {
 	*token.Session
 	*request.PageRequest
-	IDs         []string
+	Accounts    []string
 	NamespaceID string
 }
 

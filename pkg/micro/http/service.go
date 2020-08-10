@@ -1,7 +1,6 @@
 package http
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/infraboard/mcube/http/context"
@@ -54,7 +53,6 @@ func (h *handler) GetService(w http.ResponseWriter, r *http.Request) {
 
 	req := micro.NewDescriptServiceRequest()
 	req.ID = rctx.PS.ByName("id")
-	fmt.Println(req.Name)
 
 	d, err := h.service.DescribeService(req)
 	if err != nil {

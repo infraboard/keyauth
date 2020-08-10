@@ -8,6 +8,8 @@ import (
 
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/request"
+	"github.com/infraboard/mcube/logger"
+	"github.com/infraboard/mcube/logger/zap"
 	"github.com/infraboard/mcube/types/ftime"
 
 	"github.com/infraboard/keyauth/pkg"
@@ -45,6 +47,7 @@ func NewTokenIssuer() (Issuer, error) {
 		ldap:    pkg.LDAP,
 		app:     pkg.Application,
 		emailRE: regexp.MustCompile(`([a-zA-Z0-9]+)@([a-zA-Z0-9\.]+)\.([a-zA-Z0-9]+)`),
+		log:     zap.L().Named("Token Issuer"),
 	}
 	return issuer, nil
 }
@@ -57,6 +60,7 @@ type issuer struct {
 	domain  domain.Service
 	ldap    provider.LDAP
 	emailRE *regexp.Regexp
+	log     logger.Logger
 }
 
 func (i *issuer) checkUser(user, pass string) (*user.User, error) {
@@ -88,7 +92,6 @@ func (i *issuer) setTokenDomain(tk *token.Token) error {
 
 	if domains.Length() > 0 {
 		tk.Domain = domains.Items[0].Name
-		fmt.Println(tk.Domain)
 	}
 
 	return nil
@@ -109,6 +112,7 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 	case token.PASSWORD:
 		u, checkErr := i.checkUser(req.Username, req.Password)
 		if checkErr != nil {
+			i.log.Debugf("issue password token error, %s", checkErr)
 			return nil, exception.NewUnauthorized("user or password not connrect")
 		}
 

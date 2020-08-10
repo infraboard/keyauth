@@ -25,9 +25,9 @@ func (h *handler) Registry(router router.SubRouter) {
 	domainRouter.Permission(true)
 	domainRouter.Handle("POST", "/", h.CreateDomain).AddLabel(label.Create)
 	domainRouter.Handle("GET", "/", h.ListDomains).AddLabel(label.List)
-	domainRouter.Handle("GET", "/:id", h.GetDomain).AddLabel(label.Get)
-	domainRouter.Handle("PUT", "/:id", h.UpdateDomain).AddLabel(label.Update)
-	domainRouter.Handle("DELETE", "/:id", h.DeleteDomain).AddLabel(label.Delete)
+	domainRouter.Handle("GET", "/:name", h.GetDomain).AddLabel(label.Get)
+	domainRouter.Handle("PUT", "/:name", h.UpdateDomain).AddLabel(label.Update)
+	domainRouter.Handle("DELETE", "/:name", h.DeleteDomain).AddLabel(label.Delete)
 }
 
 func (h *handler) Config() error {

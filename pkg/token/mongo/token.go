@@ -2,14 +2,11 @@ package mongo
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/infraboard/mcube/exception"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/token"
-	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
 func (s *service) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) {
@@ -47,24 +44,6 @@ func (s *service) ValidateToken(req *token.ValidateTokenRequest) (*token.Token, 
 		if tk.CheckRefreshIsExpired() {
 			return nil, exception.NewRefreshTokenExpired("refresh_token: %s expoired", tk.RefreshToken)
 		}
-	}
-
-	// 校验用户权限
-	if req.EndpointID != "" {
-		descEP := endpoint.NewDescribeEndpointRequestWithID(req.EndpointID)
-		ep, err := s.endpoint.DescribeEndpoint(descEP)
-		if err != nil {
-			return nil, err
-		}
-
-		// 如果是超级管理员不做权限校验, 直接放行
-		if tk.UserType.Is(types.SupperAccount) {
-			return tk, nil
-		}
-
-		fmt.Println(ep)
-		// 找到用户角色
-		// 判断该角色是否有该Endpoint调用权限
 	}
 
 	tk.Desensitize()

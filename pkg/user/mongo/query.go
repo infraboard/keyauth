@@ -45,8 +45,8 @@ func (r *queryUserRequest) FindFilter() bson.M {
 		"domain": tk.Domain,
 	}
 
-	if len(r.IDs) > 0 {
-		filter["_id"] = bson.M{"$in": r.IDs}
+	if len(r.Accounts) > 0 {
+		filter["_id"] = bson.M{"$in": r.Accounts}
 	}
 
 	return filter
@@ -67,11 +67,8 @@ type describeUserRequest struct {
 func (r *describeUserRequest) FindFilter() bson.M {
 	filter := bson.M{}
 
-	if r.ID != "" {
-		filter["_id"] = r.ID
-	}
 	if r.Account != "" {
-		filter["account"] = r.Account
+		filter["_id"] = r.Account
 	}
 
 	return filter

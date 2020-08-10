@@ -27,7 +27,7 @@ func (h *handler) GetDomain(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
 
 	req := domain.NewDescriptDomainRequest()
-	req.ID = rctx.PS.ByName("id")
+	req.Name = rctx.PS.ByName("name")
 	d, err := h.service.DescriptionDomain(req)
 	if err != nil {
 		response.Failed(w, err)
@@ -60,7 +60,7 @@ func (h *handler) UpdateDomain(w http.ResponseWriter, r *http.Request) {
 
 	// 查找出原来的domain
 	req := domain.NewDescriptDomainRequest()
-	req.ID = rctx.PS.ByName("id")
+	req.Name = rctx.PS.ByName("name")
 	d, err := h.service.DescriptionDomain(req)
 	if err != nil {
 		response.Failed(w, err)
@@ -85,7 +85,7 @@ func (h *handler) UpdateDomain(w http.ResponseWriter, r *http.Request) {
 func (h *handler) DeleteDomain(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
 
-	if err := h.service.DeleteDomain(rctx.PS.ByName("id")); err != nil {
+	if err := h.service.DeleteDomain(rctx.PS.ByName("name")); err != nil {
 		response.Failed(w, err)
 		return
 	}

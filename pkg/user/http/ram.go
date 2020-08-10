@@ -49,7 +49,7 @@ func (h *handler) QuerySubAccount(w http.ResponseWriter, r *http.Request) {
 	page := request.NewPageRequestFromHTTP(r)
 	req := user.NewQueryAccountRequest(page)
 	if ids != "" {
-		req.IDs = strings.Split(ids, ",")
+		req.Accounts = strings.Split(ids, ",")
 	}
 	req.WithToken(tk)
 

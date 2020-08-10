@@ -29,7 +29,7 @@ func (s *service) queryAccount(req *queryUserRequest) (*user.Set, error) {
 		if err != nil {
 			return nil, err
 		}
-		req.IDs = ps.Users()
+		req.Accounts = ps.Users()
 	}
 
 	if err != nil {

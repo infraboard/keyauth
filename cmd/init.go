@@ -3,6 +3,7 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/infraboard/mcube/http/label"
@@ -199,15 +200,15 @@ func (i *Initialer) checkIsInit() error {
 func (i *Initialer) initUser() (*user.User, error) {
 	req := user.NewCreateUserRequest()
 	req.WithToken(i.mockTK)
-	req.Account = i.username
-	req.Password = i.password
+	req.Account = strings.TrimSpace(i.username)
+	req.Password = strings.TrimSpace(i.password)
 	return pkg.User.CreateAccount(types.SupperAccount, req)
 }
 
 func (i *Initialer) initDomain(ownerID string) (*domain.Domain, error) {
 	req := domain.NewCreateDomainRequst()
 	req.Name = domain.AdminDomainName
-	req.Description = i.domainDesc
+	req.Description = strings.TrimSpace(i.domainDesc)
 	return pkg.Domain.CreateDomain(ownerID, req)
 }
 

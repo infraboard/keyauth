@@ -51,11 +51,8 @@ type descDomain struct {
 func (req *descDomain) FindFilter() bson.M {
 	filter := bson.M{}
 
-	if req.ID != "" {
-		filter["_id"] = req.ID
-	}
 	if req.Name != "" {
-		filter["name"] = req.Name
+		filter["_id"] = req.Name
 	}
 
 	return filter

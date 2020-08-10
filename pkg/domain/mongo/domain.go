@@ -35,7 +35,7 @@ func (s *service) DescriptionDomain(req *domain.DescriptDomainRequest) (*domain.
 			return nil, exception.NewNotFound("domain %s not found", req)
 		}
 
-		return nil, exception.NewInternalServerError("find domain %s error, %s", req.ID, err)
+		return nil, exception.NewInternalServerError("find domain %s error, %s", req.Name, err)
 	}
 
 	return d, nil

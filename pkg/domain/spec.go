@@ -45,14 +45,13 @@ func NewDescriptDomainRequest() *DescriptDomainRequest {
 
 // DescriptDomainRequest 查询domain详情请求
 type DescriptDomainRequest struct {
-	ID   string `json:"id,omitempty"`
 	Name string `json:"name,omitempty"`
 }
 
 // Validate todo
 func (req *DescriptDomainRequest) Validate() error {
-	if req.ID == "" && req.Name == "" {
-		return fmt.Errorf("id, name or base_dn required")
+	if req.Name == "" {
+		return fmt.Errorf("name required")
 	}
 
 	return nil

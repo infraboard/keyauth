@@ -54,14 +54,10 @@ var (
 
 // startCmd represents the start command
 var serviceCmd = &cobra.Command{
-	Use:   "service [start/stop/reload/restart]",
+	Use:   "start",
 	Short: "权限中心服务",
 	Long:  `权限中心服务`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) == 0 {
-			return errors.New("[start] are required")
-		}
-
 		// 初始化全局变量
 		if err := loadGlobalConfig(confType); err != nil {
 			return err
@@ -78,29 +74,24 @@ var serviceCmd = &cobra.Command{
 		}
 
 		conf := conf.C()
-		switch args[0] {
-		case "start":
-			// 启动服务
-			ch := make(chan os.Signal, 1)
-			signal.Notify(ch, syscall.SIGTERM, syscall.SIGINT, syscall.SIGKILL, syscall.SIGHUP, syscall.SIGQUIT)
+		// 启动服务
+		ch := make(chan os.Signal, 1)
+		signal.Notify(ch, syscall.SIGTERM, syscall.SIGINT, syscall.SIGKILL, syscall.SIGHUP, syscall.SIGQUIT)
 
-			// 初始化服务
-			svr, err := newService(conf)
-			if err != nil {
+		// 初始化服务
+		svr, err := newService(conf)
+		if err != nil {
+			return err
+		}
+
+		// 等待信号处理
+		go svr.waitSign(ch)
+
+		// 启动服务
+		if err := svr.start(); err != nil {
+			if !strings.Contains(err.Error(), "http: Server closed") {
 				return err
 			}
-
-			// 等待信号处理
-			go svr.waitSign(ch)
-
-			// 启动服务
-			if err := svr.start(); err != nil {
-				if !strings.Contains(err.Error(), "http: Server closed") {
-					return err
-				}
-			}
-		default:
-			return errors.New("not support argument, support [start]")
 		}
 
 		return nil
