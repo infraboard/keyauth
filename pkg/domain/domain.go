@@ -15,8 +15,8 @@ var (
 )
 
 // New 新建一个domain
-func New(ownerID string, req *CreateDomainRequst) (*Domain, error) {
-	if ownerID == "" {
+func New(owner string, req *CreateDomainRequst) (*Domain, error) {
+	if owner == "" {
 		return nil, errors.New("domain required owner")
 	}
 
@@ -27,7 +27,7 @@ func New(ownerID string, req *CreateDomainRequst) (*Domain, error) {
 	d := &Domain{
 		CreateAt:           ftime.Now(),
 		UpdateAt:           ftime.Now(),
-		OwnerID:            ownerID,
+		Owner:              owner,
 		CreateDomainRequst: req,
 	}
 
@@ -70,7 +70,7 @@ func (s *Set) Add(d *Domain) {
 type Domain struct { // 域ID
 	CreateAt            ftime.Time `bson:"create_at" json:"create_at,omitempty"` // 创建时间
 	UpdateAt            ftime.Time `bson:"update_at" json:"update_at,omitempty"` // 更新时间
-	OwnerID             string     `bson:"owner_id" json:"owner_id,omitempty"`   // 域拥有者
+	Owner               string     `bson:"owner" json:"owner,omitempty"`         // 域拥有者
 	*CreateDomainRequst `bson:",inline"`
 }
 
