@@ -29,3 +29,17 @@ keyauth是一个微服务权限治理中心, 提供用户认证与授权管理.
 + 审计：
     + 用户登录审计:  用户什么时间在哪儿登录了系统
 
+
+## 快速开发
+
+```sh
+# 安装依赖
+make dep
+# 配置
+mv /etc/keyauth_sample.toml /etc/keyauth.toml
+vim /etc/keyauth.toml
+# 初始化服务
+make init
+# 启动服务
+make run
+```

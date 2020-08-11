@@ -18,6 +18,8 @@ log/
 .idea/
 .vscode/
 .DS_Store
-etc
+keyauth.env
+keyauth.toml
+ldap.env
 keyauth
 dist/*
