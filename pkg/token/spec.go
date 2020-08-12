@@ -58,9 +58,6 @@ func (req *IssueTokenRequest) Validate() error {
 			return fmt.Errorf("use %s grant type, username and password required", PASSWORD)
 		}
 	case REFRESH:
-		if req.AccessToken == "" {
-			return fmt.Errorf("use %s grant type, access_token required", REFRESH)
-		}
 		if req.RefreshToken == "" {
 			return fmt.Errorf("use %s grant type, refresh_token required", REFRESH)
 		}
