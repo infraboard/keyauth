@@ -43,8 +43,6 @@ func NewDepartment(req *CreateDepartmentRequest, d Service) (*Department, error)
 		}
 		ins.ParentPath = pd.Path()
 		ins.Grade = len(strings.Split(pd.Path(), "."))
-	} else {
-		req.ParentID = "/"
 	}
 
 	if req.Manager == "" {
@@ -72,6 +70,11 @@ type Department struct {
 	Domain                   string     `bson:"domain" json:"domain,omitempty"`       // 部门所属域
 	Grade                    int        `bson:"grade" json:"grade,omitempty"`         // 第几级部门, 由层数决定
 	*CreateDepartmentRequest `bson:",inline"`
+}
+
+// CounterKey 编号计算的key
+func (d *Department) CounterKey() string {
+	return fmt.Sprintf("%s.depart.%d", d.Domain, d.Grade)
 }
 
 // Path 具体路径

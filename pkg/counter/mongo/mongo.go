@@ -39,10 +39,8 @@ func (s *service) GetNextSequenceValue(sequenceName string) (*counter.Count, err
 	)
 
 	count := counter.NewCount()
-	if err := result.Decode(count); err != nil {
-		if err == mongo.ErrNoDocuments {
-			count.Value = 0
-		}
+	err := result.Decode(count)
+	if err != nil && err != mongo.ErrNoDocuments {
 		return nil, fmt.Errorf("counter decode error, %s", err)
 	}
 

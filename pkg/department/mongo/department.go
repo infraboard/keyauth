@@ -66,7 +66,7 @@ func (s *service) CreateDepartment(req *department.CreateDepartmentRequest) (
 		return nil, err
 	}
 
-	count, err := s.counter.GetNextSequenceValue("department")
+	count, err := s.counter.GetNextSequenceValue(ins.CounterKey())
 	if err != nil {
 		return nil, err
 	}
