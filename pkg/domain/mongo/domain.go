@@ -2,7 +2,6 @@ package mongo
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/types/ftime"
@@ -44,7 +43,6 @@ func (s *service) DescriptionDomain(req *domain.DescriptDomainRequest) (*domain.
 
 func (s *service) QueryDomain(req *domain.QueryDomainRequest) (*domain.Set, error) {
 	r := newQueryDomainRequest(req)
-	fmt.Println(r.FindFilter())
 	resp, err := s.col.Find(context.TODO(), r.FindFilter(), r.FindOptions())
 
 	if err != nil {

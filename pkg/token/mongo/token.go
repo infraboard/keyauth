@@ -36,7 +36,7 @@ func (s *service) ValidateToken(req *token.ValidateTokenRequest) (*token.Token, 
 	// 校验Token是否过期
 	if req.AccessToken != "" {
 		if tk.CheckAccessIsExpired() {
-			return nil, exception.NewRefreshTokenExpired("access_token: %s has expired", tk.AccessToken)
+			return nil, exception.NewAccessTokenExpired("access_token: %s has expired", tk.AccessToken)
 		}
 	}
 
