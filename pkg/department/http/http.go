@@ -26,6 +26,8 @@ func (h *handler) Registry(router router.SubRouter) {
 	appRouter.Handle("POST", "/", h.Create).AddLabel(label.Create)
 	appRouter.Handle("GET", "/", h.List).AddLabel(label.List)
 	appRouter.Handle("GET", "/:id", h.Get).AddLabel(label.Get)
+	appRouter.Handle("PUT", "/:id", h.Put).AddLabel(label.Update)
+	appRouter.Handle("PATCH", "/:id", h.Patch).AddLabel(label.Update)
 	appRouter.Handle("GET", "/:id/subs", h.GetSub).AddLabel(label.Get)
 	appRouter.Handle("DELETE", "/:id", h.Delete).AddLabel(label.Delete)
 

@@ -56,6 +56,58 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+// Create 创建主账号
+func (h *handler) Put(w http.ResponseWriter, r *http.Request) {
+	rctx := context.GetContext(r)
+	tk, err := pkg.GetTokenFromContext(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	req := department.NewPutUpdateDepartmentRequest(rctx.PS.ByName("id"))
+	if err := request.GetDataFromRequest(r, req.CreateDepartmentRequest); err != nil {
+		response.Failed(w, err)
+		return
+	}
+	req.WithToken(tk)
+
+	ins, err := h.service.UpdateDepartment(req)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	response.Success(w, ins)
+	return
+}
+
+// Create 创建主账号
+func (h *handler) Patch(w http.ResponseWriter, r *http.Request) {
+	rctx := context.GetContext(r)
+	tk, err := pkg.GetTokenFromContext(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	req := department.NewPatchUpdateDepartmentRequest(rctx.PS.ByName("id"))
+	if err := request.GetDataFromRequest(r, req.CreateDepartmentRequest); err != nil {
+		response.Failed(w, err)
+		return
+	}
+	req.WithToken(tk)
+
+	ins, err := h.service.UpdateDepartment(req)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	response.Success(w, ins)
+	return
+}
+
 func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
 

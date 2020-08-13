@@ -144,6 +144,24 @@ func (s *Set) Add(item *Department) {
 	s.Items = append(s.Items, item)
 }
 
+// NewPutUpdateDepartmentRequest todo
+func NewPutUpdateDepartmentRequest(id string) *UpdateDepartmentRequest {
+	return &UpdateDepartmentRequest{
+		ID:                      id,
+		UpdateMode:              common.PutUpdateMode,
+		CreateDepartmentRequest: NewCreateDepartmentRequest(),
+	}
+}
+
+// NewPatchUpdateDepartmentRequest todo
+func NewPatchUpdateDepartmentRequest(id string) *UpdateDepartmentRequest {
+	return &UpdateDepartmentRequest{
+		ID:                      id,
+		UpdateMode:              common.PatchUpdateMode,
+		CreateDepartmentRequest: NewCreateDepartmentRequest(),
+	}
+}
+
 // UpdateDepartmentRequest todo
 type UpdateDepartmentRequest struct {
 	ID         string            `json:"id"`
