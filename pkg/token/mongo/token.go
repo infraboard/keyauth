@@ -97,8 +97,8 @@ func (s *service) RevolkToken(req *token.RevolkTokenRequest) error {
 		return err
 	}
 
-	if tk.CheckAccessIsExpired() {
-		return exception.NewAccessTokenExpired("access_token: %s has expired", tk.AccessToken)
+	if tk.CheckRefreshIsExpired() {
+		return exception.NewRefreshTokenExpired("refresh_token: %s has expired", tk.RefreshToken)
 	}
 
 	if err := tk.CheckTokenApplication(app.ID); err != nil {
