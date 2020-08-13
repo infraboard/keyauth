@@ -1,6 +1,7 @@
 package user
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/go-playground/validator/v10"
@@ -10,6 +11,7 @@ import (
 	"github.com/infraboard/mcube/types/ftime"
 	"golang.org/x/crypto/bcrypt"
 
+	"github.com/infraboard/keyauth/common"
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user/types"
 )
@@ -20,7 +22,7 @@ var (
 )
 
 // New 实例
-func New(req *CreateUserRequest) (*User, error) {
+func New(req *CreateAccountRequest) (*User, error) {
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest(err.Error())
 	}
@@ -31,10 +33,10 @@ func New(req *CreateUserRequest) (*User, error) {
 	}
 
 	return &User{
-		CreateAt:          ftime.Now(),
-		UpdateAt:          ftime.Now(),
-		CreateUserRequest: req,
-		HashedPassword:    pass,
+		CreateAt:             ftime.Now(),
+		UpdateAt:             ftime.Now(),
+		CreateAccountRequest: req,
+		HashedPassword:       pass,
 		Status: &Status{
 			Locked: false,
 		},
@@ -44,7 +46,7 @@ func New(req *CreateUserRequest) (*User, error) {
 // NewDefaultUser 实例
 func NewDefaultUser() *User {
 	return &User{
-		CreateUserRequest: NewCreateUserRequest(),
+		CreateAccountRequest: NewCreateUserRequest(),
 		Status: &Status{
 			Locked: false,
 		},
@@ -53,12 +55,12 @@ func NewDefaultUser() *User {
 
 // User info
 type User struct {
-	CreateAt           ftime.Time `bson:"create_at" json:"create_at,omitempty"` // 用户创建的时间
-	UpdateAt           ftime.Time `bson:"update_at" json:"update_at,omitempty"` // 修改时间
-	Domain             string     `bson:"domain" json:"domain,omitempty"`       // 如果是子账号和服务账号 都需要继承主用户Domain
-	Type               types.Type `bson:"type"  json:"type"`                    // 是否是主账号
-	Roles              []string   `bson:"-" json:"roles,omitempty"`             // 用户的角色(当携带Namesapce查询时会有)
-	*CreateUserRequest `bson:",inline"`
+	CreateAt              ftime.Time `bson:"create_at" json:"create_at,omitempty"` // 用户创建的时间
+	UpdateAt              ftime.Time `bson:"update_at" json:"update_at,omitempty"` // 修改时间
+	Domain                string     `bson:"domain" json:"domain,omitempty"`       // 如果是子账号和服务账号 都需要继承主用户Domain
+	Type                  types.Type `bson:"type"  json:"type"`                    // 是否是主账号
+	Roles                 []string   `bson:"-" json:"roles,omitempty"`             // 用户的角色(当携带Namesapce查询时会有)
+	*CreateAccountRequest `bson:",inline"`
 
 	HashedPassword *Password `bson:"password" json:"password,omitempty"` // 密码相关信息
 	Status         *Status   `bson:"status" json:"status,omitempty"`     // 用户状态
@@ -95,8 +97,8 @@ func (u *User) ChangePassword(old, new string) error {
 	return nil
 }
 
-// CreateUserRequest 创建用户请求
-type CreateUserRequest struct {
+// CreateAccountRequest 创建用户请求
+type CreateAccountRequest struct {
 	*token.Session `bson:"-" json:"-"`
 	DepartmentID   string `bson:"department_id" json:"department_id" validate:"lte=200"` // 用户所属部门
 	Account        string `bson:"_id" json:"account" validate:"required,lte=60"`         // 用户账号名称
@@ -116,7 +118,7 @@ type CreateUserRequest struct {
 }
 
 // Validate 校验请求是否合法
-func (req *CreateUserRequest) Validate() error {
+func (req *CreateAccountRequest) Validate() error {
 	tk := req.GetToken()
 
 	if tk == nil {
@@ -131,8 +133,14 @@ func (req *CreateUserRequest) Validate() error {
 	return validate.Struct(req)
 }
 
+// Patch todo
+func (req *CreateAccountRequest) Patch(data *CreateAccountRequest) {
+	patchData, _ := json.Marshal(data)
+	json.Unmarshal(patchData, req)
+}
+
 // ValidateUpdate 校验请求是否合法
-func (req *CreateUserRequest) ValidateUpdate() error {
+func (req *CreateAccountRequest) ValidateUpdate() error {
 	return nil
 }
 
@@ -204,4 +212,26 @@ type Set struct {
 // Add todo
 func (s *Set) Add(u *User) {
 	s.Items = append(s.Items, u)
+}
+
+// NewPutAccountRequest todo
+func NewPutAccountRequest() *UpdateAccountRequest {
+	return &UpdateAccountRequest{
+		UpdateMode:           common.PutUpdateMode,
+		CreateAccountRequest: NewCreateUserRequest(),
+	}
+}
+
+// NewPatchAccountRequest todo
+func NewPatchAccountRequest() *UpdateAccountRequest {
+	return &UpdateAccountRequest{
+		UpdateMode:           common.PatchUpdateMode,
+		CreateAccountRequest: NewCreateUserRequest(),
+	}
+}
+
+// UpdateAccountRequest todo
+type UpdateAccountRequest struct {
+	UpdateMode common.UpdateMode `json:"update_mode"`
+	*CreateAccountRequest
 }

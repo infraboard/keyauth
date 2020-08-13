@@ -38,7 +38,8 @@ func (h *handler) Registry(router router.SubRouter) {
 	portalRouter.BasePath("profile")
 	portalRouter.Handle("GET", "/", h.QueryProfile).AddLabel(label.Get)
 	portalRouter.Handle("GET", "/domain", h.QueryDomain).AddLabel(label.Get)
-	portalRouter.Handle("PUT", "/", h.UpdateProfile).AddLabel(label.Create)
+	portalRouter.Handle("PUT", "/", h.PutProfile).AddLabel(label.Update)
+	portalRouter.Handle("PATCH", "/", h.PatchProfile).AddLabel(label.Update)
 	portalRouter.Permission(true)
 	portalRouter.Handle("PUT", "/domain", h.UpdateDomain).AddLabel(label.Create)
 

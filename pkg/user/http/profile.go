@@ -31,29 +31,51 @@ func (h *handler) QueryProfile(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func (h *handler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
+func (h *handler) PutProfile(w http.ResponseWriter, r *http.Request) {
 	tk, err := pkg.GetTokenFromContext(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
 
-	req := user.NewDescriptAccountRequest()
+	req := user.NewPutAccountRequest()
 	req.Account = tk.Account
+	req.WithToken(tk)
 
-	ins, err := h.service.DescribeAccount(req)
+	if err := request.GetDataFromRequest(r, req.CreateAccountRequest); err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	ins, err := h.service.UpdateAccountProfile(req)
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
-	ins.WithToken(tk)
+	ins.Desensitize()
 
-	if err := request.GetDataFromRequest(r, ins.CreateUserRequest); err != nil {
+	response.Success(w, ins)
+	return
+}
+
+func (h *handler) PatchProfile(w http.ResponseWriter, r *http.Request) {
+	tk, err := pkg.GetTokenFromContext(r)
+	if err != nil {
 		response.Failed(w, err)
 		return
 	}
 
-	if err := h.service.UpdateAccountProfile(ins); err != nil {
+	req := user.NewPatchAccountRequest()
+	req.Account = tk.Account
+	req.WithToken(tk)
+
+	if err := request.GetDataFromRequest(r, req.CreateAccountRequest); err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	ins, err := h.service.UpdateAccountProfile(req)
+	if err != nil {
 		response.Failed(w, err)
 		return
 	}
@@ -91,25 +113,21 @@ func (h *handler) UpdateDomain(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 查找出原来的domain
-	req := domain.NewDescriptDomainRequest()
+	req := domain.NewPatchDomainRequest()
 	req.Name = tk.Domain
-	d, err := h.domain.DescriptionDomain(req)
+
+	// 解析需要更新的数据
+	if err := request.GetDataFromRequest(r, req.CreateDomainRequst); err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	ins, err := h.domain.UpdateDomain(req)
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
 
-	// 解析需要更新的数据
-	if err := request.GetDataFromRequest(r, d.CreateDomainRequst); err != nil {
-		response.Failed(w, err)
-		return
-	}
-
-	if err := h.domain.UpdateDomain(d); err != nil {
-		response.Failed(w, err)
-		return
-	}
-
-	response.Success(w, d)
+	response.Success(w, ins)
 	return
 }

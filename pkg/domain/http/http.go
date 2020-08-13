@@ -26,7 +26,8 @@ func (h *handler) Registry(router router.SubRouter) {
 	domainRouter.Handle("POST", "/", h.CreateDomain).AddLabel(label.Create)
 	domainRouter.Handle("GET", "/", h.ListDomains).AddLabel(label.List)
 	domainRouter.Handle("GET", "/:name", h.GetDomain).AddLabel(label.Get)
-	domainRouter.Handle("PUT", "/:name", h.UpdateDomain).AddLabel(label.Update)
+	domainRouter.Handle("PUT", "/:name", h.PutDomain).AddLabel(label.Update)
+	domainRouter.Handle("PATCH", "/:name", h.PatchDomain).AddLabel(label.Update)
 	domainRouter.Handle("DELETE", "/:name", h.DeleteDomain).AddLabel(label.Delete)
 }
 

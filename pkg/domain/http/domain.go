@@ -55,30 +55,49 @@ func (h *handler) CreateDomain(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func (h *handler) UpdateDomain(w http.ResponseWriter, r *http.Request) {
+func (h *handler) PutDomain(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
 
 	// 查找出原来的domain
-	req := domain.NewDescriptDomainRequest()
+	req := domain.NewPutDomainRequest()
 	req.Name = rctx.PS.ByName("name")
-	d, err := h.service.DescriptionDomain(req)
+
+	// 解析需要更新的数据
+	if err := request.GetDataFromRequest(r, req.CreateDomainRequst); err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	ins, err := h.service.UpdateDomain(req)
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
 
+	response.Success(w, ins)
+	return
+}
+
+func (h *handler) PatchDomain(w http.ResponseWriter, r *http.Request) {
+	rctx := context.GetContext(r)
+
+	// 查找出原来的domain
+	req := domain.NewPatchDomainRequest()
+	req.Name = rctx.PS.ByName("name")
+
 	// 解析需要更新的数据
-	if err := request.GetDataFromRequest(r, d.CreateDomainRequst); err != nil {
+	if err := request.GetDataFromRequest(r, req.CreateDomainRequst); err != nil {
 		response.Failed(w, err)
 		return
 	}
 
-	if err := h.service.UpdateDomain(d); err != nil {
+	ins, err := h.service.UpdateDomain(req)
+	if err != nil {
 		response.Failed(w, err)
 		return
 	}
 
-	response.Success(w, d)
+	response.Success(w, ins)
 	return
 }
 

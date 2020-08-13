@@ -1,16 +1,18 @@
 package domain
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/infraboard/mcube/http/request"
 
+	"github.com/infraboard/keyauth/common"
 	"github.com/infraboard/keyauth/pkg/token"
 )
 
 // Service is an domain service
 type Service interface {
-	UpdateDomain(*Domain) error
+	UpdateDomain(req *UpdateDomainRequest) (*Domain, error)
 	CreateDomain(ownerID string, req *CreateDomainRequst) (*Domain, error)
 	DescriptionDomain(req *DescriptDomainRequest) (*Domain, error)
 	QueryDomain(req *QueryDomainRequest) (*Set, error)
@@ -41,6 +43,13 @@ func (req *QueryDomainRequest) Validate() error {
 // NewDescriptDomainRequest 查询详情请求
 func NewDescriptDomainRequest() *DescriptDomainRequest {
 	return &DescriptDomainRequest{}
+}
+
+// NewDescriptDomainRequestWithName 查询详情请求
+func NewDescriptDomainRequestWithName(name string) *DescriptDomainRequest {
+	return &DescriptDomainRequest{
+		Name: name,
+	}
 }
 
 // DescriptDomainRequest 查询domain详情请求
@@ -90,4 +99,32 @@ func (req *CreateDomainRequst) Validate() error {
 
 func (req *CreateDomainRequst) String() string {
 	return fmt.Sprint(*req)
+}
+
+// Patch todo
+func (req *CreateDomainRequst) Patch(data *CreateDomainRequst) {
+	patchData, _ := json.Marshal(data)
+	json.Unmarshal(patchData, req)
+}
+
+// NewPutDomainRequest todo
+func NewPutDomainRequest() *UpdateDomainRequest {
+	return &UpdateDomainRequest{
+		UpdateMode:         common.PutUpdateMode,
+		CreateDomainRequst: NewCreateDomainRequst(),
+	}
+}
+
+// NewPatchDomainRequest todo
+func NewPatchDomainRequest() *UpdateDomainRequest {
+	return &UpdateDomainRequest{
+		UpdateMode:         common.PatchUpdateMode,
+		CreateDomainRequst: NewCreateDomainRequst(),
+	}
+}
+
+// UpdateDomainRequest todo
+type UpdateDomainRequest struct {
+	UpdateMode common.UpdateMode `json:"update_mode"`
+	*CreateDomainRequst
 }

@@ -8,6 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
+	"github.com/infraboard/keyauth/common"
 	"github.com/infraboard/keyauth/pkg/domain"
 )
 
@@ -70,18 +71,31 @@ func (s *service) QueryDomain(req *domain.QueryDomainRequest) (*domain.Set, erro
 	return domainSet, nil
 }
 
-func (s *service) UpdateDomain(d *domain.Domain) error {
-	if err := d.CreateDomainRequst.Validate(); err != nil {
-		return exception.NewBadRequest(err.Error())
+func (s *service) UpdateDomain(req *domain.UpdateDomainRequest) (*domain.Domain, error) {
+	if err := req.Validate(); err != nil {
+		return nil, exception.NewBadRequest(err.Error())
+	}
+
+	d, err := s.DescriptionDomain(domain.NewDescriptDomainRequestWithName(req.Name))
+	if err != nil {
+		return nil, err
+	}
+	switch req.UpdateMode {
+	case common.PutUpdateMode:
+		*d.CreateDomainRequst = *req.CreateDomainRequst
+	case common.PatchUpdateMode:
+		d.CreateDomainRequst.Patch(req.CreateDomainRequst)
+	default:
+		return nil, exception.NewBadRequest("unknown update mode: %s", req.UpdateMode)
 	}
 
 	d.UpdateAt = ftime.Now()
-	_, err := s.col.UpdateOne(context.TODO(), bson.M{"_id": d.Name}, bson.M{"$set": d})
+	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": d.Name}, bson.M{"$set": d})
 	if err != nil {
-		return exception.NewInternalServerError("update domain(%s) error, %s", d.Name, err)
+		return nil, exception.NewInternalServerError("update domain(%s) error, %s", d.Name, err)
 	}
 
-	return nil
+	return d, nil
 }
 
 func (s *service) DeleteDomain(id string) error {

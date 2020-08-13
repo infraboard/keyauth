@@ -5,9 +5,11 @@ import (
 	"fmt"
 
 	"github.com/infraboard/mcube/exception"
+	"github.com/infraboard/mcube/types/ftime"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
+	"github.com/infraboard/keyauth/common"
 	"github.com/infraboard/keyauth/pkg/user"
 	"github.com/infraboard/keyauth/pkg/user/types"
 )
@@ -22,7 +24,7 @@ func (s *service) QueryAccount(t types.Type, req *user.QueryAccountRequest) (*us
 	return s.queryAccount(r)
 }
 
-func (s *service) CreateAccount(t types.Type, req *user.CreateUserRequest) (*user.User, error) {
+func (s *service) CreateAccount(t types.Type, req *user.CreateAccountRequest) (*user.User, error) {
 	u, err := user.New(req)
 	if err != nil {
 		return nil, err
@@ -42,18 +44,32 @@ func (s *service) CreateAccount(t types.Type, req *user.CreateUserRequest) (*use
 	return u, nil
 }
 
-func (s *service) UpdateAccountProfile(u *user.User) error {
-	req, err := newUpdateUserRequest(u)
-	if err != nil {
-		return err
+func (s *service) UpdateAccountProfile(req *user.UpdateAccountRequest) (*user.User, error) {
+	if err := req.Validate(); err != nil {
+		return nil, exception.NewBadRequest("validate update department error, %s", err)
 	}
 
-	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": u.Account}, bson.M{"$set": req.updateData()})
+	u, err := s.DescribeAccount(user.NewDescriptAccountRequestWithAccount(req.Account))
 	if err != nil {
-		return exception.NewInternalServerError("update user(%s) error, %s", u.Account, err)
+		return nil, err
+	}
+	switch req.UpdateMode {
+	case common.PutUpdateMode:
+		*u.CreateAccountRequest = *req.CreateAccountRequest
+	case common.PatchUpdateMode:
+		u.CreateAccountRequest.Patch(req.CreateAccountRequest)
+	default:
+		return nil, exception.NewBadRequest("unknown update mode: %s", req.UpdateMode)
 	}
 
-	return nil
+	u.UpdateAt = ftime.Now()
+
+	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": u.Account}, bson.M{"$set": u})
+	if err != nil {
+		return nil, exception.NewInternalServerError("update user(%s) error, %s", u.Account, err)
+	}
+
+	return u, nil
 }
 
 func (s *service) UpdateAccountPassword(req *user.UpdatePasswordRequest) (*user.Password, error) {
