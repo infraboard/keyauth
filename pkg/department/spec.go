@@ -13,6 +13,7 @@ type Service interface {
 	QueryDepartment(*QueryDepartmentRequest) (*Set, error)
 	DescribeDepartment(*DescribeDeparmentRequest) (*Department, error)
 	CreateDepartment(*CreateDepartmentRequest) (*Department, error)
+	UpdateDepartment(*UpdateDepartmentRequest) (*Department, error)
 	DeleteDepartment(id string) error
 }
 

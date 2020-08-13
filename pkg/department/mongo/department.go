@@ -4,9 +4,11 @@ import (
 	"context"
 
 	"github.com/infraboard/mcube/exception"
+	"github.com/infraboard/mcube/types/ftime"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
+	"github.com/infraboard/keyauth/common"
 	"github.com/infraboard/keyauth/pkg/department"
 )
 
@@ -91,4 +93,31 @@ func (s *service) DeleteDepartment(id string) error {
 	}
 
 	return nil
+}
+
+func (s *service) UpdateDepartment(req *department.UpdateDepartmentRequest) (*department.Department, error) {
+	if err := req.Validate(); err != nil {
+		return nil, exception.NewBadRequest("validate update department error, %s", err)
+	}
+
+	dp, err := s.DescribeDepartment(department.NewDescriptDepartmentRequestWithID(req.ID))
+	if err != nil {
+		return nil, err
+	}
+	switch req.UpdateMode {
+	case common.PutUpdateMode:
+		*dp.CreateDepartmentRequest = *req.CreateDepartmentRequest
+	case common.PatchUpdateMode:
+		dp.CreateDepartmentRequest.Patch(req.CreateDepartmentRequest)
+	default:
+		return nil, exception.NewBadRequest("unknown update mode: %s", req.UpdateMode)
+	}
+
+	dp.UpdateAt = ftime.Now()
+	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": dp.ID}, bson.M{"$set": dp})
+	if err != nil {
+		return nil, exception.NewInternalServerError("update domain(%s) error, %s", dp.Name, err)
+	}
+
+	return dp, nil
 }

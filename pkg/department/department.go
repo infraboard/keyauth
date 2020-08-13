@@ -1,6 +1,7 @@
 package department
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -10,6 +11,7 @@ import (
 	"github.com/infraboard/mcube/types/ftime"
 	"github.com/rs/xid"
 
+	"github.com/infraboard/keyauth/common"
 	"github.com/infraboard/keyauth/pkg/token"
 )
 
@@ -115,6 +117,12 @@ func (req *CreateDepartmentRequest) Validate() error {
 	return validate.Struct(req)
 }
 
+// Patch todo
+func (req *CreateDepartmentRequest) Patch(data *CreateDepartmentRequest) {
+	patchData, _ := json.Marshal(data)
+	json.Unmarshal(patchData, req)
+}
+
 // NewDepartmentSet 实例化
 func NewDepartmentSet(req *request.PageRequest) *Set {
 	return &Set{
@@ -134,4 +142,20 @@ type Set struct {
 // Add 添加应用
 func (s *Set) Add(item *Department) {
 	s.Items = append(s.Items, item)
+}
+
+// UpdateDepartmentRequest todo
+type UpdateDepartmentRequest struct {
+	ID         string            `json:"id"`
+	UpdateMode common.UpdateMode `json:"update_mode"`
+	*CreateDepartmentRequest
+}
+
+// Validate 校验入参
+func (req *UpdateDepartmentRequest) Validate() error {
+	if req.ID == "" {
+		return fmt.Errorf("department id requred")
+	}
+
+	return req.CreateDepartmentRequest.Validate()
 }
