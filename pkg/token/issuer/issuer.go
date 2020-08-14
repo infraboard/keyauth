@@ -133,7 +133,6 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 		validateReq.RefreshToken = req.RefreshToken
 		tk, err := i.token.ValidateToken(validateReq)
 		if err != nil {
-			err = exception.NewUnauthorized(err.Error())
 			return nil, err
 		}
 		if tk.AccessToken != req.AccessToken {
