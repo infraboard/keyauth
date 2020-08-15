@@ -37,6 +37,11 @@ func (r *queryDepartmentRequest) FindFilter() bson.M {
 	if r.ParentID != nil {
 		filter["parent_id"] = r.ParentID
 	}
+	if r.Keywords != "" {
+		filter["$or"] = bson.A{
+			bson.M{"name": bson.M{"$regex": r.Keywords, "$options": "im"}},
+		}
+	}
 
 	return filter
 }

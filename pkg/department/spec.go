@@ -29,6 +29,7 @@ func NewQueryDepartmentRequestFromHTTP(r *http.Request) *QueryDepartmentRequest 
 	if pid != "" {
 		req.ParentID = &pid
 	}
+	req.Keywords = qs.Get("keywords")
 
 	return req
 }
@@ -38,6 +39,7 @@ type QueryDepartmentRequest struct {
 	*token.Session
 	*request.PageRequest
 	ParentID *string
+	Keywords string
 }
 
 // NewDescriptDepartmentRequest new实例
