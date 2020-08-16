@@ -2,8 +2,8 @@ package http
 
 import (
 	"net/http"
-	"strings"
 
+	"github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 
@@ -43,14 +43,7 @@ func (h *handler) QuerySubAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	qs := r.URL.Query()
-	ids := qs.Get("ids")
-
-	page := request.NewPageRequestFromHTTP(r)
-	req := user.NewQueryAccountRequest(page)
-	if ids != "" {
-		req.Accounts = strings.Split(ids, ",")
-	}
+	req := user.NewNewQueryAccountRequestFromHTTP(r)
 	req.WithToken(tk)
 
 	d, err := h.service.QueryAccount(types.SubAccount, req)
@@ -60,5 +53,32 @@ func (h *handler) QuerySubAccount(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, d)
+	return
+}
+
+func (h *handler) DescribeSubAccount(w http.ResponseWriter, r *http.Request) {
+	rctx := context.GetContext(r)
+
+	req := user.NewDescriptAccountRequestWithAccount(rctx.PS.ByName("account"))
+	d, err := h.service.DescribeAccount(req)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	response.Success(w, d)
+	return
+}
+
+// DestroySubAccount 注销账号
+func (h *handler) DestroySubAccount(w http.ResponseWriter, r *http.Request) {
+	rctx := context.GetContext(r)
+
+	if err := h.service.DeleteAccount(rctx.PS.ByName("account")); err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	response.Success(w, "delete ok")
 	return
 }

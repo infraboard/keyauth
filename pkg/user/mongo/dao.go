@@ -6,6 +6,7 @@ import (
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/request"
 
+	"github.com/infraboard/keyauth/pkg/department"
 	"github.com/infraboard/keyauth/pkg/policy"
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
@@ -43,6 +44,17 @@ func (s *service) queryAccount(req *queryUserRequest) (*user.Set, error) {
 		if err := resp.Decode(u); err != nil {
 			return nil, exception.NewInternalServerError("decode user error, error is %s", err)
 		}
+
+		// 补充用户的部门信息
+		if req.WithDepartment && u.DepartmentID != "" {
+			depart, err := s.depart.DescribeDepartment(department.NewDescriptDepartmentRequestWithID(u.DepartmentID))
+			if err != nil {
+				s.log.Errorf("get user department error, %s", err)
+			} else {
+				u.Department = depart
+			}
+		}
+
 		u.Desensitize()
 		userSet.Add(u)
 	}

@@ -3,6 +3,8 @@ package user
 import (
 	"errors"
 	"fmt"
+	"net/http"
+	"strings"
 
 	"github.com/infraboard/mcube/http/request"
 
@@ -55,11 +57,26 @@ func (req *DescriptAccountRequest) Validate() error {
 	return nil
 }
 
+// NewNewQueryAccountRequestFromHTTP todo
+func NewNewQueryAccountRequestFromHTTP(r *http.Request) *QueryAccountRequest {
+	page := request.NewPageRequestFromHTTP(r)
+	query := NewQueryAccountRequest(page)
+
+	qs := r.URL.Query()
+	query.WithDepartment = qs.Get("with_department") == "true"
+	ids := qs.Get("ids")
+	if ids != "" {
+		query.Accounts = strings.Split(ids, ",")
+	}
+	return query
+}
+
 // NewQueryAccountRequest 列表查询请求
 func NewQueryAccountRequest(pageReq *request.PageRequest) *QueryAccountRequest {
 	return &QueryAccountRequest{
-		PageRequest: pageReq,
-		Session:     token.NewSession(),
+		PageRequest:    pageReq,
+		Session:        token.NewSession(),
+		WithDepartment: false,
 	}
 }
 
@@ -67,8 +84,9 @@ func NewQueryAccountRequest(pageReq *request.PageRequest) *QueryAccountRequest {
 type QueryAccountRequest struct {
 	*token.Session
 	*request.PageRequest
-	Accounts    []string
-	NamespaceID string
+	Accounts       []string
+	NamespaceID    string
+	WithDepartment bool
 }
 
 // Validate 校验查询参数

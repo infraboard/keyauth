@@ -9,8 +9,11 @@ import (
 
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
+	"github.com/infraboard/keyauth/pkg/department"
 	"github.com/infraboard/keyauth/pkg/policy"
 	"github.com/infraboard/keyauth/pkg/user"
+	"github.com/infraboard/mcube/logger"
+	"github.com/infraboard/mcube/logger/zap"
 )
 
 var (
@@ -19,10 +22,12 @@ var (
 )
 
 type service struct {
+	log           logger.Logger
 	col           *mongo.Collection
 	enableCache   bool
 	notifyCachPre string
 	policy        policy.Service
+	depart        department.Service
 }
 
 func (s *service) Config() error {
@@ -30,6 +35,11 @@ func (s *service) Config() error {
 		return fmt.Errorf("dependence namespace service is nil")
 	}
 	s.policy = pkg.Policy
+
+	if pkg.Department == nil {
+		return fmt.Errorf("dependence department service is nil")
+	}
+	s.depart = pkg.Department
 
 	db := conf.C().Mongo.GetDB()
 	uc := db.Collection("user")
@@ -46,6 +56,7 @@ func (s *service) Config() error {
 	}
 
 	s.col = uc
+	s.log = zap.L().Named("User")
 	return nil
 }
 
