@@ -10,6 +10,7 @@ type LoginLog struct {
 	Account       string          `json:"account"`        // 用户
 	LoginAt       ftime.Time      `json:"login_at"`       // 登录时间
 	ApplicationID string          `json:"application_id"` // 用户通过哪个端登录的
+	UserAgent     string          `json:"user_agent"`     // 用户登录工具信息
 	GrantType     token.GrantType `json:"grant_type"`     // 登录方式
 	LoginIP       string          `json:"login_ip"`       // 登录IP
 	Result        Result          `json:"result"`         // 登录状态 (成功或者失败)
