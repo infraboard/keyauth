@@ -8,6 +8,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/department"
 	"github.com/infraboard/keyauth/pkg/domain"
 	"github.com/infraboard/keyauth/pkg/endpoint"
+	"github.com/infraboard/keyauth/pkg/geoip"
 	"github.com/infraboard/keyauth/pkg/micro"
 	"github.com/infraboard/keyauth/pkg/namespace"
 	"github.com/infraboard/keyauth/pkg/permission"
@@ -45,6 +46,8 @@ var (
 	Counter counter.Service
 	// LDAP ldap服务
 	LDAP provider.LDAP
+	// GEOIP geoip服务
+	GEOIP geoip.Service
 )
 
 var (
@@ -147,6 +150,12 @@ func RegistryService(name string, svr Service) {
 			registryError(name)
 		}
 		LDAP = value
+		addService(name, svr)
+	case geoip.Service:
+		if LDAP != nil {
+			registryError(name)
+		}
+		GEOIP = value
 		addService(name, svr)
 	default:
 		panic(fmt.Sprintf("unknown service type %s", name))
