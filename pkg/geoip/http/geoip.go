@@ -9,7 +9,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/geoip"
 )
 
-func (h *handler) UploadGEOIPDBFile(w http.ResponseWriter, r *http.Request) {
+func (h *handler) UpdateDBFile(w http.ResponseWriter, r *http.Request) {
 	tk, err := pkg.GetTokenFromContext(r)
 	if err != nil {
 		response.Failed(w, err)

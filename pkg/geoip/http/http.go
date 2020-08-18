@@ -22,7 +22,7 @@ func (h *handler) Registry(router router.SubRouter) {
 	geoipRouter := router.ResourceRouter("geoip")
 	geoipRouter.BasePath("geoip")
 	geoipRouter.Permission(true)
-	geoipRouter.Handle("POST", "/dbfile", h.UploadGEOIPDBFile)
+	geoipRouter.Handle("POST", "/dbfile", h.UpdateDBFile)
 	geoipRouter.Handle("GET", "/", h.LoopupIP)
 }
 

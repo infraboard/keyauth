@@ -1,10 +1,11 @@
 package mongo
 
 import (
-	"fmt"
+	"context"
 
-	"go.mongodb.org/mongo-driver/mongo/gridfs"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/x/bsonx"
 
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
@@ -15,29 +16,50 @@ import (
 
 var (
 	// Service 服务实例
-	Service = &service{
-		dbFileName: "GeoLite2-City.mmdb",
-	}
+	Service = &service{}
 )
 
 type service struct {
-	bucket     *gridfs.Bucket
-	dbFileName string
-	log        logger.Logger
+	ip       *mongo.Collection
+	location *mongo.Collection
+	log      logger.Logger
 }
 
 func (s *service) Config() error {
 	db := conf.C().Mongo.GetDB()
-
-	opts := options.GridFSBucket()
-	opts.SetName("geoip_db")
-
-	bucket, err := gridfs.NewBucket(db, opts)
-	if err != nil {
-		return fmt.Errorf("new bucket error, %s", err)
-	}
-	s.bucket = bucket
+	s.ip = db.Collection("geoip_blocks")
+	s.location = db.Collection("geoip_locations")
 	s.log = zap.L().Named("GeoIP")
+
+	// 添加ip表的索引
+	ipIndexs := []mongo.IndexModel{
+		{
+			Keys:    bsonx.Doc{{Key: "geoname_id", Value: bsonx.Int32(-1)}},
+			Options: options.Index().SetUnique(true),
+		},
+		{
+			Keys:    bsonx.Doc{{Key: "network", Value: bsonx.Int32(-1)}},
+			Options: options.Index().SetUnique(true),
+		},
+	}
+
+	_, err := s.ip.Indexes().CreateMany(context.Background(), ipIndexs)
+	if err != nil {
+		return err
+	}
+
+	// 添加位置表的索引
+	lcIndexs := []mongo.IndexModel{
+		{
+			Keys:    bsonx.Doc{{Key: "geoname_id", Value: bsonx.Int32(-1)}},
+			Options: options.Index().SetUnique(true),
+		},
+	}
+	_, err = s.location.Indexes().CreateMany(context.Background(), lcIndexs)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
