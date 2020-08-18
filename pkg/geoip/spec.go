@@ -1,6 +1,7 @@
 package geoip
 
 import (
+	"fmt"
 	"io"
 	"net"
 	"net/http"
@@ -26,6 +27,17 @@ func NewUploadFileRequestFromHTTP(r *http.Request) *UpdateDBFileRequest {
 type UpdateDBFileRequest struct {
 	*token.Session
 	reader io.ReadCloser
+
+	ContentType DBFileContentType
+}
+
+// Validate 校验参数
+func (req *UpdateDBFileRequest) Validate() error {
+	if req.reader == nil {
+		return fmt.Errorf("file reader is nil")
+	}
+
+	return nil
 }
 
 // ReadCloser todo

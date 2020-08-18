@@ -34,28 +34,12 @@ func (s *service) Config() error {
 	// 添加ip表的索引
 	ipIndexs := []mongo.IndexModel{
 		{
-			Keys:    bsonx.Doc{{Key: "geoname_id", Value: bsonx.Int32(-1)}},
-			Options: options.Index().SetUnique(true),
-		},
-		{
 			Keys:    bsonx.Doc{{Key: "network", Value: bsonx.Int32(-1)}},
 			Options: options.Index().SetUnique(true),
 		},
 	}
 
 	_, err := s.ip.Indexes().CreateMany(context.Background(), ipIndexs)
-	if err != nil {
-		return err
-	}
-
-	// 添加位置表的索引
-	lcIndexs := []mongo.IndexModel{
-		{
-			Keys:    bsonx.Doc{{Key: "geoname_id", Value: bsonx.Int32(-1)}},
-			Options: options.Index().SetUnique(true),
-		},
-	}
-	_, err = s.location.Indexes().CreateMany(context.Background(), lcIndexs)
 	if err != nil {
 		return err
 	}

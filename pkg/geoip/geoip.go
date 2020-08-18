@@ -1,74 +1,29 @@
 package geoip
 
-// The Record struct corresponds to the data in the GeoIP2/GeoLite2 Result
-// databases.
+// Record todo
 type Record struct {
-	Continent          Continent          `maxminddb:"continent"`
-	City               City               `maxminddb:"city"`
-	Country            Country            `maxminddb:"country"`
-	Location           Location           `maxminddb:"location"`
-	RegisteredCountry  RegisteredCountry  `maxminddb:"registered_country"`
-	RepresentedCountry RepresentedCountry `maxminddb:"represented_country"`
-	Subdivisions       []Subdivisions     `maxminddb:"subdivisions"`
-	Traits             Traits             `maxminddb:"traits"`
+	*IPv4     `bson:",inline"`
+	*Location `bson:",inline"`
 }
 
-// Continent 标识符
-type Continent struct {
-	Code      string            `maxminddb:"code"`
-	GeoNameID uint              `maxminddb:"geoname_id"`
-	Names     map[string]string `maxminddb:"names"`
-}
-
-// City 城市
-type City struct {
-	GeoNameID uint              `maxminddb:"geoname_id"`
-	Names     map[string]string `maxminddb:"names"`
-}
-
-// Country 国家
-type Country struct {
-	GeoNameID         uint              `maxminddb:"geoname_id"`
-	IsInEuropeanUnion bool              `maxminddb:"is_in_european_union"`
-	IsoCode           string            `maxminddb:"iso_code"`
-	Names             map[string]string `maxminddb:"names"`
-}
-
-// Location 位置信息
+// Location todo
 type Location struct {
-	AccuracyRadius uint16  `maxminddb:"accuracy_radius"`
-	Latitude       float64 `maxminddb:"latitude"`
-	Longitude      float64 `maxminddb:"longitude"`
-	MetroCode      uint    `maxminddb:"metro_code"`
-	TimeZone       string  `maxminddb:"time_zone"`
+	GeonameID      string `bson:"_id" json:"geoname_id"`
+	LocaleCode     string `bson:"locale_code" json:"locale_code"`
+	ContinentCode  string `bson:"continent_code" json:"continent_code"`
+	ContinentName  string `bson:"continent_name" json:"continent_name"`
+	CountryISOCode string `bson:"country_iso_code" json:"country_iso_code"`
+	CountryName    string `bson:"country_name" json:"country_name"`
+	CityName       string `bson:"city_name" json:"city_name"`
 }
 
-// RegisteredCountry todo
-type RegisteredCountry struct {
-	GeoNameID         uint              `maxminddb:"geoname_id"`
-	IsInEuropeanUnion bool              `maxminddb:"is_in_european_union"`
-	IsoCode           string            `maxminddb:"iso_code"`
-	Names             map[string]string `maxminddb:"names"`
-}
-
-// RepresentedCountry todo
-type RepresentedCountry struct {
-	GeoNameID         uint              `maxminddb:"geoname_id"`
-	IsInEuropeanUnion bool              `maxminddb:"is_in_european_union"`
-	IsoCode           string            `maxminddb:"iso_code"`
-	Names             map[string]string `maxminddb:"names"`
-	Type              string            `maxminddb:"type"`
-}
-
-// Subdivisions todo
-type Subdivisions struct {
-	GeoNameID uint              `maxminddb:"geoname_id"`
-	IsoCode   string            `maxminddb:"iso_code"`
-	Names     map[string]string `maxminddb:"names"`
-}
-
-// Traits todo
-type Traits struct {
-	IsAnonymousProxy    bool `maxminddb:"is_anonymous_proxy"`
-	IsSatelliteProvider bool `maxminddb:"is_satellite_provider"`
+// IPv4 todo
+type IPv4 struct {
+	GeonameID           string  `bson:"_id" json:"geoname_id"`
+	Network             string  `bson:"network" json:"network"`
+	IsAnonymousProxy    bool    `bson:"is_anonymous_proxy" json:"is_anonymous_proxy"`
+	IsSatelliteProvider bool    `bson:"is_satellite_provider" json:"is_satellite_provider"`
+	Latitude            float32 `bson:"latitude" json:"latitude"`
+	Longitude           float32 `bson:"longitude" json:"longitude"`
+	AccuracyRadius      uint    `bson:"accuracy_radius" json:"accuracy_radius"`
 }
