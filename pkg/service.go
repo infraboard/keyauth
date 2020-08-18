@@ -15,6 +15,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/policy"
 	"github.com/infraboard/keyauth/pkg/provider"
 	"github.com/infraboard/keyauth/pkg/role"
+	"github.com/infraboard/keyauth/pkg/storage"
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
 )
@@ -48,6 +49,8 @@ var (
 	LDAP provider.LDAP
 	// GEOIP geoip服务
 	GEOIP geoip.Service
+	//
+	Storage storage.Service
 )
 
 var (
@@ -156,6 +159,12 @@ func RegistryService(name string, svr Service) {
 			registryError(name)
 		}
 		GEOIP = value
+		addService(name, svr)
+	case storage.Service:
+		if Storage != nil {
+			registryError(name)
+		}
+		Storage = value
 		addService(name, svr)
 	default:
 		panic(fmt.Sprintf("unknown service type %s", name))

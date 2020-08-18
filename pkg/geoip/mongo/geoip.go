@@ -4,13 +4,13 @@ import (
 	"io"
 	"net"
 
-	"github.com/infraboard/keyauth/pkg/geoip"
 	"go.mongodb.org/mongo-driver/mongo/options"
+
+	"github.com/infraboard/keyauth/pkg/geoip"
 )
 
-func (s *service) UploadDBFile(req *geoip.UploadFileRequest) error {
+func (s *service) UpdateDBFile(req *geoip.UpdateDBFileRequest) error {
 	opts := options.GridFSUpload()
-	opts.Metadata = req.Meta()
 
 	// 清除已有文件
 	s.bucket.Delete(s.dbFileName)
@@ -31,6 +31,6 @@ func (s *service) UploadDBFile(req *geoip.UploadFileRequest) error {
 	return nil
 }
 
-func (s *service) Lookup(ipAddress net.IP) (*geoip.Record, error) {
+func (s *service) LookupIP(ipAddress net.IP) (*geoip.Record, error) {
 	return nil, nil
 }

@@ -41,6 +41,7 @@ import (
 	_ "github.com/infraboard/keyauth/pkg/provider/mongo"
 	_ "github.com/infraboard/keyauth/pkg/role/http"
 	_ "github.com/infraboard/keyauth/pkg/role/mongo"
+	_ "github.com/infraboard/keyauth/pkg/storage/mongo"
 	_ "github.com/infraboard/keyauth/pkg/token/http"
 	_ "github.com/infraboard/keyauth/pkg/token/mongo"
 	_ "github.com/infraboard/keyauth/pkg/user/http"
