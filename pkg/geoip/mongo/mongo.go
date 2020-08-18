@@ -8,17 +8,22 @@ import (
 
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
-	"github.com/infraboard/keyauth/pkg/counter"
 	"github.com/infraboard/keyauth/pkg/geoip"
+	"github.com/infraboard/mcube/logger"
+	"github.com/infraboard/mcube/logger/zap"
 )
 
 var (
 	// Service 服务实例
-	Service = &service{}
+	Service = &service{
+		dbFileName: "GeoLite2-City.mmdb",
+	}
 )
 
 type service struct {
-	bucket *gridfs.Bucket
+	bucket     *gridfs.Bucket
+	dbFileName string
+	log        logger.Logger
 }
 
 func (s *service) Config() error {
@@ -32,11 +37,8 @@ func (s *service) Config() error {
 		return fmt.Errorf("new bucket error, %s", err)
 	}
 	s.bucket = bucket
+	s.log = zap.L().Named("GeoIP")
 	return nil
-}
-
-func (s *service) GetNextSequenceValue(sequenceName string) (*counter.Count, error) {
-	return nil, nil
 }
 
 func init() {
