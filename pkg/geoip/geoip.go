@@ -2,6 +2,7 @@ package geoip
 
 import (
 	"fmt"
+	"net"
 	"strconv"
 	"strings"
 )
@@ -87,11 +88,15 @@ func (s *LocationSet) Length() uint {
 type IPv4 struct {
 	Network             string  `bson:"_id" json:"network"`
 	GeonameID           string  `bson:"geoname_id" json:"geoname_id"`
-	IsAnonymousProxy    bool    `bson:"is_anonymous_proxy" json:"is_anonymous_proxy"`
-	IsSatelliteProvider bool    `bson:"is_satellite_provider" json:"is_satellite_provider"`
+	First               string  `bson:"fist" json:"first"`
+	Last                string  `bson:"last" json:"last"`
+	Start               int64   `bson:"start" json:"start"`
+	End                 int64   `bson:"end" json:"end"`
 	Latitude            float64 `bson:"latitude" json:"latitude"`
 	Longitude           float64 `bson:"longitude" json:"longitude"`
 	AccuracyRadius      int64   `bson:"accuracy_radius" json:"accuracy_radius"`
+	IsAnonymousProxy    bool    `bson:"is_anonymous_proxy" json:"is_anonymous_proxy"`
+	IsSatelliteProvider bool    `bson:"is_satellite_provider" json:"is_satellite_provider"`
 }
 
 // ParseIsAnonymousProxy todo
@@ -134,6 +139,11 @@ func ParseIPv4FromCsvLine(line string) (*IPv4, error) {
 		return nil, fmt.Errorf("row length not eqaul 10 (%d) check csv data source, row: %s", len(row), line)
 	}
 
+	_, _, err := net.ParseCIDR(row[0])
+	if err != nil {
+		return nil, fmt.Errorf("parse cidr error, %s", err)
+	}
+
 	ipv4 := &IPv4{
 		Network:   row[0],
 		GeonameID: row[1],
@@ -144,6 +154,7 @@ func ParseIPv4FromCsvLine(line string) (*IPv4, error) {
 	ipv4.ParseLatitude(row[7])
 	ipv4.ParseLongitude(row[8])
 	ipv4.ParseAccuracyRadius(row[9])
+
 	return ipv4, nil
 }
 

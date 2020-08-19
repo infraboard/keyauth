@@ -6,7 +6,7 @@ import (
 
 	"github.com/infraboard/mcube/http/request"
 
-	"github.com/infraboard/keyauth/common"
+	"github.com/infraboard/keyauth/common/types"
 	"github.com/infraboard/keyauth/pkg/token"
 )
 
@@ -110,7 +110,7 @@ func (req *CreateDomainRequst) Patch(data *CreateDomainRequst) {
 // NewPutDomainRequest todo
 func NewPutDomainRequest() *UpdateDomainRequest {
 	return &UpdateDomainRequest{
-		UpdateMode:         common.PutUpdateMode,
+		UpdateMode:         types.PutUpdateMode,
 		CreateDomainRequst: NewCreateDomainRequst(),
 	}
 }
@@ -118,13 +118,13 @@ func NewPutDomainRequest() *UpdateDomainRequest {
 // NewPatchDomainRequest todo
 func NewPatchDomainRequest() *UpdateDomainRequest {
 	return &UpdateDomainRequest{
-		UpdateMode:         common.PatchUpdateMode,
+		UpdateMode:         types.PatchUpdateMode,
 		CreateDomainRequst: NewCreateDomainRequst(),
 	}
 }
 
 // UpdateDomainRequest todo
 type UpdateDomainRequest struct {
-	UpdateMode common.UpdateMode `json:"update_mode"`
+	UpdateMode types.UpdateMode `json:"update_mode"`
 	*CreateDomainRequst
 }

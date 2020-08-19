@@ -11,7 +11,7 @@ import (
 	"github.com/infraboard/mcube/types/ftime"
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/infraboard/keyauth/common"
+	common "github.com/infraboard/keyauth/common/types"
 	"github.com/infraboard/keyauth/pkg/department"
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user/types"

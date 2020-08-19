@@ -11,7 +11,7 @@ import (
 	"github.com/infraboard/mcube/types/ftime"
 	"github.com/rs/xid"
 
-	"github.com/infraboard/keyauth/common"
+	"github.com/infraboard/keyauth/common/types"
 	"github.com/infraboard/keyauth/pkg/token"
 )
 
@@ -148,7 +148,7 @@ func (s *Set) Add(item *Department) {
 func NewPutUpdateDepartmentRequest(id string) *UpdateDepartmentRequest {
 	return &UpdateDepartmentRequest{
 		ID:                      id,
-		UpdateMode:              common.PutUpdateMode,
+		UpdateMode:              types.PutUpdateMode,
 		CreateDepartmentRequest: NewCreateDepartmentRequest(),
 	}
 }
@@ -157,15 +157,15 @@ func NewPutUpdateDepartmentRequest(id string) *UpdateDepartmentRequest {
 func NewPatchUpdateDepartmentRequest(id string) *UpdateDepartmentRequest {
 	return &UpdateDepartmentRequest{
 		ID:                      id,
-		UpdateMode:              common.PatchUpdateMode,
+		UpdateMode:              types.PatchUpdateMode,
 		CreateDepartmentRequest: NewCreateDepartmentRequest(),
 	}
 }
 
 // UpdateDepartmentRequest todo
 type UpdateDepartmentRequest struct {
-	ID         string            `json:"id"`
-	UpdateMode common.UpdateMode `json:"update_mode"`
+	ID         string           `json:"id"`
+	UpdateMode types.UpdateMode `json:"update_mode"`
 	*CreateDepartmentRequest
 }
 

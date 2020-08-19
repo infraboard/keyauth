@@ -8,7 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"github.com/infraboard/keyauth/common"
+	"github.com/infraboard/keyauth/common/types"
 	"github.com/infraboard/keyauth/pkg/domain"
 )
 
@@ -81,9 +81,9 @@ func (s *service) UpdateDomain(req *domain.UpdateDomainRequest) (*domain.Domain,
 		return nil, err
 	}
 	switch req.UpdateMode {
-	case common.PutUpdateMode:
+	case types.PutUpdateMode:
 		*d.CreateDomainRequst = *req.CreateDomainRequst
-	case common.PatchUpdateMode:
+	case types.PatchUpdateMode:
 		d.CreateDomainRequst.Patch(req.CreateDomainRequst)
 	default:
 		return nil, exception.NewBadRequest("unknown update mode: %s", req.UpdateMode)

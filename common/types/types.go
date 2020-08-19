@@ -1,6 +1,6 @@
 //go:generate  mcube enum -m
 
-package common
+package types
 
 // UpdateMode 更新模式
 type UpdateMode uint

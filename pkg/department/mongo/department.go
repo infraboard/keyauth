@@ -8,7 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"github.com/infraboard/keyauth/common"
+	"github.com/infraboard/keyauth/common/types"
 	"github.com/infraboard/keyauth/pkg/department"
 )
 
@@ -105,9 +105,9 @@ func (s *service) UpdateDepartment(req *department.UpdateDepartmentRequest) (*de
 		return nil, err
 	}
 	switch req.UpdateMode {
-	case common.PutUpdateMode:
+	case types.PutUpdateMode:
 		*dp.CreateDepartmentRequest = *req.CreateDepartmentRequest
-	case common.PatchUpdateMode:
+	case types.PatchUpdateMode:
 		dp.CreateDepartmentRequest.Patch(req.CreateDepartmentRequest)
 	default:
 		return nil, exception.NewBadRequest("unknown update mode: %s", req.UpdateMode)
