@@ -9,6 +9,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/domain"
 	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/geoip"
+	"github.com/infraboard/keyauth/pkg/ip2region"
 	"github.com/infraboard/keyauth/pkg/micro"
 	"github.com/infraboard/keyauth/pkg/namespace"
 	"github.com/infraboard/keyauth/pkg/permission"
@@ -49,7 +50,9 @@ var (
 	LDAP provider.LDAP
 	// GEOIP geoip服务
 	GEOIP geoip.Service
-	//
+	// IP2Region ip位置查询
+	IP2Region ip2region.Service
+	// Storage 对象存储服务
 	Storage storage.Service
 )
 
@@ -165,6 +168,12 @@ func RegistryService(name string, svr Service) {
 			registryError(name)
 		}
 		Storage = value
+		addService(name, svr)
+	case ip2region.Service:
+		if IP2Region != nil {
+			registryError(name)
+		}
+		IP2Region = value
 		addService(name, svr)
 	default:
 		panic(fmt.Sprintf("unknown service type %s", name))

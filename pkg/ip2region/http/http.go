@@ -7,7 +7,7 @@ import (
 	"github.com/infraboard/mcube/http/router"
 
 	"github.com/infraboard/keyauth/pkg"
-	"github.com/infraboard/keyauth/pkg/geoip"
+	"github.com/infraboard/keyauth/pkg/ip2region"
 )
 
 var (
@@ -15,13 +15,13 @@ var (
 )
 
 type handler struct {
-	service geoip.Service
+	service ip2region.Service
 }
 
 // Registry 注册HTTP服务路由
 func (h *handler) Registry(router router.SubRouter) {
 	geoipRouter := router.ResourceRouter("IP")
-	geoipRouter.BasePath("geoip")
+	geoipRouter.BasePath("ip2region")
 	geoipRouter.Handle("GET", "/query", h.LoopupIP).AddLabel(label.Get)
 
 	geoipRouter.Permission(true)
@@ -30,14 +30,14 @@ func (h *handler) Registry(router router.SubRouter) {
 }
 
 func (h *handler) Config() error {
-	if pkg.Department == nil {
-		return errors.New("denpence department service is nil")
+	if pkg.IP2Region == nil {
+		return errors.New("denpence IP2Region service is nil")
 	}
 
-	h.service = pkg.GEOIP
+	h.service = pkg.IP2Region
 	return nil
 }
 
 func init() {
-	pkg.RegistryHTTPV1("geoip", api)
+	pkg.RegistryHTTPV1("ip2region", api)
 }

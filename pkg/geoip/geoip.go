@@ -151,6 +151,7 @@ type IPv4 struct {
 	AccuracyRadius      int64   `bson:"accuracy_radius" json:"accuracy_radius"`
 	IsAnonymousProxy    bool    `bson:"is_anonymous_proxy" json:"is_anonymous_proxy"`
 	IsSatelliteProvider bool    `bson:"is_satellite_provider" json:"is_satellite_provider"`
+	ISP                 string  `bson:"isp" json:"isp"`
 }
 
 // ParseIsAnonymousProxy todo
