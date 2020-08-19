@@ -38,6 +38,7 @@ func (s *service) UpdateDBFile(req *geoip.UpdateDBFileRequest) error {
 			if err := s.saveIPv4Set(is); err != nil {
 				return exception.NewInternalServerError("save ipv4 set error, %s", err)
 			}
+			s.log.Infof("read line complete, total line: %d", lineCount)
 			break
 		}
 		lineCount++
@@ -54,7 +55,7 @@ func (s *service) UpdateDBFile(req *geoip.UpdateDBFileRequest) error {
 				return exception.NewBadRequest("parse line %d csv data error, %s", lineCount, err)
 			}
 			if is == nil {
-				is = geoip.NewIPv4Set(256)
+				is = geoip.NewIPv4Set(1024)
 			}
 			is.Add(ipv4)
 			if is.IsFull() {
@@ -62,6 +63,7 @@ func (s *service) UpdateDBFile(req *geoip.UpdateDBFileRequest) error {
 					return exception.NewInternalServerError("bulk save error, %s", err)
 				}
 				is.Reset()
+				s.log.Infof("lineCount: %d, ", lineCount)
 			}
 		case geoip.LocationContent:
 			location, err := geoip.ParseLocationFromCsvLine(line)
@@ -69,7 +71,7 @@ func (s *service) UpdateDBFile(req *geoip.UpdateDBFileRequest) error {
 				return exception.NewBadRequest("parse line %d csv data error, %s", lineCount, err)
 			}
 			if ls == nil {
-				ls = geoip.NewLocationSet(128)
+				ls = geoip.NewLocationSet(256)
 			}
 			ls.Add(location)
 			if ls.IsFull() {
@@ -77,6 +79,7 @@ func (s *service) UpdateDBFile(req *geoip.UpdateDBFileRequest) error {
 					return exception.NewInternalServerError("bulk save error, %s", err)
 				}
 				ls.Reset()
+				s.log.Infof("lineCount: %d, ", lineCount)
 			}
 		default:
 			return exception.NewBadRequest("unknown content type, %s", req.ContentType)
@@ -86,6 +89,24 @@ func (s *service) UpdateDBFile(req *geoip.UpdateDBFileRequest) error {
 	return nil
 }
 
-func (s *service) LookupIP(ipAddress net.IP) (*geoip.Record, error) {
-	return nil, nil
+func (s *service) LookupIP(ip net.IP) (*geoip.Record, error) {
+	if ip.To4() == nil {
+		return nil, exception.NewBadRequest("%v is not an IPv4 address", ip)
+	}
+
+	req := newGetIPv4RequestFromIP(ip)
+	ipv4, err := s.findIPv4One(req)
+	if err != nil {
+		return nil, err
+	}
+
+	locationReq := newGetLocationRequestFromID(ipv4.GeonameID)
+	location, err := s.findLocationOne(locationReq)
+	if err != nil {
+		s.log.Errorf("find geoip location error, %s", err)
+	} else {
+
+	}
+
+	return geoip.NewRecord(ipv4, location), nil
 }

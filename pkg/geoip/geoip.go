@@ -7,6 +7,14 @@ import (
 	"strings"
 )
 
+// NewRecord todo
+func NewRecord(ipv4 *IPv4, location *Location) *Record {
+	return &Record{
+		IPv4:     ipv4,
+		Location: location,
+	}
+}
+
 // Record todo
 type Record struct {
 	*IPv4     `bson:",inline"`
@@ -29,6 +37,11 @@ func ParseLocationFromCsvLine(line string) (*Location, error) {
 		CountryName:    row[5],
 		CityName:       row[10],
 	}, nil
+}
+
+// NewDefaultLocation todo
+func NewDefaultLocation() *Location {
+	return &Location{}
 }
 
 // Location todo
@@ -84,14 +97,55 @@ func (s *LocationSet) Length() uint {
 	return s.length
 }
 
+// ParseIPv4FromCsvLine todo
+func ParseIPv4FromCsvLine(line string) (*IPv4, error) {
+	row := strings.Split(line, ",")
+	if len(row) != 10 {
+		return nil, fmt.Errorf("row length not eqaul 10 (%d) check csv data source, row: %s", len(row), line)
+	}
+
+	cidr := strings.TrimSpace(row[0])
+	_, ipnet, err := net.ParseCIDR(cidr)
+	if err != nil {
+		return nil, fmt.Errorf("parse cidr error, %s", err)
+	}
+
+	first, last := AddressRange(ipnet)
+	start, _ := IPToInt(first)
+	end, _ := IPToInt(last)
+
+	ipv4 := &IPv4{
+		Network:   cidr,
+		GeonameID: strings.TrimSpace(row[1]),
+		First:     first.String(),
+		Last:      last.String(),
+		Start:     start.Uint64(),
+		End:       end.Uint64(),
+		Count:     AddressCount(ipnet),
+	}
+
+	ipv4.ParseIsAnonymousProxy(row[4])
+	ipv4.ParseIsSatelliteProvider(row[5])
+	ipv4.ParseLatitude(row[7])
+	ipv4.ParseLongitude(row[8])
+	ipv4.ParseAccuracyRadius(row[9])
+	return ipv4, nil
+}
+
+// NewDefaultIPv4 todo
+func NewDefaultIPv4() *IPv4 {
+	return &IPv4{}
+}
+
 // IPv4 todo
 type IPv4 struct {
 	Network             string  `bson:"_id" json:"network"`
 	GeonameID           string  `bson:"geoname_id" json:"geoname_id"`
 	First               string  `bson:"fist" json:"first"`
 	Last                string  `bson:"last" json:"last"`
-	Start               int64   `bson:"start" json:"start"`
-	End                 int64   `bson:"end" json:"end"`
+	Start               uint64  `bson:"start" json:"start"`
+	End                 uint64  `bson:"end" json:"end"`
+	Count               uint64  `bson:"count" json:"count"`
 	Latitude            float64 `bson:"latitude" json:"latitude"`
 	Longitude           float64 `bson:"longitude" json:"longitude"`
 	AccuracyRadius      int64   `bson:"accuracy_radius" json:"accuracy_radius"`
@@ -130,32 +184,6 @@ func (i *IPv4) ParseLongitude(lon string) {
 // ParseAccuracyRadius todo
 func (i *IPv4) ParseAccuracyRadius(radius string) {
 	i.AccuracyRadius, _ = strconv.ParseInt(strings.TrimSpace(radius), 10, 32)
-}
-
-// ParseIPv4FromCsvLine todo
-func ParseIPv4FromCsvLine(line string) (*IPv4, error) {
-	row := strings.Split(line, ",")
-	if len(row) != 10 {
-		return nil, fmt.Errorf("row length not eqaul 10 (%d) check csv data source, row: %s", len(row), line)
-	}
-
-	_, _, err := net.ParseCIDR(row[0])
-	if err != nil {
-		return nil, fmt.Errorf("parse cidr error, %s", err)
-	}
-
-	ipv4 := &IPv4{
-		Network:   row[0],
-		GeonameID: row[1],
-	}
-
-	ipv4.ParseIsAnonymousProxy(row[4])
-	ipv4.ParseIsSatelliteProvider(row[5])
-	ipv4.ParseLatitude(row[7])
-	ipv4.ParseLongitude(row[8])
-	ipv4.ParseAccuracyRadius(row[9])
-
-	return ipv4, nil
 }
 
 // NewIPv4Set todo

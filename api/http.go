@@ -34,12 +34,12 @@ func NewHTTPService() *HTTPService {
 	r.Auth(true)
 	server := &http.Server{
 		ReadHeaderTimeout: 20 * time.Second,
-		ReadTimeout:       20 * time.Second,
-		WriteTimeout:      25 * time.Second,
-		IdleTimeout:       120 * time.Second,
-		MaxHeaderBytes:    1 << 20,
-		Addr:              conf.C().App.Addr(),
-		Handler:           r,
+		// ReadTimeout:       20 * time.Second,
+		// WriteTimeout:      25 * time.Second,
+		IdleTimeout:    120 * time.Second,
+		MaxHeaderBytes: 1 << 20,
+		Addr:           conf.C().App.Addr(),
+		Handler:        r,
 	}
 
 	return &HTTPService{

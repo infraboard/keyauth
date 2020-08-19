@@ -1,7 +1,6 @@
 package http
 
 import (
-	"fmt"
 	"net"
 	"net/http"
 
@@ -51,14 +50,12 @@ func (h *handler) LoopupIP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if ip.To4() == nil {
-		response.Failed(w, exception.NewBadRequest("%v is not an IPv4 address", ip))
+	rc, err := h.service.LookupIP(ip)
+	if err != nil {
+		response.Failed(w, err)
 		return
 	}
 
-	bitCount := uint(len(ip) * 8)
-	fmt.Println(bitCount)
-
-	response.Success(w, "ok")
+	response.Success(w, rc)
 	return
 }
