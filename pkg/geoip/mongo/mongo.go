@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/x/bsonx"
 
 	"github.com/infraboard/keyauth/conf"
@@ -34,8 +33,7 @@ func (s *service) Config() error {
 	// 添加ip表的索引
 	ipIndexs := []mongo.IndexModel{
 		{
-			Keys:    bsonx.Doc{{Key: "network", Value: bsonx.Int32(-1)}},
-			Options: options.Index().SetUnique(true),
+			Keys: bsonx.Doc{{Key: "geoname_id", Value: bsonx.Int32(-1)}},
 		},
 	}
 

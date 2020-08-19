@@ -16,11 +16,25 @@ type Service interface {
 }
 
 // NewUploadFileRequestFromHTTP todo
-func NewUploadFileRequestFromHTTP(r *http.Request) *UpdateDBFileRequest {
-	return &UpdateDBFileRequest{
+func NewUploadFileRequestFromHTTP(r *http.Request) (*UpdateDBFileRequest, error) {
+	qs := r.URL.Query()
+
+	req := &UpdateDBFileRequest{
 		reader:  r.Body,
 		Session: token.NewSession(),
 	}
+
+	ctStr := qs.Get("content_type")
+	if ctStr != "" {
+		ct, err := ParseDBFileContentType(ctStr)
+		if err != nil {
+			return nil, err
+		}
+
+		req.ContentType = ct
+	}
+
+	return req, nil
 }
 
 // UpdateDBFileRequest 上传文件请求

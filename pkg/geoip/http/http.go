@@ -23,7 +23,7 @@ func (h *handler) Registry(router router.SubRouter) {
 	geoipRouter.BasePath("geoip")
 	geoipRouter.Permission(true)
 	geoipRouter.Handle("POST", "/dbfile", h.UpdateDBFile)
-	geoipRouter.Handle("GET", "/", h.LoopupIP)
+	geoipRouter.Handle("GET", "/query", h.LoopupIP)
 }
 
 func (h *handler) Config() error {
