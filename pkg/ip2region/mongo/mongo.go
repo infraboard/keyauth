@@ -2,23 +2,32 @@ package mongo
 
 import (
 	"errors"
+	"sync"
 
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
 
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/ip2region"
+	"github.com/infraboard/keyauth/pkg/ip2region/reader"
 	"github.com/infraboard/keyauth/pkg/storage"
 )
 
 var (
 	// Service 服务实例
-	Service = &service{}
+	Service = &service{
+		bucketName: "ip2region",
+		dbFileName: "ip2region.db",
+	}
 )
 
 type service struct {
-	storage storage.Service
-	log     logger.Logger
+	storage    storage.Service
+	log        logger.Logger
+	bucketName string
+	dbFileName string
+	dbReader   *reader.IPReader
+	sync.Mutex
 }
 
 func (s *service) Config() error {
@@ -33,5 +42,5 @@ func (s *service) Config() error {
 
 func init() {
 	var _ ip2region.Service = Service
-	pkg.RegistryService("geoip", Service)
+	pkg.RegistryService("ip2region", Service)
 }

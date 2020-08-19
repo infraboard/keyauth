@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 
 	"github.com/infraboard/keyauth/pkg/token"
 )
@@ -22,6 +23,10 @@ type IPInfo struct {
 	Province string `json:"province,omitempty"`
 	City     string `json:"city,omitempty"`
 	ISP      string `json:"isp,omitempty"`
+}
+
+func (ip IPInfo) String() string {
+	return strconv.FormatInt(ip.CityID, 10) + "|" + ip.Country + "|" + ip.Region + "|" + ip.Province + "|" + ip.City + "|" + ip.ISP
 }
 
 // NewUploadFileRequestFromHTTP todo

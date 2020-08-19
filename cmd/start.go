@@ -29,6 +29,8 @@ import (
 	_ "github.com/infraboard/keyauth/pkg/endpoint/mongo"
 	_ "github.com/infraboard/keyauth/pkg/geoip/http"
 	_ "github.com/infraboard/keyauth/pkg/geoip/mongo"
+	_ "github.com/infraboard/keyauth/pkg/ip2region/http"
+	_ "github.com/infraboard/keyauth/pkg/ip2region/mongo"
 	_ "github.com/infraboard/keyauth/pkg/micro/http"
 	_ "github.com/infraboard/keyauth/pkg/micro/mongo"
 	_ "github.com/infraboard/keyauth/pkg/namespace/http"

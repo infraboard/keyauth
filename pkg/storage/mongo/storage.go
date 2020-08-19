@@ -40,6 +40,24 @@ func (s *service) UploadFile(req *storage.UploadFileRequest) error {
 	return nil
 }
 
+func (s *service) Download(req *storage.DownloadFileRequest) error {
+	if err := req.Validate(); err != nil {
+		return exception.NewBadRequest("valiate upload file request error, %s", err)
+	}
+
+	bucket, err := s.getBucket(req.BucketName)
+
+	s.log.Debugf("start down file: %s ...", req.FileID)
+	// 下载文件
+	size, err := bucket.DownloadToStream(req.FileID, req.Writer())
+	if err != nil {
+		return err
+	}
+
+	s.log.Debugf("down file: %s complete, size: %d", req.FileID, size)
+	return nil
+}
+
 func (s *service) getBucket(name string) (*gridfs.Bucket, error) {
 	opts := options.GridFSBucket()
 	opts.SetName(name)
