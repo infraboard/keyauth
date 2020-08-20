@@ -17,12 +17,12 @@ type Service interface {
 
 // IPInfo todo
 type IPInfo struct {
-	CityID   int64  `json:"city_id,omitempty"`
-	Country  string `json:"country,omitempty"`
-	Region   string `json:"region,omitempty"`
-	Province string `json:"province,omitempty"`
-	City     string `json:"city,omitempty"`
-	ISP      string `json:"isp,omitempty"`
+	CityID   int64  `bson:"city_id" json:"city_id"`
+	Country  string `bson:"country" json:"country"`
+	Region   string `bson:"region" json:"region"`
+	Province string `bson:"province" json:"province"`
+	City     string `bson:"city" json:"city"`
+	ISP      string `bson:"isp" json:"isp"`
 }
 
 func (ip IPInfo) String() string {

@@ -6,8 +6,22 @@
 
 下载需要注册账号, 注册后，选择Download Files, 下载名为GeoLite2 City的文件
 
+这里没有使用官方的SDK, 官方的做法是直接发文件载入内存中, 然后查询
 
+我打算将数据导入MongoDB, 然后查询, 但是由于数据 不是直接提供的IP地址，而且提供的CIDR,
+所以, 需要技术出cidr的开始和结束的IP, 并且报错为int类型方便比较大小(通过比较开始和结束从而判断ip属于哪个cidr)
+```
+"_id" : "31.11.43.0/24",
+"ipType" : "CIDR",
+"first" : "31.11.43.0",
+"last" : "31.11.43.255",
+"start" : NumberLong(520825600),
+"end" : NumberLong(520825855),
+"count" : NumberLong(256)
+}
+```
 
 ## 参考
 
 + [使用geoip库, 通过ip获取国家，省市，城市](http://www.fecmall.com/topic/806)
++ [导入数据到MongoDB, 实现查询](http://www.kode12.com/kode12/mongodb/store-compare-ip-address-mongodb-study/)
