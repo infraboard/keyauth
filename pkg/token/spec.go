@@ -3,8 +3,15 @@ package token
 import (
 	"errors"
 	"fmt"
+	"net/http"
+	"strings"
 
 	"github.com/infraboard/mcube/http/request"
+)
+
+var (
+	// DefaultForwareHeaderKey 协商forward ip 的 hander key名称
+	defaultScanForwareHeaderKey = []string{"X-Forwarded-For", "X-Real-IP"}
 )
 
 // Service token管理服务
@@ -44,6 +51,56 @@ type IssueTokenRequest struct {
 	GrantType    GrantType `json:"grant_type,omitempty" validate:"lte=20"`             // 授权的类型
 	Type         Type      `json:"type,omitempty" validate:"lte=20"`                   // 令牌的类型 类型包含: bearer/jwt  (默认为bearer)
 	Scope        string    `json:"scope,omitempty" validate:"lte=100"`                 // 令牌的作用范围: detail https://tools.ietf.org/html/rfc6749#section-3.3
+	ua           string
+	ip           string
+}
+
+// WithUserAgent todo
+func (req *IssueTokenRequest) WithUserAgent(userAgent string) {
+	req.ua = userAgent
+}
+
+// GetUserAgent todo
+func (req *IssueTokenRequest) GetUserAgent() string {
+	return req.ua
+}
+
+// WithRemoteIPFromHTTP todo
+func (req *IssueTokenRequest) WithRemoteIPFromHTTP(r *http.Request) {
+	// 优先获取代理IP
+	var ip string
+	for _, key := range defaultScanForwareHeaderKey {
+		value := r.Header.Get(key)
+
+		if strings.Contains(value, ", ") {
+			i := strings.Index(value, ", ")
+			if i == -1 {
+				i = len(value)
+			}
+
+			ip = value[:i]
+			break
+		}
+
+		if value != "" {
+			ip = value
+			break
+		}
+	}
+
+	if ip != "" {
+		req.ip = ip
+		return
+	}
+
+	// 如果没有获得代理IP则采用RemoteIP
+	req.ip = r.RemoteAddr
+	return
+}
+
+// GetRemoteIP todo
+func (req *IssueTokenRequest) GetRemoteIP() string {
+	return req.ip
 }
 
 // Validate 校验请求

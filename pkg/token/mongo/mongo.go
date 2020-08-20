@@ -11,6 +11,7 @@ import (
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/application"
+	"github.com/infraboard/keyauth/pkg/audit"
 	"github.com/infraboard/keyauth/pkg/domain"
 	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/token"
@@ -33,6 +34,7 @@ type service struct {
 	domain   domain.Service
 	issuer   issuer.Issuer
 	endpoint endpoint.Service
+	audit    audit.Service
 }
 
 func (s *service) Config() error {
@@ -55,6 +57,11 @@ func (s *service) Config() error {
 		return errors.New("denpence endpoint service is nil")
 	}
 	s.endpoint = pkg.Endpoint
+
+	if pkg.Audit == nil {
+		return errors.New("denpence audit service is nil")
+	}
+	s.audit = pkg.Audit
 
 	issuer, err := issuer.NewTokenIssuer()
 	if err != nil {

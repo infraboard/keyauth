@@ -6,11 +6,13 @@ import (
 	"github.com/infraboard/mcube/exception"
 	"go.mongodb.org/mongo-driver/mongo"
 
+	"github.com/infraboard/keyauth/pkg/audit"
 	"github.com/infraboard/keyauth/pkg/token"
 )
 
 func (s *service) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) {
 	tk, err := s.issuer.IssueToken(req)
+	s.saveLoginLog(req, tk, err)
 	if err != nil {
 		return nil, err
 	}
@@ -21,6 +23,20 @@ func (s *service) IssueToken(req *token.IssueTokenRequest) (*token.Token, error)
 	}
 
 	return tk, nil
+}
+
+func (s *service) saveLoginLog(req *token.IssueTokenRequest, tk *token.Token, err error) {
+	switch req.GrantType {
+	case token.PASSWORD, token.LDAP, token.Access:
+		loginLog := &audit.LoginLogData{}
+		s.audit.SaveLoginRecord(loginLog)
+	}
+
+	return
+}
+
+func (s *service) saveLogoutLog(tk *token.Token) {
+	return
 }
 
 func (s *service) ValidateToken(req *token.ValidateTokenRequest) (*token.Token, error) {
@@ -42,6 +58,8 @@ func (s *service) ValidateToken(req *token.ValidateTokenRequest) (*token.Token, 
 
 	if req.RefreshToken != "" {
 		if tk.CheckRefreshIsExpired() {
+			// 如果token过期了记录退出日志
+			s.saveLogoutLog(tk)
 			return nil, exception.NewRefreshTokenExpired("refresh_token: %s expoired", tk.RefreshToken)
 		}
 	}
@@ -97,13 +115,12 @@ func (s *service) RevolkToken(req *token.RevolkTokenRequest) error {
 		return err
 	}
 
-	if tk.CheckRefreshIsExpired() {
-		return exception.NewRefreshTokenExpired("refresh_token: %s has expired", tk.RefreshToken)
-	}
-
 	if err := tk.CheckTokenApplication(app.ID); err != nil {
 		return exception.NewPermissionDeny(err.Error())
 	}
+
+	// 记录退出日志
+	s.saveLogoutLog(tk)
 
 	return s.destoryToken(descReq)
 }

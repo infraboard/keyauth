@@ -13,6 +13,8 @@ import (
 // IssueToken 颁发资源访问令牌
 func (h *handler) IssueToken(w http.ResponseWriter, r *http.Request) {
 	req := token.NewIssueTokenRequest()
+	req.WithUserAgent(r.UserAgent())
+	req.WithRemoteIPFromHTTP(r)
 
 	// 从Header中获取client凭证, 如果有
 	req.ClientID, req.ClientSecret, _ = r.BasicAuth()

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/infraboard/keyauth/pkg/application"
+	"github.com/infraboard/keyauth/pkg/audit"
 	"github.com/infraboard/keyauth/pkg/counter"
 	"github.com/infraboard/keyauth/pkg/department"
 	"github.com/infraboard/keyauth/pkg/domain"
@@ -54,6 +55,8 @@ var (
 	IP2Region ip2region.Service
 	// Storage 对象存储服务
 	Storage storage.Service
+	// Audit 审计服务
+	Audit audit.Service
 )
 
 var (
@@ -174,6 +177,12 @@ func RegistryService(name string, svr Service) {
 			registryError(name)
 		}
 		IP2Region = value
+		addService(name, svr)
+	case audit.Service:
+		if Audit != nil {
+			registryError(name)
+		}
+		Audit = value
 		addService(name, svr)
 	default:
 		panic(fmt.Sprintf("unknown service type %s", name))
