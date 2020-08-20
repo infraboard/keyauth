@@ -28,6 +28,7 @@ func (s *service) LookupIP(ip string) (*ip2region.IPInfo, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return dbReader.MemorySearch(ip)
 }
 
@@ -44,6 +45,7 @@ func (s *service) getDBReader() (*reader.IPReader, error) {
 	if err := s.storage.Download(downloadReq); err != nil {
 		return nil, err
 	}
+
 	reader, err := reader.New(buf)
 	if err != nil {
 		return nil, err

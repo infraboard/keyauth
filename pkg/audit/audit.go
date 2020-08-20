@@ -4,8 +4,10 @@ import (
 	"fmt"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/types/ftime"
 	"github.com/mssola/user_agent"
+	"github.com/rs/xid"
 
 	"github.com/infraboard/keyauth/pkg/ip2region"
 	"github.com/infraboard/keyauth/pkg/token"
@@ -19,15 +21,25 @@ var (
 // NewLoginLog todo
 func NewLoginLog(data *LoginLogData) *LoginLog {
 	log := &LoginLog{
+		ID:           xid.New().String(),
 		LoginLogData: data,
 	}
 
 	return log
 }
 
+// NewDefaultLoginLog todo
+func NewDefaultLoginLog() *LoginLog {
+	return &LoginLog{
+		LoginLogData: NewDefaultLoginLogData(),
+		IPInfo:       ip2region.NewDefaultIPInfo(),
+	}
+}
+
 // LoginLog 登录日志
 type LoginLog struct {
-	*LoginLogData
+	ID                string `bson:"_id" json:"id"`
+	*LoginLogData     `bson:",inline"`
 	UserAgent         `bson:",inline"`
 	*ip2region.IPInfo `bson:",inline"`
 }
@@ -61,8 +73,59 @@ func (l *LoginLog) ParseUserAgent() {
 	l.BrowserName, l.BrowserVersion = ua.Browser()
 }
 
+// NewLoginRecordSet 实例化
+func NewLoginRecordSet(req *request.PageRequest) *LoginRecordSet {
+	return &LoginRecordSet{
+		PageRequest: req,
+		Items:       []*LoginLog{},
+	}
+}
+
+// LoginRecordSet todo
+type LoginRecordSet struct {
+	*request.PageRequest
+
+	Total int64       `json:"total"`
+	Items []*LoginLog `json:"items"`
+}
+
+// Add 添加应用
+func (s *LoginRecordSet) Add(item *LoginLog) {
+	s.Items = append(s.Items, item)
+}
+
+// Length 长度
+func (s *LoginRecordSet) Length() int {
+	return len(s.Items)
+}
+
+// IsEmpty 长度
+func (s *LoginRecordSet) IsEmpty() bool {
+	return len(s.Items) == 0
+}
+
+// NewDefaultLoginLogData todo
+func NewDefaultLoginLogData() *LoginLogData {
+	return &LoginLogData{
+		Session: token.NewSession(),
+		LoginAt: ftime.Now(),
+		Result:  Success,
+	}
+}
+
+// NewDefaultLogoutLogData todo
+func NewDefaultLogoutLogData() *LoginLogData {
+	return &LoginLogData{
+		Session:  token.NewSession(),
+		LogoutAt: ftime.Now(),
+		Result:   Success,
+	}
+}
+
 // LoginLogData todo
 type LoginLogData struct {
+	*token.Session  `bson:"-" json:"-"`
+	Domain          string          `bson:"domain" json:"domain" alidate:"required"`                     // 所处域
 	Account         string          `bson:"account" json:"account" alidate:"required"`                   // 用户
 	LoginAt         ftime.Time      `bson:"login_at" json:"login_at" alidate:"required"`                 // 登录时间
 	LogoutAt        ftime.Time      `bson:"logout_at" json:"logout_at"`                                  // 登出时间
@@ -75,8 +138,25 @@ type LoginLogData struct {
 	userAgent       string          `bson:"-"`
 }
 
+// ActionType 是否是登录日志
+func (l *LoginLogData) ActionType() ActionType {
+	if !l.LoginAt.T().IsZero() {
+		return LoginAction
+	}
+
+	if !l.LogoutAt.T().IsZero() {
+		return LogoutAction
+	}
+
+	return LoginAction
+}
+
 // Validate 校验必填参数
 func (l *LoginLogData) Validate() error {
+	if l.LoginAt.T().IsZero() && l.LogoutAt.T().IsZero() {
+		return fmt.Errorf("login_at or logout_at need one")
+	}
+
 	return validate.Struct(l)
 }
 

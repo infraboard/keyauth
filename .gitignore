@@ -23,3 +23,5 @@ keyauth.toml
 ldap.env
 keyauth
 dist/*
+
+ip2region.db

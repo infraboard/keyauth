@@ -260,13 +260,14 @@ func (i *issuer) issueUserToken(app *application.Application, u *user.User, gt t
 func (i *issuer) newBearToken(app *application.Application, gt token.GrantType) *token.Token {
 	now := time.Now()
 	tk := &token.Token{
-		Type:          token.Bearer,
-		AccessToken:   token.MakeBearer(24),
-		RefreshToken:  token.MakeBearer(32),
-		CreatedAt:     ftime.T(now),
-		ClientID:      app.ClientID,
-		GrantType:     gt,
-		ApplicationID: app.ID,
+		Type:            token.Bearer,
+		AccessToken:     token.MakeBearer(24),
+		RefreshToken:    token.MakeBearer(32),
+		CreatedAt:       ftime.T(now),
+		ClientID:        app.ClientID,
+		GrantType:       gt,
+		ApplicationID:   app.ID,
+		ApplicationName: app.Name,
 	}
 
 	if app.AccessTokenExpireSecond != 0 {

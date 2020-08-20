@@ -73,15 +73,16 @@ type Token struct {
 	AccessExpiredAt  ftime.Time `bson:"access_expired_at" json:"access_expires_at,omitempty"`   // 还有多久过期
 	RefreshExpiredAt ftime.Time `bson:"refresh_expired_at" json:"refresh_expired_at,omitempty"` // 刷新token过期时间
 
-	Domain        string     `bson:"domain" json:"domain,omitempty"`                 // 用户所处域ID
-	UserType      types.Type `bson:"user_type" json:"user_type,omitempty"`           // 用户类型
-	Account       string     `bson:"account" json:"account,omitempty"`               // 账户名称
-	ApplicationID string     `bson:"application_id" json:"application_id,omitempty"` // 用户应用ID, 如果凭证是颁发给应用的, 应用在删除时需要删除所有的令牌, 应用禁用时, 该应用令牌验证会不通过
-	ClientID      string     `bson:"client_id" json:"client_id,omitempty"`           // 客户端ID
-	GrantType     GrantType  `bson:"grant_type" json:"grant_type,omitempty"`         // 授权的类型
-	Type          Type       `bson:"type" json:"type,omitempty"`                     // 令牌的类型 类型包含: bearer/jwt  (默认为bearer)
-	Scope         string     `bson:"scope" json:"scope,omitempty"`                   // 令牌的作用范围: detail https://tools.ietf.org/html/rfc6749#section-3.3, 格式 resource-ro@k=*, resource-rw@k=*
-	Description   string     `bson:"description" json:"description,omitempty"`       // 独立颁发给SDK使用时, 令牌的描述信息, 方便定位与取消
+	Domain          string     `bson:"domain" json:"domain,omitempty"`                     // 用户所处域ID
+	UserType        types.Type `bson:"user_type" json:"user_type,omitempty"`               // 用户类型
+	Account         string     `bson:"account" json:"account,omitempty"`                   // 账户名称
+	ApplicationID   string     `bson:"application_id" json:"application_id,omitempty"`     // 用户应用ID, 如果凭证是颁发给应用的, 应用在删除时需要删除所有的令牌, 应用禁用时, 该应用令牌验证会不通过
+	ApplicationName string     `bson:"application_name" json:"application_name,omitempty"` // 应用名称
+	ClientID        string     `bson:"client_id" json:"client_id,omitempty"`               // 客户端ID
+	GrantType       GrantType  `bson:"grant_type" json:"grant_type,omitempty"`             // 授权的类型
+	Type            Type       `bson:"type" json:"type,omitempty"`                         // 令牌的类型 类型包含: bearer/jwt  (默认为bearer)
+	Scope           string     `bson:"scope" json:"scope,omitempty"`                       // 令牌的作用范围: detail https://tools.ietf.org/html/rfc6749#section-3.3, 格式 resource-ro@k=*, resource-rw@k=*
+	Description     string     `bson:"description" json:"description,omitempty"`           // 独立颁发给SDK使用时, 令牌的描述信息, 方便定位与取消
 }
 
 // CheckAccessIsExpired 检测token是否过期

@@ -55,6 +55,7 @@ func (s *service) Download(req *storage.DownloadFileRequest) error {
 	}
 
 	s.log.Debugf("down file: %s complete, size: %d", req.FileID, size)
+
 	return nil
 }
 

@@ -94,7 +94,8 @@ func (req *IssueTokenRequest) WithRemoteIPFromHTTP(r *http.Request) {
 	}
 
 	// 如果没有获得代理IP则采用RemoteIP
-	req.ip = r.RemoteAddr
+	addr := strings.Split(r.RemoteAddr, ":")
+	req.ip = strings.Join(addr[0:len(addr)-1], ":")
 	return
 }
 

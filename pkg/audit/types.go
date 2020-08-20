@@ -11,3 +11,13 @@ const (
 	// Failed (failed) todo
 	Failed
 )
+
+// ActionType 动作类型
+type ActionType uint
+
+const (
+	// LoginAction (login) 登录动作
+	LoginAction ActionType = iota
+	// LogoutAction (logout) 登出
+	LogoutAction
+)

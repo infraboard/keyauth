@@ -26,16 +26,40 @@ func (s *service) IssueToken(req *token.IssueTokenRequest) (*token.Token, error)
 }
 
 func (s *service) saveLoginLog(req *token.IssueTokenRequest, tk *token.Token, err error) {
+	data := audit.NewDefaultLoginLogData()
+
 	switch req.GrantType {
-	case token.PASSWORD, token.LDAP, token.Access:
-		loginLog := &audit.LoginLogData{}
-		s.audit.SaveLoginRecord(loginLog)
+	case token.PASSWORD, token.LDAP:
+		data.Account = req.Username
+	case token.Access:
+		data.Account = tk.Account
 	}
 
+	data.Domain = tk.Domain
+	data.ApplicationID = tk.ApplicationID
+	data.ApplicationName = tk.ApplicationName
+	data.GrantType = tk.GrantType
+	data.LoginIP = req.GetRemoteIP()
+	data.WithUserAgent(req.GetUserAgent())
+
+	if err != nil {
+		data.Result = audit.Failed
+		data.Comment = err.Error()
+	}
+
+	s.audit.SaveLoginRecord(data)
 	return
 }
 
 func (s *service) saveLogoutLog(tk *token.Token) {
+	data := audit.NewDefaultLogoutLogData()
+	data.Domain = tk.Domain
+	data.Account = tk.Account
+	data.ApplicationID = tk.ApplicationID
+	data.ApplicationName = tk.ApplicationName
+	data.GrantType = tk.GrantType
+	data.WithToken(tk)
+	s.audit.SaveLoginRecord(data)
 	return
 }
 

@@ -15,6 +15,11 @@ type Service interface {
 	LookupIP(ip string) (*IPInfo, error)
 }
 
+// NewDefaultIPInfo todo
+func NewDefaultIPInfo() *IPInfo {
+	return &IPInfo{}
+}
+
 // IPInfo todo
 type IPInfo struct {
 	CityID   int64  `bson:"city_id" json:"city_id"`
