@@ -35,12 +35,13 @@ func (s *service) saveLoginLog(req *token.IssueTokenRequest, tk *token.Token, er
 		data.Account = tk.Account
 	}
 
-	data.Domain = tk.Domain
 	data.ApplicationID = tk.ApplicationID
 	data.ApplicationName = tk.ApplicationName
 	data.GrantType = tk.GrantType
 	data.LoginIP = req.GetRemoteIP()
+
 	data.WithUserAgent(req.GetUserAgent())
+	data.WithToken(tk)
 
 	if err != nil {
 		data.Result = audit.Failed
@@ -53,7 +54,6 @@ func (s *service) saveLoginLog(req *token.IssueTokenRequest, tk *token.Token, er
 
 func (s *service) saveLogoutLog(tk *token.Token) {
 	data := audit.NewDefaultLogoutLogData()
-	data.Domain = tk.Domain
 	data.Account = tk.Account
 	data.ApplicationID = tk.ApplicationID
 	data.ApplicationName = tk.ApplicationName

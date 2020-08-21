@@ -22,6 +22,7 @@ var (
 func NewLoginLog(data *LoginLogData) *LoginLog {
 	log := &LoginLog{
 		ID:           xid.New().String(),
+		Domain:       data.GetToken().Domain,
 		LoginLogData: data,
 	}
 
@@ -39,6 +40,7 @@ func NewDefaultLoginLog() *LoginLog {
 // LoginLog 登录日志
 type LoginLog struct {
 	ID                string `bson:"_id" json:"id"`
+	Domain            string `bson:"domain" json:"domain" alidate:"required"` // 所处域
 	*LoginLogData     `bson:",inline"`
 	UserAgent         `bson:",inline"`
 	*ip2region.IPInfo `bson:",inline"`
@@ -125,7 +127,6 @@ func NewDefaultLogoutLogData() *LoginLogData {
 // LoginLogData todo
 type LoginLogData struct {
 	*token.Session  `bson:"-" json:"-"`
-	Domain          string          `bson:"domain" json:"domain" alidate:"required"`                     // 所处域
 	Account         string          `bson:"account" json:"account" alidate:"required"`                   // 用户
 	LoginAt         ftime.Time      `bson:"login_at" json:"login_at" alidate:"required"`                 // 登录时间
 	LogoutAt        ftime.Time      `bson:"logout_at" json:"logout_at"`                                  // 登出时间
@@ -173,14 +174,4 @@ type UserAgent struct {
 	EngineVersion  string `bson:"engine_version" json:"engine_version"`
 	BrowserName    string `bson:"browser_name" json:"browser_name"`
 	BrowserVersion string `bson:"browser_version" json:"browser_version"`
-}
-
-// OperateLog 操作日志
-type OperateLog struct {
-	Account       string     `bson:"account" json:"account"`               // 用户
-	OperateAt     ftime.Time `bson:"operate_at" json:"operate_at"`         // 操作时间
-	ApplicationID string     `bson:"application_id" json:"application_id"` // 用户通过哪个端登录的
-	ResourceType  string     `bson:"resource_type" json:"resource_type"`   // 资源类型
-	Action        string     `bson:"action" json:"action"`                 // 操作资源的动作
-	Result        Result     `bson:"result" json:"result"`                 // 登录状态 (成功或者失败)
 }
