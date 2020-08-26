@@ -25,7 +25,10 @@ test-coverage: ## Run tests with coverage
 	@cat cover.out >> coverage.txt
 
 build: dep ## Build the binary file
-	@go build -i -o dist/$(PROJECT_NAME) $(MAIN_FILE)
+	@sh ./build/build.sh local dist/$(PROJECT_NAME) $(MAIN_FILE)
+
+linux: dep ## Build the binary file
+	@sh ./build/build.sh linux dist/$(PROJECT_NAME) $(MAIN_FILE)
 
 run: # Run Develop server
 	@go run $(MAIN_FILE) start
