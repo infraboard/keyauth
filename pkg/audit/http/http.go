@@ -14,7 +14,7 @@ var (
 )
 
 type handler struct {
-	service audit.LoginAudit
+	service audit.Service
 }
 
 // Registry 注册HTTP服务路由

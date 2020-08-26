@@ -111,7 +111,6 @@ func NewDefaultLoginLogData() *LoginLogData {
 	return &LoginLogData{
 		Session: token.NewSession(),
 		LoginAt: ftime.Now(),
-		Result:  Success,
 	}
 }
 
@@ -120,7 +119,6 @@ func NewDefaultLogoutLogData() *LoginLogData {
 	return &LoginLogData{
 		Session:  token.NewSession(),
 		LogoutAt: ftime.Now(),
-		Result:   Success,
 	}
 }
 
@@ -134,8 +132,6 @@ type LoginLogData struct {
 	ApplicationName string          `bson:"application_name" json:"application_name" alidate:"required"` // 用户通过哪个端登录的
 	GrantType       token.GrantType `bson:"grant_type" json:"grant_type" alidate:"required"`             // 登录方式
 	LoginIP         string          `bson:"login_ip" json:"login_ip" alidate:"required"`                 // 登录IP
-	Result          Result          `bson:"result" json:"result" alidate:"required"`                     // 登录状态 (成功或者失败)
-	Comment         string          `bson:"comment" json:"comment"`                                      // 备注 主要用于描述失败原因
 	userAgent       string          `bson:"-"`
 }
 

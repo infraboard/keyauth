@@ -12,7 +12,6 @@ import (
 
 func (s *service) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) {
 	tk, err := s.issuer.IssueToken(req)
-	s.saveLoginLog(req, tk, err)
 	if err != nil {
 		return nil, err
 	}
@@ -22,10 +21,11 @@ func (s *service) IssueToken(req *token.IssueTokenRequest) (*token.Token, error)
 			tk.AccessToken, err)
 	}
 
+	s.saveLoginLog(req, tk)
 	return tk, nil
 }
 
-func (s *service) saveLoginLog(req *token.IssueTokenRequest, tk *token.Token, err error) {
+func (s *service) saveLoginLog(req *token.IssueTokenRequest, tk *token.Token) {
 	data := audit.NewDefaultLoginLogData()
 
 	switch req.GrantType {
@@ -43,11 +43,6 @@ func (s *service) saveLoginLog(req *token.IssueTokenRequest, tk *token.Token, er
 	data.WithUserAgent(req.GetUserAgent())
 	data.WithToken(tk)
 
-	if err != nil {
-		data.Result = audit.Failed
-		data.Comment = err.Error()
-	}
-
 	s.audit.SaveLoginRecord(data)
 	return
 }
@@ -57,8 +52,10 @@ func (s *service) saveLogoutLog(tk *token.Token) {
 	data.Account = tk.Account
 	data.ApplicationID = tk.ApplicationID
 	data.ApplicationName = tk.ApplicationName
-	data.GrantType = tk.GrantType
 	data.WithToken(tk)
+	if tk.CheckRefreshIsExpired() {
+		data.LogoutAt = tk.RefreshExpiredAt
+	}
 	s.audit.SaveLoginRecord(data)
 	return
 }
@@ -145,7 +142,6 @@ func (s *service) RevolkToken(req *token.RevolkTokenRequest) error {
 
 	// 记录退出日志
 	s.saveLogoutLog(tk)
-
 	return s.destoryToken(descReq)
 }
 

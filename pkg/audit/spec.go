@@ -10,20 +10,8 @@ import (
 
 // Service todo
 type Service interface {
-	LoginAudit
-	OperateAudit
-}
-
-// LoginAudit 登录日志审计
-type LoginAudit interface {
 	SaveLoginRecord(*LoginLogData)
 	QueryLoginRecord(*QueryLoginRecordRequest) (*LoginRecordSet, error)
-}
-
-// OperateAudit 操作日志
-type OperateAudit interface {
-	SaveOperateRecord(*OperateLogData)
-	QueryOperateRecord(*QueryOperateRecordRequest) (*OperateRecordSet, error)
 }
 
 // NewQueryLoginRecordRequestFromHTTP 列表查询请求
