@@ -3,9 +3,10 @@ package mongo
 import (
 	"context"
 
-	"github.com/infraboard/keyauth/pkg/audit"
 	"github.com/infraboard/mcube/exception"
 	"go.mongodb.org/mongo-driver/bson"
+
+	"github.com/infraboard/keyauth/pkg/audit"
 )
 
 func (s *service) SaveLoginRecord(req *audit.LoginLogData) {

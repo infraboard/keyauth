@@ -10,12 +10,19 @@ import (
 // Service todo
 type Service interface {
 	LoginAudit
+	OperateAudit
 }
 
 // LoginAudit 登录日志审计
 type LoginAudit interface {
 	SaveLoginRecord(*LoginLogData)
 	QueryLoginRecord(*QueryLoginRecordRequest) (*LoginRecordSet, error)
+}
+
+// OperateAudit 操作日志
+type OperateAudit interface {
+	SaveOperateRecord(*OperateLogData)
+	QueryOperateRecord(*QueryOperateRecordRequest) (*OperateRecordSet, error)
 }
 
 // NewQueryLoginRecordRequest 列表查询请求
@@ -51,6 +58,32 @@ type QueryLoginRecordRequest struct {
 
 // Validate todo
 func (req *QueryLoginRecordRequest) Validate() error {
+	if req.GetToken() == nil {
+		return fmt.Errorf("token required")
+	}
+
+	return nil
+}
+
+// NewQueryOperateRecordRequest 列表查询请求
+func NewQueryOperateRecordRequest(pageReq *request.PageRequest) *QueryOperateRecordRequest {
+	return &QueryOperateRecordRequest{
+		Session:     token.NewSession(),
+		PageRequest: pageReq,
+	}
+}
+
+// QueryOperateRecordRequest todo
+type QueryOperateRecordRequest struct {
+	*token.Session
+	*request.PageRequest
+	Account       string
+	ApplicationID string
+	Result        *Result
+}
+
+// Validate todo
+func (req *QueryOperateRecordRequest) Validate() error {
 	if req.GetToken() == nil {
 		return fmt.Errorf("token required")
 	}
