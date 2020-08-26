@@ -13,6 +13,7 @@ import (
 
 // oauth2 Authorization Grant: https://tools.ietf.org/html/rfc6749#section-1.3
 const (
+	UNKNOWN GrantType = "unknwon"
 	// AUTHCODE oauth2 Authorization Code Grant
 	AUTHCODE GrantType = "authorization_code"
 	// IMPLICIT oauth2 Implicit Grant
@@ -23,11 +24,33 @@ const (
 	CLIENT GrantType = "client_credentials"
 	// REFRESH oauth2 Refreshing an Access Token
 	REFRESH GrantType = "refresh_token"
-	// Access is an custom grant for use use generate personal private token
-	Access GrantType = "access_token"
+	// ACCESS is an custom grant for use use generate personal private token
+	ACCESS GrantType = "access_token"
 	// LDAP 通过ldap认证
 	LDAP GrantType = "ldap"
 )
+
+// ParseGrantTypeFromString todo
+func ParseGrantTypeFromString(str string) (GrantType, error) {
+	switch str {
+	case "authorization_code":
+		return AUTHCODE, nil
+	case "implicit":
+		return IMPLICIT, nil
+	case "password":
+		return PASSWORD, nil
+	case "client_credentials":
+		return CLIENT, nil
+	case "refresh_token":
+		return REFRESH, nil
+	case "access_token":
+		return ACCESS, nil
+	case "ldap":
+		return LDAP, nil
+	default:
+		return UNKNOWN, fmt.Errorf("unknown Grant type: %s", str)
+	}
+}
 
 // GrantType is the type for OAuth2 param ` grant_type`
 type GrantType string

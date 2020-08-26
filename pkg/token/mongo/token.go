@@ -31,7 +31,7 @@ func (s *service) saveLoginLog(req *token.IssueTokenRequest, tk *token.Token, er
 	switch req.GrantType {
 	case token.PASSWORD, token.LDAP:
 		data.Account = req.Username
-	case token.Access:
+	case token.ACCESS:
 		data.Account = tk.Account
 	}
 

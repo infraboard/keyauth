@@ -152,7 +152,7 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 			return nil, err
 		}
 		return newTK, nil
-	case token.Access:
+	case token.ACCESS:
 		validateReq := token.NewValidateTokenRequest()
 		validateReq.AccessToken = req.AccessToken
 		tk, err := i.token.ValidateToken(validateReq)
@@ -163,7 +163,7 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 		if err != nil {
 			return nil, err
 		}
-		newTK := i.issueUserToken(app, u, token.Access)
+		newTK := i.issueUserToken(app, u, token.ACCESS)
 		newTK.Domain = tk.Domain
 		return newTK, nil
 	case token.LDAP:

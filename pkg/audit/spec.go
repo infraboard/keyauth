@@ -2,6 +2,7 @@ package audit
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/mcube/http/request"
@@ -23,6 +24,30 @@ type LoginAudit interface {
 type OperateAudit interface {
 	SaveOperateRecord(*OperateLogData)
 	QueryOperateRecord(*QueryOperateRecordRequest) (*OperateRecordSet, error)
+}
+
+// NewQueryLoginRecordRequestFromHTTP 列表查询请求
+func NewQueryLoginRecordRequestFromHTTP(r *http.Request) (*QueryLoginRecordRequest, error) {
+	page := request.NewPageRequestFromHTTP(r)
+	qs := r.URL.Query()
+
+	req := &QueryLoginRecordRequest{
+		Session:       token.NewSession(),
+		PageRequest:   page,
+		Account:       qs.Get("account"),
+		ApplicationID: qs.Get("application_id"),
+	}
+
+	gtStr := qs.Get("grant_type")
+	if gtStr != "" {
+		gt, err := token.ParseGrantTypeFromString(gtStr)
+		if err != nil {
+			return nil, err
+		}
+		req.GrantType = gt
+	}
+
+	return req, nil
 }
 
 // NewQueryLoginRecordRequest 列表查询请求

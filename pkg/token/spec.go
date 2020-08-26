@@ -122,9 +122,9 @@ func (req *IssueTokenRequest) Validate() error {
 		if req.RefreshToken == "" {
 			return fmt.Errorf("use %s grant type, refresh_token required", REFRESH)
 		}
-	case Access:
+	case ACCESS:
 		if req.AccessToken == "" {
-			return fmt.Errorf("use %s grant type, access_token required", Access)
+			return fmt.Errorf("use %s grant type, access_token required", ACCESS)
 		}
 	case LDAP:
 		if req.Username == "" || req.Password == "" {
