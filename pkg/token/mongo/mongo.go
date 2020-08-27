@@ -3,7 +3,10 @@ package mongo
 import (
 	"context"
 	"errors"
+	"fmt"
+	"time"
 
+	"github.com/infraboard/mcube/cache"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/x/bsonx"
@@ -35,6 +38,8 @@ type service struct {
 	issuer   issuer.Issuer
 	endpoint endpoint.Service
 	audit    audit.Service
+	cache    cache.Cache
+	retryTTL time.Duration
 }
 
 func (s *service) Config() error {
@@ -69,6 +74,12 @@ func (s *service) Config() error {
 	}
 	s.issuer = issuer
 
+	c := cache.C()
+	if c == nil {
+		return fmt.Errorf("denpence cache service is nil")
+	}
+	s.cache = c
+
 	db := conf.C().Mongo.GetDB()
 	col := db.Collection("token")
 
@@ -88,6 +99,7 @@ func (s *service) Config() error {
 	}
 
 	s.col = col
+	s.retryTTL = 5 * time.Minute
 	return nil
 }
 

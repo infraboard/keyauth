@@ -11,8 +11,14 @@ import (
 )
 
 func (s *service) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) {
+	fl := s.inspectRequest(req)
+	if err := fl.CheckBlook(); err != nil {
+		return nil, exception.NewBadRequest("inspect request error, %s", err)
+	}
+
 	tk, err := s.issuer.IssueToken(req)
 	if err != nil {
+		s.saveAbnormalLogin(req, fl)
 		return nil, err
 	}
 
@@ -25,16 +31,22 @@ func (s *service) IssueToken(req *token.IssueTokenRequest) (*token.Token, error)
 	return tk, nil
 }
 
+func (s *service) inspectRequest(req *token.IssueTokenRequest) *FailedLogin {
+	fl := NewFailedLogin()
+	s.cache.Get(req.AbnormalUserCheckKey(), fl)
+	return fl
+}
+
+// 记录登录失败的次数
+func (s *service) saveAbnormalLogin(req *token.IssueTokenRequest, fl *FailedLogin) {
+	fl.Inc()
+	s.cache.PutWithTTL("abnormal_"+req.Username, fl, s.retryTTL)
+}
+
 func (s *service) saveLoginLog(req *token.IssueTokenRequest, tk *token.Token) {
 	data := audit.NewDefaultLoginLogData()
 
-	switch req.GrantType {
-	case token.PASSWORD, token.LDAP:
-		data.Account = req.Username
-	case token.ACCESS:
-		data.Account = tk.Account
-	}
-
+	data.Account = tk.Account
 	data.ApplicationID = tk.ApplicationID
 	data.ApplicationName = tk.ApplicationName
 	data.GrantType = tk.GrantType

@@ -55,6 +55,11 @@ type IssueTokenRequest struct {
 	ip           string
 }
 
+// AbnormalUserCheckKey todo
+func (req *IssueTokenRequest) AbnormalUserCheckKey() string {
+	return "abnormal_" + req.Username
+}
+
 // WithUserAgent todo
 func (req *IssueTokenRequest) WithUserAgent(userAgent string) {
 	req.ua = userAgent

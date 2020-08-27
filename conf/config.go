@@ -29,7 +29,7 @@ type Config struct {
 	App   *app     `toml:"app"`
 	Log   *log     `toml:"log"`
 	Mongo *mongodb `toml:"mongodb"`
-	Cache *cache   `toml:"cache"`
+	Cache *_cache  `toml:"cache"`
 }
 
 // InitGloabl 注入全局变量
@@ -138,15 +138,15 @@ func (m *mongodb) getClient() (*mongo.Client, error) {
 	return client, nil
 }
 
-func newDefaultCache() *cache {
-	return &cache{
+func newDefaultCache() *_cache {
+	return &_cache{
 		Type:   "memory",
 		Memory: memory.NewDefaultConfig(),
 		Redis:  redis.NewDefaultConfig(),
 	}
 }
 
-type cache struct {
+type _cache struct {
 	Type   string         `toml:"type" json:"type" yaml:"type" env:"K_CACHE_TYPE"`
 	Memory *memory.Config `toml:"memory" json:"memory" yaml:"memory"`
 	Redis  *redis.Config  `toml:"redis" json:"redis" yaml:"redis"`

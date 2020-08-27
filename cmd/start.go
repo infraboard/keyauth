@@ -9,6 +9,9 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/infraboard/mcube/cache"
+	"github.com/infraboard/mcube/cache/memory"
+	"github.com/infraboard/mcube/cache/redis"
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
 	"github.com/spf13/cobra"
@@ -72,6 +75,11 @@ var serviceCmd = &cobra.Command{
 
 		// 初始化全局日志配置
 		if err := loadGlobalLogger(); err != nil {
+			return err
+		}
+
+		// 加载缓存
+		if err := loadCache(); err != nil {
 			return err
 		}
 
@@ -191,6 +199,26 @@ func loadGlobalLogger() error {
 	}
 
 	zap.L().Named("INIT").Info(logInitMsg)
+	return nil
+}
+
+func loadCache() error {
+	l := zap.L().Named("INIT")
+	c := conf.C()
+	// 设置全局缓存
+	switch c.Cache.Type {
+	case "memory", "":
+		ins := memory.NewCache(c.Cache.Memory)
+		cache.SetGlobal(ins)
+		l.Info("use cache in local memory")
+	case "redis":
+		ins := redis.NewCache(c.Cache.Redis)
+		cache.SetGlobal(ins)
+		l.Info("use redis to cache")
+	default:
+		return fmt.Errorf("unknown cache type: %s", c.Cache.Type)
+	}
+
 	return nil
 }
 
