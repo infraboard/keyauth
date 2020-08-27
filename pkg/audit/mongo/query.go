@@ -52,9 +52,5 @@ func (r *queryLoginLogRequest) FindFilter() bson.M {
 		filter["grant_type"] = r.GrantType
 	}
 
-	if r.Result != nil {
-		filter["result"] = r.Result
-	}
-
 	return filter
 }

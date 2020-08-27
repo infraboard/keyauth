@@ -48,14 +48,12 @@ func NewQueryLoginRecordRequest(pageReq *request.PageRequest) *QueryLoginRecordR
 
 // NewQueryLoginRecordRequestFromData 列表查询请求
 func NewQueryLoginRecordRequestFromData(req *LoginLogData) *QueryLoginRecordRequest {
-	sucess := Success
 	return &QueryLoginRecordRequest{
 		Session:       token.NewSession(),
 		PageRequest:   request.NewPageRequest(1, 1),
 		Account:       req.Account,
 		ApplicationID: req.ApplicationID,
 		GrantType:     req.GrantType,
-		Result:        &sucess,
 	}
 }
 
@@ -66,7 +64,6 @@ type QueryLoginRecordRequest struct {
 	Account       string
 	ApplicationID string
 	GrantType     token.GrantType
-	Result        *Result
 }
 
 // Validate todo

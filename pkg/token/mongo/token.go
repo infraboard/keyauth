@@ -64,6 +64,12 @@ func (s *service) saveLogoutLog(tk *token.Token) {
 	data.Account = tk.Account
 	data.ApplicationID = tk.ApplicationID
 	data.ApplicationName = tk.ApplicationName
+	if tk.GrantType.Is(token.REFRESH) {
+		data.GrantType = tk.StartGrantType
+	} else {
+		data.GrantType = tk.GrantType
+	}
+
 	data.WithToken(tk)
 	if tk.CheckRefreshIsExpired() {
 		data.LogoutAt = tk.RefreshExpiredAt

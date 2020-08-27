@@ -145,6 +145,7 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 		}
 		newTK := i.issueUserToken(app, u, token.REFRESH)
 		newTK.Domain = tk.Domain
+		newTK.StartGrantType = tk.GrantType
 
 		revolkReq := token.NewRevolkTokenRequest(app.ClientID, app.ClientSecret)
 		revolkReq.AccessToken = req.AccessToken

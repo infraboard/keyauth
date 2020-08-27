@@ -102,10 +102,19 @@ type Token struct {
 	ApplicationID   string     `bson:"application_id" json:"application_id,omitempty"`     // 用户应用ID, 如果凭证是颁发给应用的, 应用在删除时需要删除所有的令牌, 应用禁用时, 该应用令牌验证会不通过
 	ApplicationName string     `bson:"application_name" json:"application_name,omitempty"` // 应用名称
 	ClientID        string     `bson:"client_id" json:"client_id,omitempty"`               // 客户端ID
+	StartGrantType  GrantType  `bson:"start_grant_type" json:"start_grant_type,omitempty"` // 最开始授权类型
 	GrantType       GrantType  `bson:"grant_type" json:"grant_type,omitempty"`             // 授权的类型
 	Type            Type       `bson:"type" json:"type,omitempty"`                         // 令牌的类型 类型包含: bearer/jwt  (默认为bearer)
 	Scope           string     `bson:"scope" json:"scope,omitempty"`                       // 令牌的作用范围: detail https://tools.ietf.org/html/rfc6749#section-3.3, 格式 resource-ro@k=*, resource-rw@k=*
 	Description     string     `bson:"description" json:"description,omitempty"`           // 独立颁发给SDK使用时, 令牌的描述信息, 方便定位与取消
+	IsBlock         bool       `bson:"is_block" json:"is_block"`                           // 是否被禁用
+	BlockReason     string     `bson:"block_reason" json:"block_reason,omitempty"`         // 禁用原因
+}
+
+// Block 禁用token
+func (t *Token) Block(reason string) {
+	t.IsBlock = true
+	t.BlockReason = reason
 }
 
 // CheckAccessIsExpired 检测token是否过期
