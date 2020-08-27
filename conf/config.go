@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/infraboard/mcube/cache/memory"
+	"github.com/infraboard/mcube/cache/redis"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -18,6 +20,7 @@ func newConfig() *Config {
 		App:   newDefaultAPP(),
 		Log:   newDefaultLog(),
 		Mongo: newDefaultMongoDB(),
+		Cache: newDefaultCache(),
 	}
 }
 
@@ -26,6 +29,7 @@ type Config struct {
 	App   *app     `toml:"app"`
 	Log   *log     `toml:"log"`
 	Mongo *mongodb `toml:"mongodb"`
+	Cache *cache   `toml:"cache"`
 }
 
 // InitGloabl 注入全局变量
@@ -132,4 +136,18 @@ func (m *mongodb) getClient() (*mongo.Client, error) {
 	}
 
 	return client, nil
+}
+
+func newDefaultCache() *cache {
+	return &cache{
+		Type:   "memory",
+		Memory: memory.NewDefaultConfig(),
+		Redis:  redis.NewDefaultConfig(),
+	}
+}
+
+type cache struct {
+	Type   string         `toml:"type" json:"type" yaml:"type" env:"K_CACHE_TYPE"`
+	Memory *memory.Config `toml:"memory" json:"memory" yaml:"memory"`
+	Redis  *redis.Config  `toml:"redis" json:"redis" yaml:"redis"`
 }
