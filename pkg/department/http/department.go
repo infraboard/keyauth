@@ -149,9 +149,17 @@ func (h *handler) GetSub(w http.ResponseWriter, r *http.Request) {
 
 // DestroyPrimaryAccount 注销账号
 func (h *handler) Delete(w http.ResponseWriter, r *http.Request) {
+	tk, err := pkg.GetTokenFromContext(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
 	rctx := context.GetContext(r)
 
-	if err := h.service.DeleteDepartment(rctx.PS.ByName("id")); err != nil {
+	req := department.NewDeleteDepartmentRequestWithID(rctx.PS.ByName("id"))
+	req.WithToken(tk)
+	if err := h.service.DeleteDepartment(req); err != nil {
 		response.Failed(w, err)
 		return
 	}

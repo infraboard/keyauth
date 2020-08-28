@@ -14,7 +14,7 @@ type Service interface {
 	DescribeDepartment(*DescribeDeparmentRequest) (*Department, error)
 	CreateDepartment(*CreateDepartmentRequest) (*Department, error)
 	UpdateDepartment(*UpdateDepartmentRequest) (*Department, error)
-	DeleteDepartment(id string) error
+	DeleteDepartment(*DeleteDepartmentRequest) error
 }
 
 // NewQueryDepartmentRequestFromHTTP 列表查询请求
@@ -62,6 +62,33 @@ type DescribeDeparmentRequest struct {
 func (req *DescribeDeparmentRequest) Validate() error {
 	if req.ID == "" && req.Name == "" {
 		return fmt.Errorf("id or name required")
+	}
+
+	return nil
+}
+
+// NewDeleteDepartmentRequestWithID todo
+func NewDeleteDepartmentRequestWithID(id string) *DeleteDepartmentRequest {
+	return &DeleteDepartmentRequest{
+		Session: token.NewSession(),
+		ID:      id,
+	}
+}
+
+// DeleteDepartmentRequest todo
+type DeleteDepartmentRequest struct {
+	*token.Session
+	ID string
+}
+
+// Validate todo
+func (req *DeleteDepartmentRequest) Validate() error {
+	if req.ID == "" {
+		return fmt.Errorf("department id required")
+	}
+
+	if req.GetToken() == nil {
+		return fmt.Errorf("token required")
 	}
 
 	return nil

@@ -8,8 +8,10 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"github.com/infraboard/keyauth/common/types"
+	common "github.com/infraboard/keyauth/common/types"
 	"github.com/infraboard/keyauth/pkg/department"
+	"github.com/infraboard/keyauth/pkg/user"
+	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
 func (s *service) QueryDepartment(req *department.QueryDepartmentRequest) (
@@ -82,14 +84,32 @@ func (s *service) CreateDepartment(req *department.CreateDepartmentRequest) (
 	return ins, nil
 }
 
-func (s *service) DeleteDepartment(id string) error {
-	result, err := s.col.DeleteOne(context.TODO(), bson.M{"_id": id})
+func (s *service) DeleteDepartment(req *department.DeleteDepartmentRequest) error {
+	if err := req.Validate(); err != nil {
+		return exception.NewBadRequest("validate delete department request error, %s", err)
+	}
+
+	// 判断部门下是否还有用户
+	userReq := user.NewQueryAccountRequest(nil)
+	userReq.SkipItems = true
+	userReq.DepartmentID = req.ID
+	userReq.WithTokenGetter(req)
+	userSet, err := s.user.QueryAccount(types.SubAccount, userReq)
+
 	if err != nil {
-		return exception.NewInternalServerError("delete department(%s) error, %s", id, err)
+		return exception.NewBadRequest("quer department user error, %s", err)
+	}
+	if userSet.Total > 0 {
+		return exception.NewBadRequest("当前部门下还有%d个用户, 请先迁移用户", userSet.Total)
+	}
+
+	result, err := s.col.DeleteOne(context.TODO(), bson.M{"_id": req.ID})
+	if err != nil {
+		return exception.NewInternalServerError("delete department(%s) error, %s", req.ID, err)
 	}
 
 	if result.DeletedCount == 0 {
-		return exception.NewNotFound("department %s not found", id)
+		return exception.NewNotFound("department %s not found", req.ID)
 	}
 
 	return nil
@@ -105,9 +125,9 @@ func (s *service) UpdateDepartment(req *department.UpdateDepartmentRequest) (*de
 		return nil, err
 	}
 	switch req.UpdateMode {
-	case types.PutUpdateMode:
+	case common.PutUpdateMode:
 		*dp.CreateDepartmentRequest = *req.CreateDepartmentRequest
-	case types.PatchUpdateMode:
+	case common.PatchUpdateMode:
 		dp.CreateDepartmentRequest.Patch(req.CreateDepartmentRequest)
 	default:
 		return nil, exception.NewBadRequest("unknown update mode: %s", req.UpdateMode)

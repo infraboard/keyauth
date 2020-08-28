@@ -12,6 +12,7 @@ import (
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/counter"
 	"github.com/infraboard/keyauth/pkg/department"
+	"github.com/infraboard/keyauth/pkg/user"
 )
 
 var (
@@ -24,6 +25,7 @@ type service struct {
 	enableCache   bool
 	notifyCachPre string
 	counter       counter.Service
+	user          user.Service
 }
 
 func (s *service) Config() error {
@@ -31,6 +33,10 @@ func (s *service) Config() error {
 		return fmt.Errorf("dependence counter service is nil")
 	}
 	s.counter = pkg.Counter
+	if pkg.User == nil {
+		return fmt.Errorf("dependence user service is nil")
+	}
+	s.user = pkg.User
 
 	db := conf.C().Mongo.GetDB()
 	dc := db.Collection("department")

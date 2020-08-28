@@ -65,6 +65,7 @@ func NewNewQueryAccountRequestFromHTTP(r *http.Request) *QueryAccountRequest {
 	qs := r.URL.Query()
 
 	query.WithDepartment = qs.Get("with_department") == "true"
+	query.SkipItems = qs.Get("skip_items") == "true"
 	query.DepartmentID = qs.Get("department_id")
 	ids := qs.Get("ids")
 	if ids != "" {
@@ -79,6 +80,7 @@ func NewQueryAccountRequest(pageReq *request.PageRequest) *QueryAccountRequest {
 		PageRequest:    pageReq,
 		Session:        token.NewSession(),
 		WithDepartment: false,
+		SkipItems:      false,
 	}
 }
 
@@ -90,6 +92,7 @@ type QueryAccountRequest struct {
 	NamespaceID    string
 	WithDepartment bool
 	DepartmentID   string
+	SkipItems      bool
 }
 
 // Validate 校验查询参数
