@@ -3,6 +3,7 @@ package http
 import (
 	"net/http"
 
+	"github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 
@@ -47,5 +48,28 @@ func (h *handler) QueryRole(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, apps)
+	return
+}
+
+func (h *handler) DescribeRole(w http.ResponseWriter, r *http.Request) {
+	tk, err := pkg.GetTokenFromContext(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	rctx := context.GetContext(r)
+	pid := rctx.PS.ByName("name")
+
+	req := role.NewDescribeRoleRequestWithID(pid)
+	req.WithToken(tk)
+
+	ins, err := h.service.DescribeRole(req)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	response.Success(w, ins)
 	return
 }

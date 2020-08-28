@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/mcube/http/request"
 )
 
@@ -41,12 +42,14 @@ func (req *QueryRoleRequest) Validate() error {
 // NewDescribeRoleRequestWithID todo
 func NewDescribeRoleRequestWithID(id string) *DescribeRoleRequest {
 	return &DescribeRoleRequest{
-		ID: id,
+		Session: token.NewSession(),
+		ID:      id,
 	}
 }
 
 // DescribeRoleRequest role详情
 type DescribeRoleRequest struct {
+	*token.Session
 	ID   string `json:"id"`
 	Name string `json:"name,omitempty" validate:"required,lte=64"`
 }

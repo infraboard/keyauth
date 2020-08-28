@@ -24,6 +24,7 @@ func (h *handler) Registry(router router.SubRouter) {
 	r.BasePath("roles")
 	r.Handle("POST", "/", h.CreateRole).AddLabel(label.Create)
 	r.Handle("GET", "/", h.QueryRole).AddLabel(label.List)
+	r.Handle("GET", "/:name", h.DescribeRole).AddLabel(label.Get)
 }
 
 func (h *handler) Config() error {
