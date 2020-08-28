@@ -63,7 +63,9 @@ func NewNewQueryAccountRequestFromHTTP(r *http.Request) *QueryAccountRequest {
 	query := NewQueryAccountRequest(page)
 
 	qs := r.URL.Query()
+
 	query.WithDepartment = qs.Get("with_department") == "true"
+	query.DepartmentID = qs.Get("department_id")
 	ids := qs.Get("ids")
 	if ids != "" {
 		query.Accounts = strings.Split(ids, ",")
@@ -87,6 +89,7 @@ type QueryAccountRequest struct {
 	Accounts       []string
 	NamespaceID    string
 	WithDepartment bool
+	DepartmentID   string
 }
 
 // Validate 校验查询参数

@@ -47,6 +47,9 @@ func (r *queryUserRequest) FindFilter() bson.M {
 	if len(r.Accounts) > 0 {
 		filter["_id"] = bson.M{"$in": r.Accounts}
 	}
+	if r.DepartmentID != "" {
+		filter["department_id"] = r.DepartmentID
+	}
 
 	return filter
 }
