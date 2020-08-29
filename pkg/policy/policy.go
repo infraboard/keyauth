@@ -151,6 +151,7 @@ func (s *Set) GetRoles(r role.Service) (*role.Set, error) {
 	set := role.NewRoleSet(nil)
 	for i := range s.Items {
 		req := role.NewDescribeRoleRequestWithID(s.Items[i].RoleID)
+		req.WithPermissions = true
 
 		ins, err := r.DescribeRole(req)
 		if err != nil {
