@@ -33,14 +33,18 @@ func NewQueryPolicyRequestFromHTTP(r *http.Request) *QueryPolicyRequest {
 	req.Account = qs.Get("account")
 	req.RoleID = qs.Get("role_id")
 	req.NamespaceID = qs.Get("namespace_id")
+	req.WithRole = qs.Get("with_role") == "true"
+	req.WithNamespace = qs.Get("with_namespace") == "true"
 	return req
 }
 
 // NewQueryPolicyRequest 列表查询请求
 func NewQueryPolicyRequest(pageReq *request.PageRequest) *QueryPolicyRequest {
 	return &QueryPolicyRequest{
-		Session:     token.NewSession(),
-		PageRequest: pageReq,
+		Session:       token.NewSession(),
+		PageRequest:   pageReq,
+		WithRole:      false,
+		WithNamespace: false,
 	}
 }
 
@@ -49,9 +53,11 @@ type QueryPolicyRequest struct {
 	*request.PageRequest
 	*token.Session
 
-	Account     string `json:"account,omitempty"`
-	RoleID      string `json:"role_id,omitempty"`
-	NamespaceID string `json:"namespace_id,omitempty"`
+	Account       string `json:"account,omitempty"`
+	RoleID        string `json:"role_id,omitempty"`
+	NamespaceID   string `json:"namespace_id,omitempty"`
+	WithRole      bool   `json:"with_role,omitempty"`
+	WithNamespace bool   `json:"with_namespace,omitempty"`
 }
 
 // NewCreateUserRequest 创建请求

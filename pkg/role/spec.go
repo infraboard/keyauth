@@ -2,6 +2,8 @@ package role
 
 import (
 	"fmt"
+	"net/http"
+	"strings"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/infraboard/keyauth/pkg/token"
@@ -21,17 +23,34 @@ type Service interface {
 	DeleteRole(name string) error
 }
 
+// NewQueryRoleRequestFromHTTP 列表查询请求
+func NewQueryRoleRequestFromHTTP(r *http.Request) *QueryRoleRequest {
+	page := request.NewPageRequestFromHTTP(r)
+
+	req := &QueryRoleRequest{
+		PageRequest:     page,
+		WithPermissions: false,
+	}
+
+	qs := r.URL.Query()
+	req.WithPermissions = strings.TrimSpace(qs.Get("with_permissions")) == "true"
+
+	return req
+}
+
 // NewQueryRoleRequest 列表查询请求
 func NewQueryRoleRequest(pageReq *request.PageRequest) *QueryRoleRequest {
 	return &QueryRoleRequest{
-		PageRequest: pageReq,
+		PageRequest:     pageReq,
+		WithPermissions: false,
 	}
 }
 
 // QueryRoleRequest 查询请求
 type QueryRoleRequest struct {
 	*request.PageRequest
-	Type Type
+	Type            Type
+	WithPermissions bool
 }
 
 // Validate todo
@@ -42,16 +61,18 @@ func (req *QueryRoleRequest) Validate() error {
 // NewDescribeRoleRequestWithID todo
 func NewDescribeRoleRequestWithID(id string) *DescribeRoleRequest {
 	return &DescribeRoleRequest{
-		Session: token.NewSession(),
-		ID:      id,
+		Session:         token.NewSession(),
+		ID:              id,
+		WithPermissions: false,
 	}
 }
 
 // DescribeRoleRequest role详情
 type DescribeRoleRequest struct {
 	*token.Session
-	ID   string `json:"id"`
-	Name string `json:"name,omitempty" validate:"required,lte=64"`
+	ID              string `json:"id"`
+	Name            string `json:"name,omitempty" validate:"required,lte=64"`
+	WithPermissions bool
 }
 
 // Valiate todo

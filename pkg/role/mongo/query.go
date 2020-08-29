@@ -38,6 +38,17 @@ func (req *describeRoleRequest) FindFilter() bson.M {
 	return filter
 }
 
+// FindOptions todo
+func (req *describeRoleRequest) FindOptions() *options.FindOneOptions {
+	opt := &options.FindOneOptions{}
+
+	if !req.WithPermissions {
+		opt.Projection = bson.M{"permissions": 0}
+	}
+
+	return opt
+}
+
 func newQueryRoleRequest(req *role.QueryRoleRequest) (*queryRoleRequest, error) {
 	if err := req.Validate(); err != nil {
 		return nil, err
@@ -54,9 +65,13 @@ func (r *queryRoleRequest) FindOptions() *options.FindOptions {
 	skip := int64(r.PageSize) * int64(r.PageNumber-1)
 
 	opt := &options.FindOptions{
-		Sort:  bson.D{{"create_at", -1}},
+		Sort:  bson.D{{Key: "create_at", Value: -1}},
 		Limit: &pageSize,
 		Skip:  &skip,
+	}
+
+	if !r.WithPermissions {
+		opt.Projection = bson.M{"permissions": 0}
 	}
 
 	return opt

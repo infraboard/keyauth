@@ -6,7 +6,9 @@ import (
 	"github.com/infraboard/mcube/exception"
 	"go.mongodb.org/mongo-driver/mongo"
 
+	"github.com/infraboard/keyauth/pkg/namespace"
 	"github.com/infraboard/keyauth/pkg/policy"
+	"github.com/infraboard/keyauth/pkg/role"
 )
 
 func (s *service) CreatePolicy(req *policy.CreatePolicyRequest) (
@@ -48,6 +50,24 @@ func (s *service) QueryPolicy(req *policy.QueryPolicyRequest) (
 		ins := policy.NewDefaultPolicy()
 		if err := resp.Decode(ins); err != nil {
 			return nil, exception.NewInternalServerError("decode policy error, error is %s", err)
+		}
+
+		// 补充关联的角色信息
+		if req.WithRole {
+			descRole := role.NewDescribeRoleRequestWithID(ins.RoleID)
+			ins.Role, err = s.role.DescribeRole(descRole)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		// 关联空间信息
+		if req.WithNamespace {
+			descNS := namespace.NewNewDescriptNamespaceRequestWithID(ins.NamespaceID)
+			ins.Namespace, err = s.namespace.DescribeNamespace(descNS)
+			if err != nil {
+				return nil, err
+			}
 		}
 
 		set.Add(ins)

@@ -49,6 +49,9 @@ type Policy struct {
 	Creater              string     `bson:"creater" json:"creater"`     // 创建者ID
 	UserType             types.Type `bson:"user_type" json:"user_type"` // 用户类型
 	*CreatePolicyRequest `bson:",inline"`
+
+	Role      *role.Role           `bson:"-" json:"role,omitempty"`      // 关联的角色对象
+	Namespace *namespace.Namespace `bson:"-" json:"namespace,omitempty"` // 关联的空间信息
 }
 
 func (p *Policy) genID() {

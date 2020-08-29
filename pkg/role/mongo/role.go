@@ -60,7 +60,7 @@ func (s *service) DescribeRole(req *role.DescribeRoleRequest) (*role.Role, error
 	}
 
 	ins := role.NewDefaultRole()
-	if err := s.col.FindOne(context.TODO(), query.FindFilter()).Decode(ins); err != nil {
+	if err := s.col.FindOne(context.TODO(), query.FindFilter(), query.FindOptions()).Decode(ins); err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, exception.NewNotFound("role %s not found", req)
 		}

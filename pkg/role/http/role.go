@@ -38,8 +38,7 @@ func (h *handler) CreateRole(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) QueryRole(w http.ResponseWriter, r *http.Request) {
-	page := request.NewPageRequestFromHTTP(r)
-	req := role.NewQueryRoleRequest(page)
+	req := role.NewQueryRoleRequestFromHTTP(r)
 
 	apps, err := h.service.QueryRole(req)
 	if err != nil {
@@ -60,8 +59,10 @@ func (h *handler) DescribeRole(w http.ResponseWriter, r *http.Request) {
 
 	rctx := context.GetContext(r)
 	pid := rctx.PS.ByName("name")
+	qs := r.URL.Query()
 
 	req := role.NewDescribeRoleRequestWithID(pid)
+	req.WithPermissions = qs.Get("with_permissions") == "true"
 	req.WithToken(tk)
 
 	ins, err := h.service.DescribeRole(req)
