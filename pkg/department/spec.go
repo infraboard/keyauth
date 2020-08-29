@@ -8,6 +8,11 @@ import (
 	"github.com/infraboard/mcube/http/request"
 )
 
+const (
+	// DefaultDepartmentName 默认部门名称
+	DefaultDepartmentName = "default"
+)
+
 // Service 服务
 type Service interface {
 	QueryDepartment(*QueryDepartmentRequest) (*Set, error)

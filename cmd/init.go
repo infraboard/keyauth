@@ -12,6 +12,7 @@ import (
 
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/application"
+	"github.com/infraboard/keyauth/pkg/department"
 	"github.com/infraboard/keyauth/pkg/domain"
 	"github.com/infraboard/keyauth/pkg/micro"
 	"github.com/infraboard/keyauth/pkg/role"
@@ -180,6 +181,12 @@ func (i *Initialer) Run() error {
 	}
 	fmt.Printf("初始化服务: %s   [成功]\n", svr.Name)
 
+	dep, err := i.initDepartment()
+	if err != nil {
+		return err
+	}
+	fmt.Printf("初始化部门: %s   [成功]\n", dep.DisplayName)
+
 	return nil
 }
 
@@ -287,6 +294,18 @@ func (i *Initialer) initRole() ([]*role.Role, error) {
 	}
 
 	return []*role.Role{adminRole, vistorRole}, nil
+}
+
+func (i *Initialer) initDepartment() (*department.Department, error) {
+	if pkg.Department == nil {
+		return nil, fmt.Errorf("dependence service department is nil")
+	}
+
+	req := department.NewCreateDepartmentRequest()
+	req.Name = department.DefaultDepartmentName
+	req.DisplayName = "默认部门"
+	req.WithToken(i.tk)
+	return pkg.Department.CreateDepartment(req)
 }
 
 func (i *Initialer) initService() (*micro.Micro, error) {
