@@ -2,6 +2,7 @@ package policy
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/infraboard/keyauth/pkg/token"
@@ -20,6 +21,21 @@ type Service interface {
 	DescribePolicy(req *DescribePolicyRequest) (*Policy, error)
 }
 
+// NewQueryPolicyRequestFromHTTP 列表查询请求
+func NewQueryPolicyRequestFromHTTP(r *http.Request) *QueryPolicyRequest {
+	page := request.NewPageRequestFromHTTP(r)
+	req := &QueryPolicyRequest{
+		Session:     token.NewSession(),
+		PageRequest: page,
+	}
+
+	qs := r.URL.Query()
+	req.Account = qs.Get("account")
+	req.RoleID = qs.Get("role_id")
+	req.NamespaceID = qs.Get("namespace_id")
+	return req
+}
+
 // NewQueryPolicyRequest 列表查询请求
 func NewQueryPolicyRequest(pageReq *request.PageRequest) *QueryPolicyRequest {
 	return &QueryPolicyRequest{
@@ -33,7 +49,7 @@ type QueryPolicyRequest struct {
 	*request.PageRequest
 	*token.Session
 
-	User        string `json:"user,omitempty"`
+	Account     string `json:"account,omitempty"`
 	RoleID      string `json:"role_id,omitempty"`
 	NamespaceID string `json:"namespace_id,omitempty"`
 }

@@ -25,7 +25,6 @@ func New(req *CreatePolicyRequest) (*Policy, error) {
 		CreateAt:            ftime.Now(),
 		UpdateAt:            ftime.Now(),
 		Creater:             tk.Account,
-		UserType:            tk.UserType,
 		Domain:              tk.Domain,
 		CreatePolicyRequest: req,
 	}
@@ -55,30 +54,30 @@ type Policy struct {
 func (p *Policy) genID() {
 	h := fnv.New32a()
 	hashedStr := fmt.Sprintf("%s-%s-%s-%s",
-		p.Domain, p.NamespaceID, p.User, p.RoleID)
+		p.Domain, p.NamespaceID, p.Account, p.RoleID)
 
 	h.Write([]byte(hashedStr))
 	p.ID = fmt.Sprintf("%x", h.Sum32())
 }
 
 // CheckDependence todo
-func (req *CreatePolicyRequest) CheckDependence(u user.Service, r role.Service, ns namespace.Service) error {
-	_, err := u.DescribeAccount(user.NewDescriptAccountRequestWithAccount(req.Account()))
+func (req *CreatePolicyRequest) CheckDependence(u user.Service, r role.Service, ns namespace.Service) (*user.User, error) {
+	account, err := u.DescribeAccount(user.NewDescriptAccountRequestWithAccount(req.Account))
 	if err != nil {
-		return fmt.Errorf("check user error, %s", err)
+		return nil, fmt.Errorf("check user error, %s", err)
 	}
 
 	_, err = r.DescribeRole(role.NewDescribeRoleRequestWithID(req.RoleID))
 	if err != nil {
-		return fmt.Errorf("check role error, %s", err)
+		return nil, fmt.Errorf("check role error, %s", err)
 	}
 
 	_, err = ns.DescribeNamespace(namespace.NewNewDescriptNamespaceRequestWithID(req.NamespaceID))
 	if err != nil {
-		return fmt.Errorf("check role error, %s", err)
+		return nil, fmt.Errorf("check role error, %s", err)
 	}
 
-	return nil
+	return account, nil
 }
 
 // NewCreatePolicyRequest 请求实例
@@ -92,7 +91,7 @@ func NewCreatePolicyRequest() *CreatePolicyRequest {
 type CreatePolicyRequest struct {
 	*token.Session `bson:"-" json:"-"`
 	NamespaceID    string     `bson:"namespace_id" json:"namespace_id" validate:"lte=120"` // 范围
-	User           string     `bson:"user" json:"user" validate:"required,lte=120"`        // 用户ID
+	Account        string     `bson:"account" json:"account" validate:"required,lte=120"`  // 用户ID
 	RoleID         string     `bson:"role_id" json:"role_id" validate:"required,lte=40"`   // 角色名称
 	Scope          string     `bson:"scope" json:"scope"`                                  // 范围控制
 	ExpiredTime    ftime.Time `bson:"expired_time" json:"expired_time"`                    // 策略过期时间
@@ -123,7 +122,7 @@ type Set struct {
 func (s *Set) Users() []string {
 	users := map[string]struct{}{}
 	for i := range s.Items {
-		users[s.Items[i].Account()] = struct{}{}
+		users[s.Items[i].Account] = struct{}{}
 	}
 
 	set := make([]string, 0, len(users))
@@ -164,7 +163,7 @@ func (s *Set) UserRoles(account string) []string {
 	rns := []string{}
 	for i := range s.Items {
 		item := s.Items[i]
-		if item.Account() == account {
+		if item.Account == account {
 			rns = append(rns, item.RoleID)
 		}
 	}

@@ -68,6 +68,12 @@ func (r *queryPolicyRequest) FindFilter() bson.M {
 	if r.NamespaceID != "" {
 		filter["namespace_id"] = r.NamespaceID
 	}
+	if r.RoleID != "" {
+		filter["role_id"] = r.RoleID
+	}
+	if r.Account != "" {
+		filter["account"] = r.Account
+	}
 
 	return filter
 }

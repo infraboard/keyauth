@@ -18,8 +18,7 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	page := request.NewPageRequestFromHTTP(r)
-	req := policy.NewQueryPolicyRequest(page)
+	req := policy.NewQueryPolicyRequestFromHTTP(r)
 	req.WithToken(tk)
 
 	apps, err := h.service.QueryPolicy(req)

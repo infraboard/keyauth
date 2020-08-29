@@ -16,9 +16,11 @@ func (s *service) CreatePolicy(req *policy.CreatePolicyRequest) (
 		return nil, exception.NewBadRequest(err.Error())
 	}
 
-	if err := ins.CheckDependence(s.user, s.role, s.namespace); err != nil {
+	u, err := ins.CheckDependence(s.user, s.role, s.namespace)
+	if err != nil {
 		return nil, err
 	}
+	ins.UserType = u.Type
 
 	if _, err := s.col.InsertOne(context.TODO(), ins); err != nil {
 		return nil, exception.NewInternalServerError("inserted policy(%s) document error, %s",
