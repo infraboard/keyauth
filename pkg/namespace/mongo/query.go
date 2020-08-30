@@ -1,11 +1,11 @@
 package mongo
 
 import (
-	"github.com/infraboard/mcube/exception"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/infraboard/keyauth/pkg/namespace"
+	"github.com/infraboard/mcube/exception"
 )
 
 func newPaggingQuery(req *namespace.QueryNamespaceRequest) *queryNamespaceRequest {
@@ -21,7 +21,7 @@ func (r *queryNamespaceRequest) FindOptions() *options.FindOptions {
 	skip := int64(r.PageSize) * int64(r.PageNumber-1)
 
 	opt := &options.FindOptions{
-		Sort:  bson.D{{"create_at", -1}},
+		Sort:  bson.D{{Key: "create_at", Value: -1}},
 		Limit: &pageSize,
 		Skip:  &skip,
 	}

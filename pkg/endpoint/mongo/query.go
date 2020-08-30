@@ -48,7 +48,7 @@ func (r *queryEndpointRequest) FindOptions() *options.FindOptions {
 	skip := int64(r.PageSize) * int64(r.PageNumber-1)
 
 	opt := &options.FindOptions{
-		Sort:  bson.D{{"create_at", -1}},
+		Sort:  bson.D{{Key: "create_at", Value: -1}},
 		Limit: &pageSize,
 		Skip:  &skip,
 	}
@@ -58,6 +58,10 @@ func (r *queryEndpointRequest) FindOptions() *options.FindOptions {
 
 func (r *queryEndpointRequest) FindFilter() bson.M {
 	filter := bson.M{}
+
+	if r.ServiceName != "" {
+		filter["service"] = r.ServiceName
+	}
 
 	return filter
 }

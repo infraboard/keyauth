@@ -37,9 +37,7 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) List(w http.ResponseWriter, r *http.Request) {
-	page := request.NewPageRequestFromHTTP(r)
-	req := endpoint.NewQueryEndpointRequest(page)
-
+	req := endpoint.NewQueryEndpointRequestFromHTTP(r)
 	set, err := h.endpoint.QueryEndpoints(req)
 	if err != nil {
 		response.Failed(w, err)

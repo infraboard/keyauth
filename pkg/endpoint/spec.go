@@ -2,6 +2,7 @@ package endpoint
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/infraboard/mcube/http/request"
@@ -83,6 +84,17 @@ func (req *RegistryRequest) Endpoints(svr string) []*Endpoint {
 	return eps
 }
 
+// NewQueryEndpointRequestFromHTTP 列表查询请求
+func NewQueryEndpointRequestFromHTTP(r *http.Request) *QueryEndpointRequest {
+	page := request.NewPageRequestFromHTTP(r)
+	qs := r.URL.Query()
+
+	return &QueryEndpointRequest{
+		PageRequest: page,
+		ServiceName: qs.Get("service"),
+	}
+}
+
 // NewQueryEndpointRequest 列表查询请求
 func NewQueryEndpointRequest(pageReq *request.PageRequest) *QueryEndpointRequest {
 	return &QueryEndpointRequest{
@@ -93,6 +105,7 @@ func NewQueryEndpointRequest(pageReq *request.PageRequest) *QueryEndpointRequest
 // QueryEndpointRequest 查询应用列表
 type QueryEndpointRequest struct {
 	*request.PageRequest
+	ServiceName string
 }
 
 // NewDescribeEndpointRequestWithID todo
