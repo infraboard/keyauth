@@ -31,7 +31,7 @@ func NewQueryDepartmentRequestFromHTTP(r *http.Request) *QueryDepartmentRequest 
 
 	qs := r.URL.Query()
 	pid := qs.Get("parent_id")
-	if pid != "" {
+	if pid != "*" {
 		req.ParentID = &pid
 	}
 	req.Keywords = qs.Get("keywords")
