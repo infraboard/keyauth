@@ -34,6 +34,7 @@ func (h *handler) Registry(router router.SubRouter) {
 	ramRouter.Handle("POST", "/", h.CreateSubAccount).AddLabel(label.Create)
 	ramRouter.Handle("GET", "/", h.QuerySubAccount).AddLabel(label.List)
 	ramRouter.Handle("GET", "/:account", h.DescribeSubAccount).AddLabel(label.Get)
+	ramRouter.Handle("PATCH", "/:account", h.PatchSubAccount).AddLabel(label.Update)
 	ramRouter.Handle("DELETE", "/:account", h.DestroySubAccount).AddLabel(label.Delete)
 
 	portalRouter := router.ResourceRouter("profile")

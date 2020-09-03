@@ -70,6 +70,35 @@ func (h *handler) DescribeSubAccount(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+func (h *handler) PatchSubAccount(w http.ResponseWriter, r *http.Request) {
+	rctx := context.GetContext(r)
+
+	tk, err := pkg.GetTokenFromContext(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	req := user.NewPatchAccountRequest()
+	req.Account = rctx.PS.ByName("account")
+	req.WithToken(tk)
+
+	if err := request.GetDataFromRequest(r, req.CreateAccountRequest); err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	ins, err := h.service.UpdateAccountProfile(req)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+	ins.Desensitize()
+
+	response.Success(w, ins)
+	return
+}
+
 // DestroySubAccount 注销账号
 func (h *handler) DestroySubAccount(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
