@@ -25,8 +25,8 @@ func (s *Session) GetToken() *Token {
 	return s.tk
 }
 
-// Account todo
-func (s *Session) Account() string {
+// GetAccount todo
+func (s *Session) GetAccount() string {
 	if s.tk == nil {
 		return "Nil"
 	}

@@ -83,7 +83,7 @@ func (h *handler) PatchSubAccount(w http.ResponseWriter, r *http.Request) {
 	req.Account = rctx.PS.ByName("account")
 	req.WithToken(tk)
 
-	if err := request.GetDataFromRequest(r, req.CreateAccountRequest); err != nil {
+	if err := request.GetDataFromRequest(r, req.Profile); err != nil {
 		response.Failed(w, err)
 		return
 	}

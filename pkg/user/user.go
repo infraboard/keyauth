@@ -102,21 +102,37 @@ func (u *User) ChangePassword(old, new string) error {
 // CreateAccountRequest 创建用户请求
 type CreateAccountRequest struct {
 	*token.Session `bson:"-" json:"-"`
-	DepartmentID   string `bson:"department_id" json:"department_id" validate:"lte=200"` // 用户所属部门
-	Account        string `bson:"_id" json:"account" validate:"required,lte=60"`         // 用户账号名称
-	Mobile         string `bson:"mobile" json:"mobile" validate:"lte=30"`                // 手机号码, 用户可以通过手机进行注册和密码找回, 还可以通过手机号进行登录
-	Email          string `bson:"email" json:"email" validate:"lte=30"`                  // 邮箱, 用户可以通过邮箱进行注册和照明密码
-	Phone          string `bson:"phone" json:"phone" validate:"lte=30"`                  // 用户的座机号码
-	Address        string `bson:"address" json:"address" validate:"lte=120"`             // 用户住址
-	RealName       string `bson:"real_name" json:"real_name" validate:"lte=10"`          // 用户真实姓名
-	NickName       string `bson:"nick_name" json:"nick_name" validate:"lte=30"`          // 用户昵称, 用于在界面进行展示
-	Gender         string `bson:"gender" json:"gender" validate:"lte=10"`                // 性别
-	Avatar         string `bson:"avatar" json:"avatar" validate:"lte=300"`               // 头像
-	Language       string `bson:"language" json:"language" validate:"lte=40"`            // 用户使用的语言
-	City           string `bson:"city" json:"city" validate:"lte=40"`                    // 用户所在的城市
-	Province       string `bson:"province" json:"province" validate:"lte=40"`            // 用户所在的省
-	ExpiresDays    int    `bson:"expires_days" json:"expires_days"`                      // 用户多久未登录时(天), 冻结改用户, 防止僵尸用户的账号被利用
-	Password       string `bson:"-" json:"password" validate:"required,lte=80"`          // 密码相关信息
+	*Profile       `bson:",inline"`
+	Password       string `bson:"-" json:"password" validate:"required,lte=80"` // 密码相关信息
+}
+
+// NewProfile todo
+func NewProfile() *Profile {
+	return &Profile{}
+}
+
+// Profile todo
+type Profile struct {
+	DepartmentID string `bson:"department_id" json:"department_id" validate:"lte=200"` // 用户所属部门
+	Account      string `bson:"_id" json:"account" validate:"required,lte=60"`         // 用户账号名称
+	Mobile       string `bson:"mobile" json:"mobile" validate:"lte=30"`                // 手机号码, 用户可以通过手机进行注册和密码找回, 还可以通过手机号进行登录
+	Email        string `bson:"email" json:"email" validate:"lte=30"`                  // 邮箱, 用户可以通过邮箱进行注册和照明密码
+	Phone        string `bson:"phone" json:"phone" validate:"lte=30"`                  // 用户的座机号码
+	Address      string `bson:"address" json:"address" validate:"lte=120"`             // 用户住址
+	RealName     string `bson:"real_name" json:"real_name" validate:"lte=10"`          // 用户真实姓名
+	NickName     string `bson:"nick_name" json:"nick_name" validate:"lte=30"`          // 用户昵称, 用于在界面进行展示
+	Gender       string `bson:"gender" json:"gender" validate:"lte=10"`                // 性别
+	Avatar       string `bson:"avatar" json:"avatar" validate:"lte=300"`               // 头像
+	Language     string `bson:"language" json:"language" validate:"lte=40"`            // 用户使用的语言
+	City         string `bson:"city" json:"city" validate:"lte=40"`                    // 用户所在的城市
+	Province     string `bson:"province" json:"province" validate:"lte=40"`            // 用户所在的省
+	ExpiresDays  int    `bson:"expires_days" json:"expires_days"`                      // 用户多久未登录时(天), 冻结改用户, 防止僵尸用户的账号被利用
+}
+
+// Patch todo
+func (req *Profile) Patch(data *Profile) {
+	patchData, _ := json.Marshal(data)
+	json.Unmarshal(patchData, req)
 }
 
 // Validate 校验请求是否合法
@@ -133,17 +149,6 @@ func (req *CreateAccountRequest) Validate() error {
 	}
 
 	return validate.Struct(req)
-}
-
-// Patch todo
-func (req *CreateAccountRequest) Patch(data *CreateAccountRequest) {
-	patchData, _ := json.Marshal(data)
-	json.Unmarshal(patchData, req)
-}
-
-// ValidateUpdate 校验请求是否合法
-func (req *CreateAccountRequest) ValidateUpdate() error {
-	return nil
 }
 
 func (u *User) String() string {
@@ -219,21 +224,39 @@ func (s *Set) Add(u *User) {
 // NewPutAccountRequest todo
 func NewPutAccountRequest() *UpdateAccountRequest {
 	return &UpdateAccountRequest{
-		UpdateMode:           common.PutUpdateMode,
-		CreateAccountRequest: NewCreateUserRequest(),
+		UpdateMode: common.PutUpdateMode,
+		Profile:    NewProfile(),
 	}
 }
 
 // NewPatchAccountRequest todo
 func NewPatchAccountRequest() *UpdateAccountRequest {
 	return &UpdateAccountRequest{
-		UpdateMode:           common.PatchUpdateMode,
-		CreateAccountRequest: NewCreateUserRequest(),
+		Session:    token.NewSession(),
+		UpdateMode: common.PatchUpdateMode,
+		Profile:    NewProfile(),
 	}
 }
 
 // UpdateAccountRequest todo
 type UpdateAccountRequest struct {
-	UpdateMode common.UpdateMode `json:"update_mode"`
-	*CreateAccountRequest
+	*token.Session `bson:"-" json:"-"`
+	UpdateMode     common.UpdateMode `json:"update_mode"`
+	*Profile       `bson:",inline"`
+}
+
+// Validate 更新请求校验
+func (req *UpdateAccountRequest) Validate() error {
+	tk := req.GetToken()
+
+	if tk == nil {
+		return fmt.Errorf("token required")
+	}
+
+	// 非管理员, 主账号 可以创建子账号
+	if !tk.UserType.Is(types.SupperAccount, types.PrimaryAccount) {
+		return fmt.Errorf("%s user can't create sub account", tk.UserType)
+	}
+
+	return validate.Struct(req)
 }

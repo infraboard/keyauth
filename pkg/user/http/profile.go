@@ -42,7 +42,7 @@ func (h *handler) PutProfile(w http.ResponseWriter, r *http.Request) {
 	req.Account = tk.Account
 	req.WithToken(tk)
 
-	if err := request.GetDataFromRequest(r, req.CreateAccountRequest); err != nil {
+	if err := request.GetDataFromRequest(r, req.Profile); err != nil {
 		response.Failed(w, err)
 		return
 	}
@@ -69,7 +69,7 @@ func (h *handler) PatchProfile(w http.ResponseWriter, r *http.Request) {
 	req.Account = tk.Account
 	req.WithToken(tk)
 
-	if err := request.GetDataFromRequest(r, req.CreateAccountRequest); err != nil {
+	if err := request.GetDataFromRequest(r, req.Profile); err != nil {
 		response.Failed(w, err)
 		return
 	}

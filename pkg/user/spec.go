@@ -109,6 +109,7 @@ func (req *QueryAccountRequest) Validate() error {
 func NewCreateUserRequest() *CreateAccountRequest {
 	return &CreateAccountRequest{
 		Session: token.NewSession(),
+		Profile: NewProfile(),
 	}
 }
 

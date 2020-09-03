@@ -45,21 +45,22 @@ func (s *service) CreateAccount(t types.Type, req *user.CreateAccountRequest) (*
 }
 
 func (s *service) UpdateAccountProfile(req *user.UpdateAccountRequest) (*user.User, error) {
-	if err := req.Validate(); err != nil {
-		return nil, exception.NewBadRequest("validate update department error, %s", err)
-	}
-
 	u, err := s.DescribeAccount(user.NewDescriptAccountRequestWithAccount(req.Account))
 	if err != nil {
 		return nil, err
 	}
+
 	switch req.UpdateMode {
 	case common.PutUpdateMode:
-		*u.CreateAccountRequest = *req.CreateAccountRequest
+		*u.Profile = *req.Profile
 	case common.PatchUpdateMode:
-		u.CreateAccountRequest.Patch(req.CreateAccountRequest)
+		u.Profile.Patch(req.Profile)
 	default:
 		return nil, exception.NewBadRequest("unknown update mode: %s", req.UpdateMode)
+	}
+
+	if err := req.Validate(); err != nil {
+		return nil, exception.NewBadRequest("validate update department error, %s", err)
 	}
 
 	u.UpdateAt = ftime.Now()
