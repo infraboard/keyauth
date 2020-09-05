@@ -16,26 +16,44 @@ import (
 
 func (s *service) QueryDepartment(req *department.QueryDepartmentRequest) (
 	*department.Set, error) {
-	r := newQueryDepartmentRequest(req)
-	resp, err := s.col.Find(context.TODO(), r.FindFilter(), r.FindOptions())
-
-	if err != nil {
-		return nil, exception.NewInternalServerError("find department error, error is %s", err)
+	if err := req.Validate(); err != nil {
+		return nil, exception.NewBadRequest("validate query department error, %s", err)
 	}
 
+	query := newQueryDepartmentRequest(req)
 	set := department.NewDepartmentSet(req.PageRequest)
-	// 循环
-	for resp.Next(context.TODO()) {
-		ins := department.NewDefaultDepartment()
-		if err := resp.Decode(ins); err != nil {
-			return nil, exception.NewInternalServerError("decode department error, error is %s", err)
+
+	if !req.SkipItems {
+		resp, err := s.col.Find(context.TODO(), query.FindFilter(), query.FindOptions())
+
+		if err != nil {
+			return nil, exception.NewInternalServerError("find department error, error is %s", err)
 		}
 
-		set.Add(ins)
+		// 循环
+		for resp.Next(context.TODO()) {
+			ins := department.NewDefaultDepartment()
+			if err := resp.Decode(ins); err != nil {
+				return nil, exception.NewInternalServerError("decode department error, error is %s", err)
+			}
+
+			if req.WithSubCount {
+				req.ParentID = &ins.ID
+				req.SkipItems = true
+				req.WithSubCount = true
+				sc, err := s.QueryDepartment(req)
+				if err != nil {
+					return nil, exception.NewInternalServerError("query sub department count error, error is %s", err)
+				}
+				ins.SubCount = &sc.Total
+			}
+
+			set.Add(ins)
+		}
 	}
 
 	// count
-	count, err := s.col.CountDocuments(context.TODO(), r.FindFilter())
+	count, err := s.col.CountDocuments(context.TODO(), query.FindFilter())
 	if err != nil {
 		return nil, exception.NewInternalServerError("get department count error, error is %s", err)
 	}
@@ -58,6 +76,19 @@ func (s *service) DescribeDepartment(req *department.DescribeDeparmentRequest) (
 		}
 
 		return nil, exception.NewInternalServerError("find department %s error, %s", req.ID, err)
+	}
+
+	if req.WithSubCount {
+		query := department.NewQueryDepartmentRequest()
+		query.WithTokenGetter(req)
+		query.ParentID = &ins.ID
+		query.SkipItems = true
+		query.WithSubCount = true
+		sc, err := s.QueryDepartment(query)
+		if err != nil {
+			return nil, exception.NewInternalServerError("query sub department count error, error is %s", err)
+		}
+		ins.SubCount = &sc.Total
 	}
 
 	return ins, nil
@@ -87,6 +118,19 @@ func (s *service) CreateDepartment(req *department.CreateDepartmentRequest) (
 func (s *service) DeleteDepartment(req *department.DeleteDepartmentRequest) error {
 	if err := req.Validate(); err != nil {
 		return exception.NewBadRequest("validate delete department request error, %s", err)
+	}
+
+	// 判断部门是否还有子部门
+	desc := department.NewDescriptDepartmentRequest()
+	desc.ID = req.ID
+	desc.WithSubCount = true
+	desc.WithTokenGetter(req)
+	dep, err := s.DescribeDepartment(desc)
+	if err != nil {
+		return err
+	}
+	if dep.HasSubDepartment() {
+		return exception.NewBadRequest("当前部门下还有%d个子部门, 请先删除", *dep.SubCount)
 	}
 
 	// 判断部门下是否还有用户

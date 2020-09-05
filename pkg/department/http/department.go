@@ -109,10 +109,19 @@ func (h *handler) Patch(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
+	tk, err := pkg.GetTokenFromContext(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
 	rctx := context.GetContext(r)
+	qs := r.URL.Query()
 
 	req := department.NewDescriptDepartmentRequest()
+	req.WithToken(tk)
 	req.ID = rctx.PS.ByName("id")
+	req.WithSubCount = qs.Get("with_sub_count") == "true"
 	ins, err := h.service.DescribeDepartment(req)
 	if err != nil {
 		response.Failed(w, err)

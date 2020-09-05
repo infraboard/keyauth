@@ -71,7 +71,13 @@ type Department struct {
 	Creater                  string     `bson:"creater" json:"creater,omitempty"`     // 创建人
 	Domain                   string     `bson:"domain" json:"domain,omitempty"`       // 部门所属域
 	Grade                    int        `bson:"grade" json:"grade,omitempty"`         // 第几级部门, 由层数决定
+	SubCount                 *int64     `bson:"-" json:"sub_count,omitempty"`         // 子账号数量
 	*CreateDepartmentRequest `bson:",inline"`
+}
+
+// HasSubDepartment todo
+func (d *Department) HasSubDepartment() bool {
+	return *d.SubCount > 0
 }
 
 // CounterKey 编号计算的key
@@ -94,10 +100,10 @@ func NewCreateDepartmentRequest() *CreateDepartmentRequest {
 // CreateDepartmentRequest 创建部门请求
 type CreateDepartmentRequest struct {
 	*token.Session `bson:"-" json:"-"`
-	Name           string `bson:"name" json:"name" validate:"required,lte=60"`   // 部门名称
-	DisplayName    string `bson:"display_name" json:"display_name"`              // 显示名称
-	ParentID       string `bson:"parent_id" json:"parent_id" validate:"lte=200"` // 上级部门ID
-	Manager        string `bson:"manager" json:"manager" validate:"lte=200"`     // 部门管理者ID
+	Name           string `bson:"name" json:"name" validate:"required,lte=60"`        // 部门名称
+	DisplayName    string `bson:"display_name" json:"display_name"`                   // 显示名称
+	ParentID       string `bson:"parent_id" json:"parent_id" validate:"lte=200"`      // 上级部门ID
+	Manager        string `bson:"manager" json:"manager" validate:"required,lte=200"` // 部门管理者ID
 }
 
 // Validate 校验参数的合法性

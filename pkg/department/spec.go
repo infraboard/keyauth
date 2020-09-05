@@ -24,10 +24,8 @@ type Service interface {
 
 // NewQueryDepartmentRequestFromHTTP 列表查询请求
 func NewQueryDepartmentRequestFromHTTP(r *http.Request) *QueryDepartmentRequest {
-	req := &QueryDepartmentRequest{
-		PageRequest: request.NewPageRequestFromHTTP(r),
-		Session:     token.NewSession(),
-	}
+	req := NewQueryDepartmentRequest()
+	req.PageRequest = request.NewPageRequestFromHTTP(r)
 
 	qs := r.URL.Query()
 	pid := qs.Get("parent_id")
@@ -35,32 +33,59 @@ func NewQueryDepartmentRequestFromHTTP(r *http.Request) *QueryDepartmentRequest 
 		req.ParentID = &pid
 	}
 	req.Keywords = qs.Get("keywords")
-
+	req.WithSubCount = qs.Get("with_sub_count") == "true"
 	return req
+}
+
+// NewQueryDepartmentRequest todo
+func NewQueryDepartmentRequest() *QueryDepartmentRequest {
+	return &QueryDepartmentRequest{
+		Session:      token.NewSession(),
+		PageRequest:  request.NewPageRequest(20, 1),
+		SkipItems:    false,
+		WithSubCount: false,
+	}
 }
 
 // QueryDepartmentRequest todo
 type QueryDepartmentRequest struct {
 	*token.Session
 	*request.PageRequest
-	ParentID *string
-	Keywords string
+	ParentID     *string
+	Keywords     string
+	SkipItems    bool
+	WithSubCount bool
+}
+
+// Validate todo
+func (req *QueryDepartmentRequest) Validate() error {
+	if req.GetToken() == nil {
+		return fmt.Errorf("token required")
+	}
+
+	return nil
 }
 
 // NewDescriptDepartmentRequest new实例
 func NewDescriptDepartmentRequest() *DescribeDeparmentRequest {
-	return &DescribeDeparmentRequest{}
+	return &DescribeDeparmentRequest{
+		Session: token.NewSession(),
+	}
 }
 
 // NewDescriptDepartmentRequestWithID new实例
 func NewDescriptDepartmentRequestWithID(id string) *DescribeDeparmentRequest {
-	return &DescribeDeparmentRequest{ID: id}
+	req := NewDescriptDepartmentRequest()
+	req.ID = id
+	return req
 }
 
 // DescribeDeparmentRequest 详情查询
 type DescribeDeparmentRequest struct {
-	ID   string
-	Name string
+	*token.Session
+	ID           string
+	Name         string
+	WithSubCount bool
 }
 
 // Validate 参数校验
