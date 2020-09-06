@@ -7,7 +7,6 @@ import (
 
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/infraboard/mcube/http/label"
-	"github.com/infraboard/mcube/http/request"
 	"github.com/spf13/cobra"
 
 	"github.com/infraboard/keyauth/pkg"
@@ -191,7 +190,7 @@ func (i *Initialer) Run() error {
 }
 
 func (i *Initialer) checkIsInit() error {
-	req := user.NewQueryAccountRequest(request.NewPageRequest(20, 1))
+	req := user.NewQueryAccountRequest()
 	req.WithToken(i.mockTK)
 	userSet, err := pkg.User.QueryAccount(types.SupperAccount, req)
 	if err != nil {

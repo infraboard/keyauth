@@ -8,6 +8,7 @@ import (
 
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/department"
+	"github.com/infraboard/keyauth/pkg/user"
 )
 
 var (
@@ -16,6 +17,7 @@ var (
 
 type handler struct {
 	service department.Service
+	user    user.Service
 }
 
 // Registry 注册HTTP服务路由
@@ -38,7 +40,12 @@ func (h *handler) Config() error {
 		return errors.New("denpence department service is nil")
 	}
 
+	if pkg.User == nil {
+		return errors.New("dependence user service is nil")
+	}
+
 	h.service = pkg.Department
+	h.user = pkg.User
 	return nil
 }
 

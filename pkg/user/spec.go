@@ -60,7 +60,8 @@ func (req *DescriptAccountRequest) Validate() error {
 // NewNewQueryAccountRequestFromHTTP todo
 func NewNewQueryAccountRequestFromHTTP(r *http.Request) *QueryAccountRequest {
 	page := request.NewPageRequestFromHTTP(r)
-	query := NewQueryAccountRequest(page)
+	query := NewQueryAccountRequest()
+	query.SetPageRequest(page)
 
 	qs := r.URL.Query()
 
@@ -75,9 +76,9 @@ func NewNewQueryAccountRequestFromHTTP(r *http.Request) *QueryAccountRequest {
 }
 
 // NewQueryAccountRequest 列表查询请求
-func NewQueryAccountRequest(pageReq *request.PageRequest) *QueryAccountRequest {
+func NewQueryAccountRequest() *QueryAccountRequest {
 	return &QueryAccountRequest{
-		PageRequest:    pageReq,
+		PageRequest:    request.NewPageRequest(20, 1),
 		Session:        token.NewSession(),
 		WithDepartment: false,
 		SkipItems:      false,
@@ -93,6 +94,11 @@ type QueryAccountRequest struct {
 	WithDepartment bool
 	DepartmentID   string
 	SkipItems      bool
+}
+
+// SetPageRequest todo
+func (req *QueryAccountRequest) SetPageRequest(page *request.PageRequest) {
+	req.PageRequest = page
 }
 
 // Validate 校验查询参数

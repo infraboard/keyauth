@@ -71,7 +71,8 @@ type Department struct {
 	Creater                  string     `bson:"creater" json:"creater,omitempty"`     // 创建人
 	Domain                   string     `bson:"domain" json:"domain,omitempty"`       // 部门所属域
 	Grade                    int        `bson:"grade" json:"grade,omitempty"`         // 第几级部门, 由层数决定
-	SubCount                 *int64     `bson:"-" json:"sub_count,omitempty"`         // 子账号数量
+	SubCount                 *int64     `bson:"-" json:"sub_count,omitempty"`         // 子部门数量
+	UserCount                *int64     `bson:"-" json:"user_count,omitempty"`        // 部门所有用户数量
 	*CreateDepartmentRequest `bson:",inline"`
 }
 

@@ -37,15 +37,28 @@ func (s *service) QueryDepartment(req *department.QueryDepartmentRequest) (
 				return nil, exception.NewInternalServerError("decode department error, error is %s", err)
 			}
 
+			// 补充子部门数量
 			if req.WithSubCount {
 				req.ParentID = &ins.ID
 				req.SkipItems = true
 				req.WithSubCount = true
-				sc, err := s.QueryDepartment(req)
+				ds, err := s.QueryDepartment(req)
 				if err != nil {
 					return nil, exception.NewInternalServerError("query sub department count error, error is %s", err)
 				}
-				ins.SubCount = &sc.Total
+				ins.SubCount = &ds.Total
+			}
+
+			// 补充用户数量
+			if req.WithUserCount {
+				queryU := user.NewQueryAccountRequest()
+				queryU.SkipItems = true
+				queryU.WithTokenGetter(req)
+				us, err := s.user.QueryAccount(types.SubAccount, queryU)
+				if err != nil {
+					return nil, exception.NewInternalServerError("query department user count error, error is %s", err)
+				}
+				ins.UserCount = &us.Total
 			}
 
 			set.Add(ins)
@@ -91,6 +104,18 @@ func (s *service) DescribeDepartment(req *department.DescribeDeparmentRequest) (
 		ins.SubCount = &sc.Total
 	}
 
+	// 补充用户数量
+	if req.WithUserCount {
+		queryU := user.NewQueryAccountRequest()
+		queryU.SkipItems = true
+		queryU.WithTokenGetter(req)
+		us, err := s.user.QueryAccount(types.SubAccount, queryU)
+		if err != nil {
+			return nil, exception.NewInternalServerError("query department user count error, error is %s", err)
+		}
+		ins.UserCount = &us.Total
+	}
+
 	return ins, nil
 }
 
@@ -134,7 +159,7 @@ func (s *service) DeleteDepartment(req *department.DeleteDepartmentRequest) erro
 	}
 
 	// 判断部门下是否还有用户
-	userReq := user.NewQueryAccountRequest(nil)
+	userReq := user.NewQueryAccountRequest()
 	userReq.SkipItems = true
 	userReq.DepartmentID = req.ID
 	userReq.WithTokenGetter(req)

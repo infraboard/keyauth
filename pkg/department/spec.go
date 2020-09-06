@@ -34,16 +34,18 @@ func NewQueryDepartmentRequestFromHTTP(r *http.Request) *QueryDepartmentRequest 
 	}
 	req.Keywords = qs.Get("keywords")
 	req.WithSubCount = qs.Get("with_sub_count") == "true"
+	req.WithUserCount = qs.Get("with_user_count") == "true"
 	return req
 }
 
 // NewQueryDepartmentRequest todo
 func NewQueryDepartmentRequest() *QueryDepartmentRequest {
 	return &QueryDepartmentRequest{
-		Session:      token.NewSession(),
-		PageRequest:  request.NewPageRequest(20, 1),
-		SkipItems:    false,
-		WithSubCount: false,
+		Session:       token.NewSession(),
+		PageRequest:   request.NewPageRequest(20, 1),
+		SkipItems:     false,
+		WithSubCount:  false,
+		WithUserCount: false,
 	}
 }
 
@@ -51,10 +53,11 @@ func NewQueryDepartmentRequest() *QueryDepartmentRequest {
 type QueryDepartmentRequest struct {
 	*token.Session
 	*request.PageRequest
-	ParentID     *string
-	Keywords     string
-	SkipItems    bool
-	WithSubCount bool
+	ParentID      *string
+	Keywords      string
+	SkipItems     bool
+	WithSubCount  bool
+	WithUserCount bool
 }
 
 // Validate todo
@@ -83,9 +86,10 @@ func NewDescriptDepartmentRequestWithID(id string) *DescribeDeparmentRequest {
 // DescribeDeparmentRequest 详情查询
 type DescribeDeparmentRequest struct {
 	*token.Session
-	ID           string
-	Name         string
-	WithSubCount bool
+	ID            string
+	Name          string
+	WithSubCount  bool
+	WithUserCount bool
 }
 
 // Validate 参数校验
