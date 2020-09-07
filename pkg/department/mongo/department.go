@@ -10,6 +10,7 @@ import (
 
 	common "github.com/infraboard/keyauth/common/types"
 	"github.com/infraboard/keyauth/pkg/department"
+	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
 	"github.com/infraboard/keyauth/pkg/user/types"
 )
@@ -37,28 +38,21 @@ func (s *service) QueryDepartment(req *department.QueryDepartmentRequest) (
 				return nil, exception.NewInternalServerError("decode department error, error is %s", err)
 			}
 
-			// 补充子部门数量
 			if req.WithSubCount {
-				req.ParentID = &ins.ID
-				req.SkipItems = true
-				req.WithSubCount = true
-				ds, err := s.QueryDepartment(req)
+				sc, err := s.querySubCount(ins.ParentID, req.GetToken())
 				if err != nil {
-					return nil, exception.NewInternalServerError("query sub department count error, error is %s", err)
+					return nil, err
 				}
-				ins.SubCount = &ds.Total
+				ins.SubCount = &sc
 			}
 
 			// 补充用户数量
 			if req.WithUserCount {
-				queryU := user.NewQueryAccountRequest()
-				queryU.SkipItems = true
-				queryU.WithTokenGetter(req)
-				us, err := s.user.QueryAccount(types.SubAccount, queryU)
+				uc, err := s.queryUserCount(ins.ID, req.GetToken())
 				if err != nil {
-					return nil, exception.NewInternalServerError("query department user count error, error is %s", err)
+					return nil, err
 				}
-				ins.UserCount = &us.Total
+				ins.UserCount = &uc
 			}
 
 			set.Add(ins)
@@ -92,33 +86,50 @@ func (s *service) DescribeDepartment(req *department.DescribeDeparmentRequest) (
 	}
 
 	if req.WithSubCount {
-		query := department.NewQueryDepartmentRequest()
-		query.WithTokenGetter(req)
-		query.ParentID = &ins.ID
-		query.SkipItems = true
-		query.WithSubCount = true
-		sc, err := s.QueryDepartment(query)
+		sc, err := s.querySubCount(ins.ParentID, req.GetToken())
 		if err != nil {
-			return nil, exception.NewInternalServerError("query sub department count error, error is %s", err)
+			return nil, err
 		}
-		ins.SubCount = &sc.Total
+		ins.SubCount = &sc
 	}
 
 	// 补充用户数量
 	if req.WithUserCount {
-		queryU := user.NewQueryAccountRequest()
-		queryU.DepartmentID = ins.ID
-		queryU.SkipItems = true
-		queryU.WithALLSub = true
-		queryU.WithTokenGetter(req)
-		us, err := s.user.QueryAccount(types.SubAccount, queryU)
+		uc, err := s.queryUserCount(ins.ID, req.GetToken())
 		if err != nil {
-			return nil, exception.NewInternalServerError("query department user count error, error is %s", err)
+			return nil, err
 		}
-		ins.UserCount = &us.Total
+		ins.UserCount = &uc
 	}
 
 	return ins, nil
+}
+
+func (s *service) querySubCount(parentID string, tk *token.Token) (int64, error) {
+	query := department.NewQueryDepartmentRequest()
+	query.WithToken(tk)
+	query.ParentID = &parentID
+	query.SkipItems = true
+	query.WithSubCount = true
+	sc, err := s.QueryDepartment(query)
+	if err != nil {
+		return 0, exception.NewInternalServerError("query sub department count error, error is %s", err)
+	}
+	return sc.Total, nil
+}
+
+func (s *service) queryUserCount(departmentID string, tk *token.Token) (int64, error) {
+	queryU := user.NewQueryAccountRequest()
+	queryU.DepartmentID = departmentID
+	queryU.SkipItems = true
+	queryU.WithALLSub = true
+	queryU.WithToken(tk)
+	us, err := s.user.QueryAccount(types.SubAccount, queryU)
+	if err != nil {
+		return 0, exception.NewInternalServerError("query department user count error, error is %s", err)
+	}
+
+	return us.Total, nil
 }
 
 func (s *service) CreateDepartment(req *department.CreateDepartmentRequest) (
