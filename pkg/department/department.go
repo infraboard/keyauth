@@ -9,9 +9,9 @@ import (
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/types/ftime"
-	"github.com/rs/xid"
 
 	"github.com/infraboard/keyauth/common/types"
+	"github.com/infraboard/keyauth/pkg/counter"
 	"github.com/infraboard/keyauth/pkg/token"
 )
 
@@ -21,7 +21,7 @@ var (
 )
 
 // NewDepartment 新建实例
-func NewDepartment(req *CreateDepartmentRequest, d Service) (*Department, error) {
+func NewDepartment(req *CreateDepartmentRequest, d Service, counter counter.Service) (*Department, error) {
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest(err.Error())
 	}
@@ -29,7 +29,6 @@ func NewDepartment(req *CreateDepartmentRequest, d Service) (*Department, error)
 	tk := req.GetToken()
 
 	ins := &Department{
-		ID:                      xid.New().String(),
 		CreateAt:                ftime.Now(),
 		UpdateAt:                ftime.Now(),
 		Creater:                 tk.Account,
@@ -50,6 +49,14 @@ func NewDepartment(req *CreateDepartmentRequest, d Service) (*Department, error)
 	if req.Manager == "" {
 		req.Manager = tk.Account
 	}
+
+	// 计算ID
+	count, err := counter.GetNextSequenceValue(ins.CounterKey())
+	if err != nil {
+		return nil, err
+	}
+	ins.Number = count.Value
+	ins.ID = fmt.Sprintf("%s.%d", ins.ParentPath, ins.Number)
 
 	return ins, nil
 }

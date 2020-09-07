@@ -121,16 +121,10 @@ func (s *service) DescribeDepartment(req *department.DescribeDeparmentRequest) (
 
 func (s *service) CreateDepartment(req *department.CreateDepartmentRequest) (
 	*department.Department, error) {
-	ins, err := department.NewDepartment(req, s)
+	ins, err := department.NewDepartment(req, s, s.counter)
 	if err != nil {
 		return nil, err
 	}
-
-	count, err := s.counter.GetNextSequenceValue(ins.CounterKey())
-	if err != nil {
-		return nil, err
-	}
-	ins.Number = count.Value
 
 	if _, err := s.col.InsertOne(context.TODO(), ins); err != nil {
 		return nil, exception.NewInternalServerError("inserted department(%s) document error, %s",
