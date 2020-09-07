@@ -68,6 +68,7 @@ func NewNewQueryAccountRequestFromHTTP(r *http.Request) *QueryAccountRequest {
 	query.WithDepartment = qs.Get("with_department") == "true"
 	query.SkipItems = qs.Get("skip_items") == "true"
 	query.DepartmentID = qs.Get("department_id")
+	query.WithALLSub = qs.Get("with_all_sub") == "true"
 	ids := qs.Get("ids")
 	if ids != "" {
 		query.Accounts = strings.Split(ids, ",")
@@ -93,6 +94,7 @@ type QueryAccountRequest struct {
 	NamespaceID    string
 	WithDepartment bool
 	DepartmentID   string
+	WithALLSub     bool
 	SkipItems      bool
 }
 

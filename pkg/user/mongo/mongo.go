@@ -48,6 +48,9 @@ func (s *service) Config() error {
 		{
 			Keys: bsonx.Doc{{Key: "create_at", Value: bsonx.Int32(-1)}},
 		},
+		{
+			Keys: bsonx.Doc{{Key: "department_id", Value: bsonx.Int32(-1)}},
+		},
 	}
 
 	_, err := uc.Indexes().CreateMany(context.Background(), indexs)

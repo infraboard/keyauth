@@ -48,7 +48,13 @@ func (r *queryUserRequest) FindFilter() bson.M {
 		filter["_id"] = bson.M{"$in": r.Accounts}
 	}
 	if r.DepartmentID != "" {
-		filter["department_id"] = r.DepartmentID
+		if r.WithALLSub {
+			filter["$or"] = bson.A{
+				bson.M{"department_id": bson.M{"$regex": r.DepartmentID, "$options": "im"}},
+			}
+		} else {
+			filter["department_id"] = r.DepartmentID
+		}
 	}
 
 	return filter

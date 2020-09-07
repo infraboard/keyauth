@@ -107,7 +107,9 @@ func (s *service) DescribeDepartment(req *department.DescribeDeparmentRequest) (
 	// 补充用户数量
 	if req.WithUserCount {
 		queryU := user.NewQueryAccountRequest()
+		queryU.DepartmentID = ins.ID
 		queryU.SkipItems = true
+		queryU.WithALLSub = true
 		queryU.WithTokenGetter(req)
 		us, err := s.user.QueryAccount(types.SubAccount, queryU)
 		if err != nil {
