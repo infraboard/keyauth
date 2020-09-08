@@ -39,7 +39,7 @@ func (s *service) QueryDepartment(req *department.QueryDepartmentRequest) (
 			}
 
 			if req.WithSubCount {
-				sc, err := s.querySubCount(ins.ParentID, req.GetToken())
+				sc, err := s.querySubCount(ins.ID, req.GetToken())
 				if err != nil {
 					return nil, err
 				}
@@ -86,7 +86,7 @@ func (s *service) DescribeDepartment(req *department.DescribeDeparmentRequest) (
 	}
 
 	if req.WithSubCount {
-		sc, err := s.querySubCount(ins.ParentID, req.GetToken())
+		sc, err := s.querySubCount(ins.ID, req.GetToken())
 		if err != nil {
 			return nil, err
 		}
@@ -105,10 +105,10 @@ func (s *service) DescribeDepartment(req *department.DescribeDeparmentRequest) (
 	return ins, nil
 }
 
-func (s *service) querySubCount(parentID string, tk *token.Token) (int64, error) {
+func (s *service) querySubCount(departmentID string, tk *token.Token) (int64, error) {
 	query := department.NewQueryDepartmentRequest()
 	query.WithToken(tk)
-	query.ParentID = &parentID
+	query.ParentID = &departmentID
 	query.SkipItems = true
 	query.WithSubCount = true
 	sc, err := s.QueryDepartment(query)
