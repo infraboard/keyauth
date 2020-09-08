@@ -32,6 +32,10 @@ func (r *queryNamespaceRequest) FindOptions() *options.FindOptions {
 func (r *queryNamespaceRequest) FindFilter() bson.M {
 	filter := bson.M{}
 
+	if r.Department != "" {
+		filter["department"] = r.Department
+	}
+
 	return filter
 }
 

@@ -3,6 +3,7 @@ package namespace
 import (
 	"errors"
 	"fmt"
+	"net/http"
 
 	"github.com/infraboard/mcube/http/request"
 
@@ -17,6 +18,16 @@ type Service interface {
 	DeleteNamespace(req *DeleteNamespaceRequest) error
 }
 
+// NewQueryNamespaceRequestFromHTTP 列表查询请求
+func NewQueryNamespaceRequestFromHTTP(r *http.Request) *QueryNamespaceRequest {
+	qs := r.URL.Query()
+	return &QueryNamespaceRequest{
+		Session:     token.NewSession(),
+		PageRequest: request.NewPageRequestFromHTTP(r),
+		Department:  qs.Get("department"),
+	}
+}
+
 // NewQueryNamespaceRequest 列表查询请求
 func NewQueryNamespaceRequest(pageReq *request.PageRequest) *QueryNamespaceRequest {
 	return &QueryNamespaceRequest{
@@ -29,6 +40,7 @@ func NewQueryNamespaceRequest(pageReq *request.PageRequest) *QueryNamespaceReque
 type QueryNamespaceRequest struct {
 	*token.Session
 	*request.PageRequest
+	Department string
 }
 
 // NewNewDescriptNamespaceRequestWithID todo

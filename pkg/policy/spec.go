@@ -60,11 +60,6 @@ type QueryPolicyRequest struct {
 	WithNamespace bool   `json:"with_namespace,omitempty"`
 }
 
-// NewCreateUserRequest 创建请求
-func NewCreateUserRequest() *QueryPolicyRequest {
-	return &QueryPolicyRequest{}
-}
-
 // Validate 校验请求是否合法
 func (req *QueryPolicyRequest) Validate() error {
 	return validate.Struct(req)

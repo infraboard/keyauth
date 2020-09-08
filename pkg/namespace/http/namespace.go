@@ -18,8 +18,7 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	page := request.NewPageRequestFromHTTP(r)
-	req := namespace.NewQueryNamespaceRequest(page)
+	req := namespace.NewQueryNamespaceRequestFromHTTP(r)
 	req.WithToken(tk)
 
 	apps, err := h.service.QueryNamespace(req)

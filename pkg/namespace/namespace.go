@@ -9,6 +9,7 @@ import (
 	"github.com/infraboard/mcube/types/ftime"
 	"github.com/rs/xid"
 
+	"github.com/infraboard/keyauth/pkg/department"
 	"github.com/infraboard/keyauth/pkg/token"
 )
 
@@ -18,7 +19,7 @@ var (
 )
 
 // NewNamespace todo
-func NewNamespace(req *CreateNamespaceRequest) (*Namespace, error) {
+func NewNamespace(req *CreateNamespaceRequest, depart department.Service) (*Namespace, error) {
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest(err.Error())
 	}
@@ -33,6 +34,15 @@ func NewNamespace(req *CreateNamespaceRequest) (*Namespace, error) {
 		UpdateAt:               ftime.Now(),
 		CreateNamespaceRequest: req,
 	}
+
+	descD := department.NewDescriptDepartmentRequest()
+	descD.WithTokenGetter(req)
+	descD.Name = req.Department
+	d, err := depart.DescribeDepartment(descD)
+	if err != nil {
+		return nil, err
+	}
+	ins.Owner = d.Manager
 
 	if ins.Owner == "" {
 		ins.Owner = tk.Account
@@ -69,11 +79,12 @@ func NewCreateNamespaceRequest() *CreateNamespaceRequest {
 // CreateNamespaceRequest 创建项目请求
 type CreateNamespaceRequest struct {
 	*token.Session `bson:"-" json:"-"`
-	Name           string `bson:"name" json:"name" validate:"required,lte=80"` // 项目名称
-	Picture        string `bson:"picture" json:"picture,omitempty"`            // 项目描述图片
-	Enabled        bool   `bson:"enabled" json:"enabled,omitempty"`            // 禁用项目, 该项目所有人暂时都无法访问
-	Owner          string `bson:"owner" json:"owner,omitempty"`                // 项目所有者, PMO
-	Description    string `bson:"description" json:"description,omitempty"`    // 项目描述
+	Department     string `bson:"department" json:"department" validate:"required,80"` // 部门名称
+	Name           string `bson:"name" json:"name" validate:"required,lte=80"`         // 项目名称
+	Picture        string `bson:"picture" json:"picture,omitempty"`                    // 项目描述图片
+	Enabled        bool   `bson:"enabled" json:"enabled,omitempty"`                    // 禁用项目, 该项目所有人暂时都无法访问
+	Owner          string `bson:"owner" json:"owner,omitempty"`                        // 项目所有者, PMO
+	Description    string `bson:"description" json:"description,omitempty"`            // 项目描述
 }
 
 // Validate todo

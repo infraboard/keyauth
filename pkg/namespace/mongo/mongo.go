@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"fmt"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -9,7 +10,9 @@ import (
 
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
+	"github.com/infraboard/keyauth/pkg/department"
 	"github.com/infraboard/keyauth/pkg/namespace"
+	"github.com/infraboard/keyauth/pkg/policy"
 )
 
 var (
@@ -21,15 +24,30 @@ type service struct {
 	col           *mongo.Collection
 	enableCache   bool
 	notifyCachPre string
+	depart        department.Service
+	policy        policy.Service
 }
 
 func (s *service) Config() error {
+	if pkg.Department == nil {
+		return fmt.Errorf("depence department service is nil")
+	}
+	s.depart = pkg.Department
+
+	if pkg.Policy == nil {
+		return fmt.Errorf("depence policy service is nil")
+	}
+	s.policy = pkg.Policy
+
 	db := conf.C().Mongo.GetDB()
 	ac := db.Collection("namespace")
 
 	indexs := []mongo.IndexModel{
 		{
-			Keys:    bsonx.Doc{{Key: "name", Value: bsonx.Int32(-1)}},
+			Keys: bsonx.Doc{
+				{Key: "domain", Value: bsonx.Int32(-1)},
+				{Key: "name", Value: bsonx.Int32(-1)},
+			},
 			Options: options.Index().SetUnique(true),
 		},
 		{

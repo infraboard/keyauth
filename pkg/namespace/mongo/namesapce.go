@@ -8,14 +8,20 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/infraboard/keyauth/pkg/namespace"
+	"github.com/infraboard/keyauth/pkg/policy"
 )
 
 func (s *service) CreateNamespace(req *namespace.CreateNamespaceRequest) (
 	*namespace.Namespace, error) {
-	ins, err := namespace.NewNamespace(req)
+	ins, err := namespace.NewNamespace(req, s.depart)
 	if err != nil {
 		return nil, err
 	}
+
+	pReq := policy.NewCreatePolicyRequest()
+	pReq.WithTokenGetter(req)
+	pReq.NamespaceID = ins.ID
+	s.policy.CreatePolicy(pReq)
 
 	if _, err := s.col.InsertOne(context.TODO(), ins); err != nil {
 		return nil, exception.NewInternalServerError("inserted namespace(%s) document error, %s",
