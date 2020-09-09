@@ -13,6 +13,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/department"
 	"github.com/infraboard/keyauth/pkg/namespace"
 	"github.com/infraboard/keyauth/pkg/policy"
+	"github.com/infraboard/keyauth/pkg/role"
 )
 
 var (
@@ -26,6 +27,7 @@ type service struct {
 	notifyCachPre string
 	depart        department.Service
 	policy        policy.Service
+	role          role.Service
 }
 
 func (s *service) Config() error {
@@ -38,6 +40,11 @@ func (s *service) Config() error {
 		return fmt.Errorf("depence policy service is nil")
 	}
 	s.policy = pkg.Policy
+
+	if pkg.Role == nil {
+		return fmt.Errorf("depence role service is nil")
+	}
+	s.role = pkg.Role
 
 	db := conf.C().Mongo.GetDB()
 	ac := db.Collection("namespace")

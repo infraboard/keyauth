@@ -83,6 +83,10 @@ type Department struct {
 	*CreateDepartmentRequest `bson:",inline"`
 }
 
+func (d *Department) String() string {
+	return d.Name
+}
+
 // HasSubDepartment todo
 func (d *Department) HasSubDepartment() bool {
 	return *d.SubCount > 0

@@ -9,6 +9,7 @@ import (
 
 	"github.com/infraboard/keyauth/pkg/namespace"
 	"github.com/infraboard/keyauth/pkg/policy"
+	"github.com/infraboard/keyauth/pkg/role"
 	"github.com/infraboard/keyauth/pkg/token"
 )
 
@@ -24,14 +25,28 @@ func (s *service) CreateNamespace(req *namespace.CreateNamespaceRequest) (
 			ins.Name, err)
 	}
 
+	if err := s.updateNamespacePolicy(ins, req.GetToken()); err != nil {
+		return nil, err
+	}
+
 	return ins, nil
 }
 
 func (s *service) updateNamespacePolicy(ns *namespace.Namespace, tk *token.Token) error {
+	descR := role.NewDescribeRoleRequestWithName(role.AdminRoleName)
+	r, err := s.role.DescribeRole(descR)
+	if err != nil {
+		return err
+	}
 	pReq := policy.NewCreatePolicyRequest()
 	pReq.WithToken(tk)
 	pReq.NamespaceID = ns.ID
-	s.policy.CreatePolicy(pReq)
+	pReq.RoleID = r.ID
+	pReq.Account = ns.Owner
+	_, err = s.policy.CreatePolicy(pReq)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 

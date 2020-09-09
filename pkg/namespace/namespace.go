@@ -15,7 +15,7 @@ import (
 
 // use a single instance of Validate, it caches struct info
 var (
-	validate = validator.New()
+	validater = validator.New()
 )
 
 // NewNamespace todo
@@ -79,12 +79,12 @@ func NewCreateNamespaceRequest() *CreateNamespaceRequest {
 // CreateNamespaceRequest 创建项目请求
 type CreateNamespaceRequest struct {
 	*token.Session `bson:"-" json:"-"`
-	Department     string `bson:"department" json:"department" validate:"required,80"` // 部门名称
-	Name           string `bson:"name" json:"name" validate:"required,lte=80"`         // 项目名称
-	Picture        string `bson:"picture" json:"picture,omitempty"`                    // 项目描述图片
-	Enabled        bool   `bson:"enabled" json:"enabled,omitempty"`                    // 禁用项目, 该项目所有人暂时都无法访问
-	Owner          string `bson:"owner" json:"owner,omitempty"`                        // 项目所有者, PMO
-	Description    string `bson:"description" json:"description,omitempty"`            // 项目描述
+	Department     string `bson:"department" json:"department" validate:"required,lte=80"` // 部门名称
+	Name           string `bson:"name" json:"name" validate:"required,lte=80"`             // 项目名称
+	Picture        string `bson:"picture" json:"picture,omitempty"`                        // 项目描述图片
+	Enabled        bool   `bson:"enabled" json:"enabled,omitempty"`                        // 禁用项目, 该项目所有人暂时都无法访问
+	Owner          string `bson:"owner" json:"owner,omitempty"`                            // 项目所有者, PMO
+	Description    string `bson:"description" json:"description,omitempty"`                // 项目描述
 }
 
 // Validate todo
@@ -93,7 +93,7 @@ func (req *CreateNamespaceRequest) Validate() error {
 		return fmt.Errorf("token required")
 	}
 
-	return validate.Struct(req)
+	return validater.Struct(req)
 }
 
 // NewNamespaceSet 实例化

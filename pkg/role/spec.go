@@ -67,6 +67,15 @@ func NewDescribeRoleRequestWithID(id string) *DescribeRoleRequest {
 	}
 }
 
+// NewDescribeRoleRequestWithName todo
+func NewDescribeRoleRequestWithName(name string) *DescribeRoleRequest {
+	return &DescribeRoleRequest{
+		Session:         token.NewSession(),
+		Name:            name,
+		WithPermissions: false,
+	}
+}
+
 // DescribeRoleRequest role详情
 type DescribeRoleRequest struct {
 	*token.Session

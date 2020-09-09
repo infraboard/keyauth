@@ -64,6 +64,9 @@ func (r *describeDepartmentRequest) FindFilter() bson.M {
 	if r.ID != "" {
 		filter["_id"] = r.ID
 	}
+	if r.Name != "" {
+		filter["name"] = r.Name
+	}
 
 	return filter
 }

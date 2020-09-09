@@ -92,6 +92,14 @@ type DescribeDeparmentRequest struct {
 	WithUserCount bool
 }
 
+func (req *DescribeDeparmentRequest) String() string {
+	if req.ID != "" {
+		return req.ID
+	}
+
+	return req.Name
+}
+
 // Validate 参数校验
 func (req *DescribeDeparmentRequest) Validate() error {
 	if req.ID == "" && req.Name == "" {
