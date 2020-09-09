@@ -9,6 +9,7 @@ import (
 
 	"github.com/infraboard/keyauth/pkg/namespace"
 	"github.com/infraboard/keyauth/pkg/policy"
+	"github.com/infraboard/keyauth/pkg/token"
 )
 
 func (s *service) CreateNamespace(req *namespace.CreateNamespaceRequest) (
@@ -18,17 +19,20 @@ func (s *service) CreateNamespace(req *namespace.CreateNamespaceRequest) (
 		return nil, err
 	}
 
-	pReq := policy.NewCreatePolicyRequest()
-	pReq.WithTokenGetter(req)
-	pReq.NamespaceID = ins.ID
-	s.policy.CreatePolicy(pReq)
-
 	if _, err := s.col.InsertOne(context.TODO(), ins); err != nil {
 		return nil, exception.NewInternalServerError("inserted namespace(%s) document error, %s",
 			ins.Name, err)
 	}
 
 	return ins, nil
+}
+
+func (s *service) updateNamespacePolicy(ns *namespace.Namespace, tk *token.Token) error {
+	pReq := policy.NewCreatePolicyRequest()
+	pReq.WithToken(tk)
+	pReq.NamespaceID = ns.ID
+	s.policy.CreatePolicy(pReq)
+	return nil
 }
 
 func (s *service) QueryNamespace(req *namespace.QueryNamespaceRequest) (
