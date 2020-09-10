@@ -24,10 +24,7 @@ type Service interface {
 // NewQueryPolicyRequestFromHTTP 列表查询请求
 func NewQueryPolicyRequestFromHTTP(r *http.Request) *QueryPolicyRequest {
 	page := request.NewPageRequestFromHTTP(r)
-	req := &QueryPolicyRequest{
-		Session:     token.NewSession(),
-		PageRequest: page,
-	}
+	req := NewQueryPolicyRequest(page)
 
 	qs := r.URL.Query()
 	req.Account = qs.Get("account")
