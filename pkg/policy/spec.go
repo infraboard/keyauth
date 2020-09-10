@@ -40,11 +40,13 @@ func NewQueryPolicyRequestFromHTTP(r *http.Request) *QueryPolicyRequest {
 
 // NewQueryPolicyRequest 列表查询请求
 func NewQueryPolicyRequest(pageReq *request.PageRequest) *QueryPolicyRequest {
+	cp := CustomPolicy
 	return &QueryPolicyRequest{
 		Session:       token.NewSession(),
 		PageRequest:   pageReq,
 		WithRole:      false,
 		WithNamespace: false,
+		Type:          &cp,
 	}
 }
 
@@ -56,6 +58,7 @@ type QueryPolicyRequest struct {
 	Account       string `json:"account,omitempty"`
 	RoleID        string `json:"role_id,omitempty"`
 	NamespaceID   string `json:"namespace_id,omitempty"`
+	Type          *Type  `json:"type,omitempty"`
 	WithRole      bool   `json:"with_role,omitempty"`
 	WithNamespace bool   `json:"with_namespace,omitempty"`
 }

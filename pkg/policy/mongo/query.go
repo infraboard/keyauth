@@ -74,6 +74,9 @@ func (r *queryPolicyRequest) FindFilter() bson.M {
 	if r.Account != "" {
 		filter["account"] = r.Account
 	}
+	if r.Type != nil {
+		filter["type"] = r.Type
+	}
 
 	return filter
 }
