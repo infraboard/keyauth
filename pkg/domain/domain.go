@@ -68,9 +68,9 @@ func (s *Set) Add(d *Domain) {
 
 // Domain a tenant container, example an company or organization.
 type Domain struct { // 域ID
-	CreateAt            ftime.Time `bson:"create_at" json:"create_at,omitempty"` // 创建时间
-	UpdateAt            ftime.Time `bson:"update_at" json:"update_at,omitempty"` // 更新时间
-	Owner               string     `bson:"owner" json:"owner,omitempty"`         // 域拥有者
+	CreateAt            ftime.Time `bson:"create_at" json:"create_at"` // 创建时间
+	UpdateAt            ftime.Time `bson:"update_at" json:"update_at"` // 更新时间
+	Owner               string     `bson:"owner" json:"owner"`         // 域拥有者
 	*CreateDomainRequst `bson:",inline"`
 }
 
