@@ -15,13 +15,14 @@ import (
 )
 
 // New 新实例
-func New(req *CreatePolicyRequest) (*Policy, error) {
+func New(t Type, req *CreatePolicyRequest) (*Policy, error) {
 	if err := req.Validate(); err != nil {
 		return nil, err
 	}
 
 	tk := req.GetToken()
 	p := &Policy{
+		Type:                t,
 		CreateAt:            ftime.Now(),
 		UpdateAt:            ftime.Now(),
 		Creater:             tk.Account,
@@ -42,12 +43,14 @@ func NewDefaultPolicy() *Policy {
 
 // Policy 权限策略
 type Policy struct {
-	ID                   string     `bson:"_id" json:"id"`              // 策略ID
-	CreateAt             ftime.Time `bson:"create_at" json:"create_at"` // 创建时间
-	UpdateAt             ftime.Time `bson:"update_at" json:"update_at"` // 更新时间
-	Domain               string     `bson:"domain" json:"domain"`       // 策略所属域
-	Creater              string     `bson:"creater" json:"creater"`     // 创建者ID
-	UserType             types.Type `bson:"user_type" json:"user_type"` // 用户类型
+	ID       string     `bson:"_id" json:"id"`              // 策略ID
+	Type     Type       `bson:"type" json:"type"`           // 策略的类型
+	CreateAt ftime.Time `bson:"create_at" json:"create_at"` // 创建时间
+	UpdateAt ftime.Time `bson:"update_at" json:"update_at"` // 更新时间
+	Domain   string     `bson:"domain" json:"domain"`       // 策略所属域
+	Creater  string     `bson:"creater" json:"creater"`     // 创建者ID
+	UserType types.Type `bson:"user_type" json:"user_type"` // 用户类型
+
 	*CreatePolicyRequest `bson:",inline"`
 
 	Role      *role.Role           `bson:"-" json:"role,omitempty"`      // 关联的角色对象

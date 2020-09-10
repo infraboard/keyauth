@@ -26,7 +26,7 @@ func ParseDBFileContentType(str string) (DBFileContentType, error) {
 	key := strings.Trim(string(str), `"`)
 	v, ok := enumDBFileContentTypeIDMap[key]
 	if !ok {
-		return 0, fmt.Errorf("unknown content type: %s", str)
+		return 0, fmt.Errorf("unknown Status: %s", str)
 	}
 
 	return v, nil

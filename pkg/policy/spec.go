@@ -16,9 +16,9 @@ var (
 
 // Service 策略服务
 type Service interface {
-	CreatePolicy(req *CreatePolicyRequest) (*Policy, error)
-	QueryPolicy(req *QueryPolicyRequest) (*Set, error)
-	DescribePolicy(req *DescribePolicyRequest) (*Policy, error)
+	CreatePolicy(Type, *CreatePolicyRequest) (*Policy, error)
+	QueryPolicy(*QueryPolicyRequest) (*Set, error)
+	DescribePolicy(*DescribePolicyRequest) (*Policy, error)
 }
 
 // NewQueryPolicyRequestFromHTTP 列表查询请求

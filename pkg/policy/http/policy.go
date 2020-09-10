@@ -46,7 +46,7 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 	req.WithToken(tk)
 
-	d, err := h.service.CreatePolicy(req)
+	d, err := h.service.CreatePolicy(policy.CustomPolicy, req)
 	if err != nil {
 		response.Failed(w, err)
 		return

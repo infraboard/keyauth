@@ -64,3 +64,59 @@ func (t *Result) UnmarshalJSON(b []byte) error {
 	*t = ins
 	return nil
 }
+
+var (
+	enumActionTypeShowMap = map[ActionType]string{
+		LoginAction:  "login",
+		LogoutAction: "logout",
+	}
+
+	enumActionTypeIDMap = map[string]ActionType{
+		"login":  LoginAction,
+		"logout": LogoutAction,
+	}
+)
+
+// ParseActionType Parse ActionType from string
+func ParseActionType(str string) (ActionType, error) {
+	key := strings.Trim(string(str), `"`)
+	v, ok := enumActionTypeIDMap[key]
+	if !ok {
+		return 0, fmt.Errorf("unknown Status: %s", str)
+	}
+
+	return v, nil
+}
+
+// Is todo
+func (t ActionType) Is(target ActionType) bool {
+	return t == target
+}
+
+// String stringer
+func (t ActionType) String() string {
+	v, ok := enumActionTypeShowMap[t]
+	if !ok {
+		return "unknown"
+	}
+
+	return v
+}
+
+// MarshalJSON todo
+func (t ActionType) MarshalJSON() ([]byte, error) {
+	b := bytes.NewBufferString(`"`)
+	b.WriteString(t.String())
+	b.WriteString(`"`)
+	return b.Bytes(), nil
+}
+
+// UnmarshalJSON todo
+func (t *ActionType) UnmarshalJSON(b []byte) error {
+	ins, err := ParseActionType(string(b))
+	if err != nil {
+		return err
+	}
+	*t = ins
+	return nil
+}

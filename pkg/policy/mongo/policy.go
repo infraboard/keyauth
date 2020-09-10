@@ -11,9 +11,9 @@ import (
 	"github.com/infraboard/keyauth/pkg/role"
 )
 
-func (s *service) CreatePolicy(req *policy.CreatePolicyRequest) (
+func (s *service) CreatePolicy(t policy.Type, req *policy.CreatePolicyRequest) (
 	*policy.Policy, error) {
-	ins, err := policy.New(req)
+	ins, err := policy.New(t, req)
 	if err != nil {
 		return nil, exception.NewBadRequest(err.Error())
 	}
