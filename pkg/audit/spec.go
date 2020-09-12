@@ -48,9 +48,10 @@ func NewQueryLoginRecordRequestFromHTTP(r *http.Request) (*QueryLoginRecordReque
 			return nil, fmt.Errorf("parse login start time error, %s", err)
 		}
 
-		st := ftime.T(time.Unix(startTS/1000, 0))
-		req.StartLoginTime = &st
-
+		if startTS != 0 {
+			st := ftime.T(time.Unix(startTS/1000, 0))
+			req.StartLoginTime = &st
+		}
 	}
 	if endTime != "" {
 		endTS, err := strconv.ParseInt(endTime, 10, 64)
@@ -58,8 +59,10 @@ func NewQueryLoginRecordRequestFromHTTP(r *http.Request) (*QueryLoginRecordReque
 			return nil, fmt.Errorf("parse login start time error, %s", err)
 		}
 
-		et := ftime.T(time.Unix(endTS/1000, 0))
-		req.EndLoginTime = &et
+		if endTS != 0 {
+			et := ftime.T(time.Unix(endTS/1000, 0))
+			req.EndLoginTime = &et
+		}
 	}
 
 	return req, nil
