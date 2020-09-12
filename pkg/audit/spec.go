@@ -3,9 +3,12 @@ package audit
 import (
 	"fmt"
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/mcube/http/request"
+	"github.com/infraboard/mcube/types/ftime"
 )
 
 // Service todo
@@ -24,6 +27,8 @@ func NewQueryLoginRecordRequestFromHTTP(r *http.Request) (*QueryLoginRecordReque
 		PageRequest:   page,
 		Account:       qs.Get("account"),
 		ApplicationID: qs.Get("application_id"),
+		LoginIP:       qs.Get("login_ip"),
+		LoginCity:     qs.Get("login_city"),
 	}
 
 	gtStr := qs.Get("grant_type")
@@ -33,6 +38,28 @@ func NewQueryLoginRecordRequestFromHTTP(r *http.Request) (*QueryLoginRecordReque
 			return nil, err
 		}
 		req.GrantType = gt
+	}
+
+	startTime := qs.Get("start_time")
+	endTime := qs.Get("end_time")
+	if startTime != "" {
+		startTS, err := strconv.ParseInt(startTime, 10, 64)
+		if err != nil {
+			return nil, fmt.Errorf("parse login start time error, %s", err)
+		}
+
+		st := ftime.T(time.Unix(startTS/1000, 0))
+		req.StartLoginTime = &st
+
+	}
+	if endTime != "" {
+		endTS, err := strconv.ParseInt(endTime, 10, 64)
+		if err != nil {
+			return nil, fmt.Errorf("parse login start time error, %s", err)
+		}
+
+		et := ftime.T(time.Unix(endTS/1000, 0))
+		req.EndLoginTime = &et
 	}
 
 	return req, nil
@@ -61,9 +88,13 @@ func NewQueryLoginRecordRequestFromData(req *LoginLogData) *QueryLoginRecordRequ
 type QueryLoginRecordRequest struct {
 	*token.Session
 	*request.PageRequest
-	Account       string
-	ApplicationID string
-	GrantType     token.GrantType
+	Account        string
+	LoginIP        string
+	LoginCity      string
+	ApplicationID  string
+	GrantType      token.GrantType
+	StartLoginTime *ftime.Time
+	EndLoginTime   *ftime.Time
 }
 
 // Validate todo

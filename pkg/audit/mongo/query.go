@@ -48,8 +48,28 @@ func (r *queryLoginLogRequest) FindFilter() bson.M {
 		filter["application_id"] = r.ApplicationID
 	}
 
+	if r.LoginIP != "" {
+		filter["login_ip"] = r.LoginIP
+	}
+
+	if r.LoginCity != "" {
+		filter["city"] = r.LoginCity
+	}
+
 	if r.GrantType != "" {
 		filter["grant_type"] = r.GrantType
+	}
+
+	loginAt := bson.A{}
+	if r.StartLoginTime != nil {
+		loginAt = append(loginAt, bson.M{"login_at": bson.M{"$gte": r.StartLoginTime}})
+	}
+
+	if r.EndLoginTime != nil {
+		loginAt = append(loginAt, bson.M{"login_at": bson.M{"$lte": r.EndLoginTime}})
+	}
+	if len(loginAt) > 0 {
+		filter["$and"] = loginAt
 	}
 
 	return filter
