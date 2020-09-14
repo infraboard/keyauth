@@ -10,7 +10,6 @@ import (
 
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/provider"
-	"github.com/infraboard/keyauth/pkg/provider/ldap"
 	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
@@ -43,7 +42,8 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	req := ldap.NewDefaultConfig()
+	req := provider.NewSaveLDAPConfigRequest()
+	req.WithToken(tk)
 	if err := request.GetDataFromRequest(r, req); err != nil {
 		response.Failed(w, err)
 		return
@@ -54,7 +54,7 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	d, err := h.service.SaveConfig(tk, req)
+	d, err := h.service.SaveConfig(req)
 	if err != nil {
 		response.Failed(w, err)
 		return

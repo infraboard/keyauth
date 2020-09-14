@@ -29,7 +29,7 @@ func (h *handler) Registry(router router.SubRouter) {
 }
 
 func (h *handler) Config() error {
-	if pkg.Namespace == nil {
+	if pkg.LDAP == nil {
 		return errors.New("denpence namespace service is nil")
 	}
 

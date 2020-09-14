@@ -7,13 +7,11 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/infraboard/keyauth/pkg/provider"
-	"github.com/infraboard/keyauth/pkg/provider/ldap"
-	"github.com/infraboard/keyauth/pkg/token"
 )
 
-func (s *service) SaveConfig(tk *token.Token, conf *ldap.Config) (
+func (s *service) SaveConfig(req *provider.SaveLDAPConfigRequest) (
 	*provider.LDAPConfig, error) {
-	ins, err := provider.NewLDAPConfig(tk, conf)
+	ins, err := provider.NewLDAPConfig(req)
 	if err != nil {
 		return nil, err
 	}

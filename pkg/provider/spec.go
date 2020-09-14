@@ -11,10 +11,31 @@ import (
 
 // LDAP todo
 type LDAP interface {
-	SaveConfig(*token.Token, *ldap.Config) (*LDAPConfig, error)
-	QueryConfig(req *QueryLDAPConfigRequest) (*LDAPSet, error)
-	DescribeConfig(req *DescribeLDAPConfig) (*LDAPConfig, error)
-	DeleteConfig(req *DeleteLDAPConfig) error
+	SaveConfig(*SaveLDAPConfigRequest) (*LDAPConfig, error)
+	QueryConfig(*QueryLDAPConfigRequest) (*LDAPSet, error)
+	DescribeConfig(*DescribeLDAPConfig) (*LDAPConfig, error)
+	DeleteConfig(*DeleteLDAPConfig) error
+}
+
+// NewSaveLDAPConfigRequest todo
+func NewSaveLDAPConfigRequest() *SaveLDAPConfigRequest {
+	return &SaveLDAPConfigRequest{
+		Session: token.NewSession(),
+		Enabled: true,
+		Config:  ldap.NewDefaultConfig(),
+	}
+}
+
+// SaveLDAPConfigRequest todo
+type SaveLDAPConfigRequest struct {
+	Enabled        bool `bson:"enabled" json:"enabled"`
+	*ldap.Config   `bson:",inline"`
+	*token.Session `bson"-" json:"-"`
+}
+
+// Validate todo
+func (req *SaveLDAPConfigRequest) Validate() error {
+	return nil
 }
 
 // NewQueryLDAPConfigRequest todo
