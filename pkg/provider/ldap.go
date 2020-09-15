@@ -5,7 +5,6 @@ import (
 
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/types/ftime"
-	"github.com/rs/xid"
 )
 
 // NewLDAPConfig todo
@@ -20,7 +19,6 @@ func NewLDAPConfig(req *SaveLDAPConfigRequest) (*LDAPConfig, error) {
 	}
 
 	ins := &LDAPConfig{
-		ID:                    xid.New().String(),
 		Domain:                tk.Domain,
 		Creater:               tk.Account,
 		CreateAt:              ftime.Now(),
@@ -39,8 +37,7 @@ func NewDefaultLDAPConfig() *LDAPConfig {
 
 // LDAPConfig todo
 type LDAPConfig struct {
-	ID                     string     `bson:"_id" json:"id,omitempty"`              // 唯一ID
-	Domain                 string     `bson:"domain" json:"domain_id,omitempty"`    // 所属域ID
+	Domain                 string     `bson:"_id" json:"domain,omitempty"`          // 所属域ID
 	Creater                string     `bson:"creater" json:"creater,omitempty"`     // 创建人
 	CreateAt               ftime.Time `bson:"create_at" json:"create_at,omitempty"` // 创建时间
 	UpdateAt               ftime.Time `bson:"update_at" json:"update_at,omitempty"` // 更新时间

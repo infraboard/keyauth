@@ -67,7 +67,7 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
 
-	req := provider.NewDescribeLDAPConfigWithID(rctx.PS.ByName("id"))
+	req := provider.NewDescribeLDAPConfigWithID(rctx.PS.ByName("domain"))
 	d, err := h.service.DescribeConfig(req)
 	if err != nil {
 		response.Failed(w, err)

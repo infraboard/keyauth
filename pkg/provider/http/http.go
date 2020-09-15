@@ -25,7 +25,7 @@ func (h *handler) Registry(router router.SubRouter) {
 	r.Permission(true)
 	r.Handle("POST", "/", h.Create).AddLabel(label.Create)
 	r.Handle("GET", "/", h.List).AddLabel(label.List)
-	r.Handle("GET", "/:id", h.Get).AddLabel(label.Get)
+	r.Handle("GET", "/:domain", h.Get).AddLabel(label.Get)
 }
 
 func (h *handler) Config() error {

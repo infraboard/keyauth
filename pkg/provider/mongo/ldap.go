@@ -64,7 +64,7 @@ func (s *service) DescribeConfig(req *provider.DescribeLDAPConfig) (*provider.LD
 			return nil, exception.NewNotFound("ldap %s not found", req)
 		}
 
-		return nil, exception.NewInternalServerError("find ldap %s error, %s", req.ID, err)
+		return nil, exception.NewInternalServerError("find ldap %s error, %s", req.Domain, err)
 	}
 
 	return ins, nil

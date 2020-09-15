@@ -30,7 +30,7 @@ func NewSaveLDAPConfigRequest() *SaveLDAPConfigRequest {
 type SaveLDAPConfigRequest struct {
 	Enabled        bool `bson:"enabled" json:"enabled"`
 	*ldap.Config   `bson:",inline"`
-	*token.Session `bson"-" json:"-"`
+	*token.Session `bson:"-" json:"-"`
 }
 
 // Validate todo
@@ -60,22 +60,22 @@ func NewDescribeLDAPConfigWithBaseDN(baseDN string) *DescribeLDAPConfig {
 }
 
 // NewDescribeLDAPConfigWithID todo
-func NewDescribeLDAPConfigWithID(id string) *DescribeLDAPConfig {
+func NewDescribeLDAPConfigWithID(domain string) *DescribeLDAPConfig {
 	return &DescribeLDAPConfig{
-		ID: id,
+		Domain: domain,
 	}
 }
 
 // DescribeLDAPConfig 描述配置
 type DescribeLDAPConfig struct {
-	ID     string
+	Domain string
 	BaseDN string
 }
 
 // Validate todo
 func (req *DescribeLDAPConfig) Validate() error {
-	if req.ID == "" && req.BaseDN == "" {
-		return fmt.Errorf("id or base_dn required")
+	if req.Domain == "" && req.BaseDN == "" {
+		return fmt.Errorf("domain or base_dn required")
 	}
 
 	return nil

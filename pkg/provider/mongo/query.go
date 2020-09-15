@@ -21,7 +21,7 @@ func (r *queryLDAPRequest) FindOptions() *options.FindOptions {
 	skip := int64(r.PageSize) * int64(r.PageNumber-1)
 
 	opt := &options.FindOptions{
-		Sort:  bson.D{{"create_at", -1}},
+		Sort:  bson.D{{Key: "create_at", Value: -1}},
 		Limit: &pageSize,
 		Skip:  &skip,
 	}
@@ -50,8 +50,11 @@ type describeLDAPRequest struct {
 func (r *describeLDAPRequest) FindFilter() bson.M {
 	filter := bson.M{}
 
-	if r.ID != "" {
-		filter["_id"] = r.ID
+	if r.Domain != "" {
+		filter["_id"] = r.Domain
+	}
+	if r.BaseDN != "" {
+		filter["base_dn"] = r.BaseDN
 	}
 
 	return filter
