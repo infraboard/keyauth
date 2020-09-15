@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/infraboard/mcube/http/request"
@@ -16,6 +17,11 @@ func NewLDAPConfig(req *SaveLDAPConfigRequest) (*LDAPConfig, error) {
 
 	if err := req.Config.Validate(); err != nil {
 		return nil, err
+	}
+
+	// 补充默认BaseDN
+	if req.BaseDN == "" {
+		req.BaseDN = req.GetBaseDNFromUser()
 	}
 
 	ins := &LDAPConfig{
@@ -42,6 +48,12 @@ type LDAPConfig struct {
 	CreateAt               ftime.Time `bson:"create_at" json:"create_at,omitempty"` // 创建时间
 	UpdateAt               ftime.Time `bson:"update_at" json:"update_at,omitempty"` // 更新时间
 	*SaveLDAPConfigRequest `bson:",inline"`
+}
+
+// Merge todo
+func (ldap *LDAPConfig) Merge(data *LDAPConfig) {
+	mergeData, _ := json.Marshal(data)
+	json.Unmarshal(mergeData, ldap)
 }
 
 // NewLDAPSet 实例化

@@ -21,11 +21,10 @@ type handler struct {
 // Registry 注册HTTP服务路由
 func (h *handler) Registry(router router.SubRouter) {
 	r := router.ResourceRouter("ldap")
-	r.BasePath("ldaps")
+	r.BasePath("settings/ldap")
 	r.Permission(true)
 	r.Handle("POST", "/", h.Create).AddLabel(label.Create)
-	r.Handle("GET", "/", h.List).AddLabel(label.List)
-	r.Handle("GET", "/:domain", h.Get).AddLabel(label.Get)
+	r.Handle("GET", "/", h.Get).AddLabel(label.List)
 }
 
 func (h *handler) Config() error {

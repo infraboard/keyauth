@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/infraboard/mcube/exception"
-	"github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 
@@ -65,9 +64,13 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
-	rctx := context.GetContext(r)
+	tk, err := pkg.GetTokenFromContext(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
 
-	req := provider.NewDescribeLDAPConfigWithID(rctx.PS.ByName("domain"))
+	req := provider.NewDescribeLDAPConfigWithDomain(tk.Domain)
 	d, err := h.service.DescribeConfig(req)
 	if err != nil {
 		response.Failed(w, err)

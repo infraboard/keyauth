@@ -1,6 +1,9 @@
 package ldap
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 // NewDefaultConfig represents the default LDAP config.
 func NewDefaultConfig() *Config {
@@ -30,10 +33,22 @@ type Config struct {
 	Password             string `bson:"password" json:"password"`
 }
 
+// GetBaseDNFromUser 从用户中获取BaseDN
+func (c *Config) GetBaseDNFromUser() string {
+	baseDN := []string{}
+	for _, item := range strings.Split(c.User, ",") {
+		if !strings.HasPrefix("cn=", item) {
+			baseDN = append(baseDN, item)
+		}
+	}
+
+	return strings.Join(baseDN, ",")
+}
+
 // Validate todo
 func (c *Config) Validate() error {
-	if c.URL == "" || c.BaseDN == "" {
-		return fmt.Errorf("url and base_dn required")
+	if c.URL == "" {
+		return fmt.Errorf("url required")
 	}
 
 	if c.User == "" || c.Password == "" {

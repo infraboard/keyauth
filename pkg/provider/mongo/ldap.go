@@ -16,9 +16,16 @@ func (s *service) SaveConfig(req *provider.SaveLDAPConfigRequest) (
 		return nil, err
 	}
 
-	if _, err := s.col.InsertOne(context.TODO(), ins); err != nil {
-		return nil, exception.NewInternalServerError("inserted ldap(%s) document error, %s",
-			ins.BaseDN, err)
+	// 创建或者更新
+	descLDAP := provider.NewDescribeLDAPConfigWithDomain(ins.Domain)
+	_, err = s.DescribeConfig(descLDAP)
+	if exception.IsNotFoundError(err) {
+		err = s.save(ins)
+	} else {
+		err = s.update(ins)
+	}
+	if err != nil {
+		return nil, err
 	}
 
 	return ins, nil

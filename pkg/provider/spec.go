@@ -59,8 +59,8 @@ func NewDescribeLDAPConfigWithBaseDN(baseDN string) *DescribeLDAPConfig {
 	}
 }
 
-// NewDescribeLDAPConfigWithID todo
-func NewDescribeLDAPConfigWithID(domain string) *DescribeLDAPConfig {
+// NewDescribeLDAPConfigWithDomain todo
+func NewDescribeLDAPConfigWithDomain(domain string) *DescribeLDAPConfig {
 	return &DescribeLDAPConfig{
 		Domain: domain,
 	}
