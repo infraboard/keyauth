@@ -65,13 +65,17 @@ func NewNewQueryAccountRequestFromHTTP(r *http.Request) *QueryAccountRequest {
 
 	qs := r.URL.Query()
 
+	query.DepartmentID = qs.Get("department_id")
+	query.Keywords = qs.Get("keywords")
+	query.NamespaceID = qs.Get("namespace_id")
+
 	query.WithDepartment = qs.Get("with_department") == "true"
 	query.SkipItems = qs.Get("skip_items") == "true"
-	query.DepartmentID = qs.Get("department_id")
 	query.WithALLSub = qs.Get("with_all_sub") == "true"
-	ids := qs.Get("ids")
-	if ids != "" {
-		query.Accounts = strings.Split(ids, ",")
+
+	accounts := qs.Get("accounts")
+	if accounts != "" {
+		query.Accounts = strings.Split(accounts, ",")
 	}
 	return query
 }
@@ -96,6 +100,7 @@ type QueryAccountRequest struct {
 	DepartmentID   string
 	WithALLSub     bool
 	SkipItems      bool
+	Keywords       string
 }
 
 // SetPageRequest todo

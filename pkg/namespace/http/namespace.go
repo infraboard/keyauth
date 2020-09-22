@@ -31,6 +31,26 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+func (h *handler) ListSelfNamespace(w http.ResponseWriter, r *http.Request) {
+	tk, err := pkg.GetTokenFromContext(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	req := namespace.NewQueryNamespaceRequestFromHTTP(r)
+	req.WithToken(tk)
+
+	apps, err := h.service.QueryNamespace(req)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	response.Success(w, apps)
+	return
+}
+
 // CreateApplication 创建主账号
 func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 	tk, err := pkg.GetTokenFromContext(r)
