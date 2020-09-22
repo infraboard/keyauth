@@ -120,7 +120,7 @@ type Profile struct {
 	Address      string `bson:"address" json:"address" validate:"lte=120"`             // 用户住址
 	RealName     string `bson:"real_name" json:"real_name" validate:"lte=10"`          // 用户真实姓名
 	NickName     string `bson:"nick_name" json:"nick_name" validate:"lte=30"`          // 用户昵称, 用于在界面进行展示
-	Gender       string `bson:"gender" json:"gender" validate:"lte=10"`                // 性别
+	Gender       Gender `bson:"gender" json:"gender" validate:"lte=10"`                // 性别
 	Avatar       string `bson:"avatar" json:"avatar" validate:"lte=300"`               // 头像
 	Language     string `bson:"language" json:"language" validate:"lte=40"`            // 用户使用的语言
 	City         string `bson:"city" json:"city" validate:"lte=40"`                    // 用户所在的城市

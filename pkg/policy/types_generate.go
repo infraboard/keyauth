@@ -11,13 +11,13 @@ import (
 
 var (
 	enumTypeShowMap = map[Type]string{
-		BuildInPolicy: "build_in",
 		CustomPolicy:  "custom",
+		BuildInPolicy: "build_in",
 	}
 
 	enumTypeIDMap = map[string]Type{
-		"build_in": BuildInPolicy,
 		"custom":   CustomPolicy,
+		"build_in": BuildInPolicy,
 	}
 )
 
