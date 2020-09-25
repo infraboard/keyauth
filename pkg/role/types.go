@@ -11,12 +11,17 @@ const (
 	BuildInType Type = iota + 1
 	// GlobalType 管理员创建的一些角色, 全局可用
 	GlobalType
-	// CustomType 用户自定义的角色
+	// CustomType 用户自定义的角色, 仅域内可见
 	CustomType
 )
 
 // Type 角色类型
 type Type uint
+
+// Is 判断是否相当
+func (t Type) Is(target Type) bool {
+	return t == target
+}
 
 func (t Type) String() string {
 	switch t {

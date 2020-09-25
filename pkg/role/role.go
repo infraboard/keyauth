@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/user/types"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/types/ftime"
 	"github.com/rs/xid"
@@ -18,16 +19,22 @@ const (
 )
 
 // New 新创建一个Role
-func New(t Type, req *CreateRoleRequest) (*Role, error) {
+func New(req *CreateRoleRequest) (*Role, error) {
 	if err := req.Validate(); err != nil {
 		return nil, err
 	}
 
 	tk := req.GetToken()
+	if tk == nil {
+		return nil, fmt.Errorf("token required")
+	}
+
+	if !tk.UserType.Is(types.SupperAccount) && !req.IsCumstomType() {
+		return nil, fmt.Errorf("only supper account can create global and build role")
+	}
 
 	return &Role{
 		ID:                xid.New().String(),
-		Type:              t,
 		CreateAt:          ftime.Now(),
 		UpdateAt:          ftime.Now(),
 		Domain:            tk.Domain,
@@ -46,7 +53,6 @@ func NewDefaultRole() *Role {
 // Role is rbac's role
 type Role struct {
 	ID                 string     `bson:"_id" json:"id"`                        // 角色ID
-	Type               Type       `bson:"type" json:"type"`                     // 角色类型
 	CreateAt           ftime.Time `bson:"create_at" json:"create_at,omitempty"` // 创建时间`
 	UpdateAt           ftime.Time `bson:"update_at" json:"update_at,omitempty"` // 更新时间
 	Domain             string     `bson:"domain" json:"domain,omitempty"`       // 角色所属域
@@ -74,15 +80,22 @@ func NewCreateRoleRequest() *CreateRoleRequest {
 	return &CreateRoleRequest{
 		Session:     token.NewSession(),
 		Permissions: []*Permission{},
+		Type:        CustomType,
 	}
 }
 
 // CreateRoleRequest 创建应用请求
 type CreateRoleRequest struct {
 	*token.Session `bson:"-" json:"-"`
+	Type           Type          `bson:"type" json:"type"`                                            // 角色类型
 	Name           string        `bson:"name" json:"name,omitempty" validate:"required,lte=30"`       // 应用名称
 	Description    string        `bson:"description" json:"description,omitempty" validate:"lte=400"` // 应用简单的描述
 	Permissions    []*Permission `bson:"permissions" json:"permissions,omitempty"`                    // 读权限
+}
+
+// IsCumstomType todo
+func (req *CreateRoleRequest) IsCumstomType() bool {
+	return req.Type.Is(CustomType)
 }
 
 // Validate 请求校验

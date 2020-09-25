@@ -17,7 +17,7 @@ var (
 
 // Service 角色服务
 type Service interface {
-	CreateRole(t Type, req *CreateRoleRequest) (*Role, error)
+	CreateRole(req *CreateRoleRequest) (*Role, error)
 	QueryRole(req *QueryRoleRequest) (*Set, error)
 	DescribeRole(req *DescribeRoleRequest) (*Role, error)
 	DeleteRole(name string) error
@@ -27,11 +27,7 @@ type Service interface {
 func NewQueryRoleRequestFromHTTP(r *http.Request) *QueryRoleRequest {
 	page := request.NewPageRequestFromHTTP(r)
 
-	req := &QueryRoleRequest{
-		PageRequest:     page,
-		WithPermissions: false,
-	}
-
+	req := NewQueryRoleRequest(page)
 	qs := r.URL.Query()
 	req.WithPermissions = strings.TrimSpace(qs.Get("with_permissions")) == "true"
 
@@ -41,6 +37,7 @@ func NewQueryRoleRequestFromHTTP(r *http.Request) *QueryRoleRequest {
 // NewQueryRoleRequest 列表查询请求
 func NewQueryRoleRequest(pageReq *request.PageRequest) *QueryRoleRequest {
 	return &QueryRoleRequest{
+		Session:         token.NewSession(),
 		PageRequest:     pageReq,
 		WithPermissions: false,
 	}
@@ -48,13 +45,19 @@ func NewQueryRoleRequest(pageReq *request.PageRequest) *QueryRoleRequest {
 
 // QueryRoleRequest 查询请求
 type QueryRoleRequest struct {
+	*token.Session
 	*request.PageRequest
-	Type            Type
+
+	Type            *Type
 	WithPermissions bool
 }
 
 // Validate todo
 func (req *QueryRoleRequest) Validate() error {
+	if req.GetToken() == nil {
+		return fmt.Errorf("token required")
+	}
+
 	return nil
 }
 
@@ -82,6 +85,7 @@ type DescribeRoleRequest struct {
 	ID              string `json:"id"`
 	Name            string `json:"name,omitempty" validate:"required,lte=64"`
 	WithPermissions bool
+	Type            *Type
 }
 
 // Valiate todo

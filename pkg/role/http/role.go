@@ -27,7 +27,7 @@ func (h *handler) CreateRole(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	d, err := h.service.CreateRole(role.CustomType, req)
+	d, err := h.service.CreateRole(req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -38,7 +38,14 @@ func (h *handler) CreateRole(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) QueryRole(w http.ResponseWriter, r *http.Request) {
+	tk, err := pkg.GetTokenFromContext(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
 	req := role.NewQueryRoleRequestFromHTTP(r)
+	req.WithToken(tk)
 
 	apps, err := h.service.QueryRole(req)
 	if err != nil {
