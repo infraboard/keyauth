@@ -80,7 +80,7 @@ func (req *CreatePolicyRequest) CheckDependence(u user.Service, r role.Service, 
 
 	_, err = ns.DescribeNamespace(namespace.NewNewDescriptNamespaceRequestWithID(req.NamespaceID))
 	if err != nil {
-		return nil, fmt.Errorf("check role error, %s", err)
+		return nil, fmt.Errorf("check namespace error, %s", err)
 	}
 
 	return account, nil
