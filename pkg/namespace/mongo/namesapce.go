@@ -7,6 +7,7 @@ import (
 	"github.com/infraboard/mcube/exception"
 	"go.mongodb.org/mongo-driver/mongo"
 
+	"github.com/infraboard/keyauth/pkg/department"
 	"github.com/infraboard/keyauth/pkg/namespace"
 	"github.com/infraboard/keyauth/pkg/policy"
 	"github.com/infraboard/keyauth/pkg/role"
@@ -67,6 +68,16 @@ func (s *service) QueryNamespace(req *namespace.QueryNamespaceRequest) (
 			return nil, exception.NewInternalServerError("decode namespace error, error is %s", err)
 		}
 
+		// 补充用户的部门信息
+		if req.WithDepartment && ins.DepartmentID != "" {
+			depart, err := s.depart.DescribeDepartment(department.NewDescriptDepartmentRequestWithID(ins.DepartmentID))
+			if err != nil {
+				s.log.Errorf("get user department error, %s", err)
+			} else {
+				ins.Department = depart
+			}
+		}
+
 		set.Add(ins)
 	}
 
@@ -94,6 +105,16 @@ func (s *service) DescribeNamespace(req *namespace.DescriptNamespaceRequest) (
 		}
 
 		return nil, exception.NewInternalServerError("find namespace %s error, %s", req.ID, err)
+	}
+
+	// 补充用户的部门信息
+	if req.WithDepartment && ins.DepartmentID != "" {
+		depart, err := s.depart.DescribeDepartment(department.NewDescriptDepartmentRequestWithID(ins.DepartmentID))
+		if err != nil {
+			s.log.Errorf("get user department error, %s", err)
+		} else {
+			ins.Department = depart
+		}
 	}
 
 	return ins, nil

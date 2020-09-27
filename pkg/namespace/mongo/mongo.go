@@ -14,6 +14,8 @@ import (
 	"github.com/infraboard/keyauth/pkg/namespace"
 	"github.com/infraboard/keyauth/pkg/policy"
 	"github.com/infraboard/keyauth/pkg/role"
+	"github.com/infraboard/mcube/logger"
+	"github.com/infraboard/mcube/logger/zap"
 )
 
 var (
@@ -28,6 +30,7 @@ type service struct {
 	depart        department.Service
 	policy        policy.Service
 	role          role.Service
+	log           logger.Logger
 }
 
 func (s *service) Config() error {
@@ -68,6 +71,7 @@ func (s *service) Config() error {
 	}
 
 	s.col = ac
+	s.log = zap.L().Named("Namespace")
 	return nil
 }
 

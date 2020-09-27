@@ -75,12 +75,13 @@ func NewCreateNamespaceRequest() *CreateNamespaceRequest {
 // CreateNamespaceRequest 创建项目请求
 type CreateNamespaceRequest struct {
 	*token.Session `bson:"-" json:"-"`
-	DepartmentID   string `bson:"department_id" json:"department_id" validate:"required,lte=80"` // 所属部门
-	Name           string `bson:"name" json:"name" validate:"required,lte=80"`                   // 项目名称
-	Picture        string `bson:"picture" json:"picture,omitempty"`                              // 项目描述图片
-	Enabled        bool   `bson:"enabled" json:"enabled,omitempty"`                              // 禁用项目, 该项目所有人暂时都无法访问
-	Owner          string `bson:"owner" json:"owner,omitempty"`                                  // 项目所有者, PMO
-	Description    string `bson:"description" json:"description,omitempty"`                      // 项目描述
+	DepartmentID   string                 `bson:"department_id" json:"department_id" validate:"required,lte=80"` // 所属部门
+	Name           string                 `bson:"name" json:"name" validate:"required,lte=80"`                   // 项目名称
+	Picture        string                 `bson:"picture" json:"picture,omitempty"`                              // 项目描述图片
+	Enabled        bool                   `bson:"enabled" json:"enabled,omitempty"`                              // 禁用项目, 该项目所有人暂时都无法访问
+	Owner          string                 `bson:"owner" json:"owner,omitempty"`                                  // 项目所有者, PMO
+	Description    string                 `bson:"description" json:"description,omitempty"`                      // 项目描述
+	Department     *department.Department `bson:"-" json:"department,omitempty"`                                 // 补充的部门
 }
 
 // Validate todo
