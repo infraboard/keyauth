@@ -142,7 +142,6 @@ type CreateDepartmentRequest struct {
 
 // Validate 校验参数的合法性
 func (req *CreateDepartmentRequest) Validate() error {
-
 	if req.Session == nil {
 		return fmt.Errorf("session required")
 	}

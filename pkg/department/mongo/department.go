@@ -10,6 +10,7 @@ import (
 
 	common "github.com/infraboard/keyauth/common/types"
 	"github.com/infraboard/keyauth/pkg/department"
+	"github.com/infraboard/keyauth/pkg/role"
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
 	"github.com/infraboard/keyauth/pkg/user/types"
@@ -53,6 +54,14 @@ func (s *service) QueryDepartment(req *department.QueryDepartmentRequest) (
 					return nil, err
 				}
 				ins.UserCount = &uc
+			}
+
+			if req.WithRole && ins.DefaultRoleID != "" {
+				rIns, err := s.role.DescribeRole(role.NewDescribeRoleRequestWithID(ins.DefaultRoleID))
+				if err != nil {
+					return nil, err
+				}
+				ins.DefaultRole = rIns
 			}
 
 			set.Add(ins)

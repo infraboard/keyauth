@@ -35,6 +35,7 @@ func NewQueryDepartmentRequestFromHTTP(r *http.Request) *QueryDepartmentRequest 
 	req.Keywords = qs.Get("keywords")
 	req.WithSubCount = qs.Get("with_sub_count") == "true"
 	req.WithUserCount = qs.Get("with_user_count") == "true"
+	req.WithRole = qs.Get("with_role") == "true"
 	return req
 }
 
@@ -58,6 +59,7 @@ type QueryDepartmentRequest struct {
 	SkipItems     bool
 	WithSubCount  bool
 	WithUserCount bool
+	WithRole      bool
 }
 
 // Validate todo

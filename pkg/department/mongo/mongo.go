@@ -40,6 +40,11 @@ func (s *service) Config() error {
 	}
 	s.user = pkg.User
 
+	if pkg.Role == nil {
+		return fmt.Errorf("dependence role service is nil")
+	}
+	s.role = pkg.Role
+
 	db := conf.C().Mongo.GetDB()
 	dc := db.Collection("department")
 
