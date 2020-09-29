@@ -12,6 +12,7 @@ import (
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/counter"
 	"github.com/infraboard/keyauth/pkg/department"
+	"github.com/infraboard/keyauth/pkg/role"
 	"github.com/infraboard/keyauth/pkg/user"
 )
 
@@ -26,6 +27,7 @@ type service struct {
 	notifyCachPre string
 	counter       counter.Service
 	user          user.Service
+	role          role.Service
 }
 
 func (s *service) Config() error {

@@ -134,7 +134,7 @@ func (s *service) queryUserCount(departmentID string, tk *token.Token) (int64, e
 
 func (s *service) CreateDepartment(req *department.CreateDepartmentRequest) (
 	*department.Department, error) {
-	ins, err := department.NewDepartment(req, s, s.counter)
+	ins, err := department.NewDepartment(req, s, s.role, s.counter)
 	if err != nil {
 		return nil, err
 	}
