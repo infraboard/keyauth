@@ -33,7 +33,11 @@ func (r *queryNamespaceRequest) FindFilter() bson.M {
 	filter := bson.M{}
 
 	if r.DepartmentID != "" {
-		filter["department_id"] = r.DepartmentID
+		if r.WithSubDepartment {
+			filter["department_id"] = bson.M{"$regex": r.DepartmentID, "$options": "im"}
+		} else {
+			filter["department_id"] = r.DepartmentID
+		}
 	}
 
 	return filter

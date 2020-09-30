@@ -22,10 +22,11 @@ type Service interface {
 func NewQueryNamespaceRequestFromHTTP(r *http.Request) *QueryNamespaceRequest {
 	qs := r.URL.Query()
 	return &QueryNamespaceRequest{
-		Session:        token.NewSession(),
-		PageRequest:    request.NewPageRequestFromHTTP(r),
-		DepartmentID:   qs.Get("department_id"),
-		WithDepartment: qs.Get("with_department") == "true",
+		Session:           token.NewSession(),
+		PageRequest:       request.NewPageRequestFromHTTP(r),
+		DepartmentID:      qs.Get("department_id"),
+		WithDepartment:    qs.Get("with_department") == "true",
+		WithSubDepartment: qs.Get("with_sub_department") == "true",
 	}
 }
 
@@ -42,8 +43,9 @@ func NewQueryNamespaceRequest(pageReq *request.PageRequest) *QueryNamespaceReque
 type QueryNamespaceRequest struct {
 	*token.Session
 	*request.PageRequest
-	DepartmentID   string
-	WithDepartment bool
+	DepartmentID      string
+	WithSubDepartment bool
+	WithDepartment    bool
 }
 
 // NewNewDescriptNamespaceRequestWithID todo
