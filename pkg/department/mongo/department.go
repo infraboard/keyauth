@@ -111,6 +111,14 @@ func (s *service) DescribeDepartment(req *department.DescribeDeparmentRequest) (
 		ins.UserCount = &uc
 	}
 
+	if req.WithRole && ins.DefaultRoleID != "" {
+		rIns, err := s.role.DescribeRole(role.NewDescribeRoleRequestWithID(ins.DefaultRoleID))
+		if err != nil {
+			return nil, err
+		}
+		ins.DefaultRole = rIns
+	}
+
 	return ins, nil
 }
 

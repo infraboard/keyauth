@@ -92,6 +92,7 @@ type DescribeDeparmentRequest struct {
 	Name          string
 	WithSubCount  bool
 	WithUserCount bool
+	WithRole      bool
 }
 
 func (req *DescribeDeparmentRequest) String() string {
