@@ -3,6 +3,7 @@ package micro
 import (
 	"errors"
 
+	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/mcube/http/request"
 )
 
@@ -12,6 +13,7 @@ type Service interface {
 	QueryService(req *QueryMicroRequest) (*Set, error)
 	DescribeService(req *DescribeMicroRequest) (*Micro, error)
 	DeleteService(id string) error
+	RefreshServicToken(req *DescribeMicroRequest) (*token.Token, error)
 }
 
 // NewQueryMicroRequest 列表查询请求

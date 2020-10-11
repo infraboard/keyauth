@@ -18,6 +18,7 @@ var (
 type Service interface {
 	IssueToken(req *IssueTokenRequest) (*Token, error)
 	ValidateToken(req *ValidateTokenRequest) (*Token, error)
+	DescribeToken(req *DescribeTokenRequest) (*Token, error)
 	RevolkToken(req *RevolkTokenRequest) error
 	QueryToken(req *QueryTokenRequest) (*Set, error)
 }
@@ -51,8 +52,9 @@ type IssueTokenRequest struct {
 	GrantType    GrantType `json:"grant_type,omitempty" validate:"lte=20"`             // 授权的类型
 	Type         Type      `json:"type,omitempty" validate:"lte=20"`                   // 令牌的类型 类型包含: bearer/jwt  (默认为bearer)
 	Scope        string    `json:"scope,omitempty" validate:"lte=100"`                 // 令牌的作用范围: detail https://tools.ietf.org/html/rfc6749#section-3.3
-	ua           string
-	ip           string
+
+	ua string
+	ip string
 }
 
 // AbnormalUserCheckKey todo
@@ -206,6 +208,13 @@ type RevolkTokenRequest struct {
 // NewDescribeTokenRequest 实例化
 func NewDescribeTokenRequest() *DescribeTokenRequest {
 	return &DescribeTokenRequest{}
+}
+
+// NewDescribeTokenRequestWithAccessToken 实例化
+func NewDescribeTokenRequestWithAccessToken(at string) *DescribeTokenRequest {
+	req := NewDescribeTokenRequest()
+	req.AccessToken = at
+	return req
 }
 
 // DescribeTokenRequest 撤销请求

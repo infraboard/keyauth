@@ -107,6 +107,19 @@ func (s *service) ValidateToken(req *token.ValidateTokenRequest) (*token.Token, 
 	return tk, nil
 }
 
+func (s *service) DescribeToken(req *token.DescribeTokenRequest) (*token.Token, error) {
+	if err := req.Validate(); err != nil {
+		return nil, exception.NewBadRequest(err.Error())
+	}
+
+	tk, err := s.describeToken(newDescribeTokenRequest(req))
+	if err != nil {
+		return nil, exception.NewUnauthorized(err.Error())
+	}
+
+	return tk, nil
+}
+
 func (s *service) QueryToken(req *token.QueryTokenRequest) (*token.Set, error) {
 	query := newQueryRequest(req)
 	resp, err := s.col.Find(context.TODO(), query.FindFilter(), query.FindOptions())

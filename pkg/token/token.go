@@ -128,6 +128,11 @@ func (t *Token) CheckAccessIsExpired() bool {
 
 // CheckRefreshIsExpired 检测刷新token是否过期
 func (t *Token) CheckRefreshIsExpired() bool {
+	// 过期时间为0时, 标识不过期
+	if t.RefreshExpiredAt.Timestamp() == 0 {
+		return false
+	}
+
 	return t.RefreshExpiredAt.T().Before(time.Now())
 }
 

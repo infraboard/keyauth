@@ -68,6 +68,20 @@ func (s *service) createServiceToken(user, pass string) (*token.Token, error) {
 	return s.token.IssueToken(req)
 }
 
+func (s *service) refreshServiceToken(at, rt string) (*token.Token, error) {
+	app, err := s.app.GetBuildInApplication(application.AdminServiceApplicationName)
+	if err != nil {
+		return nil, err
+	}
+	req := token.NewIssueTokenRequest()
+	req.GrantType = token.REFRESH
+	req.AccessToken = at
+	req.RefreshToken = rt
+	req.ClientID = app.ClientID
+	req.ClientSecret = app.ClientSecret
+	return s.token.IssueToken(req)
+}
+
 func (s *service) QueryService(req *micro.QueryMicroRequest) (*micro.Set, error) {
 	r := newPaggingQuery(req)
 	resp, err := s.scol.Find(context.TODO(), r.FindFilter(), r.FindOptions())
@@ -113,6 +127,29 @@ func (s *service) DescribeService(req *micro.DescribeMicroRequest) (
 		return nil, exception.NewInternalServerError("find service %s error, %s", req, err)
 	}
 	return ins, nil
+}
+
+func (s *service) RefreshServicToken(req *micro.DescribeMicroRequest) (
+	*token.Token, error) {
+	ins, err := s.DescribeService(req)
+	if err != nil {
+		return nil, err
+	}
+
+	tk, err := s.refreshServiceToken(ins.AccessToken, ins.RefreshToken)
+	if err != nil {
+		return nil, err
+	}
+
+	ins.AccessToken = tk.AccessToken
+	ins.RefreshToken = tk.RefreshToken
+	tk.Desensitize()
+
+	if err := s.update(ins); err != nil {
+		return nil, err
+	}
+
+	return tk, nil
 }
 
 func (s *service) DeleteService(id string) error {
