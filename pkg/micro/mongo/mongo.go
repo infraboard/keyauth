@@ -12,8 +12,12 @@ import (
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/application"
 	"github.com/infraboard/keyauth/pkg/micro"
+	"github.com/infraboard/keyauth/pkg/policy"
+	"github.com/infraboard/keyauth/pkg/role"
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
+	"github.com/infraboard/mcube/logger"
+	"github.com/infraboard/mcube/logger/zap"
 )
 
 var (
@@ -29,6 +33,9 @@ type service struct {
 	token         token.Service
 	user          user.Service
 	app           application.Service
+	policy        policy.Service
+	role          role.Service
+	log           logger.Logger
 }
 
 func (s *service) Config() error {
@@ -56,6 +63,7 @@ func (s *service) configService() error {
 		return err
 	}
 	s.scol = sc
+	s.log = zap.L().Named("Micro")
 
 	if pkg.Token == nil {
 		return fmt.Errorf("dependence token service is nil, please load first")
@@ -68,9 +76,19 @@ func (s *service) configService() error {
 	s.app = pkg.Application
 
 	if pkg.User == nil {
-		return fmt.Errorf("dependence application service is nil, please load first")
+		return fmt.Errorf("dependence user service is nil, please load first")
 	}
 	s.user = pkg.User
+
+	if pkg.Policy == nil {
+		return fmt.Errorf("dependence policy service is nil, please load first")
+	}
+	s.policy = pkg.Policy
+
+	if pkg.Role == nil {
+		return fmt.Errorf("dependence role service is nil, please load first")
+	}
+	s.role = pkg.Role
 
 	return nil
 }

@@ -10,6 +10,8 @@ import (
 
 	"github.com/infraboard/keyauth/pkg/application"
 	"github.com/infraboard/keyauth/pkg/micro"
+	"github.com/infraboard/keyauth/pkg/policy"
+	"github.com/infraboard/keyauth/pkg/role"
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
 	"github.com/infraboard/keyauth/pkg/user/types"
@@ -40,6 +42,12 @@ func (s *service) CreateService(req *micro.CreateMicroRequest) (
 	ins.Creater = tk.Account
 	ins.Domain = tk.Domain
 
+	// 为服务用户添加策略
+	_, err = s.createPolicy(tk, ins.Account, req.RoleID)
+	if err != nil {
+		s.log.Errorf("create service: %s policy error, %s", ins.Name, err)
+	}
+
 	if _, err := s.scol.InsertOne(context.TODO(), ins); err != nil {
 		return nil, exception.NewInternalServerError("inserted a service document error, %s", err)
 	}
@@ -66,6 +74,24 @@ func (s *service) createServiceToken(user, pass string) (*token.Token, error) {
 	req.ClientID = app.ClientID
 	req.ClientSecret = app.ClientSecret
 	return s.token.IssueToken(req)
+}
+
+func (s *service) createPolicy(tk *token.Token, account, roleID string) (*policy.Policy, error) {
+	if roleID == "" {
+		descR := role.NewDescribeRoleRequestWithName(role.AdminRoleName)
+		descR.WithToken(tk)
+		adminR, err := s.role.DescribeRole(descR)
+		if err != nil {
+			return nil, err
+		}
+		roleID = adminR.ID
+	}
+
+	req := policy.NewCreatePolicyRequest()
+	req.Account = account
+	req.NamespaceID = "*"
+	req.RoleID = roleID
+	return s.policy.CreatePolicy(policy.BuildInPolicy, req)
 }
 
 func (s *service) refreshServiceToken(at, rt string) (*token.Token, error) {

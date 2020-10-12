@@ -65,7 +65,8 @@ type CreateMicroRequest struct {
 	Label           map[string]string `bson:"label" json:"label" validate:"lte=80"`                 // 服务标签
 	Description     string            `bson:"description" json:"description,omitempty"`             // 描述信息
 	Enabled         bool              `bson:"enabled" json:"enabled"`                               // 是否启用该服务
-	TokenExpireTime int64             `bson:"token_expire_time" json:"token_expire_time,omitempty"` // 凭证申请的token的过期时间                               // 创建者ID
+	TokenExpireTime int64             `bson:"token_expire_time" json:"token_expire_time,omitempty"` // 凭证申请的token的过期时间
+	RoleID          string            `bson:"role_id" json:"role_id,omitempty"`                     // 服务角色
 }
 
 // Validate 校验请求是否合法

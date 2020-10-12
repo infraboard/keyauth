@@ -3,10 +3,11 @@ package mongo
 import (
 	"context"
 
-	"github.com/infraboard/keyauth/pkg/micro"
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/types/ftime"
 	"go.mongodb.org/mongo-driver/bson"
+
+	"github.com/infraboard/keyauth/pkg/micro"
 )
 
 func (s *service) update(ins *micro.Micro) error {

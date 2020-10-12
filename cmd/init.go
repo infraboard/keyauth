@@ -166,15 +166,20 @@ func (i *Initialer) Run() error {
 		return err
 	}
 
+	var adminRole *role.Role
 	roles, err := i.initRole()
 	if err != nil {
 		return err
 	}
 	for index := range roles {
-		fmt.Printf("初始化角色: %s [成功]\n", roles[index].Name)
+		r := roles[index]
+		fmt.Printf("初始化角色: %s [成功]\n", r.Name)
+		if r.Name == role.AdminRoleName {
+			adminRole = r
+		}
 	}
 
-	svr, err := i.initService()
+	svr, err := i.initService(adminRole)
 	if err != nil {
 		return err
 	}
@@ -309,12 +314,13 @@ func (i *Initialer) initDepartment() (*department.Department, error) {
 	return pkg.Department.CreateDepartment(req)
 }
 
-func (i *Initialer) initService() (*micro.Micro, error) {
+func (i *Initialer) initService(r *role.Role) (*micro.Micro, error) {
 	req := micro.NewCreateMicroRequest()
 	req.WithToken(i.tk)
 	req.Name = version.ServiceName
 	req.Description = version.Description
 	req.Label = map[string]string{"type": "build_in"}
+	req.RoleID = r.ID
 	return pkg.Micro.CreateService(req)
 }
 
