@@ -78,7 +78,7 @@ func (s *service) createServiceToken(user, pass string) (*token.Token, error) {
 
 func (s *service) createPolicy(tk *token.Token, account, roleID string) (*policy.Policy, error) {
 	if roleID == "" {
-		descR := role.NewDescribeRoleRequestWithName(role.AdminRoleName)
+		descR := role.NewDescribeRoleRequestWithName(role.VisitorRoleName)
 		descR.WithToken(tk)
 		adminR, err := s.role.DescribeRole(descR)
 		if err != nil {
@@ -88,6 +88,7 @@ func (s *service) createPolicy(tk *token.Token, account, roleID string) (*policy
 	}
 
 	req := policy.NewCreatePolicyRequest()
+	req.WithToken(tk)
 	req.Account = account
 	req.NamespaceID = "*"
 	req.RoleID = roleID

@@ -69,6 +69,10 @@ type DescriptNamespaceRequest struct {
 	WithDepartment bool
 }
 
+func (req *DescriptNamespaceRequest) String() string {
+	return req.ID
+}
+
 // Validate 校验详情查询请求
 func (req *DescriptNamespaceRequest) Validate() error {
 	if req.ID == "" {
