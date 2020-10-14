@@ -37,13 +37,11 @@ func NewQueryPolicyRequestFromHTTP(r *http.Request) *QueryPolicyRequest {
 
 // NewQueryPolicyRequest 列表查询请求
 func NewQueryPolicyRequest(pageReq *request.PageRequest) *QueryPolicyRequest {
-	cp := CustomPolicy
 	return &QueryPolicyRequest{
 		Session:       token.NewSession(),
 		PageRequest:   pageReq,
 		WithRole:      false,
 		WithNamespace: false,
-		Type:          &cp,
 	}
 }
 
