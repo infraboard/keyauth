@@ -73,6 +73,7 @@ func (s *service) Registry(req *endpoint.RegistryRequest) error {
 		return err
 	}
 
+	// 生产该服务的Endpoint
 	endpoints := req.Endpoints(svr.ID)
 
 	// 更新已有的记录
