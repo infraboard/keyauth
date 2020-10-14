@@ -8,6 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/infraboard/keyauth/pkg/endpoint"
+	"github.com/infraboard/keyauth/pkg/micro"
 )
 
 func (s *service) DescribeEndpoint(req *endpoint.DescribeEndpointRequest) (
@@ -66,7 +67,13 @@ func (s *service) Registry(req *endpoint.RegistryRequest) error {
 
 	tk := req.GetToken()
 
-	endpoints := req.Endpoints(tk.Account)
+	// 查询该服务
+	svr, err := s.micro.DescribeService(micro.NewDescriptServiceRequestWithAccount(tk.Account))
+	if err != nil {
+		return err
+	}
+
+	endpoints := req.Endpoints(svr.ID)
 
 	// 更新已有的记录
 	news := make([]interface{}, 0, len(endpoints))

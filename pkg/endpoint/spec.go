@@ -91,7 +91,7 @@ func NewQueryEndpointRequestFromHTTP(r *http.Request) *QueryEndpointRequest {
 
 	return &QueryEndpointRequest{
 		PageRequest: page,
-		ServiceName: qs.Get("service"),
+		ServiceID:   qs.Get("service_id"),
 	}
 }
 
@@ -105,7 +105,7 @@ func NewQueryEndpointRequest(pageReq *request.PageRequest) *QueryEndpointRequest
 // QueryEndpointRequest 查询应用列表
 type QueryEndpointRequest struct {
 	*request.PageRequest
-	ServiceName string
+	ServiceID string
 }
 
 // NewDescribeEndpointRequestWithID todo

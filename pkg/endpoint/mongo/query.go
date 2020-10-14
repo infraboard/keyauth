@@ -59,8 +59,8 @@ func (r *queryEndpointRequest) FindOptions() *options.FindOptions {
 func (r *queryEndpointRequest) FindFilter() bson.M {
 	filter := bson.M{}
 
-	if r.ServiceName != "" {
-		filter["service"] = r.ServiceName
+	if r.ServiceID != "" {
+		filter["service_id"] = r.ServiceID
 	}
 
 	return filter
