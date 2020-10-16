@@ -65,6 +65,7 @@ func (s *service) saveLogoutLog(tk *token.Token) {
 	data.Account = tk.Account
 	data.ApplicationID = tk.ApplicationID
 	data.ApplicationName = tk.ApplicationName
+	data.GrantType = tk.GrantType
 	data.GrantType = *tk.GetStartGrantType()
 
 	data.WithToken(tk)
