@@ -47,6 +47,7 @@ func (s *service) saveLoginLog(req *token.IssueTokenRequest, tk *token.Token) {
 	data := audit.NewDefaultLoginLogData()
 
 	data.Account = tk.Account
+	data.AccountType = tk.UserType
 	data.ApplicationID = tk.ApplicationID
 	data.ApplicationName = tk.ApplicationName
 	data.GrantType = tk.GrantType
@@ -64,11 +65,7 @@ func (s *service) saveLogoutLog(tk *token.Token) {
 	data.Account = tk.Account
 	data.ApplicationID = tk.ApplicationID
 	data.ApplicationName = tk.ApplicationName
-	if tk.GrantType.Is(token.REFRESH) {
-		data.GrantType = tk.StartGrantType
-	} else {
-		data.GrantType = tk.GrantType
-	}
+	data.GrantType = *tk.GetStartGrantType()
 
 	data.WithToken(tk)
 	if tk.CheckRefreshIsExpired() {

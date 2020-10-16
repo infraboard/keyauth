@@ -2,6 +2,7 @@ package micro
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/infraboard/mcube/exception"
@@ -67,6 +68,18 @@ type CreateMicroRequest struct {
 	Enabled         bool              `bson:"enabled" json:"enabled"`                               // 是否启用该服务
 	TokenExpireTime int64             `bson:"token_expire_time" json:"token_expire_time,omitempty"` // 凭证申请的token的过期时间
 	RoleID          string            `bson:"role_id" json:"role_id,omitempty"`                     // 服务角色
+
+	ip string
+}
+
+// WithRemoteIPFromHTTP todo
+func (req *CreateMicroRequest) WithRemoteIPFromHTTP(r *http.Request) {
+	req.ip = request.GetRemoteIP(r)
+}
+
+// GetRemoteIP todo
+func (req *CreateMicroRequest) GetRemoteIP() string {
+	return req.ip
 }
 
 // Validate 校验请求是否合法

@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/infraboard/mcube/http/request"
 )
@@ -74,36 +73,12 @@ func (req *IssueTokenRequest) GetUserAgent() string {
 
 // WithRemoteIPFromHTTP todo
 func (req *IssueTokenRequest) WithRemoteIPFromHTTP(r *http.Request) {
-	// 优先获取代理IP
-	var ip string
-	for _, key := range defaultScanForwareHeaderKey {
-		value := r.Header.Get(key)
+	req.ip = request.GetRemoteIP(r)
+}
 
-		if strings.Contains(value, ", ") {
-			i := strings.Index(value, ", ")
-			if i == -1 {
-				i = len(value)
-			}
-
-			ip = value[:i]
-			break
-		}
-
-		if value != "" {
-			ip = value
-			break
-		}
-	}
-
-	if ip != "" {
-		req.ip = ip
-		return
-	}
-
-	// 如果没有获得代理IP则采用RemoteIP
-	addr := strings.Split(r.RemoteAddr, ":")
-	req.ip = strings.Join(addr[0:len(addr)-1], ":")
-	return
+// WithRemoteIP todo
+func (req *IssueTokenRequest) WithRemoteIP(ip string) {
+	req.ip = ip
 }
 
 // GetRemoteIP todo

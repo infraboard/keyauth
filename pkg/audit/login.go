@@ -11,6 +11,7 @@ import (
 
 	"github.com/infraboard/keyauth/pkg/ip2region"
 	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
 // use a single instance of Validate, it caches struct info
@@ -125,13 +126,14 @@ func NewDefaultLogoutLogData() *LoginLogData {
 // LoginLogData todo
 type LoginLogData struct {
 	*token.Session  `bson:"-" json:"-"`
-	Account         string          `bson:"account" json:"account" alidate:"required"`                   // 用户
-	LoginAt         ftime.Time      `bson:"login_at" json:"login_at" alidate:"required"`                 // 登录时间
-	LogoutAt        ftime.Time      `bson:"logout_at" json:"logout_at"`                                  // 登出时间
-	ApplicationID   string          `bson:"application_id" json:"application_id" alidate:"required"`     // 用户通过哪个端登录的
-	ApplicationName string          `bson:"application_name" json:"application_name" alidate:"required"` // 用户通过哪个端登录的
-	GrantType       token.GrantType `bson:"grant_type" json:"grant_type" alidate:"required"`             // 登录方式
-	LoginIP         string          `bson:"login_ip" json:"login_ip" alidate:"required"`                 // 登录IP
+	Account         string          `bson:"account" json:"account" validate:"required"`                   // 用户名称
+	AccountType     types.Type      `bson:"account_type" json:"account_type" validate:"required"`         // 用户类型
+	LoginAt         ftime.Time      `bson:"login_at" json:"login_at" validate:"required"`                 // 登录时间
+	LogoutAt        ftime.Time      `bson:"logout_at" json:"logout_at"`                                   // 登出时间
+	ApplicationID   string          `bson:"application_id" json:"application_id" validate:"required"`     // 用户通过哪个端登录的
+	ApplicationName string          `bson:"application_name" json:"application_name" validate:"required"` // 用户通过哪个端登录的
+	GrantType       token.GrantType `bson:"grant_type" json:"grant_type" validate:"required"`             // 登录方式
+	LoginIP         string          `bson:"login_ip" json:"login_ip" validate:"required"`                 // 登录IP
 	userAgent       string          `bson:"-"`
 }
 
