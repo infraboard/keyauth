@@ -40,8 +40,6 @@ func (h *handler) CreateService(w http.ResponseWriter, r *http.Request) {
 	}
 
 	req.WithToken(tk)
-	req.WithRemoteIPFromHTTP(r)
-	req.WithUserAgent(r.UserAgent())
 	d, err := h.service.CreateService(req)
 	if err != nil {
 		response.Failed(w, err)

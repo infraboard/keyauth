@@ -8,6 +8,7 @@ import (
 
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/context"
+	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/router"
 
 	"github.com/infraboard/keyauth/pkg/endpoint"
@@ -104,5 +105,7 @@ func GetTokenFromContext(r *http.Request) (*token.Token, error) {
 		return nil, exception.NewInternalServerError("authInfo is not token pointer")
 	}
 
+	tk.WithRemoteIP(request.GetRemoteIP(r))
+	tk.WithUerAgent(r.UserAgent())
 	return tk, nil
 }
