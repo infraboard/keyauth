@@ -11,8 +11,8 @@ import (
 
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
-	"github.com/infraboard/keyauth/pkg/audit"
 	"github.com/infraboard/keyauth/pkg/ip2region"
+	"github.com/infraboard/keyauth/pkg/session"
 )
 
 var (
@@ -57,6 +57,6 @@ func (s *service) Config() error {
 }
 
 func init() {
-	var _ audit.Service = Service
+	var _ session.Service = Service
 	pkg.RegistryService("audit", Service)
 }

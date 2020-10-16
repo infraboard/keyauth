@@ -109,6 +109,42 @@ type Token struct {
 	Description     string     `bson:"description" json:"description,omitempty"`           // 独立颁发给SDK使用时, 令牌的描述信息, 方便定位与取消
 	IsBlock         bool       `bson:"is_block" json:"is_block"`                           // 是否被禁用
 	BlockReason     string     `bson:"block_reason" json:"block_reason,omitempty"`         // 禁用原因
+
+	remoteIP  string
+	userAgent string
+}
+
+// IsAvailable 判断一个token的可用性
+func (t *Token) IsAvailable() error {
+	if t.IsBlock {
+		return fmt.Errorf("token is blocked")
+	}
+
+	if t.CheckAccessIsExpired() {
+		return fmt.Errorf("token is expired")
+	}
+
+	return nil
+}
+
+// WithRemoteIP todo
+func (t *Token) WithRemoteIP(ip string) {
+	t.remoteIP = ip
+}
+
+// GetRemoteIP todo
+func (t *Token) GetRemoteIP() string {
+	return t.remoteIP
+}
+
+// WithUerAgent todo
+func (t *Token) WithUerAgent(ua string) {
+	t.userAgent = ua
+}
+
+// GetUserAgent todo
+func (t *Token) GetUserAgent() string {
+	return t.userAgent
 }
 
 // GetStartGrantType todo

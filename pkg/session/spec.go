@@ -1,4 +1,4 @@
-package audit
+package session
 
 import (
 	"fmt"
@@ -13,16 +13,17 @@ import (
 
 // Service todo
 type Service interface {
-	SaveLoginRecord(*LoginLogData)
-	QueryLoginRecord(*QueryLoginRecordRequest) (*LoginRecordSet, error)
+	Login(*token.Token) (*Session, error)
+	Logout(*token.Token) (*Session, error)
+	QuerySession(*QuerySessionRequest) (*Set, error)
 }
 
-// NewQueryLoginRecordRequestFromHTTP 列表查询请求
-func NewQueryLoginRecordRequestFromHTTP(r *http.Request) (*QueryLoginRecordRequest, error) {
+// NewQuerySessionRequestFromHTTP 列表查询请求
+func NewQuerySessionRequestFromHTTP(r *http.Request) (*QuerySessionRequest, error) {
 	page := request.NewPageRequestFromHTTP(r)
 	qs := r.URL.Query()
 
-	req := &QueryLoginRecordRequest{
+	req := &QuerySessionRequest{
 		Session:       token.NewSession(),
 		PageRequest:   page,
 		Account:       qs.Get("account"),
@@ -68,27 +69,27 @@ func NewQueryLoginRecordRequestFromHTTP(r *http.Request) (*QueryLoginRecordReque
 	return req, nil
 }
 
-// NewQueryLoginRecordRequest 列表查询请求
-func NewQueryLoginRecordRequest(pageReq *request.PageRequest) *QueryLoginRecordRequest {
-	return &QueryLoginRecordRequest{
+// NewQuerySessionRequest 列表查询请求
+func NewQuerySessionRequest(pageReq *request.PageRequest) *QuerySessionRequest {
+	return &QuerySessionRequest{
 		Session:     token.NewSession(),
 		PageRequest: pageReq,
 	}
 }
 
-// NewQueryLoginRecordRequestFromData 列表查询请求
-func NewQueryLoginRecordRequestFromData(req *LoginLogData) *QueryLoginRecordRequest {
-	return &QueryLoginRecordRequest{
+// NewQuerySessionRequestFromToken 列表查询请求
+func NewQuerySessionRequestFromToken(tk *token.Token) *QuerySessionRequest {
+	return &QuerySessionRequest{
 		Session:       token.NewSession(),
 		PageRequest:   request.NewPageRequest(1, 1),
-		Account:       req.Account,
-		ApplicationID: req.ApplicationID,
-		GrantType:     req.GrantType,
+		Account:       tk.Account,
+		ApplicationID: tk.ApplicationID,
+		GrantType:     tk.GrantType,
 	}
 }
 
-// QueryLoginRecordRequest todo
-type QueryLoginRecordRequest struct {
+// QuerySessionRequest todo
+type QuerySessionRequest struct {
 	*token.Session
 	*request.PageRequest
 	Account        string
@@ -101,33 +102,7 @@ type QueryLoginRecordRequest struct {
 }
 
 // Validate todo
-func (req *QueryLoginRecordRequest) Validate() error {
-	if req.GetToken() == nil {
-		return fmt.Errorf("token required")
-	}
-
-	return nil
-}
-
-// NewQueryOperateRecordRequest 列表查询请求
-func NewQueryOperateRecordRequest(pageReq *request.PageRequest) *QueryOperateRecordRequest {
-	return &QueryOperateRecordRequest{
-		Session:     token.NewSession(),
-		PageRequest: pageReq,
-	}
-}
-
-// QueryOperateRecordRequest todo
-type QueryOperateRecordRequest struct {
-	*token.Session
-	*request.PageRequest
-	Account       string
-	ApplicationID string
-	Result        *Result
-}
-
-// Validate todo
-func (req *QueryOperateRecordRequest) Validate() error {
+func (req *QuerySessionRequest) Validate() error {
 	if req.GetToken() == nil {
 		return fmt.Errorf("token required")
 	}

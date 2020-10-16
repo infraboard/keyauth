@@ -6,7 +6,6 @@ import (
 	"github.com/infraboard/mcube/exception"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"github.com/infraboard/keyauth/pkg/audit"
 	"github.com/infraboard/keyauth/pkg/token"
 )
 
@@ -44,35 +43,13 @@ func (s *service) saveAbnormalLogin(req *token.IssueTokenRequest, fl *FailedLogi
 }
 
 func (s *service) saveLoginLog(req *token.IssueTokenRequest, tk *token.Token) {
-	data := audit.NewDefaultLoginLogData()
-
-	data.Account = tk.Account
-	data.AccountType = tk.UserType
-	data.ApplicationID = tk.ApplicationID
-	data.ApplicationName = tk.ApplicationName
-	data.GrantType = tk.GrantType
-	data.LoginIP = req.GetRemoteIP()
-
-	data.WithUserAgent(req.GetUserAgent())
-	data.WithToken(tk)
-
-	s.audit.SaveLoginRecord(data)
+	s.session.Login(tk)
+	// data := audit.NewDefaultLoginLogData()
 	return
 }
 
 func (s *service) saveLogoutLog(tk *token.Token) {
-	data := audit.NewDefaultLogoutLogData()
-	data.Account = tk.Account
-	data.ApplicationID = tk.ApplicationID
-	data.ApplicationName = tk.ApplicationName
-	data.GrantType = tk.GrantType
-	data.GrantType = *tk.GetStartGrantType()
-
-	data.WithToken(tk)
-	if tk.CheckRefreshIsExpired() {
-		data.LogoutAt = tk.RefreshExpiredAt
-	}
-	s.audit.SaveLoginRecord(data)
+	s.session.Logout(tk)
 	return
 }
 

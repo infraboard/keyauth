@@ -4,24 +4,24 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
-	"github.com/infraboard/keyauth/pkg/audit"
+	"github.com/infraboard/keyauth/pkg/session"
 )
 
-func newQueryLoginLogRequest(req *audit.QueryLoginRecordRequest) (*queryLoginLogRequest, error) {
+func newQueryLoginLogRequest(req *session.QuerySessionRequest) (*querySessionRequest, error) {
 	if err := req.Validate(); err != nil {
 		return nil, err
 	}
 
-	return &queryLoginLogRequest{
-		QueryLoginRecordRequest: req,
+	return &querySessionRequest{
+		QuerySessionRequest: req,
 	}, nil
 }
 
-type queryLoginLogRequest struct {
-	*audit.QueryLoginRecordRequest
+type querySessionRequest struct {
+	*session.QuerySessionRequest
 }
 
-func (r *queryLoginLogRequest) FindOptions() *options.FindOptions {
+func (r *querySessionRequest) FindOptions() *options.FindOptions {
 	pageSize := int64(r.PageSize)
 	skip := int64(r.PageSize) * int64(r.PageNumber-1)
 
@@ -34,7 +34,7 @@ func (r *queryLoginLogRequest) FindOptions() *options.FindOptions {
 	return opt
 }
 
-func (r *queryLoginLogRequest) FindFilter() bson.M {
+func (r *querySessionRequest) FindFilter() bson.M {
 	tk := r.GetToken()
 	filter := bson.M{
 		"domain": tk.Domain,
