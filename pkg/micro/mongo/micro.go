@@ -33,7 +33,7 @@ func (s *service) CreateService(req *micro.CreateMicroRequest) (
 	ins.Account = account.Account
 
 	// 使用用户创建服务访问Token
-	tk, err := s.createServiceToken(req.GetRemoteIP(), user, pass)
+	tk, err := s.createServiceToken(req.GetUserAgent(), req.GetRemoteIP(), user, pass)
 	if err != nil {
 		return nil, exception.NewInternalServerError("create service token error, %s", err)
 	}
@@ -62,7 +62,7 @@ func (s *service) createServiceAccount(tk *token.Token, name, pass string) (*use
 	return s.user.CreateAccount(types.ServiceAccount, req)
 }
 
-func (s *service) createServiceToken(remoteIP, user, pass string) (*token.Token, error) {
+func (s *service) createServiceToken(userAgent, remoteIP, user, pass string) (*token.Token, error) {
 	app, err := s.app.GetBuildInApplication(application.AdminServiceApplicationName)
 	if err != nil {
 		return nil, err
@@ -74,6 +74,7 @@ func (s *service) createServiceToken(remoteIP, user, pass string) (*token.Token,
 	req.ClientID = app.ClientID
 	req.ClientSecret = app.ClientSecret
 	req.WithRemoteIP(remoteIP)
+	req.WithUserAgent(userAgent)
 	return s.token.IssueToken(req)
 }
 
