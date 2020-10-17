@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/infraboard/mcube/exception"
+	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/infraboard/keyauth/pkg/session"
 	"github.com/infraboard/keyauth/pkg/token"
@@ -52,12 +53,12 @@ func (s *service) closeOldSession(tk *token.Token) {
 		return
 	}
 
-	// 禁用该token
-	if tk.IsBlock {
-		sess.LogoutAt = tk.BlockAt
-	} else {
-		sess.LogoutAt = tk.Block(token.Normal, "session closed by other login")
+	blockReq := token.NewBlockTokenRequest(sess.AccessToken, token.Normal, "session closed by other login")
+	preTK, err := s.token.BlockToken(blockReq)
+	if err != nil {
+		s.log.Errorf("block previous token error, %s", err)
 	}
+	sess.LogoutAt = preTK.EndAt()
 
 	if err := s.updateSession(sess); err != nil {
 		s.log.Errorf("block session error, %s", err)
@@ -77,8 +78,21 @@ func (s *service) Logout(req *session.LogoutRequest) error {
 	return nil
 }
 
-func (s *service) DescribeSession(*session.DescribeSessionRequest) (*session.Session, error) {
-	return nil, nil
+func (s *service) DescribeSession(req *session.DescribeSessionRequest) (*session.Session, error) {
+	r, err := newDescribeSession(req)
+	if err != nil {
+		return nil, err
+	}
+
+	ins := session.NewDefaultSession()
+	if err := s.col.FindOne(context.TODO(), r.FindFilter()).Decode(ins); err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, exception.NewNotFound("session %s not found", req)
+		}
+
+		return nil, exception.NewInternalServerError("find session %s error, %s", req.ID, err)
+	}
+	return ins, nil
 }
 
 func (s *service) QuerySession(req *session.QuerySessionRequest) (*session.Set, error) {
@@ -87,7 +101,7 @@ func (s *service) QuerySession(req *session.QuerySessionRequest) (*session.Set, 
 		return nil, exception.NewBadRequest("validate query session request error, %s", err)
 	}
 
-	resp, err := s.login.Find(context.TODO(), r.FindFilter(), r.FindOptions())
+	resp, err := s.col.Find(context.TODO(), r.FindFilter(), r.FindOptions())
 
 	if err != nil {
 		return nil, exception.NewInternalServerError("find session error, %s", err)
@@ -105,7 +119,7 @@ func (s *service) QuerySession(req *session.QuerySessionRequest) (*session.Set, 
 	}
 
 	// count
-	count, err := s.login.CountDocuments(context.TODO(), r.FindFilter())
+	count, err := s.col.CountDocuments(context.TODO(), r.FindFilter())
 	if err != nil {
 		return nil, exception.NewInternalServerError("get session count error, error is %s", err)
 	}

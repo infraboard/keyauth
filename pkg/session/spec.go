@@ -113,7 +113,11 @@ func (req *QuerySessionRequest) Validate() error {
 
 // NewDescribeSessionRequestWithToken todo
 func NewDescribeSessionRequestWithToken(tk *token.Token) *DescribeSessionRequest {
-	return &DescribeSessionRequest{}
+	return &DescribeSessionRequest{
+		Domain:  tk.Domain,
+		Account: tk.Account,
+		Login:   true,
+	}
 }
 
 // NewDescribeSessionRequestWithID todo
@@ -125,7 +129,28 @@ func NewDescribeSessionRequestWithID(id string) *DescribeSessionRequest {
 
 // DescribeSessionRequest todo
 type DescribeSessionRequest struct {
-	ID string
+	ID      string
+	Domain  string
+	Account string
+	Login   bool
+}
+
+// Validate todo
+func (req *DescribeSessionRequest) Validate() error {
+	if req.ID == "" && !req.HasAccount() {
+		return fmt.Errorf("id or (domain and account) requried")
+	}
+
+	return nil
+}
+
+// HasAccount todo
+func (req *DescribeSessionRequest) HasAccount() bool {
+	if req.Domain != "" && req.Account != "" {
+		return true
+	}
+
+	return false
 }
 
 // NewLogoutRequest todo

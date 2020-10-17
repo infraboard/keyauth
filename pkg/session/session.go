@@ -38,8 +38,8 @@ func NewSession(ip ip2region.Service, tk *token.Token) (*Session, error) {
 		LoginAt:         tk.CreatedAt,
 		LoginIP:         tk.GetRemoteIP(),
 		log:             zap.L().Named("Session"),
+		ip:              ip,
 	}
-
 	sess.ParseUserAgent(tk.GetUserAgent())
 	sess.ParseLoginAddress(tk.GetRemoteIP())
 

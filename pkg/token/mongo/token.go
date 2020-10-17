@@ -2,8 +2,10 @@ package mongo
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/infraboard/mcube/exception"
+	"github.com/infraboard/mcube/types/ftime"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/infraboard/keyauth/pkg/session"
@@ -21,6 +23,8 @@ func (s *service) IssueToken(req *token.IssueTokenRequest) (*token.Token, error)
 		s.saveAbnormalLogin(req, fl)
 		return nil, err
 	}
+	tk.WithRemoteIP(req.GetRemoteIP())
+	tk.WithUerAgent(req.GetUserAgent())
 
 	// 登录会话
 	sess, err := s.session.Login(tk)
@@ -29,9 +33,8 @@ func (s *service) IssueToken(req *token.IssueTokenRequest) (*token.Token, error)
 	}
 	tk.SessionID = sess.ID
 
-	if _, err := s.col.InsertOne(context.TODO(), tk); err != nil {
-		return nil, exception.NewInternalServerError("inserted token(%s) document error, %s",
-			tk.AccessToken, err)
+	if err := s.saveToken(tk); err != nil {
+		return nil, err
 	}
 
 	return tk, nil
@@ -73,6 +76,23 @@ func (s *service) ValidateToken(req *token.ValidateTokenRequest) (*token.Token, 
 	}
 
 	tk.Desensitize()
+	return tk, nil
+}
+
+func (s *service) BlockToken(req *token.BlockTokenRequest) (*token.Token, error) {
+	tk, err := s.DescribeToken(token.NewDescribeTokenRequestWithAccessToken(req.AccessToken))
+	if err != nil {
+		return nil, fmt.Errorf("query session access token error, %s", err)
+	}
+
+	tk.IsBlock = true
+	tk.BlockType = req.BlcokType
+	tk.BlockReason = req.BlockReson
+	tk.BlockAt = ftime.Now()
+
+	if err := s.updateToken(tk); err != nil {
+		return nil, err
+	}
 	return tk, nil
 }
 

@@ -15,11 +15,12 @@ var (
 
 // Service token管理服务
 type Service interface {
-	IssueToken(req *IssueTokenRequest) (*Token, error)
-	ValidateToken(req *ValidateTokenRequest) (*Token, error)
-	DescribeToken(req *DescribeTokenRequest) (*Token, error)
-	RevolkToken(req *RevolkTokenRequest) error
-	QueryToken(req *QueryTokenRequest) (*Set, error)
+	IssueToken(*IssueTokenRequest) (*Token, error)
+	ValidateToken(*ValidateTokenRequest) (*Token, error)
+	DescribeToken(*DescribeTokenRequest) (*Token, error)
+	RevolkToken(*RevolkTokenRequest) error
+	QueryToken(*QueryTokenRequest) (*Set, error)
+	BlockToken(*BlockTokenRequest) (*Token, error)
 }
 
 // NewIssueTokenRequest 默认请求
@@ -209,4 +210,20 @@ func (req *DescribeTokenRequest) Validate() error {
 	}
 
 	return nil
+}
+
+// NewBlockTokenRequest todo
+func NewBlockTokenRequest(accessToken string, bt BlockType, reason string) *BlockTokenRequest {
+	return &BlockTokenRequest{
+		AccessToken: accessToken,
+		BlcokType:   bt,
+		BlockReson:  reason,
+	}
+}
+
+// BlockTokenRequest 禁用请求
+type BlockTokenRequest struct {
+	AccessToken string
+	BlockReson  string
+	BlcokType   BlockType
 }

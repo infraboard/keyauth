@@ -5,6 +5,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/infraboard/keyauth/pkg/session"
+	"github.com/infraboard/mcube/exception"
 )
 
 func newQueryLoginLogRequest(req *session.QuerySessionRequest) (*querySessionRequest, error) {
@@ -70,6 +71,37 @@ func (r *querySessionRequest) FindFilter() bson.M {
 	}
 	if len(loginAt) > 0 {
 		filter["$and"] = loginAt
+	}
+
+	return filter
+}
+
+func newDescribeSession(req *session.DescribeSessionRequest) (*describeSessionRequest, error) {
+	if err := req.Validate(); err != nil {
+		return nil, exception.NewBadRequest(err.Error())
+	}
+
+	return &describeSessionRequest{req}, nil
+}
+
+type describeSessionRequest struct {
+	*session.DescribeSessionRequest
+}
+
+func (r *describeSessionRequest) FindFilter() bson.M {
+	filter := bson.M{}
+
+	if r.ID != "" {
+		filter["_id"] = r.ID
+	}
+	if r.Domain != "" {
+		filter["domain"] = r.Domain
+	}
+	if r.Account != "" {
+		filter["account"] = r.Account
+	}
+	if r.Login {
+		filter["logout_at"] = 0
 	}
 
 	return filter

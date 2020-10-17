@@ -97,12 +97,11 @@ func (t *Token) GetStartGrantType() *GrantType {
 	return &t.GrantType
 }
 
-// Block 禁用token
-func (t *Token) Block(bt BlockType, reason string) ftime.Time {
-	t.IsBlock = true
-	t.BlockAt = ftime.Now()
-	t.BlockReason = reason
-	t.BlockType = bt
+// EndAt token结束时间
+func (t *Token) EndAt() ftime.Time {
+	if !t.IsBlock {
+		return ftime.Time{}
+	}
 
 	if t.CheckRefreshIsExpired() {
 		return t.RefreshExpiredAt
