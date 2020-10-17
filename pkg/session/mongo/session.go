@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/infraboard/mcube/exception"
-	"github.com/infraboard/mcube/types/ftime"
 
 	"github.com/infraboard/keyauth/pkg/session"
 	"github.com/infraboard/keyauth/pkg/token"
@@ -53,10 +52,11 @@ func (s *service) closeOldSession(tk *token.Token) {
 		return
 	}
 
-	sess.LogoutAt = ftime.Now()
 	// 禁用该token
-	if !tk.IsBlock {
-		sess.LogoutAt = tk.Block("")
+	if tk.IsBlock {
+		sess.LogoutAt = tk.BlockAt
+	} else {
+		sess.LogoutAt = tk.Block(token.Normal, "session closed by other login")
 	}
 
 	if err := s.updateSession(sess); err != nil {

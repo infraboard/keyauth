@@ -11,73 +11,6 @@ import (
 	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
-// oauth2 Authorization Grant: https://tools.ietf.org/html/rfc6749#section-1.3
-const (
-	UNKNOWN GrantType = "unknwon"
-	// AUTHCODE oauth2 Authorization Code Grant
-	AUTHCODE GrantType = "authorization_code"
-	// IMPLICIT oauth2 Implicit Grant
-	IMPLICIT GrantType = "implicit"
-	// PASSWORD oauth2 Resource Owner Password Credentials Grant
-	PASSWORD GrantType = "password"
-	// CLIENT oauth2 Client Credentials Grant
-	CLIENT GrantType = "client_credentials"
-	// REFRESH oauth2 Refreshing an Access Token
-	REFRESH GrantType = "refresh_token"
-	// ACCESS is an custom grant for use use generate personal private token
-	ACCESS GrantType = "access_token"
-	// LDAP 通过ldap认证
-	LDAP GrantType = "ldap"
-)
-
-// ParseGrantTypeFromString todo
-func ParseGrantTypeFromString(str string) (GrantType, error) {
-	switch str {
-	case "authorization_code":
-		return AUTHCODE, nil
-	case "implicit":
-		return IMPLICIT, nil
-	case "password":
-		return PASSWORD, nil
-	case "client_credentials":
-		return CLIENT, nil
-	case "refresh_token":
-		return REFRESH, nil
-	case "access_token":
-		return ACCESS, nil
-	case "ldap":
-		return LDAP, nil
-	default:
-		return UNKNOWN, fmt.Errorf("unknown Grant type: %s", str)
-	}
-}
-
-// GrantType is the type for OAuth2 param ` grant_type`
-type GrantType string
-
-// Is 判断类型
-func (t GrantType) Is(tps ...GrantType) bool {
-	for i := range tps {
-		if tps[i] == t {
-			return true
-		}
-	}
-	return false
-}
-
-// oauth2 Token Type: https://tools.ietf.org/html/rfc6749#section-7.1
-const (
-	// Bearer detail: https://tools.ietf.org/html/rfc6750
-	Bearer Type = "bearer"
-	// MAC detail: https://tools.ietf.org/html/rfc6749#ref-OAuth-HTTP-MAC
-	MAC Type = "mac"
-	// JWT detail:  https://tools.ietf.org/html/rfc7519
-	JWT Type = "jwt"
-)
-
-// Type token type
-type Type string
-
 // use a single instance of Validate, it caches struct info
 var (
 	validate = validator.New()
@@ -109,6 +42,7 @@ type Token struct {
 	Scope           string     `bson:"scope" json:"scope,omitempty"`                       // 令牌的作用范围: detail https://tools.ietf.org/html/rfc6749#section-3.3, 格式 resource-ro@k=*, resource-rw@k=*
 	Description     string     `bson:"description" json:"description,omitempty"`           // 独立颁发给SDK使用时, 令牌的描述信息, 方便定位与取消
 	IsBlock         bool       `bson:"is_block" json:"is_block"`                           // 是否被禁用
+	BlockType       BlockType  `bson:"block_type" json:"block_type"`                       // 禁用类型
 	BlockAt         ftime.Time `bson:"block_at" json:"block_at"`                           // 禁用时间
 	BlockReason     string     `bson:"block_reason" json:"block_reason,omitempty"`         // 禁用原因
 
@@ -164,10 +98,11 @@ func (t *Token) GetStartGrantType() *GrantType {
 }
 
 // Block 禁用token
-func (t *Token) Block(reason string) ftime.Time {
+func (t *Token) Block(bt BlockType, reason string) ftime.Time {
 	t.IsBlock = true
 	t.BlockAt = ftime.Now()
 	t.BlockReason = reason
+	t.BlockType = bt
 
 	if t.CheckRefreshIsExpired() {
 		return t.RefreshExpiredAt
