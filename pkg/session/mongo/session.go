@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/infraboard/mcube/exception"
+	"github.com/infraboard/mcube/types/ftime"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/infraboard/keyauth/pkg/session"
@@ -57,6 +58,7 @@ func (s *service) closeOldSession(tk *token.Token) {
 	preTK, err := s.token.BlockToken(blockReq)
 	if err != nil {
 		s.log.Errorf("block previous token error, %s", err)
+		return
 	}
 	sess.LogoutAt = preTK.EndAt()
 
@@ -72,6 +74,7 @@ func (s *service) Logout(req *session.LogoutRequest) error {
 		return fmt.Errorf("query session error, %s", err)
 	}
 
+	sess.LoginAt = ftime.Now()
 	if err := s.updateSession(sess); err != nil {
 		s.log.Errorf("update session error, %s", err)
 	}
@@ -85,7 +88,7 @@ func (s *service) DescribeSession(req *session.DescribeSessionRequest) (*session
 	}
 
 	ins := session.NewDefaultSession()
-	if err := s.col.FindOne(context.TODO(), r.FindFilter()).Decode(ins); err != nil {
+	if err := s.col.FindOne(context.TODO(), r.FindFilter(), r.FindOptions()).Decode(ins); err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, exception.NewNotFound("session %s not found", req)
 		}

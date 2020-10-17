@@ -88,6 +88,14 @@ type describeSessionRequest struct {
 	*session.DescribeSessionRequest
 }
 
+func (r *describeSessionRequest) FindOptions() *options.FindOneOptions {
+	opt := &options.FindOneOptions{
+		Sort: bson.D{{Key: "login_at", Value: -1}},
+	}
+
+	return opt
+}
+
 func (r *describeSessionRequest) FindFilter() bson.M {
 	filter := bson.M{}
 
