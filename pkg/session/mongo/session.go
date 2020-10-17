@@ -54,7 +54,7 @@ func (s *service) closeOldSession(tk *token.Token) {
 		return
 	}
 
-	blockReq := token.NewBlockTokenRequest(sess.AccessToken, token.Normal, "session closed by other login")
+	blockReq := token.NewBlockTokenRequest(sess.AccessToken, token.OtherClientLoggedIn, "session closed by other login")
 	preTK, err := s.token.BlockToken(blockReq)
 	if err != nil {
 		s.log.Errorf("block previous token error, %s", err)

@@ -55,6 +55,15 @@ func (t *Token) IsRefresh() bool {
 	return t.GrantType.Is(REFRESH)
 }
 
+// BlockMessage todo
+func (t *Token) BlockMessage() string {
+	if !t.IsBlock {
+		return ""
+	}
+
+	return fmt.Sprintf("token blocked at %s, reason: %s", t.BlockAt.T(), t.BlockReason)
+}
+
 // IsAvailable 判断一个token的可用性
 func (t *Token) IsAvailable() error {
 	if t.IsBlock {

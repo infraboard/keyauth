@@ -70,14 +70,14 @@ const (
 type Type string
 
 const (
-	// Normal 正常情况
-	Normal BlockType = "normal"
-	// Manual 由用户手动设置的
-	Manual = "manual"
-	// LoginPlaceProtect 异地登录保护
-	LoginPlaceProtect = "login_place_protect"
-	// LoginIPProtect 登录IP保护
-	LoginIPProtect = "login_ip_protect"
+	// OtherClientLoggedIn 启动端登录
+	OtherClientLoggedIn BlockType = "other_client_logged_in"
+	// SessionTerminated 会话中断
+	SessionTerminated = "session_terminated"
+	// OtherPlaceLoggedIn 异地登录保护
+	OtherPlaceLoggedIn = "other_place_logged_in"
+	// OtherIPLoggedIn 登录IP保护
+	OtherIPLoggedIn = "other_ip_logged_in"
 )
 
 // BlockType 禁用类型

@@ -62,6 +62,10 @@ func (s *service) ValidateToken(req *token.ValidateTokenRequest) (*token.Token, 
 		return nil, exception.NewUnauthorized(err.Error())
 	}
 
+	if tk.IsBlock {
+		return nil, s.makeBlockExcption(tk.BlockType, tk.BlockMessage())
+	}
+
 	// 校验Token是否过期
 	if req.AccessToken != "" {
 		if tk.CheckAccessIsExpired() {
@@ -77,6 +81,21 @@ func (s *service) ValidateToken(req *token.ValidateTokenRequest) (*token.Token, 
 
 	tk.Desensitize()
 	return tk, nil
+}
+
+func (s *service) makeBlockExcption(bt token.BlockType, message string) exception.APIException {
+	switch bt {
+	case token.OtherClientLoggedIn:
+		return exception.NewOtherClientsLoggedIn(message)
+	case token.SessionTerminated:
+		return exception.NewSessionTerminated(message)
+	case token.OtherPlaceLoggedIn:
+		return exception.NewOtherPlaceLoggedIn(message)
+	case token.OtherIPLoggedIn:
+		return exception.NewOtherIPLoggedIn(message)
+	default:
+		return exception.NewInternalServerError("unknow block type: %s, message: %s", bt, message)
+	}
 }
 
 func (s *service) BlockToken(req *token.BlockTokenRequest) (*token.Token, error) {
