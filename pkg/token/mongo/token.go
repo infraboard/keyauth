@@ -6,6 +6,7 @@ import (
 	"github.com/infraboard/mcube/exception"
 	"go.mongodb.org/mongo-driver/mongo"
 
+	"github.com/infraboard/keyauth/pkg/session"
 	"github.com/infraboard/keyauth/pkg/token"
 )
 
@@ -21,12 +22,20 @@ func (s *service) IssueToken(req *token.IssueTokenRequest) (*token.Token, error)
 		return nil, err
 	}
 
+	// 刷新令牌算延长会话, 不算新会话
+	if !req.GrantType.Is(token.REFRESH) {
+		sess, err := s.session.Login(tk)
+		if err != nil {
+			return nil, err
+		}
+		tk.SessionID = sess.ID
+	}
+
 	if _, err := s.col.InsertOne(context.TODO(), tk); err != nil {
 		return nil, exception.NewInternalServerError("inserted token(%s) document error, %s",
 			tk.AccessToken, err)
 	}
 
-	s.saveLoginLog(req, tk)
 	return tk, nil
 }
 
@@ -42,15 +51,17 @@ func (s *service) saveAbnormalLogin(req *token.IssueTokenRequest, fl *FailedLogi
 	s.cache.PutWithTTL("abnormal_"+req.Username, fl, s.retryTTL)
 }
 
-func (s *service) saveLoginLog(req *token.IssueTokenRequest, tk *token.Token) {
-	s.session.Login(tk)
-	// data := audit.NewDefaultLoginLogData()
-	return
-}
+func (s *service) logoutSession(tk *token.Token) {
+	req := session.NewLogoutRequest(tk.SessionID)
+	if tk.CheckRefreshIsExpired() {
+		req.LogoutAt = tk.RefreshExpiredAt
+	}
 
-func (s *service) saveLogoutLog(tk *token.Token) {
-	s.session.Logout(tk)
-	return
+	if err := s.session.Logout(req); err != nil {
+		s.log.Errorf("logout session error, %s", err)
+	} else {
+		s.log.Infof("logout session(%s) ok", tk.SessionID)
+	}
 }
 
 func (s *service) ValidateToken(req *token.ValidateTokenRequest) (*token.Token, error) {
@@ -73,7 +84,7 @@ func (s *service) ValidateToken(req *token.ValidateTokenRequest) (*token.Token, 
 	if req.RefreshToken != "" {
 		if tk.CheckRefreshIsExpired() {
 			// 如果token过期了记录退出日志
-			s.saveLogoutLog(tk)
+			s.logoutSession(tk)
 			return nil, exception.NewRefreshTokenExpired("refresh_token: %s expoired", tk.RefreshToken)
 		}
 	}
@@ -147,7 +158,7 @@ func (s *service) RevolkToken(req *token.RevolkTokenRequest) error {
 	}
 
 	// 记录退出日志
-	s.saveLogoutLog(tk)
+	s.logoutSession(tk)
 	return s.destoryToken(descReq)
 }
 

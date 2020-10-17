@@ -14,7 +14,8 @@ import (
 // Service todo
 type Service interface {
 	Login(*token.Token) (*Session, error)
-	Logout(*token.Token) (*Session, error)
+	Logout(*LogoutRequest) error
+	DescribeSession(*DescribeSessionRequest) (*Session, error)
 	QuerySession(*QuerySessionRequest) (*Set, error)
 }
 
@@ -108,4 +109,30 @@ func (req *QuerySessionRequest) Validate() error {
 	}
 
 	return nil
+}
+
+// NewDescribeSessionRequestWithID todo
+func NewDescribeSessionRequestWithID(id string) *DescribeSessionRequest {
+	return &DescribeSessionRequest{
+		ID: id,
+	}
+}
+
+// DescribeSessionRequest todo
+type DescribeSessionRequest struct {
+	ID string
+}
+
+// NewLogoutRequest todo
+func NewLogoutRequest(sessionID string) *LogoutRequest {
+	return &LogoutRequest{
+		SessionID: sessionID,
+		LogoutAt:  ftime.Now(),
+	}
+}
+
+// LogoutRequest 登出请求
+type LogoutRequest struct {
+	SessionID string
+	LogoutAt  ftime.Time
 }

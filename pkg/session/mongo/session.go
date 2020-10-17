@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/infraboard/mcube/exception"
-	"github.com/infraboard/mcube/types/ftime"
 	"go.mongodb.org/mongo-driver/bson"
 
 	"github.com/infraboard/keyauth/pkg/session"
@@ -25,27 +24,22 @@ func (s *service) Login(tk *token.Token) (*session.Session, error) {
 	return sess, nil
 }
 
-func (s *service) Logout(tk *token.Token) (*session.Session, error) {
-	queryReq := session.NewQuerySessionRequestFromToken(tk)
-	set, err := s.QuerySession(queryReq)
+func (s *service) Logout(req *session.LogoutRequest) error {
+	descReq := session.NewDescribeSessionRequestWithID(req.SessionID)
+	sess, err := s.DescribeSession(descReq)
 	if err != nil {
-		return nil, fmt.Errorf("session query error, %s", err)
+		return fmt.Errorf("query session error, %s", err)
 	}
 
-	if set.IsEmpty() {
-		return nil, exception.NewBadRequest("session not found")
-	}
-
-	sess := set.Items[0]
-	sess.LogoutAt = ftime.Now()
-
-	if tk.CheckRefreshIsExpired() {
-		sess.LogoutAt = tk.RefreshExpiredAt
-	}
+	sess.LogoutAt = req.LogoutAt
 
 	if err := s.updateSession(sess); err != nil {
 		s.log.Errorf("update session error, %s", err)
 	}
+	return nil
+}
+
+func (s *service) DescribeSession(*session.DescribeSessionRequest) (*session.Session, error) {
 	return nil, nil
 }
 

@@ -90,6 +90,7 @@ func NewDefaultToken() *Token {
 
 // Token is user's access resource token
 type Token struct {
+	SessionID        string     `bson:"session_id" json:"session_id"`                           // 会话ID
 	AccessToken      string     `bson:"_id" json:"access_token"`                                // 服务访问令牌
 	RefreshToken     string     `bson:"refresh_token" json:"refresh_token,omitempty"`           // 用于刷新访问令牌的凭证, 刷新过后, 原先令牌将会被删除
 	CreatedAt        ftime.Time `bson:"create_at" json:"create_at,omitempty"`                   // 凭证创建时间

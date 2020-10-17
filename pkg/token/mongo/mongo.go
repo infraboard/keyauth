@@ -7,6 +7,8 @@ import (
 	"time"
 
 	"github.com/infraboard/mcube/cache"
+	"github.com/infraboard/mcube/logger"
+	"github.com/infraboard/mcube/logger/zap"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/x/bsonx"
@@ -29,6 +31,7 @@ var (
 
 type service struct {
 	col           *mongo.Collection
+	log           logger.Logger
 	enableCache   bool
 	notifyCachPre string
 
@@ -99,6 +102,7 @@ func (s *service) Config() error {
 	}
 
 	s.col = col
+	s.log = zap.L().Named("token")
 	s.retryTTL = 5 * time.Minute
 	return nil
 }
