@@ -109,10 +109,16 @@ type Token struct {
 	Scope           string     `bson:"scope" json:"scope,omitempty"`                       // 令牌的作用范围: detail https://tools.ietf.org/html/rfc6749#section-3.3, 格式 resource-ro@k=*, resource-rw@k=*
 	Description     string     `bson:"description" json:"description,omitempty"`           // 独立颁发给SDK使用时, 令牌的描述信息, 方便定位与取消
 	IsBlock         bool       `bson:"is_block" json:"is_block"`                           // 是否被禁用
+	BlockAt         ftime.Time `bson:"block_at" json:"block_at"`                           // 禁用时间
 	BlockReason     string     `bson:"block_reason" json:"block_reason,omitempty"`         // 禁用原因
 
 	remoteIP  string
 	userAgent string
+}
+
+// IsRefresh todo
+func (t *Token) IsRefresh() bool {
+	return t.GrantType.Is(REFRESH)
 }
 
 // IsAvailable 判断一个token的可用性
@@ -158,9 +164,20 @@ func (t *Token) GetStartGrantType() *GrantType {
 }
 
 // Block 禁用token
-func (t *Token) Block(reason string) {
+func (t *Token) Block(reason string) ftime.Time {
 	t.IsBlock = true
+	t.BlockAt = ftime.Now()
 	t.BlockReason = reason
+
+	if t.CheckRefreshIsExpired() {
+		return t.RefreshExpiredAt
+	}
+
+	if t.CheckAccessIsExpired() {
+		return t.AccessExpiredAt
+	}
+
+	return t.BlockAt
 }
 
 // CheckAccessIsExpired 检测token是否过期

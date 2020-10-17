@@ -34,6 +34,7 @@ func NewSession(ip ip2region.Service, tk *token.Token) (*Session, error) {
 		ApplicationID:   tk.ApplicationID,
 		ApplicationName: tk.ApplicationName,
 		GrantType:       tk.GrantType,
+		AccessToken:     tk.AccessToken,
 		LoginAt:         tk.CreatedAt,
 		LoginIP:         tk.GetRemoteIP(),
 		log:             zap.L().Named("Session"),
@@ -64,11 +65,13 @@ type Session struct {
 	LoginAt         ftime.Time      `bson:"login_at" json:"login_at" validate:"required"`                 // 登录时间
 	LoginIP         string          `bson:"login_ip" json:"login_ip" validate:"required"`                 // 登录IP
 	LogoutAt        ftime.Time      `bson:"logout_at" json:"logout_at"`                                   // 登出时间
+	AccessToken     string          `bson:"access_token" json:"access_token"`                             // 当前会话的访问的token
 
-	UserAgent         `bson:",inline"`  // 登录端信息
-	*ip2region.IPInfo `bson:",inline"`  // 登录地
-	ip                ip2region.Service // 地址查询服务
-	log               logger.Logger
+	UserAgent         `bson:",inline"` // 登录端信息
+	*ip2region.IPInfo `bson:",inline"` // 登录地
+
+	ip  ip2region.Service // 地址查询服务
+	log logger.Logger     //日志服务
 }
 
 // ParseLoginAddress todo

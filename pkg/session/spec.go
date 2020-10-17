@@ -111,6 +111,11 @@ func (req *QuerySessionRequest) Validate() error {
 	return nil
 }
 
+// NewDescribeSessionRequestWithToken todo
+func NewDescribeSessionRequestWithToken(tk *token.Token) *DescribeSessionRequest {
+	return &DescribeSessionRequest{}
+}
+
 // NewDescribeSessionRequestWithID todo
 func NewDescribeSessionRequestWithID(id string) *DescribeSessionRequest {
 	return &DescribeSessionRequest{
@@ -127,12 +132,11 @@ type DescribeSessionRequest struct {
 func NewLogoutRequest(sessionID string) *LogoutRequest {
 	return &LogoutRequest{
 		SessionID: sessionID,
-		LogoutAt:  ftime.Now(),
 	}
 }
 
 // LogoutRequest 登出请求
 type LogoutRequest struct {
 	SessionID string
-	LogoutAt  ftime.Time
+	Account   string
 }

@@ -5,23 +5,63 @@ import (
 	"fmt"
 
 	"github.com/infraboard/mcube/exception"
-	"go.mongodb.org/mongo-driver/bson"
+	"github.com/infraboard/mcube/types/ftime"
 
 	"github.com/infraboard/keyauth/pkg/session"
 	"github.com/infraboard/keyauth/pkg/token"
 )
 
 func (s *service) Login(tk *token.Token) (*session.Session, error) {
+	if tk.IsRefresh() {
+		sess, err := s.DescribeSession(session.NewDescribeSessionRequestWithID(tk.SessionID))
+		if err != nil {
+			return nil, err
+		}
+
+		sess.AccessToken = tk.AccessToken
+		if err := s.updateSession(sess); err != nil {
+			return nil, err
+		}
+		return sess, nil
+	}
+
+	// 关闭之前的session
+	s.closeOldSession(tk)
+
 	sess, err := session.NewSession(s.ip, tk)
 	if err != nil {
 		return nil, err
 	}
 
-	if _, err := s.login.InsertOne(context.TODO(), sess); err != nil {
-		s.log.Errorf("inserted session document error, %s", err)
+	if err := s.saveSession(sess); err != nil {
+		return nil, err
 	}
 
 	return sess, nil
+}
+
+// 判断用户之前的会话是否正常退出
+// 如果access token已经过期, 则已access token过期时间为登出数据 结束该会话
+// 如果该会话的刷新token已经过期, 则已刷新结束时间为登出时间 结束该会话
+// 如果token正常, 则已当前时间为登出时间 结束该会话
+// 结束会话后, 禁用该token
+func (s *service) closeOldSession(tk *token.Token) {
+	descReq := session.NewDescribeSessionRequestWithToken(tk)
+	sess, err := s.DescribeSession(descReq)
+	if err != nil {
+		s.log.Errorf("query session error, %s", err)
+		return
+	}
+
+	sess.LogoutAt = ftime.Now()
+	// 禁用该token
+	if !tk.IsBlock {
+		sess.LogoutAt = tk.Block("")
+	}
+
+	if err := s.updateSession(sess); err != nil {
+		s.log.Errorf("block session error, %s", err)
+	}
 }
 
 func (s *service) Logout(req *session.LogoutRequest) error {
@@ -30,8 +70,6 @@ func (s *service) Logout(req *session.LogoutRequest) error {
 	if err != nil {
 		return fmt.Errorf("query session error, %s", err)
 	}
-
-	sess.LogoutAt = req.LogoutAt
 
 	if err := s.updateSession(sess); err != nil {
 		s.log.Errorf("update session error, %s", err)
@@ -73,13 +111,4 @@ func (s *service) QuerySession(req *session.QuerySessionRequest) (*session.Set, 
 	}
 	set.Total = count
 	return set, nil
-}
-
-func (s *service) updateSession(sess *session.Session) error {
-	_, err := s.login.UpdateOne(context.TODO(), bson.M{"_id": sess.ID}, bson.M{"$set": sess})
-	if err != nil {
-		return exception.NewInternalServerError("update session(%s) error, %s", sess.ID, err)
-	}
-
-	return nil
 }

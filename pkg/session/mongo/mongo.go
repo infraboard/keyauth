@@ -58,5 +58,5 @@ func (s *service) Config() error {
 
 func init() {
 	var _ session.Service = Service
-	pkg.RegistryService("audit", Service)
+	pkg.RegistryService("session", Service)
 }
