@@ -123,21 +123,21 @@ func NewDescribeSessionRequestWithToken(tk *token.Token) *DescribeSessionRequest
 // NewDescribeSessionRequestWithID todo
 func NewDescribeSessionRequestWithID(id string) *DescribeSessionRequest {
 	return &DescribeSessionRequest{
-		ID: id,
+		SessionID: id,
 	}
 }
 
 // DescribeSessionRequest todo
 type DescribeSessionRequest struct {
-	ID      string
-	Domain  string
-	Account string
-	Login   bool
+	SessionID string
+	Domain    string
+	Account   string
+	Login     bool
 }
 
 // Validate todo
 func (req *DescribeSessionRequest) Validate() error {
-	if req.ID == "" && !req.HasAccount() {
+	if req.SessionID == "" && !req.HasAccount() {
 		return fmt.Errorf("id or (domain and account) requried")
 	}
 

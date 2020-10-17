@@ -99,8 +99,8 @@ func (r *describeSessionRequest) FindOptions() *options.FindOneOptions {
 func (r *describeSessionRequest) FindFilter() bson.M {
 	filter := bson.M{}
 
-	if r.ID != "" {
-		filter["_id"] = r.ID
+	if r.SessionID != "" {
+		filter["_id"] = r.SessionID
 	}
 	if r.Domain != "" {
 		filter["domain"] = r.Domain

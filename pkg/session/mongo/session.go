@@ -74,7 +74,7 @@ func (s *service) Logout(req *session.LogoutRequest) error {
 		return fmt.Errorf("query session error, %s", err)
 	}
 
-	sess.LoginAt = ftime.Now()
+	sess.LogoutAt = ftime.Now()
 	if err := s.updateSession(sess); err != nil {
 		s.log.Errorf("update session error, %s", err)
 	}
@@ -93,7 +93,7 @@ func (s *service) DescribeSession(req *session.DescribeSessionRequest) (*session
 			return nil, exception.NewNotFound("session %s not found", req)
 		}
 
-		return nil, exception.NewInternalServerError("find session %s error, %s", req.ID, err)
+		return nil, exception.NewInternalServerError("find session %s error, %s", req.SessionID, err)
 	}
 	return ins, nil
 }
