@@ -170,14 +170,16 @@ func NewRevolkTokenRequest(clientID, clientSecret string) *RevolkTokenRequest {
 	return &RevolkTokenRequest{
 		ClientID:             clientID,
 		ClientSecret:         clientSecret,
+		LogoutSession:        true,
 		DescribeTokenRequest: NewDescribeTokenRequest(),
 	}
 }
 
 // RevolkTokenRequest 撤销Token的请求
 type RevolkTokenRequest struct {
-	ClientSecret string `json:"client_secret,omitempty" validate:"required,lte=80"` // 客户端凭证
-	ClientID     string `json:"client_id,omitempty" validate:"required,lte=80"`     // 客户端ID
+	ClientSecret  string `json:"client_secret,omitempty" validate:"required,lte=80"` // 客户端凭证
+	ClientID      string `json:"client_id,omitempty" validate:"required,lte=80"`     // 客户端ID
+	LogoutSession bool   `json:"logout_session"`                                     // 是否退出会话
 	*DescribeTokenRequest
 }
 

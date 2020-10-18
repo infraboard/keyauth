@@ -180,9 +180,11 @@ func (s *service) RevolkToken(req *token.RevolkTokenRequest) error {
 	}
 
 	// 退出会话
-	logoutReq := session.NewLogoutRequest(tk.SessionID)
-	if err := s.session.Logout(logoutReq); err != nil {
-		return exception.NewInternalServerError("logout session error, %s", err)
+	if req.LogoutSession {
+		logoutReq := session.NewLogoutRequest(tk.SessionID)
+		if err := s.session.Logout(logoutReq); err != nil {
+			return exception.NewInternalServerError("logout session error, %s", err)
+		}
 	}
 
 	return s.destoryToken(descReq)

@@ -37,7 +37,7 @@ func (s *service) Login(tk *token.Token) (*session.Session, error) {
 	if err := s.saveSession(sess); err != nil {
 		return nil, err
 	}
-
+	s.log.Infof("user(%s) session: %s login at: %s", sess.Account, sess.ID, sess.LoginAt.T())
 	return sess, nil
 }
 
@@ -65,6 +65,7 @@ func (s *service) closeOldSession(tk *token.Token) {
 	if err := s.updateSession(sess); err != nil {
 		s.log.Errorf("block session error, %s", err)
 	}
+	s.log.Infof("user(%s) session: %s logout at: %s", sess.Account, sess.ID, sess.LogoutAt.T())
 }
 
 func (s *service) Logout(req *session.LogoutRequest) error {
@@ -78,6 +79,7 @@ func (s *service) Logout(req *session.LogoutRequest) error {
 	if err := s.updateSession(sess); err != nil {
 		s.log.Errorf("update session error, %s", err)
 	}
+	s.log.Infof("user(%s) session: %s logout at: %s", sess.Account, sess.ID, sess.LogoutAt.T())
 	return nil
 }
 

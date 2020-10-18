@@ -150,6 +150,7 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 
 		revolkReq := token.NewRevolkTokenRequest(app.ClientID, app.ClientSecret)
 		revolkReq.AccessToken = req.AccessToken
+		revolkReq.LogoutSession = false
 		if err := i.token.RevolkToken(revolkReq); err != nil {
 			return nil, err
 		}
