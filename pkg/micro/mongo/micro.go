@@ -24,23 +24,28 @@ func (s *service) CreateService(req *micro.CreateMicroRequest) (
 		return nil, err
 	}
 
+	tk := req.GetToken()
+	if tk == nil {
+		return nil, exception.NewPermissionDeny("token required")
+	}
+
 	user, pass := ins.Name, xid.New().String()
 	// 创建服务用户
-	account, err := s.createServiceAccount(req.GetToken(), user, pass)
+	account, err := s.createServiceAccount(tk, user, pass)
 	if err != nil {
 		return nil, exception.NewInternalServerError("create service account error, %s", err)
 	}
 	ins.Account = account.Account
 
 	// 使用用户创建服务访问Token
-	tk, err := s.createServiceToken(req.GetUserAgent(), req.GetRemoteIP(), user, pass)
+	svrTK, err := s.createServiceToken(tk.GetUserAgent(), tk.GetRemoteIP(), user, pass)
 	if err != nil {
 		return nil, exception.NewInternalServerError("create service token error, %s", err)
 	}
-	ins.AccessToken = tk.AccessToken
-	ins.RefreshToken = tk.RefreshToken
-	ins.Creater = tk.Account
-	ins.Domain = tk.Domain
+	ins.AccessToken = svrTK.AccessToken
+	ins.RefreshToken = svrTK.RefreshToken
+	ins.Creater = svrTK.Account
+	ins.Domain = svrTK.Domain
 
 	// 为服务用户添加策略
 	_, err = s.createPolicy(tk, ins.Account, req.RoleID)
