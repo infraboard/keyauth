@@ -6,7 +6,7 @@ import (
 	"github.com/infraboard/mcube/http/router"
 
 	"github.com/infraboard/keyauth/pkg"
-	"github.com/infraboard/keyauth/pkg/audit"
+	"github.com/infraboard/keyauth/pkg/session"
 )
 
 var (
@@ -14,13 +14,13 @@ var (
 )
 
 type handler struct {
-	service audit.Service
+	service session.Service
 }
 
 // Registry 注册HTTP服务路由
 func (h *handler) Registry(router router.SubRouter) {
-	r := router.ResourceRouter("loginLog")
-	r.BasePath("loginLogs")
+	r := router.ResourceRouter("sessions")
+	r.BasePath("sessions")
 	r.Permission(true)
 	r.Handle("GET", "/", h.QueryLoginLog)
 }
@@ -30,10 +30,10 @@ func (h *handler) Config() error {
 		return errors.New("denpence domain service is nil")
 	}
 
-	h.service = pkg.Audit
+	h.service = pkg.Session
 	return nil
 }
 
 func init() {
-	pkg.RegistryHTTPV1("loginLog", api)
+	pkg.RegistryHTTPV1("session", api)
 }

@@ -41,7 +41,7 @@ func NewDescriptAccountRequestWithAccount(accout string) *DescriptAccountRequest
 
 // DescriptAccountRequest 查询用户详情请求
 type DescriptAccountRequest struct {
-	Account string `json:"account,omitempty"`
+	Account string
 }
 
 func (req *DescriptAccountRequest) String() string {

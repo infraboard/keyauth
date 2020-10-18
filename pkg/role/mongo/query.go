@@ -79,8 +79,16 @@ func (r *queryRoleRequest) FindOptions() *options.FindOptions {
 
 func (r *queryRoleRequest) FindFilter() bson.M {
 	filter := bson.M{}
-	if r.Type.String() != "unknown" {
+
+	if r.Type != nil {
 		filter["type"] = r.Type.String()
+	} else {
+		// 获取内建和全局的角色以及域内自己创建的角色
+		filter["$or"] = bson.A{
+			bson.M{"type": role.BuildInType},
+			bson.M{"type": role.GlobalType},
+			bson.M{"type": role.CustomType, "domain": r.GetToken().Domain},
+		}
 	}
 
 	return filter

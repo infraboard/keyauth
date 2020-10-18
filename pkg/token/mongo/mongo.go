@@ -7,6 +7,8 @@ import (
 	"time"
 
 	"github.com/infraboard/mcube/cache"
+	"github.com/infraboard/mcube/logger"
+	"github.com/infraboard/mcube/logger/zap"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/x/bsonx"
@@ -14,9 +16,9 @@ import (
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/application"
-	"github.com/infraboard/keyauth/pkg/audit"
 	"github.com/infraboard/keyauth/pkg/domain"
 	"github.com/infraboard/keyauth/pkg/endpoint"
+	"github.com/infraboard/keyauth/pkg/session"
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/token/issuer"
 	"github.com/infraboard/keyauth/pkg/user"
@@ -29,6 +31,7 @@ var (
 
 type service struct {
 	col           *mongo.Collection
+	log           logger.Logger
 	enableCache   bool
 	notifyCachPre string
 
@@ -37,7 +40,7 @@ type service struct {
 	domain   domain.Service
 	issuer   issuer.Issuer
 	endpoint endpoint.Service
-	audit    audit.Service
+	session  session.Service
 	cache    cache.Cache
 	retryTTL time.Duration
 }
@@ -63,10 +66,10 @@ func (s *service) Config() error {
 	}
 	s.endpoint = pkg.Endpoint
 
-	if pkg.Audit == nil {
-		return errors.New("denpence audit service is nil")
+	if pkg.Session == nil {
+		return errors.New("denpence session service is nil")
 	}
-	s.audit = pkg.Audit
+	s.session = pkg.Session
 
 	issuer, err := issuer.NewTokenIssuer()
 	if err != nil {
@@ -99,6 +102,7 @@ func (s *service) Config() error {
 	}
 
 	s.col = col
+	s.log = zap.L().Named("token")
 	s.retryTTL = 5 * time.Minute
 	return nil
 }

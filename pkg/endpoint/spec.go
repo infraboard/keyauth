@@ -68,16 +68,16 @@ func (req *RegistryRequest) Validate() error {
 }
 
 // Endpoints 功能列表
-func (req *RegistryRequest) Endpoints(svr string) []*Endpoint {
+func (req *RegistryRequest) Endpoints(serviceID string) []*Endpoint {
 	eps := make([]*Endpoint, 0, len(req.Entries))
 	for i := range req.Entries {
 		ep := &Endpoint{
-			ID:       GenHashID(svr, req.Entries[i].Path, req.Entries[i].Method),
-			CreateAt: ftime.Now(),
-			UpdateAt: ftime.Now(),
-			Service:  svr,
-			Version:  req.Version,
-			Entry:    *req.Entries[i],
+			ID:        GenHashID(serviceID, req.Entries[i].Path, req.Entries[i].Method),
+			CreateAt:  ftime.Now(),
+			UpdateAt:  ftime.Now(),
+			ServiceID: serviceID,
+			Version:   req.Version,
+			Entry:     *req.Entries[i],
 		}
 		eps = append(eps, ep)
 	}
@@ -91,7 +91,7 @@ func NewQueryEndpointRequestFromHTTP(r *http.Request) *QueryEndpointRequest {
 
 	return &QueryEndpointRequest{
 		PageRequest: page,
-		ServiceName: qs.Get("service"),
+		ServiceID:   qs.Get("service_id"),
 	}
 }
 
@@ -105,7 +105,7 @@ func NewQueryEndpointRequest(pageReq *request.PageRequest) *QueryEndpointRequest
 // QueryEndpointRequest 查询应用列表
 type QueryEndpointRequest struct {
 	*request.PageRequest
-	ServiceName string
+	ServiceID string
 }
 
 // NewDescribeEndpointRequestWithID todo

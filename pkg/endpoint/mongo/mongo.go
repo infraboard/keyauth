@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"fmt"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/x/bsonx"
@@ -9,6 +10,7 @@ import (
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/endpoint"
+	"github.com/infraboard/keyauth/pkg/micro"
 )
 
 var (
@@ -20,6 +22,8 @@ type service struct {
 	col           *mongo.Collection
 	enableCache   bool
 	notifyCachPre string
+
+	micro micro.Service
 }
 
 func (s *service) Config() error {
@@ -38,6 +42,11 @@ func (s *service) Config() error {
 	}
 
 	s.col = col
+
+	if pkg.Micro == nil {
+		return fmt.Errorf("dependence micro service is nil, please load first")
+	}
+	s.micro = pkg.Micro
 	return nil
 }
 

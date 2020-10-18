@@ -22,17 +22,20 @@ type Service interface {
 func NewQueryNamespaceRequestFromHTTP(r *http.Request) *QueryNamespaceRequest {
 	qs := r.URL.Query()
 	return &QueryNamespaceRequest{
-		Session:     token.NewSession(),
-		PageRequest: request.NewPageRequestFromHTTP(r),
-		Department:  qs.Get("department"),
+		Session:           token.NewSession(),
+		PageRequest:       request.NewPageRequestFromHTTP(r),
+		DepartmentID:      qs.Get("department_id"),
+		WithDepartment:    qs.Get("with_department") == "true",
+		WithSubDepartment: qs.Get("with_sub_department") == "true",
 	}
 }
 
 // NewQueryNamespaceRequest 列表查询请求
 func NewQueryNamespaceRequest(pageReq *request.PageRequest) *QueryNamespaceRequest {
 	return &QueryNamespaceRequest{
-		Session:     token.NewSession(),
-		PageRequest: pageReq,
+		Session:        token.NewSession(),
+		PageRequest:    pageReq,
+		WithDepartment: false,
 	}
 }
 
@@ -40,7 +43,9 @@ func NewQueryNamespaceRequest(pageReq *request.PageRequest) *QueryNamespaceReque
 type QueryNamespaceRequest struct {
 	*token.Session
 	*request.PageRequest
-	Department string
+	DepartmentID      string
+	WithSubDepartment bool
+	WithDepartment    bool
 }
 
 // NewNewDescriptNamespaceRequestWithID todo
@@ -60,7 +65,12 @@ func NewDescriptNamespaceRequest() *DescriptNamespaceRequest {
 // DescriptNamespaceRequest 查询应用详情
 type DescriptNamespaceRequest struct {
 	*token.Session
-	ID string `json:"id,omitempty"`
+	ID             string `json:"id,omitempty"`
+	WithDepartment bool
+}
+
+func (req *DescriptNamespaceRequest) String() string {
+	return req.ID
 }
 
 // Validate 校验详情查询请求

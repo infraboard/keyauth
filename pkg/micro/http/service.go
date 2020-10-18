@@ -9,6 +9,7 @@ import (
 
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/micro"
+	"github.com/infraboard/keyauth/pkg/token"
 )
 
 func (h *handler) QueryService(w http.ResponseWriter, r *http.Request) {
@@ -74,4 +75,41 @@ func (h *handler) DestroyService(w http.ResponseWriter, r *http.Request) {
 
 	response.Success(w, "delete ok")
 	return
+}
+
+func (h *handler) GetServiceToken(w http.ResponseWriter, r *http.Request) {
+	rctx := context.GetContext(r)
+
+	req := micro.NewDescriptServiceRequest()
+	req.ID = rctx.PS.ByName("id")
+
+	d, err := h.service.DescribeService(req)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	tk, err := h.token.DescribeToken(token.NewDescribeTokenRequestWithAccessToken(d.AccessToken))
+	tk.Desensitize()
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	response.Success(w, tk)
+}
+
+func (h *handler) RefreshServiceToken(w http.ResponseWriter, r *http.Request) {
+	rctx := context.GetContext(r)
+
+	req := micro.NewDescriptServiceRequest()
+	req.ID = rctx.PS.ByName("id")
+
+	d, err := h.service.RefreshServicToken(req)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	response.Success(w, d)
 }

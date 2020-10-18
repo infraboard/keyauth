@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/infraboard/mcube/http/request"
 )
@@ -16,10 +15,12 @@ var (
 
 // Service token管理服务
 type Service interface {
-	IssueToken(req *IssueTokenRequest) (*Token, error)
-	ValidateToken(req *ValidateTokenRequest) (*Token, error)
-	RevolkToken(req *RevolkTokenRequest) error
-	QueryToken(req *QueryTokenRequest) (*Set, error)
+	IssueToken(*IssueTokenRequest) (*Token, error)
+	ValidateToken(*ValidateTokenRequest) (*Token, error)
+	DescribeToken(*DescribeTokenRequest) (*Token, error)
+	RevolkToken(*RevolkTokenRequest) error
+	QueryToken(*QueryTokenRequest) (*Set, error)
+	BlockToken(*BlockTokenRequest) (*Token, error)
 }
 
 // NewIssueTokenRequest 默认请求
@@ -51,8 +52,9 @@ type IssueTokenRequest struct {
 	GrantType    GrantType `json:"grant_type,omitempty" validate:"lte=20"`             // 授权的类型
 	Type         Type      `json:"type,omitempty" validate:"lte=20"`                   // 令牌的类型 类型包含: bearer/jwt  (默认为bearer)
 	Scope        string    `json:"scope,omitempty" validate:"lte=100"`                 // 令牌的作用范围: detail https://tools.ietf.org/html/rfc6749#section-3.3
-	ua           string
-	ip           string
+
+	ua string
+	ip string
 }
 
 // AbnormalUserCheckKey todo
@@ -72,36 +74,12 @@ func (req *IssueTokenRequest) GetUserAgent() string {
 
 // WithRemoteIPFromHTTP todo
 func (req *IssueTokenRequest) WithRemoteIPFromHTTP(r *http.Request) {
-	// 优先获取代理IP
-	var ip string
-	for _, key := range defaultScanForwareHeaderKey {
-		value := r.Header.Get(key)
+	req.ip = request.GetRemoteIP(r)
+}
 
-		if strings.Contains(value, ", ") {
-			i := strings.Index(value, ", ")
-			if i == -1 {
-				i = len(value)
-			}
-
-			ip = value[:i]
-			break
-		}
-
-		if value != "" {
-			ip = value
-			break
-		}
-	}
-
-	if ip != "" {
-		req.ip = ip
-		return
-	}
-
-	// 如果没有获得代理IP则采用RemoteIP
-	addr := strings.Split(r.RemoteAddr, ":")
-	req.ip = strings.Join(addr[0:len(addr)-1], ":")
-	return
+// WithRemoteIP todo
+func (req *IssueTokenRequest) WithRemoteIP(ip string) {
+	req.ip = ip
 }
 
 // GetRemoteIP todo
@@ -208,6 +186,13 @@ func NewDescribeTokenRequest() *DescribeTokenRequest {
 	return &DescribeTokenRequest{}
 }
 
+// NewDescribeTokenRequestWithAccessToken 实例化
+func NewDescribeTokenRequestWithAccessToken(at string) *DescribeTokenRequest {
+	req := NewDescribeTokenRequest()
+	req.AccessToken = at
+	return req
+}
+
 // DescribeTokenRequest 撤销请求
 type DescribeTokenRequest struct {
 	AccessToken  string `json:"access_token,omitempty" validate:"lte=80"`  // 访问凭证
@@ -225,4 +210,20 @@ func (req *DescribeTokenRequest) Validate() error {
 	}
 
 	return nil
+}
+
+// NewBlockTokenRequest todo
+func NewBlockTokenRequest(accessToken string, bt BlockType, reason string) *BlockTokenRequest {
+	return &BlockTokenRequest{
+		AccessToken: accessToken,
+		BlcokType:   bt,
+		BlockReson:  reason,
+	}
+}
+
+// BlockTokenRequest 禁用请求
+type BlockTokenRequest struct {
+	AccessToken string
+	BlockReson  string
+	BlcokType   BlockType
 }

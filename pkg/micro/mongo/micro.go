@@ -10,6 +10,8 @@ import (
 
 	"github.com/infraboard/keyauth/pkg/application"
 	"github.com/infraboard/keyauth/pkg/micro"
+	"github.com/infraboard/keyauth/pkg/policy"
+	"github.com/infraboard/keyauth/pkg/role"
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
 	"github.com/infraboard/keyauth/pkg/user/types"
@@ -31,7 +33,7 @@ func (s *service) CreateService(req *micro.CreateMicroRequest) (
 	ins.Account = account.Account
 
 	// 使用用户创建服务访问Token
-	tk, err := s.createServiceToken(user, pass)
+	tk, err := s.createServiceToken(req.GetUserAgent(), req.GetRemoteIP(), user, pass)
 	if err != nil {
 		return nil, exception.NewInternalServerError("create service token error, %s", err)
 	}
@@ -39,6 +41,12 @@ func (s *service) CreateService(req *micro.CreateMicroRequest) (
 	ins.RefreshToken = tk.RefreshToken
 	ins.Creater = tk.Account
 	ins.Domain = tk.Domain
+
+	// 为服务用户添加策略
+	_, err = s.createPolicy(tk, ins.Account, req.RoleID)
+	if err != nil {
+		s.log.Errorf("create service: %s policy error, %s", ins.Name, err)
+	}
 
 	if _, err := s.scol.InsertOne(context.TODO(), ins); err != nil {
 		return nil, exception.NewInternalServerError("inserted a service document error, %s", err)
@@ -54,7 +62,7 @@ func (s *service) createServiceAccount(tk *token.Token, name, pass string) (*use
 	return s.user.CreateAccount(types.ServiceAccount, req)
 }
 
-func (s *service) createServiceToken(user, pass string) (*token.Token, error) {
+func (s *service) createServiceToken(userAgent, remoteIP, user, pass string) (*token.Token, error) {
 	app, err := s.app.GetBuildInApplication(application.AdminServiceApplicationName)
 	if err != nil {
 		return nil, err
@@ -63,6 +71,41 @@ func (s *service) createServiceToken(user, pass string) (*token.Token, error) {
 	req.GrantType = token.PASSWORD
 	req.Username = user
 	req.Password = pass
+	req.ClientID = app.ClientID
+	req.ClientSecret = app.ClientSecret
+	req.WithRemoteIP(remoteIP)
+	req.WithUserAgent(userAgent)
+	return s.token.IssueToken(req)
+}
+
+func (s *service) createPolicy(tk *token.Token, account, roleID string) (*policy.Policy, error) {
+	if roleID == "" {
+		descR := role.NewDescribeRoleRequestWithName(role.VisitorRoleName)
+		descR.WithToken(tk)
+		adminR, err := s.role.DescribeRole(descR)
+		if err != nil {
+			return nil, err
+		}
+		roleID = adminR.ID
+	}
+
+	req := policy.NewCreatePolicyRequest()
+	req.WithToken(tk)
+	req.Account = account
+	req.NamespaceID = "*"
+	req.RoleID = roleID
+	return s.policy.CreatePolicy(policy.BuildInPolicy, req)
+}
+
+func (s *service) refreshServiceToken(at, rt string) (*token.Token, error) {
+	app, err := s.app.GetBuildInApplication(application.AdminServiceApplicationName)
+	if err != nil {
+		return nil, err
+	}
+	req := token.NewIssueTokenRequest()
+	req.GrantType = token.REFRESH
+	req.AccessToken = at
+	req.RefreshToken = rt
 	req.ClientID = app.ClientID
 	req.ClientSecret = app.ClientSecret
 	return s.token.IssueToken(req)
@@ -113,6 +156,29 @@ func (s *service) DescribeService(req *micro.DescribeMicroRequest) (
 		return nil, exception.NewInternalServerError("find service %s error, %s", req, err)
 	}
 	return ins, nil
+}
+
+func (s *service) RefreshServicToken(req *micro.DescribeMicroRequest) (
+	*token.Token, error) {
+	ins, err := s.DescribeService(req)
+	if err != nil {
+		return nil, err
+	}
+
+	tk, err := s.refreshServiceToken(ins.AccessToken, ins.RefreshToken)
+	if err != nil {
+		return nil, err
+	}
+
+	ins.AccessToken = tk.AccessToken
+	ins.RefreshToken = tk.RefreshToken
+	tk.Desensitize()
+
+	if err := s.update(ins); err != nil {
+		return nil, err
+	}
+
+	return tk, nil
 }
 
 func (s *service) DeleteService(id string) error {

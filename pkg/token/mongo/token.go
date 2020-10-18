@@ -2,11 +2,13 @@ package mongo
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/infraboard/mcube/exception"
+	"github.com/infraboard/mcube/types/ftime"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"github.com/infraboard/keyauth/pkg/audit"
+	"github.com/infraboard/keyauth/pkg/session"
 	"github.com/infraboard/keyauth/pkg/token"
 )
 
@@ -21,13 +23,20 @@ func (s *service) IssueToken(req *token.IssueTokenRequest) (*token.Token, error)
 		s.saveAbnormalLogin(req, fl)
 		return nil, err
 	}
+	tk.WithRemoteIP(req.GetRemoteIP())
+	tk.WithUerAgent(req.GetUserAgent())
 
-	if _, err := s.col.InsertOne(context.TODO(), tk); err != nil {
-		return nil, exception.NewInternalServerError("inserted token(%s) document error, %s",
-			tk.AccessToken, err)
+	// 登录会话
+	sess, err := s.session.Login(tk)
+	if err != nil {
+		return nil, err
+	}
+	tk.SessionID = sess.ID
+
+	if err := s.saveToken(tk); err != nil {
+		return nil, err
 	}
 
-	s.saveLoginLog(req, tk)
 	return tk, nil
 }
 
@@ -43,41 +52,6 @@ func (s *service) saveAbnormalLogin(req *token.IssueTokenRequest, fl *FailedLogi
 	s.cache.PutWithTTL("abnormal_"+req.Username, fl, s.retryTTL)
 }
 
-func (s *service) saveLoginLog(req *token.IssueTokenRequest, tk *token.Token) {
-	data := audit.NewDefaultLoginLogData()
-
-	data.Account = tk.Account
-	data.ApplicationID = tk.ApplicationID
-	data.ApplicationName = tk.ApplicationName
-	data.GrantType = tk.GrantType
-	data.LoginIP = req.GetRemoteIP()
-
-	data.WithUserAgent(req.GetUserAgent())
-	data.WithToken(tk)
-
-	s.audit.SaveLoginRecord(data)
-	return
-}
-
-func (s *service) saveLogoutLog(tk *token.Token) {
-	data := audit.NewDefaultLogoutLogData()
-	data.Account = tk.Account
-	data.ApplicationID = tk.ApplicationID
-	data.ApplicationName = tk.ApplicationName
-	if tk.GrantType.Is(token.REFRESH) {
-		data.GrantType = tk.StartGrantType
-	} else {
-		data.GrantType = tk.GrantType
-	}
-
-	data.WithToken(tk)
-	if tk.CheckRefreshIsExpired() {
-		data.LogoutAt = tk.RefreshExpiredAt
-	}
-	s.audit.SaveLoginRecord(data)
-	return
-}
-
 func (s *service) ValidateToken(req *token.ValidateTokenRequest) (*token.Token, error) {
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest(err.Error())
@@ -86,6 +60,10 @@ func (s *service) ValidateToken(req *token.ValidateTokenRequest) (*token.Token, 
 	tk, err := s.describeToken(newDescribeTokenRequest(req.DescribeTokenRequest))
 	if err != nil {
 		return nil, exception.NewUnauthorized(err.Error())
+	}
+
+	if tk.IsBlock {
+		return nil, s.makeBlockExcption(tk.BlockType, tk.BlockMessage())
 	}
 
 	// 校验Token是否过期
@@ -97,13 +75,56 @@ func (s *service) ValidateToken(req *token.ValidateTokenRequest) (*token.Token, 
 
 	if req.RefreshToken != "" {
 		if tk.CheckRefreshIsExpired() {
-			// 如果token过期了记录退出日志
-			s.saveLogoutLog(tk)
 			return nil, exception.NewRefreshTokenExpired("refresh_token: %s expoired", tk.RefreshToken)
 		}
 	}
 
 	tk.Desensitize()
+	return tk, nil
+}
+
+func (s *service) makeBlockExcption(bt token.BlockType, message string) exception.APIException {
+	switch bt {
+	case token.OtherClientLoggedIn:
+		return exception.NewOtherClientsLoggedIn(message)
+	case token.SessionTerminated:
+		return exception.NewSessionTerminated(message)
+	case token.OtherPlaceLoggedIn:
+		return exception.NewOtherPlaceLoggedIn(message)
+	case token.OtherIPLoggedIn:
+		return exception.NewOtherIPLoggedIn(message)
+	default:
+		return exception.NewInternalServerError("unknow block type: %s, message: %s", bt, message)
+	}
+}
+
+func (s *service) BlockToken(req *token.BlockTokenRequest) (*token.Token, error) {
+	tk, err := s.DescribeToken(token.NewDescribeTokenRequestWithAccessToken(req.AccessToken))
+	if err != nil {
+		return nil, fmt.Errorf("query session access token error, %s", err)
+	}
+
+	tk.IsBlock = true
+	tk.BlockType = req.BlcokType
+	tk.BlockReason = req.BlockReson
+	tk.BlockAt = ftime.Now()
+
+	if err := s.updateToken(tk); err != nil {
+		return nil, err
+	}
+	return tk, nil
+}
+
+func (s *service) DescribeToken(req *token.DescribeTokenRequest) (*token.Token, error) {
+	if err := req.Validate(); err != nil {
+		return nil, exception.NewBadRequest(err.Error())
+	}
+
+	tk, err := s.describeToken(newDescribeTokenRequest(req))
+	if err != nil {
+		return nil, exception.NewUnauthorized(err.Error())
+	}
+
 	return tk, nil
 }
 
@@ -158,8 +179,12 @@ func (s *service) RevolkToken(req *token.RevolkTokenRequest) error {
 		return exception.NewPermissionDeny(err.Error())
 	}
 
-	// 记录退出日志
-	s.saveLogoutLog(tk)
+	// 退出会话
+	logoutReq := session.NewLogoutRequest(tk.SessionID)
+	if err := s.session.Logout(logoutReq); err != nil {
+		return exception.NewInternalServerError("logout session error, %s", err)
+	}
+
 	return s.destoryToken(descReq)
 }
 

@@ -123,6 +123,7 @@ func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 	req.ID = rctx.PS.ByName("id")
 	req.WithSubCount = qs.Get("with_sub_count") == "true"
 	req.WithUserCount = qs.Get("with_user_count") == "true"
+	req.WithRole = qs.Get("with_role") == "true"
 	ins, err := h.service.DescribeDepartment(req)
 	if err != nil {
 		response.Failed(w, err)

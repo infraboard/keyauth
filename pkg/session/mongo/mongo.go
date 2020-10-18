@@ -11,8 +11,9 @@ import (
 
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
-	"github.com/infraboard/keyauth/pkg/audit"
 	"github.com/infraboard/keyauth/pkg/ip2region"
+	"github.com/infraboard/keyauth/pkg/session"
+	"github.com/infraboard/keyauth/pkg/token"
 )
 
 var (
@@ -21,11 +22,13 @@ var (
 )
 
 type service struct {
-	login         *mongo.Collection
+	col           *mongo.Collection
 	enableCache   bool
 	notifyCachPre string
-	ip            ip2region.Service
-	log           logger.Logger
+
+	ip    ip2region.Service
+	token token.Service
+	log   logger.Logger
 }
 
 func (s *service) Config() error {
@@ -34,8 +37,13 @@ func (s *service) Config() error {
 	}
 	s.ip = pkg.IP2Region
 
+	if pkg.Token == nil {
+		return fmt.Errorf("depence service token is nil")
+	}
+	s.token = pkg.Token
+
 	db := conf.C().Mongo.GetDB()
-	dc := db.Collection("login")
+	dc := db.Collection("session")
 
 	indexs := []mongo.IndexModel{
 		{
@@ -51,12 +59,12 @@ func (s *service) Config() error {
 		return err
 	}
 
-	s.login = dc
-	s.log = zap.L().Named("Audit")
+	s.col = dc
+	s.log = zap.L().Named("Session")
 	return nil
 }
 
 func init() {
-	var _ audit.Service = Service
-	pkg.RegistryService("audit", Service)
+	var _ session.Service = Service
+	pkg.RegistryService("session", Service)
 }

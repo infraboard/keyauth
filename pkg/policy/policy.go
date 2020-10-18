@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"hash/fnv"
 
+	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/types/ftime"
 
@@ -21,6 +22,10 @@ func New(t Type, req *CreatePolicyRequest) (*Policy, error) {
 	}
 
 	tk := req.GetToken()
+	if tk == nil {
+		return nil, exception.NewUnauthorized("token required")
+	}
+
 	p := &Policy{
 		Type:                t,
 		CreateAt:            ftime.Now(),
@@ -78,9 +83,11 @@ func (req *CreatePolicyRequest) CheckDependence(u user.Service, r role.Service, 
 		return nil, fmt.Errorf("check role error, %s", err)
 	}
 
-	_, err = ns.DescribeNamespace(namespace.NewNewDescriptNamespaceRequestWithID(req.NamespaceID))
-	if err != nil {
-		return nil, fmt.Errorf("check role error, %s", err)
+	if !req.IsAllNamespace() {
+		_, err = ns.DescribeNamespace(namespace.NewNewDescriptNamespaceRequestWithID(req.NamespaceID))
+		if err != nil {
+			return nil, fmt.Errorf("check namespace error, %s", err)
+		}
 	}
 
 	return account, nil
@@ -106,6 +113,11 @@ type CreatePolicyRequest struct {
 // Validate 校验请求合法
 func (req *CreatePolicyRequest) Validate() error {
 	return validate.Struct(req)
+}
+
+// IsAllNamespace 是否是对账所有namespace的测试
+func (req *CreatePolicyRequest) IsAllNamespace() bool {
+	return req.NamespaceID == "*"
 }
 
 // NewPolicySet todo

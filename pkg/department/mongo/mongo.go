@@ -12,6 +12,7 @@ import (
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/counter"
 	"github.com/infraboard/keyauth/pkg/department"
+	"github.com/infraboard/keyauth/pkg/role"
 	"github.com/infraboard/keyauth/pkg/user"
 )
 
@@ -26,6 +27,7 @@ type service struct {
 	notifyCachPre string
 	counter       counter.Service
 	user          user.Service
+	role          role.Service
 }
 
 func (s *service) Config() error {
@@ -37,6 +39,11 @@ func (s *service) Config() error {
 		return fmt.Errorf("dependence user service is nil")
 	}
 	s.user = pkg.User
+
+	if pkg.Role == nil {
+		return fmt.Errorf("dependence role service is nil")
+	}
+	s.role = pkg.Role
 
 	db := conf.C().Mongo.GetDB()
 	dc := db.Collection("department")

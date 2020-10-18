@@ -101,7 +101,8 @@ type service struct {
 }
 
 func (s *service) start() error {
-	s.log.Infof("loaded services: %v", pkg.LoadedService())
+	s.log.Infof("loaded pkg: %v", pkg.LoadedService())
+	s.log.Infof("loaded http: %s", pkg.LoadedHTTP())
 	return s.http.Start()
 }
 

@@ -11,73 +11,6 @@ import (
 	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
-// oauth2 Authorization Grant: https://tools.ietf.org/html/rfc6749#section-1.3
-const (
-	UNKNOWN GrantType = "unknwon"
-	// AUTHCODE oauth2 Authorization Code Grant
-	AUTHCODE GrantType = "authorization_code"
-	// IMPLICIT oauth2 Implicit Grant
-	IMPLICIT GrantType = "implicit"
-	// PASSWORD oauth2 Resource Owner Password Credentials Grant
-	PASSWORD GrantType = "password"
-	// CLIENT oauth2 Client Credentials Grant
-	CLIENT GrantType = "client_credentials"
-	// REFRESH oauth2 Refreshing an Access Token
-	REFRESH GrantType = "refresh_token"
-	// ACCESS is an custom grant for use use generate personal private token
-	ACCESS GrantType = "access_token"
-	// LDAP 通过ldap认证
-	LDAP GrantType = "ldap"
-)
-
-// ParseGrantTypeFromString todo
-func ParseGrantTypeFromString(str string) (GrantType, error) {
-	switch str {
-	case "authorization_code":
-		return AUTHCODE, nil
-	case "implicit":
-		return IMPLICIT, nil
-	case "password":
-		return PASSWORD, nil
-	case "client_credentials":
-		return CLIENT, nil
-	case "refresh_token":
-		return REFRESH, nil
-	case "access_token":
-		return ACCESS, nil
-	case "ldap":
-		return LDAP, nil
-	default:
-		return UNKNOWN, fmt.Errorf("unknown Grant type: %s", str)
-	}
-}
-
-// GrantType is the type for OAuth2 param ` grant_type`
-type GrantType string
-
-// Is 判断类型
-func (t GrantType) Is(tps ...GrantType) bool {
-	for i := range tps {
-		if tps[i] == t {
-			return true
-		}
-	}
-	return false
-}
-
-// oauth2 Token Type: https://tools.ietf.org/html/rfc6749#section-7.1
-const (
-	// Bearer detail: https://tools.ietf.org/html/rfc6750
-	Bearer Type = "bearer"
-	// MAC detail: https://tools.ietf.org/html/rfc6749#ref-OAuth-HTTP-MAC
-	MAC Type = "mac"
-	// JWT detail:  https://tools.ietf.org/html/rfc7519
-	JWT Type = "jwt"
-)
-
-// Type token type
-type Type string
-
 // use a single instance of Validate, it caches struct info
 var (
 	validate = validator.New()
@@ -90,6 +23,7 @@ func NewDefaultToken() *Token {
 
 // Token is user's access resource token
 type Token struct {
+	SessionID        string     `bson:"session_id" json:"session_id"`                           // 会话ID
 	AccessToken      string     `bson:"_id" json:"access_token"`                                // 服务访问令牌
 	RefreshToken     string     `bson:"refresh_token" json:"refresh_token,omitempty"`           // 用于刷新访问令牌的凭证, 刷新过后, 原先令牌将会被删除
 	CreatedAt        ftime.Time `bson:"create_at" json:"create_at,omitempty"`                   // 凭证创建时间
@@ -102,19 +36,91 @@ type Token struct {
 	ApplicationID   string     `bson:"application_id" json:"application_id,omitempty"`     // 用户应用ID, 如果凭证是颁发给应用的, 应用在删除时需要删除所有的令牌, 应用禁用时, 该应用令牌验证会不通过
 	ApplicationName string     `bson:"application_name" json:"application_name,omitempty"` // 应用名称
 	ClientID        string     `bson:"client_id" json:"client_id,omitempty"`               // 客户端ID
-	StartGrantType  GrantType  `bson:"start_grant_type" json:"start_grant_type,omitempty"` // 最开始授权类型
+	StartGrantType  *GrantType `bson:"start_grant_type" json:"start_grant_type,omitempty"` // 最开始授权类型
 	GrantType       GrantType  `bson:"grant_type" json:"grant_type,omitempty"`             // 授权的类型
 	Type            Type       `bson:"type" json:"type,omitempty"`                         // 令牌的类型 类型包含: bearer/jwt  (默认为bearer)
 	Scope           string     `bson:"scope" json:"scope,omitempty"`                       // 令牌的作用范围: detail https://tools.ietf.org/html/rfc6749#section-3.3, 格式 resource-ro@k=*, resource-rw@k=*
 	Description     string     `bson:"description" json:"description,omitempty"`           // 独立颁发给SDK使用时, 令牌的描述信息, 方便定位与取消
 	IsBlock         bool       `bson:"is_block" json:"is_block"`                           // 是否被禁用
+	BlockType       BlockType  `bson:"block_type" json:"block_type"`                       // 禁用类型
+	BlockAt         ftime.Time `bson:"block_at" json:"block_at"`                           // 禁用时间
 	BlockReason     string     `bson:"block_reason" json:"block_reason,omitempty"`         // 禁用原因
+
+	remoteIP  string
+	userAgent string
 }
 
-// Block 禁用token
-func (t *Token) Block(reason string) {
-	t.IsBlock = true
-	t.BlockReason = reason
+// IsRefresh todo
+func (t *Token) IsRefresh() bool {
+	return t.GrantType.Is(REFRESH)
+}
+
+// BlockMessage todo
+func (t *Token) BlockMessage() string {
+	if !t.IsBlock {
+		return ""
+	}
+
+	return fmt.Sprintf("token blocked at %s, reason: %s", t.BlockAt.T(), t.BlockReason)
+}
+
+// IsAvailable 判断一个token的可用性
+func (t *Token) IsAvailable() error {
+	if t.IsBlock {
+		return fmt.Errorf("token is blocked")
+	}
+
+	if t.CheckAccessIsExpired() {
+		return fmt.Errorf("token is expired")
+	}
+
+	return nil
+}
+
+// WithRemoteIP todo
+func (t *Token) WithRemoteIP(ip string) {
+	t.remoteIP = ip
+}
+
+// GetRemoteIP todo
+func (t *Token) GetRemoteIP() string {
+	return t.remoteIP
+}
+
+// WithUerAgent todo
+func (t *Token) WithUerAgent(ua string) {
+	t.userAgent = ua
+}
+
+// GetUserAgent todo
+func (t *Token) GetUserAgent() string {
+	return t.userAgent
+}
+
+// GetStartGrantType todo
+func (t *Token) GetStartGrantType() *GrantType {
+	if t.StartGrantType != nil {
+		return t.StartGrantType
+	}
+
+	return &t.GrantType
+}
+
+// EndAt token结束时间
+func (t *Token) EndAt() ftime.Time {
+	if !t.IsBlock {
+		return ftime.Time{}
+	}
+
+	if t.CheckRefreshIsExpired() {
+		return t.RefreshExpiredAt
+	}
+
+	if t.CheckAccessIsExpired() {
+		return t.AccessExpiredAt
+	}
+
+	return t.BlockAt
 }
 
 // CheckAccessIsExpired 检测token是否过期
@@ -128,6 +134,11 @@ func (t *Token) CheckAccessIsExpired() bool {
 
 // CheckRefreshIsExpired 检测刷新token是否过期
 func (t *Token) CheckRefreshIsExpired() bool {
+	// 过期时间为0时, 标识不过期
+	if t.RefreshExpiredAt.Timestamp() == 0 {
+		return false
+	}
+
 	return t.RefreshExpiredAt.T().Before(time.Now())
 }
 

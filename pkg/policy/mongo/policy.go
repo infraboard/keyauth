@@ -62,7 +62,7 @@ func (s *service) QueryPolicy(req *policy.QueryPolicyRequest) (
 		}
 
 		// 关联空间信息
-		if req.WithNamespace {
+		if req.WithNamespace && ins.NamespaceID != "*" {
 			descNS := namespace.NewNewDescriptNamespaceRequestWithID(ins.NamespaceID)
 			ins.Namespace, err = s.namespace.DescribeNamespace(descNS)
 			if err != nil {

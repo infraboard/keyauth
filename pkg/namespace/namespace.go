@@ -25,7 +25,6 @@ func NewNamespace(req *CreateNamespaceRequest, depart department.Service) (*Name
 	}
 
 	tk := req.GetToken()
-
 	ins := &Namespace{
 		ID:                     xid.New().String(),
 		Domain:                 tk.Domain,
@@ -37,16 +36,13 @@ func NewNamespace(req *CreateNamespaceRequest, depart department.Service) (*Name
 
 	descD := department.NewDescriptDepartmentRequest()
 	descD.WithTokenGetter(req)
-	descD.Name = req.Department
+	descD.ID = req.DepartmentID
 	d, err := depart.DescribeDepartment(descD)
 	if err != nil {
 		return nil, err
 	}
+	// 部门负责人就是空间负责人
 	ins.Owner = d.Manager
-
-	if ins.Owner == "" {
-		ins.Owner = tk.Account
-	}
 
 	return ins, nil
 }
@@ -79,12 +75,13 @@ func NewCreateNamespaceRequest() *CreateNamespaceRequest {
 // CreateNamespaceRequest 创建项目请求
 type CreateNamespaceRequest struct {
 	*token.Session `bson:"-" json:"-"`
-	Department     string `bson:"department" json:"department" validate:"required,lte=80"` // 部门名称
-	Name           string `bson:"name" json:"name" validate:"required,lte=80"`             // 项目名称
-	Picture        string `bson:"picture" json:"picture,omitempty"`                        // 项目描述图片
-	Enabled        bool   `bson:"enabled" json:"enabled,omitempty"`                        // 禁用项目, 该项目所有人暂时都无法访问
-	Owner          string `bson:"owner" json:"owner,omitempty"`                            // 项目所有者, PMO
-	Description    string `bson:"description" json:"description,omitempty"`                // 项目描述
+	DepartmentID   string                 `bson:"department_id" json:"department_id" validate:"required,lte=80"` // 所属部门
+	Name           string                 `bson:"name" json:"name" validate:"required,lte=80"`                   // 项目名称
+	Picture        string                 `bson:"picture" json:"picture,omitempty"`                              // 项目描述图片
+	Enabled        bool                   `bson:"enabled" json:"enabled,omitempty"`                              // 禁用项目, 该项目所有人暂时都无法访问
+	Owner          string                 `bson:"owner" json:"owner,omitempty"`                                  // 项目所有者, PMO
+	Description    string                 `bson:"description" json:"description,omitempty"`                      // 项目描述
+	Department     *department.Department `bson:"-" json:"department,omitempty"`                                 // 补充的部门
 }
 
 // Validate todo

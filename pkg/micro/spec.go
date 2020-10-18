@@ -3,6 +3,7 @@ package micro
 import (
 	"errors"
 
+	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/mcube/http/request"
 )
 
@@ -12,6 +13,7 @@ type Service interface {
 	QueryService(req *QueryMicroRequest) (*Set, error)
 	DescribeService(req *DescribeMicroRequest) (*Micro, error)
 	DeleteService(id string) error
+	RefreshServicToken(req *DescribeMicroRequest) (*token.Token, error)
 }
 
 // NewQueryMicroRequest 列表查询请求
@@ -26,6 +28,13 @@ type QueryMicroRequest struct {
 	*request.PageRequest
 }
 
+// NewDescriptServiceRequestWithAccount new实例
+func NewDescriptServiceRequestWithAccount(account string) *DescribeMicroRequest {
+	req := NewDescriptServiceRequest()
+	req.Account = account
+	return req
+}
+
 // NewDescriptServiceRequest new实例
 func NewDescriptServiceRequest() *DescribeMicroRequest {
 	return &DescribeMicroRequest{}
@@ -33,14 +42,15 @@ func NewDescriptServiceRequest() *DescribeMicroRequest {
 
 // DescribeMicroRequest 查询应用详情
 type DescribeMicroRequest struct {
-	Name string
-	ID   string
+	Account string
+	Name    string
+	ID      string
 }
 
 // Validate 校验详情查询请求
 func (req *DescribeMicroRequest) Validate() error {
-	if req.ID == "" && req.Name == "" {
-		return errors.New("id, name or service_id is required")
+	if req.ID == "" && req.Name == "" && req.Account == "" {
+		return errors.New("id, name or account is required")
 	}
 
 	return nil

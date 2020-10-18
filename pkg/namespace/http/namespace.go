@@ -79,8 +79,10 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
 
+	qs := r.URL.Query()
 	req := namespace.NewDescriptNamespaceRequest()
 	req.ID = rctx.PS.ByName("id")
+	req.WithDepartment = qs.Get("with_department") == "true"
 	d, err := h.service.DescribeNamespace(req)
 	if err != nil {
 		response.Failed(w, err)

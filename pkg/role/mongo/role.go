@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/infraboard/keyauth/pkg/role"
 	"github.com/infraboard/mcube/exception"
@@ -9,8 +10,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func (s *service) CreateRole(t role.Type, req *role.CreateRoleRequest) (*role.Role, error) {
-	r, err := role.New(t, req)
+func (s *service) CreateRole(req *role.CreateRoleRequest) (*role.Role, error) {
+	r, err := role.New(req)
 	if err != nil {
 		return nil, err
 	}
@@ -72,6 +73,15 @@ func (s *service) DescribeRole(req *role.DescribeRoleRequest) (*role.Role, error
 }
 
 func (s *service) DeleteRole(id string) error {
+	r, err := s.DescribeRole(role.NewDescribeRoleRequestWithID(id))
+	if err != nil {
+		return err
+	}
+
+	if r.Type.Is(role.BuildInType) {
+		return fmt.Errorf("build_in role can't be delete")
+	}
+
 	resp, err := s.col.DeleteOne(context.TODO(), bson.M{"_id": id})
 	if err != nil {
 		return exception.NewInternalServerError("delete role(%s) error, %s", id, err)
