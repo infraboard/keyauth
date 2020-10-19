@@ -16,9 +16,10 @@ var (
 
 // Service 策略服务
 type Service interface {
-	CreatePolicy(Type, *CreatePolicyRequest) (*Policy, error)
+	CreatePolicy(*CreatePolicyRequest) (*Policy, error)
 	QueryPolicy(*QueryPolicyRequest) (*Set, error)
 	DescribePolicy(*DescribePolicyRequest) (*Policy, error)
+	DeletePolicy(*DeletePolicyRequest) error
 }
 
 // NewQueryPolicyRequestFromHTTP 列表查询请求
@@ -83,4 +84,24 @@ func (req *DescribePolicyRequest) Validate() error {
 	}
 
 	return nil
+}
+
+// NewDeletePolicyRequestWithID todo
+func NewDeletePolicyRequestWithID(id string) *DeletePolicyRequest {
+	req := NewDeletePolicyRequest()
+	req.ID = id
+	return req
+}
+
+// NewDeletePolicyRequest todo
+func NewDeletePolicyRequest() *DeletePolicyRequest {
+	return &DeletePolicyRequest{
+		Session: token.NewSession(),
+	}
+}
+
+// DeletePolicyRequest todo
+type DeletePolicyRequest struct {
+	*token.Session
+	ID string
 }

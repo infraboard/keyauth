@@ -16,7 +16,7 @@ import (
 )
 
 // New 新实例
-func New(t Type, req *CreatePolicyRequest) (*Policy, error) {
+func New(req *CreatePolicyRequest) (*Policy, error) {
 	if err := req.Validate(); err != nil {
 		return nil, err
 	}
@@ -27,7 +27,6 @@ func New(t Type, req *CreatePolicyRequest) (*Policy, error) {
 	}
 
 	p := &Policy{
-		Type:                t,
 		CreateAt:            ftime.Now(),
 		UpdateAt:            ftime.Now(),
 		Creater:             tk.Account,
@@ -49,7 +48,6 @@ func NewDefaultPolicy() *Policy {
 // Policy 权限策略
 type Policy struct {
 	ID       string     `bson:"_id" json:"id"`              // 策略ID
-	Type     Type       `bson:"type" json:"type"`           // 策略的类型
 	CreateAt ftime.Time `bson:"create_at" json:"create_at"` // 创建时间
 	UpdateAt ftime.Time `bson:"update_at" json:"update_at"` // 更新时间
 	Domain   string     `bson:"domain" json:"domain"`       // 策略所属域
@@ -93,6 +91,20 @@ func (req *CreatePolicyRequest) CheckDependence(u user.Service, r role.Service, 
 	return account, nil
 }
 
+// func NewCreatePolicyRequestFromHTTP(r *http.Request) (*CreatePolicyRequest, error) {
+// 	tk, err := pkg.GetTokenFromContext(r)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	req := NewCreatePolicyRequest()
+// 	if err := request.GetDataFromRequest(r, req); err != nil {
+// 		response.Failed(w, err)
+// 		return nil,
+// 	}
+// 	req.WithToken(tk)
+// }
+
 // NewCreatePolicyRequest 请求实例
 func NewCreatePolicyRequest() *CreatePolicyRequest {
 	return &CreatePolicyRequest{
@@ -108,6 +120,7 @@ type CreatePolicyRequest struct {
 	RoleID         string     `bson:"role_id" json:"role_id" validate:"required,lte=40"`   // 角色名称
 	Scope          string     `bson:"scope" json:"scope"`                                  // 范围控制
 	ExpiredTime    ftime.Time `bson:"expired_time" json:"expired_time"`                    // 策略过期时间
+	Type           Type       `bson:"type" json:"type"`                                    // 策略的类型
 }
 
 // Validate 校验请求合法

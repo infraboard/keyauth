@@ -99,7 +99,8 @@ func (s *service) createPolicy(tk *token.Token, account, roleID string) (*policy
 	req.Account = account
 	req.NamespaceID = "*"
 	req.RoleID = roleID
-	return s.policy.CreatePolicy(policy.BuildInPolicy, req)
+	req.Type = policy.BuildInPolicy
+	return s.policy.CreatePolicy(req)
 }
 
 func (s *service) refreshServiceToken(at, rt string) (*token.Token, error) {
@@ -192,6 +193,16 @@ func (s *service) DeleteService(id string) error {
 	if _, err := s.DescribeService(describeReq); err != nil {
 		return err
 	}
+
+	// 删除服务默认策略
+
+	// 删除服务注册的Endpoint
+
+	// 删除服务的Token
+
+	// 关闭服务的会话
+
+	// 清除服务实体
 
 	_, err := s.scol.DeleteOne(context.TODO(), bson.M{"_id": id})
 	if err != nil {

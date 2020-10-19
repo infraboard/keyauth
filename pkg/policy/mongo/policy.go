@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/infraboard/mcube/exception"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -11,9 +12,9 @@ import (
 	"github.com/infraboard/keyauth/pkg/role"
 )
 
-func (s *service) CreatePolicy(t policy.Type, req *policy.CreatePolicyRequest) (
+func (s *service) CreatePolicy(req *policy.CreatePolicyRequest) (
 	*policy.Policy, error) {
-	ins, err := policy.New(t, req)
+	ins, err := policy.New(req)
 	if err != nil {
 		return nil, exception.NewBadRequest(err.Error())
 	}
@@ -100,4 +101,22 @@ func (s *service) DescribePolicy(req *policy.DescribePolicyRequest) (
 	}
 
 	return ins, nil
+}
+
+func (s *service) DeletePolicy(req *policy.DeletePolicyRequest) error {
+	r, err := newDeletePolicyRequest(req)
+	if err != nil {
+		return err
+	}
+
+	result, err := s.col.DeleteOne(context.TODO(), r.FindFilter())
+	if err != nil {
+		return exception.NewInternalServerError("delete policy(%s) error, %s", req.ID, err)
+	}
+
+	if result.DeletedCount == 0 {
+		return fmt.Errorf("policy %s not found", req.ID)
+	}
+
+	return nil
 }

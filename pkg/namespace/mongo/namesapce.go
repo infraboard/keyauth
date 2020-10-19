@@ -44,7 +44,8 @@ func (s *service) updateNamespacePolicy(ns *namespace.Namespace, tk *token.Token
 	pReq.NamespaceID = ns.ID
 	pReq.RoleID = r.ID
 	pReq.Account = ns.Owner
-	_, err = s.policy.CreatePolicy(policy.BuildInPolicy, pReq)
+	pReq.Type = policy.BuildInPolicy
+	_, err = s.policy.CreatePolicy(pReq)
 	if err != nil {
 		return err
 	}

@@ -179,7 +179,7 @@ func NewRevolkTokenRequest(clientID, clientSecret string) *RevolkTokenRequest {
 type RevolkTokenRequest struct {
 	ClientSecret  string `json:"client_secret,omitempty" validate:"required,lte=80"` // 客户端凭证
 	ClientID      string `json:"client_id,omitempty" validate:"required,lte=80"`     // 客户端ID
-	LogoutSession bool   `json:"logout_session"`                                     // 是否退出会话
+	LogoutSession bool   `json:"logout_session"`                                     // 是否退出会话, 当刷新token时 不需要退出会话
 	*DescribeTokenRequest
 }
 
