@@ -130,3 +130,17 @@ type DeletePolicyRequest struct {
 	NamespaceID    string `json:"namespace_id,omitempty"`
 	Type           *Type  `json:"type,omitempty"`
 }
+
+// Validate todo
+func (req *DeletePolicyRequest) Validate() error {
+	tk := req.GetToken()
+	if tk == nil {
+		return fmt.Errorf("token required")
+	}
+
+	if req.ID == "" {
+		return fmt.Errorf("policy id required")
+	}
+
+	return nil
+}

@@ -66,9 +66,16 @@ func (h *handler) GetService(w http.ResponseWriter, r *http.Request) {
 
 // DestroyService 销毁服务
 func (h *handler) DestroyService(w http.ResponseWriter, r *http.Request) {
-	rctx := context.GetContext(r)
+	tk, err := pkg.GetTokenFromContext(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
 
-	if err := h.service.DeleteService(rctx.PS.ByName("id")); err != nil {
+	rctx := context.GetContext(r)
+	req := micro.NewDeleteMicroRequestWithID(rctx.PS.ByName("id"))
+	req.WithToken(tk)
+	if err := h.service.DeleteService(req); err != nil {
 		response.Failed(w, err)
 		return
 	}

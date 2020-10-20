@@ -2,6 +2,7 @@ package micro
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/mcube/http/request"
@@ -12,7 +13,7 @@ type Service interface {
 	CreateService(req *CreateMicroRequest) (*Micro, error)
 	QueryService(req *QueryMicroRequest) (*Set, error)
 	DescribeService(req *DescribeMicroRequest) (*Micro, error)
-	DeleteService(id string) error
+	DeleteService(req *DeleteMicroRequest) error
 	RefreshServicToken(req *DescribeMicroRequest) (*token.Token, error)
 }
 
@@ -54,4 +55,32 @@ func (req *DescribeMicroRequest) Validate() error {
 	}
 
 	return nil
+}
+
+// NewDeleteMicroRequestWithID todo
+func NewDeleteMicroRequestWithID(id string) *DeleteMicroRequest {
+	return &DeleteMicroRequest{
+		Session: token.NewSession(),
+		ID:      id,
+	}
+}
+
+// Validate todo
+func (req *DeleteMicroRequest) Validate() error {
+	tk := req.GetToken()
+	if tk == nil {
+		return fmt.Errorf("token required")
+	}
+
+	if req.ID == "" {
+		return fmt.Errorf("micro service id required")
+	}
+
+	return nil
+}
+
+// DeleteMicroRequest todo
+type DeleteMicroRequest struct {
+	*token.Session
+	ID string
 }

@@ -198,28 +198,35 @@ func (s *service) RefreshServicToken(req *micro.DescribeMicroRequest) (
 	return tk, nil
 }
 
-func (s *service) DeleteService(id string) error {
+func (s *service) DeleteService(req *micro.DeleteMicroRequest) error {
+	if err := req.Validate(); err != nil {
+		return exception.NewBadRequest("validate delete service error, %s", err)
+	}
+
 	describeReq := micro.NewDescriptServiceRequest()
-	describeReq.ID = id
+	describeReq.ID = req.ID
 	svr, err := s.DescribeService(describeReq)
 	if err != nil {
 		return err
 	}
 
 	// 清除服务实体
-	_, err = s.scol.DeleteOne(context.TODO(), bson.M{"_id": id})
+	_, err = s.scol.DeleteOne(context.TODO(), bson.M{"_id": req.ID})
 	if err != nil {
-		return exception.NewInternalServerError("delete service(%s) error, %s", id, err)
+		return exception.NewInternalServerError("delete service(%s) error, %s", req.ID, err)
 	}
 
 	// 删除服务默认策略
-	err = s.policy.DeletePolicy(policy.NewDeletePolicyRequestWithAccount(svr.Account))
+	dpReq := policy.NewDeletePolicyRequestWithAccount(svr.Account)
+	dpReq.WithTokenGetter(req)
+	err = s.policy.DeletePolicy(dpReq)
 	if err != nil {
 		s.log.Errorf("delete service policy error, %s", err)
 	}
 
 	// 删除服务注册的Endpoint
-	err = s.endpoint.DeleteEndpoint(endpoint.NewDeleteEndpointRequestWithServiceID(svr.ID))
+	deReq := endpoint.NewDeleteEndpointRequestWithServiceID(svr.ID)
+	err = s.endpoint.DeleteEndpoint(deReq)
 	if err != nil {
 		s.log.Errorf("delete service endpoint error, %s", err)
 	}
