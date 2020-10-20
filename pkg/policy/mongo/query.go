@@ -100,6 +100,18 @@ func (r *deletePolicyRequest) FindFilter() bson.M {
 	if r.ID != "" {
 		filter["_id"] = r.ID
 	}
+	if r.Account != "" {
+		filter["account"] = r.Account
+	}
+	if r.RoleID != "" {
+		filter["role_id"] = r.RoleID
+	}
+	if r.NamespaceID != "" {
+		filter["namespace_id"] = r.NamespaceID
+	}
+	if r.Type != nil {
+		filter["type"] = r.Type
+	}
 
 	return filter
 }

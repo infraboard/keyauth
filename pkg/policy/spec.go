@@ -102,6 +102,10 @@ func NewDeletePolicyRequest() *DeletePolicyRequest {
 
 // DeletePolicyRequest todo
 type DeletePolicyRequest struct {
-	*token.Session
-	ID string
+	*token.Session `json:"-"`
+	ID             string `json:"id,omitempty"`
+	Account        string `json:"account,omitempty"`
+	RoleID         string `json:"role_id,omitempty"`
+	NamespaceID    string `json:"namespace_id,omitempty"`
+	Type           *Type  `json:"type,omitempty"`
 }
