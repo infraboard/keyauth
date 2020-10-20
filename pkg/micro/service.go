@@ -17,9 +17,6 @@ var (
 	validate = validator.New()
 )
 
-// Type 服务类型
-type Type string
-
 // Micro is service provider
 type Micro struct {
 	ID                  string     `bson:"_id" json:"id"`                        // 微服务ID
@@ -55,12 +52,14 @@ func NewCreateMicroRequest() *CreateMicroRequest {
 		Session: token.NewSession(),
 		Enabled: true,
 		Label:   map[string]string{},
+		Type:    BuildIn,
 	}
 }
 
 // CreateMicroRequest 服务创建请求
 type CreateMicroRequest struct {
 	*token.Session  `bson:"-" json:"-"`
+	Type            Type              `bson:"type" json:"type"`                                     // 服务类型
 	Name            string            `bson:"name" json:"name" validate:"required,lte=200"`         // 名称
 	Label           map[string]string `bson:"label" json:"label" validate:"lte=80"`                 // 服务标签
 	Description     string            `bson:"description" json:"description,omitempty"`             // 描述信息
