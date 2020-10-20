@@ -210,6 +210,10 @@ func (s *service) DeleteService(req *micro.DeleteMicroRequest) error {
 		return err
 	}
 
+	if micro.IsSystemMicro(svr.Name) {
+		return exception.NewBadRequest("service %s is system service, your can't delete", svr.Name)
+	}
+
 	// 清除服务实体
 	_, err = s.scol.DeleteOne(context.TODO(), bson.M{"_id": req.ID})
 	if err != nil {
