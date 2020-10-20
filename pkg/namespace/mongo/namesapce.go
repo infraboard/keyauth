@@ -136,5 +136,11 @@ func (s *service) DeleteNamespace(req *namespace.DeleteNamespaceRequest) error {
 		return fmt.Errorf("namespace %s not found", req.ID)
 	}
 
+	// 清除空间管理的所有策略
+	err = s.policy.DeletePolicy(policy.NewDeletePolicyRequestWithNamespaceID(req.ID))
+	if err != nil {
+		s.log.Errorf("delete namespace policy error, %s", err)
+	}
+
 	return nil
 }

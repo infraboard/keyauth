@@ -10,6 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 
 	common "github.com/infraboard/keyauth/common/types"
+	"github.com/infraboard/keyauth/pkg/policy"
 	"github.com/infraboard/keyauth/pkg/user"
 	"github.com/infraboard/keyauth/pkg/user/types"
 )
@@ -134,5 +135,11 @@ func (s *service) DeleteAccount(account string) error {
 	if err != nil {
 		return exception.NewInternalServerError("delete user(%s) error, %s", account, err)
 	}
+
+	// 清除账号的关联的所有策略
+	if err := s.policy.DeletePolicy(policy.NewDeletePolicyRequestWithAccount(account)); err != nil {
+		s.log.Errorf("delete account policy error, %s", err)
+	}
+
 	return nil
 }

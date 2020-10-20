@@ -93,6 +93,27 @@ func NewDeletePolicyRequestWithID(id string) *DeletePolicyRequest {
 	return req
 }
 
+// NewDeletePolicyRequestWithNamespaceID todo
+func NewDeletePolicyRequestWithNamespaceID(namespaceID string) *DeletePolicyRequest {
+	req := NewDeletePolicyRequest()
+	req.NamespaceID = namespaceID
+	return req
+}
+
+// NewDeletePolicyRequestWithAccount todo
+func NewDeletePolicyRequestWithAccount(account string) *DeletePolicyRequest {
+	req := NewDeletePolicyRequest()
+	req.Account = account
+	return req
+}
+
+// NewDeletePolicyRequestWithRoleID todo
+func NewDeletePolicyRequestWithRoleID(roleID string) *DeletePolicyRequest {
+	req := NewDeletePolicyRequest()
+	req.RoleID = roleID
+	return req
+}
+
 // NewDeletePolicyRequest todo
 func NewDeletePolicyRequest() *DeletePolicyRequest {
 	return &DeletePolicyRequest{
