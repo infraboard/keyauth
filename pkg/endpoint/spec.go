@@ -23,6 +23,7 @@ type Service interface {
 	DescribeEndpoint(req *DescribeEndpointRequest) (*Endpoint, error)
 	QueryEndpoints(req *QueryEndpointRequest) (*Set, error)
 	Registry(req *RegistryRequest) error
+	DeleteEndpoint(req *DeleteEndpointRequest) error
 }
 
 // NewRegistryRequest 注册请求
@@ -125,4 +126,14 @@ func (req *DescribeEndpointRequest) Validate() error {
 	}
 
 	return nil
+}
+
+// NewDeleteEndpointRequestWithServiceID todo
+func NewDeleteEndpointRequestWithServiceID(id string) *DeleteEndpointRequest {
+	return &DeleteEndpointRequest{ServiceID: id}
+}
+
+// DeleteEndpointRequest todo
+type DeleteEndpointRequest struct {
+	ServiceID string
 }

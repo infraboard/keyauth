@@ -9,6 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/infraboard/keyauth/pkg/application"
+	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/micro"
 	"github.com/infraboard/keyauth/pkg/policy"
 	"github.com/infraboard/keyauth/pkg/role"
@@ -81,6 +82,16 @@ func (s *service) createServiceToken(userAgent, remoteIP, user, pass string) (*t
 	req.WithRemoteIP(remoteIP)
 	req.WithUserAgent(userAgent)
 	return s.token.IssueToken(req)
+}
+
+func (s *service) revolkServiceToken(accessToken string) error {
+	app, err := s.app.GetBuildInApplication(application.AdminServiceApplicationName)
+	if err != nil {
+		return err
+	}
+	req := token.NewRevolkTokenRequest(app.ClientID, app.ClientSecret)
+	req.AccessToken = accessToken
+	return s.token.RevolkToken(req)
 }
 
 func (s *service) createPolicy(tk *token.Token, account, roleID string) (*policy.Policy, error) {
@@ -190,23 +201,34 @@ func (s *service) RefreshServicToken(req *micro.DescribeMicroRequest) (
 func (s *service) DeleteService(id string) error {
 	describeReq := micro.NewDescriptServiceRequest()
 	describeReq.ID = id
-	if _, err := s.DescribeService(describeReq); err != nil {
+	svr, err := s.DescribeService(describeReq)
+	if err != nil {
 		return err
 	}
 
-	// 删除服务默认策略
-
-	// 删除服务注册的Endpoint
-
-	// 删除服务的Token
-
-	// 关闭服务的会话
-
 	// 清除服务实体
-
-	_, err := s.scol.DeleteOne(context.TODO(), bson.M{"_id": id})
+	_, err = s.scol.DeleteOne(context.TODO(), bson.M{"_id": id})
 	if err != nil {
 		return exception.NewInternalServerError("delete service(%s) error, %s", id, err)
 	}
+
+	// 删除服务默认策略
+	err = s.policy.DeletePolicy(policy.NewDeletePolicyRequestWithAccount(svr.Account))
+	if err != nil {
+		s.log.Errorf("delete service policy error, %s", err)
+	}
+
+	// 删除服务注册的Endpoint
+	err = s.endpoint.DeleteEndpoint(endpoint.NewDeleteEndpointRequestWithServiceID(svr.ID))
+	if err != nil {
+		s.log.Errorf("delete service endpoint error, %s", err)
+	}
+
+	// 删除服务的Token
+	err = s.revolkServiceToken(svr.AccessToken)
+	if err != nil {
+		s.log.Errorf("revolk service token error, %s", err)
+	}
+
 	return nil
 }
