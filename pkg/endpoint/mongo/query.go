@@ -62,6 +62,18 @@ func (r *queryEndpointRequest) FindFilter() bson.M {
 	if r.ServiceID != "" {
 		filter["service_id"] = r.ServiceID
 	}
+	if r.Method != "" {
+		filter["method"] = r.Method
+	}
+	if r.Resource != "" {
+		filter["resource"] = r.Resource
+	}
+	if r.Path != "" {
+		filter["path"] = bson.M{"$regex": r.Path, "$options": "im"}
+	}
+	if r.FunctionName != "" {
+		filter["function_name"] = r.FunctionName
+	}
 
 	return filter
 }
