@@ -20,6 +20,16 @@ func TestConn(t *testing.T) {
 	should.True(ok)
 }
 
+func TestGetBaseDNFromUser(t *testing.T) {
+	should := assert.New(t)
+
+	conf := ldap.NewDefaultConfig()
+	conf.User = "cn=admin,dc=example,dc=org"
+	baseDN := conf.GetBaseDNFromUser()
+
+	should.Equal("dc=example,dc=org", baseDN)
+}
+
 func init() {
 	zap.DevelopmentSetup()
 }

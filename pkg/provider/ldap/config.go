@@ -37,7 +37,7 @@ type Config struct {
 func (c *Config) GetBaseDNFromUser() string {
 	baseDN := []string{}
 	for _, item := range strings.Split(c.User, ",") {
-		if !strings.HasPrefix("cn=", item) {
+		if !strings.HasPrefix(item, "cn=") {
 			baseDN = append(baseDN, item)
 		}
 	}
