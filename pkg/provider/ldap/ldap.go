@@ -18,6 +18,7 @@ const specialLDAPRunes = ",#+<>;\"="
 
 // UserProvider LDAP provider
 type UserProvider interface {
+	CheckConnect() error
 	CheckUserPassword(username string, password string) (bool, error)
 	GetDetails(username string) (*UserDetails, error)
 	UpdatePassword(username string, newPassword string) error
@@ -87,6 +88,17 @@ func (p *Provider) connect(userDN string, password string) (Connection, error) {
 	}
 
 	return conn, nil
+}
+
+// CheckConnect todo
+func (p *Provider) CheckConnect() error {
+	adminClient, err := p.connect(p.conf.User, p.conf.Password)
+	if err != nil {
+		return err
+	}
+	defer adminClient.Close()
+
+	return nil
 }
 
 // CheckUserPassword checks if provided password matches for the given user.

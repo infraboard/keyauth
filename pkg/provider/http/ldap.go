@@ -80,3 +80,20 @@ func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 	response.Success(w, d)
 	return
 }
+
+func (h *handler) Check(w http.ResponseWriter, r *http.Request) {
+	tk, err := pkg.GetTokenFromContext(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	req := provider.NewDescribeLDAPConfigWithDomain(tk.Domain)
+	if err := h.service.CheckConnect(req); err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	response.Success(w, "passed")
+	return
+}

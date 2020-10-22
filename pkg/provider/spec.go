@@ -15,6 +15,7 @@ type LDAP interface {
 	QueryConfig(*QueryLDAPConfigRequest) (*LDAPSet, error)
 	DescribeConfig(*DescribeLDAPConfig) (*LDAPConfig, error)
 	DeleteConfig(*DeleteLDAPConfig) error
+	CheckConnect(*DescribeLDAPConfig) error
 }
 
 // NewSaveLDAPConfigRequest todo

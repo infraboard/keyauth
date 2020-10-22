@@ -7,6 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/infraboard/keyauth/pkg/provider"
+	"github.com/infraboard/keyauth/pkg/provider/ldap"
 )
 
 func (s *service) SaveConfig(req *provider.SaveLDAPConfigRequest) (
@@ -79,4 +80,14 @@ func (s *service) DescribeConfig(req *provider.DescribeLDAPConfig) (*provider.LD
 
 func (s *service) DeleteConfig(req *provider.DeleteLDAPConfig) error {
 	return nil
+}
+
+func (s *service) CheckConnect(req *provider.DescribeLDAPConfig) error {
+	cfg, err := s.DescribeConfig(req)
+	if err != nil {
+		return err
+	}
+
+	p := ldap.NewProvider(cfg.Config)
+	return p.CheckConnect()
 }
