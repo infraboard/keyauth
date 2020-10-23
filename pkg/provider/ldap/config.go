@@ -9,10 +9,11 @@ import (
 func NewDefaultConfig() *Config {
 	return &Config{
 		MailAttribute:        "mail",
-		DisplayNameAttribute: "displayname",
+		DisplayNameAttribute: "displayName",
 		GroupNameAttribute:   "cn",
-		UsersFilter:          "(objectclass=simpleSecurityObject)",
 		UsernameAttribute:    "uid",
+		UsersFilter:          "(uid={input})",
+		GroupsFilter:         "(|(member={dn})(uid={username})(uid={input}))",
 	}
 }
 
