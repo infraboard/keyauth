@@ -58,3 +58,8 @@ func (c *Config) Validate() error {
 
 	return nil
 }
+
+// Desensitize todo
+func (c *Config) Desensitize() {
+	c.Password = ""
+}

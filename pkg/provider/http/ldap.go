@@ -77,6 +77,7 @@ func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	d.Desensitize()
 	response.Success(w, d)
 	return
 }
