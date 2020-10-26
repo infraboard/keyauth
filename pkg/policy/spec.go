@@ -16,9 +16,10 @@ var (
 
 // Service 策略服务
 type Service interface {
-	CreatePolicy(Type, *CreatePolicyRequest) (*Policy, error)
+	CreatePolicy(*CreatePolicyRequest) (*Policy, error)
 	QueryPolicy(*QueryPolicyRequest) (*Set, error)
 	DescribePolicy(*DescribePolicyRequest) (*Policy, error)
+	DeletePolicy(*DeletePolicyRequest) error
 }
 
 // NewQueryPolicyRequestFromHTTP 列表查询请求
@@ -78,6 +79,65 @@ type DescribePolicyRequest struct {
 
 // Validate todo
 func (req *DescribePolicyRequest) Validate() error {
+	if req.ID == "" {
+		return fmt.Errorf("policy id required")
+	}
+
+	return nil
+}
+
+// NewDeletePolicyRequestWithID todo
+func NewDeletePolicyRequestWithID(id string) *DeletePolicyRequest {
+	req := NewDeletePolicyRequest()
+	req.ID = id
+	return req
+}
+
+// NewDeletePolicyRequestWithNamespaceID todo
+func NewDeletePolicyRequestWithNamespaceID(namespaceID string) *DeletePolicyRequest {
+	req := NewDeletePolicyRequest()
+	req.NamespaceID = namespaceID
+	return req
+}
+
+// NewDeletePolicyRequestWithAccount todo
+func NewDeletePolicyRequestWithAccount(account string) *DeletePolicyRequest {
+	req := NewDeletePolicyRequest()
+	req.Account = account
+	return req
+}
+
+// NewDeletePolicyRequestWithRoleID todo
+func NewDeletePolicyRequestWithRoleID(roleID string) *DeletePolicyRequest {
+	req := NewDeletePolicyRequest()
+	req.RoleID = roleID
+	return req
+}
+
+// NewDeletePolicyRequest todo
+func NewDeletePolicyRequest() *DeletePolicyRequest {
+	return &DeletePolicyRequest{
+		Session: token.NewSession(),
+	}
+}
+
+// DeletePolicyRequest todo
+type DeletePolicyRequest struct {
+	*token.Session `json:"-"`
+	ID             string `json:"id,omitempty"`
+	Account        string `json:"account,omitempty"`
+	RoleID         string `json:"role_id,omitempty"`
+	NamespaceID    string `json:"namespace_id,omitempty"`
+	Type           *Type  `json:"type,omitempty"`
+}
+
+// Validate todo
+func (req *DeletePolicyRequest) Validate() error {
+	tk := req.GetToken()
+	if tk == nil {
+		return fmt.Errorf("token required")
+	}
+
 	if req.ID == "" {
 		return fmt.Errorf("policy id required")
 	}

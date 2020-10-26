@@ -108,19 +108,19 @@ func (t *Token) GetStartGrantType() *GrantType {
 
 // EndAt token结束时间
 func (t *Token) EndAt() ftime.Time {
-	if !t.IsBlock {
-		return ftime.Time{}
-	}
-
-	if t.CheckRefreshIsExpired() {
-		return t.RefreshExpiredAt
+	if t.IsBlock {
+		return t.BlockAt
 	}
 
 	if t.CheckAccessIsExpired() {
 		return t.AccessExpiredAt
 	}
 
-	return t.BlockAt
+	if t.CheckRefreshIsExpired() {
+		return t.RefreshExpiredAt
+	}
+
+	return ftime.Time{}
 }
 
 // CheckAccessIsExpired 检测token是否过期

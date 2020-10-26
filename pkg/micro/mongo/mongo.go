@@ -11,6 +11,7 @@ import (
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/application"
+	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/micro"
 	"github.com/infraboard/keyauth/pkg/policy"
 	"github.com/infraboard/keyauth/pkg/role"
@@ -30,12 +31,14 @@ type service struct {
 	fcol          *mongo.Collection
 	enableCache   bool
 	notifyCachPre string
-	token         token.Service
-	user          user.Service
-	app           application.Service
-	policy        policy.Service
-	role          role.Service
-	log           logger.Logger
+
+	token    token.Service
+	user     user.Service
+	app      application.Service
+	policy   policy.Service
+	role     role.Service
+	endpoint endpoint.Service
+	log      logger.Logger
 }
 
 func (s *service) Config() error {
@@ -93,6 +96,10 @@ func (s *service) configService() error {
 	}
 	s.role = pkg.Role
 
+	if pkg.Endpoint == nil {
+		return fmt.Errorf("dependence endpoint service is nil, please load first")
+	}
+	s.endpoint = pkg.Endpoint
 	return nil
 }
 

@@ -11,7 +11,9 @@ import (
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
 	"github.com/infraboard/mcube/types/ftime"
+	"github.com/rs/xid"
 
+	"github.com/infraboard/keyauth/common/password"
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/application"
 	"github.com/infraboard/keyauth/pkg/domain"
@@ -150,6 +152,7 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 
 		revolkReq := token.NewRevolkTokenRequest(app.ClientID, app.ClientSecret)
 		revolkReq.AccessToken = req.AccessToken
+		revolkReq.LogoutSession = false
 		if err := i.token.RevolkToken(revolkReq); err != nil {
 			return nil, err
 		}
@@ -188,7 +191,7 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 			return nil, exception.NewUnauthorized("用户名或者密码不对")
 		}
 		mockPrimary := i.mockBuildInToken(app, userName, ldapConf.Domain)
-		u, err := i.syncLDAPUser(mockPrimary, userName)
+		u, err := i.syncLDAPUser(mockPrimary, req.Username)
 		if err != nil {
 			return nil, err
 		}
@@ -226,12 +229,16 @@ func (i *issuer) genBaseDN(username string) (string, string, error) {
 func (i *issuer) syncLDAPUser(tk *token.Token, userName string) (*user.User, error) {
 	descUser := user.NewDescriptAccountRequestWithAccount(userName)
 	u, err := i.user.DescribeAccount(descUser)
-	if u.Type.Is(types.PrimaryAccount, types.SupperAccount) {
+
+	if u != nil && u.Type.Is(types.PrimaryAccount, types.SupperAccount) {
 		return nil, exception.NewBadRequest("用户名和主账号用户名冲突, 请修改")
 	}
+
 	if err != nil {
 		if exception.IsNotFoundError(err) {
 			req := user.NewCreateUserRequest()
+			req.Account = userName
+			req.Password = i.randomPass()
 			req.WithToken(tk)
 			u, err = i.user.CreateAccount(types.SubAccount, req)
 			if err != nil {
@@ -242,6 +249,18 @@ func (i *issuer) syncLDAPUser(tk *token.Token, userName string) (*user.User, err
 	}
 
 	return u, nil
+}
+
+func (i *issuer) randomPass() string {
+	rpass, err := password.NewWithDefault().Generate()
+	if err != nil {
+		i.log.Warnf("generate random password error, %s, use uuid for random password", err)
+	}
+	if rpass != nil {
+		return *rpass
+	}
+
+	return xid.New().String()
 }
 
 func (i *issuer) mockBuildInToken(app *application.Application, userName, domainID string) *token.Token {

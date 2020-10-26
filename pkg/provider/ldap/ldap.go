@@ -18,8 +18,9 @@ const specialLDAPRunes = ",#+<>;\"="
 
 // UserProvider LDAP provider
 type UserProvider interface {
+	CheckConnect() error
 	CheckUserPassword(username string, password string) (bool, error)
-	GetDetails(username string) (*UserDetails, error)
+	GetDetails(username string) (*UserProfile, error)
 	UpdatePassword(username string, newPassword string) error
 }
 
@@ -89,6 +90,17 @@ func (p *Provider) connect(userDN string, password string) (Connection, error) {
 	return conn, nil
 }
 
+// CheckConnect todo
+func (p *Provider) CheckConnect() error {
+	adminClient, err := p.connect(p.conf.User, p.conf.Password)
+	if err != nil {
+		return err
+	}
+	defer adminClient.Close()
+
+	return nil
+}
+
 // CheckUserPassword checks if provided password matches for the given user.
 func (p *Provider) CheckUserPassword(inputUsername string, password string) (bool, error) {
 	adminClient, err := p.connect(p.conf.User, p.conf.Password)
@@ -133,7 +145,6 @@ func (p *Provider) resolveUsersFilter(userFilter string, inputUsername string) s
 	// in configuration.
 	userFilter = strings.ReplaceAll(userFilter, "{username_attribute}", p.conf.UsernameAttribute)
 	userFilter = strings.ReplaceAll(userFilter, "{mail_attribute}", p.conf.MailAttribute)
-
 	return userFilter
 }
 
@@ -148,7 +159,9 @@ func (p *Provider) getUserProfile(conn Connection, inputUsername string) (*UserP
 
 	attributes := []string{"dn",
 		p.conf.MailAttribute,
-		p.conf.UsernameAttribute}
+		p.conf.UsernameAttribute,
+		p.conf.DisplayNameAttribute,
+	}
 
 	// Search for the given username.
 	searchRequest := ldap.NewSearchRequest(
@@ -186,6 +199,9 @@ func (p *Provider) getUserProfile(conn Connection, inputUsername string) (*UserP
 
 			userProfile.Username = attr.Values[0]
 		}
+		if attr.Name == p.conf.DisplayNameAttribute {
+			userProfile.DisplayName = attr.Values[0]
+		}
 	}
 
 	if userProfile.DN == "" {
@@ -213,7 +229,7 @@ func (p *Provider) resolveGroupsFilter(inputUsername string, profile *UserProfil
 }
 
 // GetDetails retrieve the groups a user belongs to.
-func (p *Provider) GetDetails(inputUsername string) (*UserDetails, error) {
+func (p *Provider) GetDetails(inputUsername string) (*UserProfile, error) {
 	conn, err := p.connect(p.conf.User, p.conf.Password)
 	if err != nil {
 		return nil, err
@@ -249,22 +265,16 @@ func (p *Provider) GetDetails(inputUsername string) (*UserDetails, error) {
 		return nil, fmt.Errorf("Unable to retrieve groups of user %s. Cause: %s", inputUsername, err)
 	}
 
-	groups := make([]string, 0)
-
 	for _, res := range sr.Entries {
 		if len(res.Attributes) == 0 {
 			p.log.Warnf("No groups retrieved from LDAP for user %s", inputUsername)
 			break
 		}
 		// Append all values of the document. Normally there should be only one per document.
-		groups = append(groups, res.Attributes[0].Values...)
+		profile.Groups = append(profile.Groups, res.Attributes[0].Values...)
 	}
 
-	return &UserDetails{
-		Username: profile.Username,
-		Emails:   profile.Emails,
-		Groups:   groups,
-	}, nil
+	return profile, nil
 }
 
 // UpdatePassword update the password of the given user.

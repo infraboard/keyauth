@@ -23,6 +23,7 @@ type Service interface {
 	DescribeEndpoint(req *DescribeEndpointRequest) (*Endpoint, error)
 	QueryEndpoints(req *QueryEndpointRequest) (*Set, error)
 	Registry(req *RegistryRequest) error
+	DeleteEndpoint(req *DeleteEndpointRequest) error
 }
 
 // NewRegistryRequest 注册请求
@@ -90,8 +91,12 @@ func NewQueryEndpointRequestFromHTTP(r *http.Request) *QueryEndpointRequest {
 	qs := r.URL.Query()
 
 	return &QueryEndpointRequest{
-		PageRequest: page,
-		ServiceID:   qs.Get("service_id"),
+		PageRequest:  page,
+		ServiceID:    qs.Get("service_id"),
+		Path:         qs.Get("path"),
+		Method:       qs.Get("method"),
+		FunctionName: qs.Get("function_name"),
+		Resource:     qs.Get("resource"),
 	}
 }
 
@@ -105,7 +110,12 @@ func NewQueryEndpointRequest(pageReq *request.PageRequest) *QueryEndpointRequest
 // QueryEndpointRequest 查询应用列表
 type QueryEndpointRequest struct {
 	*request.PageRequest
-	ServiceID string
+	ServiceID    string
+	Path         string
+	Method       string
+	FunctionName string
+	Resource     string
+	Labels       map[string]string
 }
 
 // NewDescribeEndpointRequestWithID todo
@@ -125,4 +135,14 @@ func (req *DescribeEndpointRequest) Validate() error {
 	}
 
 	return nil
+}
+
+// NewDeleteEndpointRequestWithServiceID todo
+func NewDeleteEndpointRequestWithServiceID(id string) *DeleteEndpointRequest {
+	return &DeleteEndpointRequest{ServiceID: id}
+}
+
+// DeleteEndpointRequest todo
+type DeleteEndpointRequest struct {
+	ServiceID string
 }

@@ -97,3 +97,13 @@ func (s *service) Registry(req *endpoint.RegistryRequest) error {
 
 	return nil
 }
+
+func (s *service) DeleteEndpoint(req *endpoint.DeleteEndpointRequest) error {
+	result, err := s.col.DeleteOne(context.TODO(), bson.M{"service_id": req.ServiceID})
+	if err != nil {
+		return exception.NewInternalServerError("delete service(%s) endpoint error, %s", req.ServiceID, err)
+	}
+
+	s.log.Infof("delete service %s endpoint success, total count: %d", req.ServiceID, result.DeletedCount)
+	return nil
+}

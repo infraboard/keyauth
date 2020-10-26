@@ -44,7 +44,8 @@ func (s *service) updateNamespacePolicy(ns *namespace.Namespace, tk *token.Token
 	pReq.NamespaceID = ns.ID
 	pReq.RoleID = r.ID
 	pReq.Account = ns.Owner
-	_, err = s.policy.CreatePolicy(policy.BuildInPolicy, pReq)
+	pReq.Type = policy.BuildInPolicy
+	_, err = s.policy.CreatePolicy(pReq)
 	if err != nil {
 		return err
 	}
@@ -133,6 +134,12 @@ func (s *service) DeleteNamespace(req *namespace.DeleteNamespaceRequest) error {
 
 	if result.DeletedCount == 0 {
 		return fmt.Errorf("namespace %s not found", req.ID)
+	}
+
+	// 清除空间管理的所有策略
+	err = s.policy.DeletePolicy(policy.NewDeletePolicyRequestWithNamespaceID(req.ID))
+	if err != nil {
+		s.log.Errorf("delete namespace policy error, %s", err)
 	}
 
 	return nil

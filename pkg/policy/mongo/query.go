@@ -80,3 +80,38 @@ func (r *queryPolicyRequest) FindFilter() bson.M {
 
 	return filter
 }
+
+func newDeletePolicyRequest(req *policy.DeletePolicyRequest) (*deletePolicyRequest, error) {
+	return &deletePolicyRequest{
+		DeletePolicyRequest: req,
+	}, nil
+}
+
+type deletePolicyRequest struct {
+	*policy.DeletePolicyRequest
+}
+
+func (r *deletePolicyRequest) FindFilter() bson.M {
+	tk := r.GetToken()
+
+	filter := bson.M{}
+	filter["domain"] = tk.Domain
+
+	if r.ID != "" {
+		filter["_id"] = r.ID
+	}
+	if r.Account != "" {
+		filter["account"] = r.Account
+	}
+	if r.RoleID != "" {
+		filter["role_id"] = r.RoleID
+	}
+	if r.NamespaceID != "" {
+		filter["namespace_id"] = r.NamespaceID
+	}
+	if r.Type != nil {
+		filter["type"] = r.Type
+	}
+
+	return filter
+}

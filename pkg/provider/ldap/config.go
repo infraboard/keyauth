@@ -9,10 +9,11 @@ import (
 func NewDefaultConfig() *Config {
 	return &Config{
 		MailAttribute:        "mail",
-		DisplayNameAttribute: "displayname",
+		DisplayNameAttribute: "displayName",
 		GroupNameAttribute:   "cn",
-		UsersFilter:          "(objectclass=simpleSecurityObject)",
 		UsernameAttribute:    "uid",
+		UsersFilter:          "(uid={input})",
+		GroupsFilter:         "(|(member={dn})(uid={username})(uid={input}))",
 	}
 }
 
@@ -37,7 +38,7 @@ type Config struct {
 func (c *Config) GetBaseDNFromUser() string {
 	baseDN := []string{}
 	for _, item := range strings.Split(c.User, ",") {
-		if !strings.HasPrefix("cn=", item) {
+		if !strings.HasPrefix(item, "cn=") {
 			baseDN = append(baseDN, item)
 		}
 	}
@@ -56,4 +57,9 @@ func (c *Config) Validate() error {
 	}
 
 	return nil
+}
+
+// Desensitize todo
+func (c *Config) Desensitize() {
+	c.Password = ""
 }

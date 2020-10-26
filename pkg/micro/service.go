@@ -2,7 +2,6 @@ package micro
 
 import (
 	"fmt"
-	"net/http"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/infraboard/mcube/exception"
@@ -17,9 +16,6 @@ import (
 var (
 	validate = validator.New()
 )
-
-// Type 服务类型
-type Type string
 
 // Micro is service provider
 type Micro struct {
@@ -56,41 +52,20 @@ func NewCreateMicroRequest() *CreateMicroRequest {
 		Session: token.NewSession(),
 		Enabled: true,
 		Label:   map[string]string{},
+		Type:    BuildIn,
 	}
 }
 
 // CreateMicroRequest 服务创建请求
 type CreateMicroRequest struct {
 	*token.Session  `bson:"-" json:"-"`
+	Type            Type              `bson:"type" json:"type"`                                     // 服务类型
 	Name            string            `bson:"name" json:"name" validate:"required,lte=200"`         // 名称
 	Label           map[string]string `bson:"label" json:"label" validate:"lte=80"`                 // 服务标签
 	Description     string            `bson:"description" json:"description,omitempty"`             // 描述信息
 	Enabled         bool              `bson:"enabled" json:"enabled"`                               // 是否启用该服务
 	TokenExpireTime int64             `bson:"token_expire_time" json:"token_expire_time,omitempty"` // 凭证申请的token的过期时间
 	RoleID          string            `bson:"role_id" json:"role_id,omitempty"`                     // 服务角色
-
-	ip string
-	ua string
-}
-
-// WithRemoteIPFromHTTP todo
-func (req *CreateMicroRequest) WithRemoteIPFromHTTP(r *http.Request) {
-	req.ip = request.GetRemoteIP(r)
-}
-
-// GetRemoteIP todo
-func (req *CreateMicroRequest) GetRemoteIP() string {
-	return req.ip
-}
-
-// WithUserAgent todo
-func (req *CreateMicroRequest) WithUserAgent(userAgent string) {
-	req.ua = userAgent
-}
-
-// GetUserAgent todo
-func (req *CreateMicroRequest) GetUserAgent() string {
-	return req.ua
 }
 
 // Validate 校验请求是否合法

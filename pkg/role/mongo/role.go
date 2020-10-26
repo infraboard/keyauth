@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/infraboard/keyauth/pkg/policy"
 	"github.com/infraboard/keyauth/pkg/role"
 	"github.com/infraboard/mcube/exception"
 	"go.mongodb.org/mongo-driver/bson"
@@ -89,6 +90,12 @@ func (s *service) DeleteRole(id string) error {
 
 	if resp.DeletedCount == 0 {
 		return exception.NewNotFound("role(%s) not found", id)
+	}
+
+	// 清除角色管理的策略
+	err = s.policy.DeletePolicy(policy.NewDeletePolicyRequestWithRoleID(id))
+	if err != nil {
+		s.log.Errorf("delete role policy error, %s", err)
 	}
 
 	return nil

@@ -319,7 +319,7 @@ func (i *Initialer) initService(r *role.Role) (*micro.Micro, error) {
 	req.WithToken(i.tk)
 	req.Name = version.ServiceName
 	req.Description = version.Description
-	req.Label = map[string]string{"type": "build_in"}
+	req.Type = micro.BuildIn
 	req.RoleID = r.ID
 	return pkg.Micro.CreateService(req)
 }

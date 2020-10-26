@@ -9,6 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/infraboard/keyauth/pkg/application"
+	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/micro"
 	"github.com/infraboard/keyauth/pkg/policy"
 	"github.com/infraboard/keyauth/pkg/role"
@@ -24,23 +25,28 @@ func (s *service) CreateService(req *micro.CreateMicroRequest) (
 		return nil, err
 	}
 
+	tk := req.GetToken()
+	if tk == nil {
+		return nil, exception.NewPermissionDeny("token required")
+	}
+
 	user, pass := ins.Name, xid.New().String()
 	// 创建服务用户
-	account, err := s.createServiceAccount(req.GetToken(), user, pass)
+	account, err := s.createServiceAccount(tk, user, pass)
 	if err != nil {
 		return nil, exception.NewInternalServerError("create service account error, %s", err)
 	}
 	ins.Account = account.Account
 
 	// 使用用户创建服务访问Token
-	tk, err := s.createServiceToken(req.GetUserAgent(), req.GetRemoteIP(), user, pass)
+	svrTK, err := s.createServiceToken(tk.GetUserAgent(), tk.GetRemoteIP(), user, pass)
 	if err != nil {
 		return nil, exception.NewInternalServerError("create service token error, %s", err)
 	}
-	ins.AccessToken = tk.AccessToken
-	ins.RefreshToken = tk.RefreshToken
-	ins.Creater = tk.Account
-	ins.Domain = tk.Domain
+	ins.AccessToken = svrTK.AccessToken
+	ins.RefreshToken = svrTK.RefreshToken
+	ins.Creater = svrTK.Account
+	ins.Domain = svrTK.Domain
 
 	// 为服务用户添加策略
 	_, err = s.createPolicy(tk, ins.Account, req.RoleID)
@@ -78,6 +84,16 @@ func (s *service) createServiceToken(userAgent, remoteIP, user, pass string) (*t
 	return s.token.IssueToken(req)
 }
 
+func (s *service) revolkServiceToken(accessToken string) error {
+	app, err := s.app.GetBuildInApplication(application.AdminServiceApplicationName)
+	if err != nil {
+		return err
+	}
+	req := token.NewRevolkTokenRequest(app.ClientID, app.ClientSecret)
+	req.AccessToken = accessToken
+	return s.token.RevolkToken(req)
+}
+
 func (s *service) createPolicy(tk *token.Token, account, roleID string) (*policy.Policy, error) {
 	if roleID == "" {
 		descR := role.NewDescribeRoleRequestWithName(role.VisitorRoleName)
@@ -94,7 +110,8 @@ func (s *service) createPolicy(tk *token.Token, account, roleID string) (*policy
 	req.Account = account
 	req.NamespaceID = "*"
 	req.RoleID = roleID
-	return s.policy.CreatePolicy(policy.BuildInPolicy, req)
+	req.Type = policy.BuildInPolicy
+	return s.policy.CreatePolicy(req)
 }
 
 func (s *service) refreshServiceToken(at, rt string) (*token.Token, error) {
@@ -181,16 +198,48 @@ func (s *service) RefreshServicToken(req *micro.DescribeMicroRequest) (
 	return tk, nil
 }
 
-func (s *service) DeleteService(id string) error {
+func (s *service) DeleteService(req *micro.DeleteMicroRequest) error {
+	if err := req.Validate(); err != nil {
+		return exception.NewBadRequest("validate delete service error, %s", err)
+	}
+
 	describeReq := micro.NewDescriptServiceRequest()
-	describeReq.ID = id
-	if _, err := s.DescribeService(describeReq); err != nil {
+	describeReq.ID = req.ID
+	svr, err := s.DescribeService(describeReq)
+	if err != nil {
 		return err
 	}
 
-	_, err := s.scol.DeleteOne(context.TODO(), bson.M{"_id": id})
-	if err != nil {
-		return exception.NewInternalServerError("delete service(%s) error, %s", id, err)
+	if micro.IsSystemMicro(svr.Name) {
+		return exception.NewBadRequest("service %s is system service, your can't delete", svr.Name)
 	}
+
+	// 清除服务实体
+	_, err = s.scol.DeleteOne(context.TODO(), bson.M{"_id": req.ID})
+	if err != nil {
+		return exception.NewInternalServerError("delete service(%s) error, %s", req.ID, err)
+	}
+
+	// 删除服务默认策略
+	dpReq := policy.NewDeletePolicyRequestWithAccount(svr.Account)
+	dpReq.WithTokenGetter(req)
+	err = s.policy.DeletePolicy(dpReq)
+	if err != nil {
+		s.log.Errorf("delete service policy error, %s", err)
+	}
+
+	// 删除服务注册的Endpoint
+	deReq := endpoint.NewDeleteEndpointRequestWithServiceID(svr.ID)
+	err = s.endpoint.DeleteEndpoint(deReq)
+	if err != nil {
+		s.log.Errorf("delete service endpoint error, %s", err)
+	}
+
+	// 删除服务的Token
+	err = s.revolkServiceToken(svr.AccessToken)
+	if err != nil {
+		s.log.Errorf("revolk service token error, %s", err)
+	}
+
 	return nil
 }

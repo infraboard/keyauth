@@ -24,6 +24,7 @@ func (h *handler) Registry(router router.SubRouter) {
 	r.BasePath("settings/ldap")
 	r.Permission(true)
 	r.Handle("POST", "/", h.Create).AddLabel(label.Create)
+	r.Handle("POST", "/conn_check", h.Check).AddLabel(label.Create)
 	r.Handle("GET", "/", h.Get).AddLabel(label.List)
 }
 

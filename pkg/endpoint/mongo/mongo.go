@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/infraboard/mcube/logger"
+	"github.com/infraboard/mcube/logger/zap"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/x/bsonx"
 
@@ -24,6 +26,7 @@ type service struct {
 	notifyCachPre string
 
 	micro micro.Service
+	log   logger.Logger
 }
 
 func (s *service) Config() error {
@@ -47,6 +50,7 @@ func (s *service) Config() error {
 		return fmt.Errorf("dependence micro service is nil, please load first")
 	}
 	s.micro = pkg.Micro
+	s.log = zap.L().Named("Endpoint")
 	return nil
 }
 
