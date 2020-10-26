@@ -43,6 +43,7 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	req := provider.NewSaveLDAPConfigRequest()
 	req.WithToken(tk)
+	req.GetDryRunParamFromHTTP(r)
 	if err := request.GetDataFromRequest(r, req); err != nil {
 		response.Failed(w, err)
 		return

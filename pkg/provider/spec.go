@@ -5,6 +5,7 @@ import (
 
 	"github.com/infraboard/mcube/http/request"
 
+	"github.com/infraboard/keyauth/common/dryrun"
 	"github.com/infraboard/keyauth/pkg/provider/ldap"
 	"github.com/infraboard/keyauth/pkg/token"
 )
@@ -24,6 +25,7 @@ func NewSaveLDAPConfigRequest() *SaveLDAPConfigRequest {
 		Session: token.NewSession(),
 		Enabled: true,
 		Config:  ldap.NewDefaultConfig(),
+		DryRun:  dryrun.NewDryRun(),
 	}
 }
 
@@ -32,6 +34,8 @@ type SaveLDAPConfigRequest struct {
 	Enabled        bool `bson:"enabled" json:"enabled"`
 	*ldap.Config   `bson:",inline"`
 	*token.Session `bson:"-" json:"-"`
+
+	*dryrun.DryRun
 }
 
 // Validate todo

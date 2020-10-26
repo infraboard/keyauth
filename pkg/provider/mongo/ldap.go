@@ -14,13 +14,27 @@ func (s *service) SaveConfig(req *provider.SaveLDAPConfigRequest) (
 	*provider.LDAPConfig, error) {
 	ins, err := provider.NewLDAPConfig(req)
 	if err != nil {
+		return nil, exception.NewBadRequest("validate error, %s", err)
+	}
+
+	p := ldap.NewProvider(ins.Config)
+	if err := p.CheckConnect(); err != nil {
+		return nil, exception.NewBadRequest("try connect ldap error, %s", err)
+	}
+
+	descLDAP := provider.NewDescribeLDAPConfigWithDomain(ins.Domain)
+	old, err := s.DescribeConfig(descLDAP)
+	if err != nil && !exception.IsNotFoundError(err) {
 		return nil, err
 	}
 
-	// 创建或者更新
-	descLDAP := provider.NewDescribeLDAPConfigWithDomain(ins.Domain)
-	_, err = s.DescribeConfig(descLDAP)
-	if exception.IsNotFoundError(err) {
+	// 如果是DryRun直接返回
+	if req.IsDryRun() {
+		return ins, nil
+	}
+
+	// 保存入库
+	if old == nil {
 		err = s.save(ins)
 	} else {
 		err = s.update(ins)
