@@ -26,7 +26,6 @@ func LoadConfigFromToml(filePath string) error {
 	if _, err := toml.DecodeFile(filePath, cfg); err != nil {
 		return err
 	}
-	global = cfg
 	return cfg.InitGloabl()
 }
 
@@ -36,6 +35,5 @@ func LoadConfigFromEnv() error {
 	if err := env.Parse(cfg); err != nil {
 		return fmt.Errorf("load config from env, %s", err.Error())
 	}
-	global = cfg
 	return cfg.InitGloabl()
 }
