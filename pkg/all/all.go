@@ -4,8 +4,6 @@ import (
 	// 加载服务模块
 	_ "github.com/infraboard/keyauth/pkg/application/http"
 	_ "github.com/infraboard/keyauth/pkg/application/mongo"
-	_ "github.com/infraboard/keyauth/pkg/session/http"
-	_ "github.com/infraboard/keyauth/pkg/session/mongo"
 	_ "github.com/infraboard/keyauth/pkg/counter/mongo"
 	_ "github.com/infraboard/keyauth/pkg/department/http"
 	_ "github.com/infraboard/keyauth/pkg/department/mongo"
@@ -29,6 +27,8 @@ import (
 	_ "github.com/infraboard/keyauth/pkg/provider/mongo"
 	_ "github.com/infraboard/keyauth/pkg/role/http"
 	_ "github.com/infraboard/keyauth/pkg/role/mongo"
+	_ "github.com/infraboard/keyauth/pkg/session/http"
+	_ "github.com/infraboard/keyauth/pkg/session/mongo"
 	_ "github.com/infraboard/keyauth/pkg/storage/mongo"
 	_ "github.com/infraboard/keyauth/pkg/token/http"
 	_ "github.com/infraboard/keyauth/pkg/token/mongo"
