@@ -66,3 +66,61 @@ func (t *Gender) UnmarshalJSON(b []byte) error {
 	*t = ins
 	return nil
 }
+
+var (
+	enumCreateTypeShowMap = map[CreateType]string{
+		DomainAdmin:  "domain_admin",
+		LDAPSync:     "ldap_sync",
+		UserRegistry: "user_registry",
+	}
+
+	enumCreateTypeIDMap = map[string]CreateType{
+		"domain_admin":  DomainAdmin,
+		"ldap_sync":     LDAPSync,
+		"user_registry": UserRegistry,
+	}
+)
+
+// ParseCreateType Parse CreateType from string
+func ParseCreateType(str string) (CreateType, error) {
+	key := strings.Trim(string(str), `"`)
+	v, ok := enumCreateTypeIDMap[key]
+	if !ok {
+		return 0, fmt.Errorf("unknown Status: %s", str)
+	}
+
+	return v, nil
+}
+
+// Is todo
+func (t CreateType) Is(target CreateType) bool {
+	return t == target
+}
+
+// String stringer
+func (t CreateType) String() string {
+	v, ok := enumCreateTypeShowMap[t]
+	if !ok {
+		return "unknown"
+	}
+
+	return v
+}
+
+// MarshalJSON todo
+func (t CreateType) MarshalJSON() ([]byte, error) {
+	b := bytes.NewBufferString(`"`)
+	b.WriteString(t.String())
+	b.WriteString(`"`)
+	return b.Bytes(), nil
+}
+
+// UnmarshalJSON todo
+func (t *CreateType) UnmarshalJSON(b []byte) error {
+	ins, err := ParseCreateType(string(b))
+	if err != nil {
+		return err
+	}
+	*t = ins
+	return nil
+}

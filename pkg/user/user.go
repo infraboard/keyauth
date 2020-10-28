@@ -62,9 +62,10 @@ type User struct {
 	Roles                 []string   `bson:"-" json:"roles,omitempty"`             // 用户的角色(当携带Namesapce查询时会有)
 	*CreateAccountRequest `bson:",inline"`
 
-	HashedPassword *Password              `bson:"password" json:"password,omitempty"` // 密码相关信息
-	Status         *Status                `bson:"status" json:"status,omitempty"`     // 用户状态
-	Department     *department.Department `bson:"-" json:"department,omitempty"`      // 部门
+	HashedPassword *Password              `bson:"password" json:"password,omitempty"`   // 密码相关信息
+	Status         *Status                `bson:"status" json:"status,omitempty"`       // 用户状态
+	IsInitialized  bool                   `bson:"is_initialized" json:"is_initialized"` // 用户是否初始化
+	Department     *department.Department `bson:"-" json:"department,omitempty"`        // 部门
 }
 
 // Block 锁用户
@@ -102,7 +103,8 @@ func (u *User) ChangePassword(old, new string) error {
 type CreateAccountRequest struct {
 	*token.Session `bson:"-" json:"-"`
 	*Profile       `bson:",inline"`
-	Password       string `bson:"-" json:"password" validate:"required,lte=80"` // 密码相关信息
+	CreateType     CreateType `bson:"create_type" json:"create_type"`               // 创建方式
+	Password       string     `bson:"-" json:"password" validate:"required,lte=80"` // 密码相关信息
 }
 
 // NewProfile todo
@@ -178,10 +180,11 @@ func NewHashedPassword(password string) (*Password, error) {
 
 // Password user's password
 type Password struct {
-	Password string     `bson:"password" json:"password,omitempty"`    // hash过后的密码
-	ExpireAt ftime.Time `bson:"expire_at" json:"expire_at,omitempty" ` // 密码过期时间
-	CreateAt ftime.Time `bson:"create_at" json:"create_at,omitempty" ` // 密码创建时间
-	UpdateAt ftime.Time `bson:"update_at" json:"update_at,omitempty"`  // 密码更新时间
+	Password  string     `bson:"password" json:"password,omitempty"`    // hash过后的密码
+	ExpireAt  ftime.Time `bson:"expire_at" json:"expire_at,omitempty" ` // 密码过期时间
+	CreateAt  ftime.Time `bson:"create_at" json:"create_at,omitempty" ` // 密码创建时间
+	UpdateAt  ftime.Time `bson:"update_at" json:"update_at,omitempty"`  // 密码更新时间
+	NeedReset bool       `bson:"need_reset" json:"need_reset"`          // 密码需要被重置
 }
 
 // CheckPassword 判断password 是否正确

@@ -236,16 +236,13 @@ func (i *issuer) syncLDAPUser(tk *token.Token, userName string) (*user.User, err
 
 	if err != nil {
 		if exception.IsNotFoundError(err) {
-			req := user.NewCreateUserRequest()
-			req.Account = userName
-			req.Password = i.randomPass()
-			req.WithToken(tk)
+			req := user.NewCreateUserRequestWithLDAPSync(userName, i.randomPass(), tk)
 			u, err = i.user.CreateAccount(types.SubAccount, req)
 			if err != nil {
 				return nil, err
 			}
 		}
-		return nil, err
+		return u, err
 	}
 
 	return u, nil

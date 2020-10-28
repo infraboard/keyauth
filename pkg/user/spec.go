@@ -118,6 +118,16 @@ func (req *QueryAccountRequest) Validate() error {
 	return nil
 }
 
+// NewCreateUserRequestWithLDAPSync todo
+func NewCreateUserRequestWithLDAPSync(username, password string, tk *token.Token) *CreateAccountRequest {
+	req := NewCreateUserRequest()
+	req.CreateType = LDAPSync
+	req.Account = username
+	req.Password = password
+	req.WithToken(tk)
+	return req
+}
+
 // NewCreateUserRequest 创建请求
 func NewCreateUserRequest() *CreateAccountRequest {
 	return &CreateAccountRequest{
