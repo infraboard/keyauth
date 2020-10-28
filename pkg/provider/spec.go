@@ -34,8 +34,7 @@ type SaveLDAPConfigRequest struct {
 	Enabled        bool `bson:"enabled" json:"enabled"`
 	*ldap.Config   `bson:",inline"`
 	*token.Session `bson:"-" json:"-"`
-
-	*dryrun.DryRun
+	*dryrun.DryRun `bson:"-" json:"-"`
 }
 
 // Validate todo
