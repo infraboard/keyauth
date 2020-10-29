@@ -37,6 +37,11 @@ var InitCmd = &cobra.Command{
 			return err
 		}
 
+		// 加载缓存
+		if err := loadCache(); err != nil {
+			return err
+		}
+
 		// 初始化服务层
 		if err := pkg.InitService(); err != nil {
 			return err
@@ -310,6 +315,7 @@ func (i *Initialer) initDepartment() (*department.Department, error) {
 	req := department.NewCreateDepartmentRequest()
 	req.Name = department.DefaultDepartmentName
 	req.DisplayName = "默认部门"
+	req.Manager = strings.TrimSpace(i.username)
 	req.WithToken(i.tk)
 	return pkg.Department.CreateDepartment(req)
 }
