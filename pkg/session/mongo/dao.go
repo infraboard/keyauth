@@ -3,10 +3,10 @@ package mongo
 import (
 	"context"
 
+	"github.com/infraboard/mcube/exception"
 	"go.mongodb.org/mongo-driver/bson"
 
 	"github.com/infraboard/keyauth/pkg/session"
-	"github.com/infraboard/mcube/exception"
 )
 
 func (s *service) updateSession(sess *session.Session) error {

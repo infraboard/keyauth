@@ -3,10 +3,11 @@ package http
 import (
 	"net/http"
 
-	"github.com/infraboard/keyauth/pkg"
-	"github.com/infraboard/keyauth/pkg/session"
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/response"
+
+	"github.com/infraboard/keyauth/pkg"
+	"github.com/infraboard/keyauth/pkg/session"
 )
 
 func (h *handler) QueryLoginLog(w http.ResponseWriter, r *http.Request) {
