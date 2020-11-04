@@ -6,6 +6,7 @@ import (
 
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/mcube/http/request"
+	"github.com/infraboard/mcube/types/ftime"
 )
 
 const (
@@ -20,6 +21,9 @@ type Service interface {
 	CreateDepartment(*CreateDepartmentRequest) (*Department, error)
 	UpdateDepartment(*UpdateDepartmentRequest) (*Department, error)
 	DeleteDepartment(*DeleteDepartmentRequest) error
+
+	JoinDepartment(*JoinDepartmentRequest) (*ApplicationForm, error)
+	DealApplicationForm(*DealApplicationFormRequest) (*ApplicationForm, error)
 }
 
 // NewQueryDepartmentRequestFromHTTP 列表查询请求
@@ -137,4 +141,27 @@ func (req *DeleteDepartmentRequest) Validate() error {
 	}
 
 	return nil
+}
+
+// JoinDepartmentRequest todo
+type JoinDepartmentRequest struct {
+	Accounts     []string `bson:"accounts" json:"accounts" validate:"required"`
+	DepartmentID string   `bson:"department_id" json:"department_id" validate:"required"`
+	Message      string   `bson:"message" json:"message"`
+}
+
+// ApplicationForm todo
+type ApplicationForm struct {
+	ID       string                `bson:"_id" json:"id"`              // 部门加入申请单ID
+	Creater  string                `bson:"creater" json:"creater"`     // 申请人
+	CreateAt ftime.Time            `bson:"create_at" json:"create_at"` // 创建时间
+	UpdateAt ftime.Time            `bson:"update_at" json:"update_at"` // 更新时间
+	Status   ApplicationFormStatus `bson:"status" json:"status"`       // 状态
+	*JoinDepartmentRequest
+}
+
+// DealApplicationFormRequest todo
+type DealApplicationFormRequest struct {
+	*token.Session
+	id string
 }
