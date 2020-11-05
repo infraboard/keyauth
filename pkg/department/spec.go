@@ -5,8 +5,10 @@ import (
 	"net/http"
 
 	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/types/ftime"
+	"github.com/rs/xid"
 )
 
 const (
@@ -145,9 +147,36 @@ func (req *DeleteDepartmentRequest) Validate() error {
 
 // JoinDepartmentRequest todo
 type JoinDepartmentRequest struct {
-	Accounts     []string `bson:"accounts" json:"accounts" validate:"required"`
-	DepartmentID string   `bson:"department_id" json:"department_id" validate:"required"`
-	Message      string   `bson:"message" json:"message"`
+	Account      string `bson:"account" json:"account" validate:"required"`             // 申请人
+	DepartmentID string `bson:"department_id" json:"department_id" validate:"required"` // 申请加入的部门
+	Message      string `bson:"message" json:"message"`                                 // 留言
+
+	*token.Session
+}
+
+// Validate todo
+func (req *JoinDepartmentRequest) Validate() error {
+	return validate.Struct(req)
+}
+
+// NewApplicationForm todo
+func NewApplicationForm(req *JoinDepartmentRequest) (*ApplicationForm, error) {
+	if err := req.Validate(); err != nil {
+		return nil, exception.NewBadRequest(err.Error())
+	}
+
+	tk := req.GetToken()
+
+	ins := &ApplicationForm{
+		ID:                    xid.New().String(),
+		CreateAt:              ftime.Now(),
+		UpdateAt:              ftime.Now(),
+		Creater:               tk.Account,
+		JoinDepartmentRequest: req,
+		Status:                Pending,
+	}
+
+	return ins, nil
 }
 
 // ApplicationForm todo
@@ -163,5 +192,6 @@ type ApplicationForm struct {
 // DealApplicationFormRequest todo
 type DealApplicationFormRequest struct {
 	*token.Session
-	id string
+	ID     string                `json:"id"`
+	Status ApplicationFormStatus `json:"status"` // 状态
 }
