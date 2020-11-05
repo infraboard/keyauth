@@ -30,3 +30,7 @@ func (s *service) DealApplicationForm(req *department.DealApplicationFormRequest
 	// }
 	return nil, nil
 }
+
+func (s *service) QueryApplicationForm(req *department.QueryApplicationFormRequet) (*department.ApplicationFormSet, error) {
+	return nil, nil
+}

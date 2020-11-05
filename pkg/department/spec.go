@@ -8,7 +8,6 @@ import (
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/types/ftime"
-	"github.com/rs/xid"
 )
 
 const (
@@ -24,6 +23,7 @@ type Service interface {
 	UpdateDepartment(*UpdateDepartmentRequest) (*Department, error)
 	DeleteDepartment(*DeleteDepartmentRequest) error
 
+	QueryApplicationForm(*QueryApplicationFormRequet) (*ApplicationFormSet, error)
 	JoinDepartment(*JoinDepartmentRequest) (*ApplicationForm, error)
 	DealApplicationForm(*DealApplicationFormRequest) (*ApplicationForm, error)
 }
@@ -147,7 +147,7 @@ func (req *DeleteDepartmentRequest) Validate() error {
 
 // JoinDepartmentRequest todo
 type JoinDepartmentRequest struct {
-	Account      string `bson:"account" json:"account" validate:"required"`             // 申请人
+	Account      string `bson:"_id" json:"account" validate:"required"`                 // 申请人
 	DepartmentID string `bson:"department_id" json:"department_id" validate:"required"` // 申请加入的部门
 	Message      string `bson:"message" json:"message"`                                 // 留言
 
@@ -168,7 +168,6 @@ func NewApplicationForm(req *JoinDepartmentRequest) (*ApplicationForm, error) {
 	tk := req.GetToken()
 
 	ins := &ApplicationForm{
-		ID:                    xid.New().String(),
 		CreateAt:              ftime.Now(),
 		UpdateAt:              ftime.Now(),
 		Creater:               tk.Account,
@@ -181,7 +180,6 @@ func NewApplicationForm(req *JoinDepartmentRequest) (*ApplicationForm, error) {
 
 // ApplicationForm todo
 type ApplicationForm struct {
-	ID       string                `bson:"_id" json:"id"`              // 部门加入申请单ID
 	Creater  string                `bson:"creater" json:"creater"`     // 申请人
 	CreateAt ftime.Time            `bson:"create_at" json:"create_at"` // 创建时间
 	UpdateAt ftime.Time            `bson:"update_at" json:"update_at"` // 更新时间
@@ -192,6 +190,26 @@ type ApplicationForm struct {
 // DealApplicationFormRequest todo
 type DealApplicationFormRequest struct {
 	*token.Session
-	ID     string                `json:"id"`
-	Status ApplicationFormStatus `json:"status"` // 状态
+	Account string                `json:"account"` // 用户
+	Status  ApplicationFormStatus `json:"status"`  // 状态
+}
+
+// ApplicationFormSet todo
+type ApplicationFormSet struct {
+	*request.PageRequest
+
+	Total int64              `json:"total"`
+	Items []*ApplicationForm `json:"items"`
+}
+
+// Add 添加
+func (s *ApplicationFormSet) Add(e *ApplicationForm) {
+	s.Items = append(s.Items, e)
+}
+
+// QueryApplicationFormRequet todo
+type QueryApplicationFormRequet struct {
+	*token.Session
+	Account      string
+	DepartmentID string
 }
