@@ -26,7 +26,7 @@ func (s *service) QueryDepartment(req *department.QueryDepartmentRequest) (
 	set := department.NewDepartmentSet(req.PageRequest)
 
 	if !req.SkipItems {
-		resp, err := s.col.Find(context.TODO(), query.FindFilter(), query.FindOptions())
+		resp, err := s.dc.Find(context.TODO(), query.FindFilter(), query.FindOptions())
 
 		if err != nil {
 			return nil, exception.NewInternalServerError("find department error, error is %s", err)
@@ -69,7 +69,7 @@ func (s *service) QueryDepartment(req *department.QueryDepartmentRequest) (
 	}
 
 	// count
-	count, err := s.col.CountDocuments(context.TODO(), query.FindFilter())
+	count, err := s.dc.CountDocuments(context.TODO(), query.FindFilter())
 	if err != nil {
 		return nil, exception.NewInternalServerError("get department count error, error is %s", err)
 	}
@@ -86,7 +86,7 @@ func (s *service) DescribeDepartment(req *department.DescribeDeparmentRequest) (
 	}
 
 	ins := department.NewDefaultDepartment()
-	if err := s.col.FindOne(context.TODO(), r.FindFilter()).Decode(ins); err != nil {
+	if err := s.dc.FindOne(context.TODO(), r.FindFilter()).Decode(ins); err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, exception.NewNotFound("department %s not found", req)
 		}
@@ -156,7 +156,7 @@ func (s *service) CreateDepartment(req *department.CreateDepartmentRequest) (
 		return nil, err
 	}
 
-	if _, err := s.col.InsertOne(context.TODO(), ins); err != nil {
+	if _, err := s.dc.InsertOne(context.TODO(), ins); err != nil {
 		return nil, exception.NewInternalServerError("inserted department(%s) document error, %s",
 			ins.Name, err)
 	}
@@ -196,7 +196,7 @@ func (s *service) DeleteDepartment(req *department.DeleteDepartmentRequest) erro
 		return exception.NewBadRequest("当前部门下还有%d个用户, 请先迁移用户", userSet.Total)
 	}
 
-	result, err := s.col.DeleteOne(context.TODO(), bson.M{"_id": req.ID})
+	result, err := s.dc.DeleteOne(context.TODO(), bson.M{"_id": req.ID})
 	if err != nil {
 		return exception.NewInternalServerError("delete department(%s) error, %s", req.ID, err)
 	}
@@ -227,7 +227,7 @@ func (s *service) UpdateDepartment(req *department.UpdateDepartmentRequest) (*de
 	}
 
 	dp.UpdateAt = ftime.Now()
-	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": dp.ID}, bson.M{"$set": dp})
+	_, err = s.dc.UpdateOne(context.TODO(), bson.M{"_id": dp.ID}, bson.M{"$set": dp})
 	if err != nil {
 		return nil, exception.NewInternalServerError("update domain(%s) error, %s", dp.Name, err)
 	}

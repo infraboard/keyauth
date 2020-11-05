@@ -22,7 +22,8 @@ var (
 )
 
 type service struct {
-	col           *mongo.Collection
+	dc            *mongo.Collection
+	ac            *mongo.Collection
 	enableCache   bool
 	notifyCachPre string
 	counter       counter.Service
@@ -46,9 +47,9 @@ func (s *service) Config() error {
 	s.role = pkg.Role
 
 	db := conf.C().Mongo.GetDB()
-	dc := db.Collection("department")
 
-	indexs := []mongo.IndexModel{
+	dc := db.Collection("department")
+	dcIndexs := []mongo.IndexModel{
 		{
 			Keys: bsonx.Doc{
 				{Key: "domain", Value: bsonx.Int32(-1)},
@@ -61,12 +62,25 @@ func (s *service) Config() error {
 		},
 	}
 
-	_, err := dc.Indexes().CreateMany(context.Background(), indexs)
+	ac := db.Collection("join_apply")
+	acIndexs := []mongo.IndexModel{
+		{
+			Keys: bsonx.Doc{{Key: "create_at", Value: bsonx.Int32(-1)}},
+		},
+	}
+
+	_, err := dc.Indexes().CreateMany(context.Background(), dcIndexs)
 	if err != nil {
 		return err
 	}
 
-	s.col = dc
+	_, err = dc.Indexes().CreateMany(context.Background(), acIndexs)
+	if err != nil {
+		return err
+	}
+
+	s.dc = dc
+	s.ac = ac
 	return nil
 }
 
