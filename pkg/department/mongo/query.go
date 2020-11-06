@@ -93,10 +93,11 @@ func (r *queryApplicationFormRequest) FindOptions() *options.FindOptions {
 }
 
 func (r *queryApplicationFormRequest) FindFilter() bson.M {
-	filter := bson.M{}
-
 	tk := r.GetToken()
+
+	filter := bson.M{}
 	filter["domain"] = tk.Domain
+
 	if r.Account != "" {
 		filter["_id"] = r.Account
 	}

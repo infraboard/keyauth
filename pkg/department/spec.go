@@ -152,7 +152,7 @@ func NewJoinDepartmentRequest() *JoinDepartmentRequest {
 
 // JoinDepartmentRequest todo
 type JoinDepartmentRequest struct {
-	Account      string `bson:"_id" json:"account" validate:"required"`                 // 申请人
+	Account      string `bson:"account" json:"account" validate:"required"`             // 申请人
 	DepartmentID string `bson:"department_id" json:"department_id" validate:"required"` // 申请加入的部门
 	Message      string `bson:"message" json:"message"`                                 // 留言
 

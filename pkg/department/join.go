@@ -1,20 +1,17 @@
 package department
 
 import (
-	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/types/ftime"
+	"github.com/rs/xid"
 )
 
 // NewApplicationForm todo
 func NewApplicationForm(req *JoinDepartmentRequest) (*ApplicationForm, error) {
-	if err := req.Validate(); err != nil {
-		return nil, exception.NewBadRequest(err.Error())
-	}
-
 	tk := req.GetToken()
 
 	ins := &ApplicationForm{
+		ID:                    xid.New().String(),
 		CreateAt:              ftime.Now(),
 		UpdateAt:              ftime.Now(),
 		Creater:               tk.Account,
@@ -34,6 +31,7 @@ func NewDeafultApplicationForm() *ApplicationForm {
 
 // ApplicationForm todo
 type ApplicationForm struct {
+	ID       string                `bson:"_id" json:"id"`              // 申请单ID
 	Creater  string                `bson:"creater" json:"creater"`     // 申请人
 	CreateAt ftime.Time            `bson:"create_at" json:"create_at"` // 创建时间
 	UpdateAt ftime.Time            `bson:"update_at" json:"update_at"` // 更新时间

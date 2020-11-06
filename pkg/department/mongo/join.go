@@ -11,6 +11,16 @@ import (
 )
 
 func (s *service) JoinDepartment(req *department.JoinDepartmentRequest) (*department.ApplicationForm, error) {
+	if err := req.Validate(); err != nil {
+		return nil, exception.NewBadRequest(err.Error())
+	}
+
+	// 检测部署是否存在
+	_, err := s.DescribeDepartment(department.NewDescriptDepartmentRequestWithID(req.DepartmentID))
+	if err != nil {
+		return nil, err
+	}
+
 	ins, err := department.NewApplicationForm(req)
 	if err != nil {
 		return nil, err
