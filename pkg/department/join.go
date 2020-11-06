@@ -57,6 +57,11 @@ type ApplicationFormSet struct {
 	Items []*ApplicationForm `json:"items"`
 }
 
+// Length 个数
+func (s *ApplicationFormSet) Length() int {
+	return len(s.Items)
+}
+
 // Add 添加
 func (s *ApplicationFormSet) Add(e *ApplicationForm) {
 	s.Items = append(s.Items, e)

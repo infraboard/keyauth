@@ -23,6 +23,11 @@ type handler struct {
 // Registry 注册HTTP服务路由
 func (h *handler) Registry(router router.SubRouter) {
 	appRouter := router.ResourceRouter("department")
+	appRouter.BasePath("join_apply")
+	appRouter.Handle("POST", "/", h.CreateJoinApply).AddLabel(label.Create)
+	appRouter.Handle("GET", "/", h.QueryJoinApply).AddLabel(label.List)
+	appRouter.Handle("PATCH", "/", h.DealJoinApply).AddLabel(label.Update)
+
 	appRouter.BasePath("departments")
 	appRouter.Permission(true)
 	appRouter.Handle("POST", "/", h.Create).AddLabel(label.Create)
@@ -32,7 +37,6 @@ func (h *handler) Registry(router router.SubRouter) {
 	appRouter.Handle("PATCH", "/:id", h.Patch).AddLabel(label.Update)
 	appRouter.Handle("GET", "/:id/subs", h.GetSub).AddLabel(label.Get)
 	appRouter.Handle("DELETE", "/:id", h.Delete).AddLabel(label.Delete)
-
 }
 
 func (h *handler) Config() error {

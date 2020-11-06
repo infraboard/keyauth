@@ -169,6 +169,20 @@ type DealApplicationFormRequest struct {
 	*token.Session
 	Account string                `json:"account"` // 用户
 	Status  ApplicationFormStatus `json:"status"`  // 状态
+	Message string                `json:"message"` // 备注
+}
+
+// Validate todo
+func (req *DealApplicationFormRequest) Validate() error {
+	if req.Account == "" {
+		return fmt.Errorf("account required one")
+	}
+
+	if req.Status.Is(Pending) {
+		return fmt.Errorf("status must be passed or deny")
+	}
+
+	return nil
 }
 
 // NewQueryApplicationFormRequetFromHTTP todo

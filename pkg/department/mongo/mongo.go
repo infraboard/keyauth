@@ -14,6 +14,8 @@ import (
 	"github.com/infraboard/keyauth/pkg/department"
 	"github.com/infraboard/keyauth/pkg/role"
 	"github.com/infraboard/keyauth/pkg/user"
+	"github.com/infraboard/mcube/logger"
+	"github.com/infraboard/mcube/logger/zap"
 )
 
 var (
@@ -29,6 +31,7 @@ type service struct {
 	counter       counter.Service
 	user          user.Service
 	role          role.Service
+	log           logger.Logger
 }
 
 func (s *service) Config() error {
@@ -81,6 +84,7 @@ func (s *service) Config() error {
 
 	s.dc = dc
 	s.ac = ac
+	s.log = zap.L().Named("Department")
 	return nil
 }
 
