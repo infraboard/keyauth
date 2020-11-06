@@ -164,6 +164,13 @@ func (req *JoinDepartmentRequest) Validate() error {
 	return validate.Struct(req)
 }
 
+// NewDefaultDealApplicationFormRequest todo
+func NewDefaultDealApplicationFormRequest() *DealApplicationFormRequest {
+	return &DealApplicationFormRequest{
+		Session: token.NewSession(),
+	}
+}
+
 // DealApplicationFormRequest todo
 type DealApplicationFormRequest struct {
 	*token.Session
