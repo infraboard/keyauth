@@ -5,9 +5,7 @@ import (
 	"net/http"
 
 	"github.com/infraboard/keyauth/pkg/token"
-	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/request"
-	"github.com/infraboard/mcube/types/ftime"
 )
 
 const (
@@ -145,6 +143,13 @@ func (req *DeleteDepartmentRequest) Validate() error {
 	return nil
 }
 
+// NewJoinDepartmentRequest todo
+func NewJoinDepartmentRequest() *JoinDepartmentRequest {
+	return &JoinDepartmentRequest{
+		Session: token.NewSession(),
+	}
+}
+
 // JoinDepartmentRequest todo
 type JoinDepartmentRequest struct {
 	Account      string `bson:"_id" json:"account" validate:"required"`                 // 申请人
@@ -159,34 +164,6 @@ func (req *JoinDepartmentRequest) Validate() error {
 	return validate.Struct(req)
 }
 
-// NewApplicationForm todo
-func NewApplicationForm(req *JoinDepartmentRequest) (*ApplicationForm, error) {
-	if err := req.Validate(); err != nil {
-		return nil, exception.NewBadRequest(err.Error())
-	}
-
-	tk := req.GetToken()
-
-	ins := &ApplicationForm{
-		CreateAt:              ftime.Now(),
-		UpdateAt:              ftime.Now(),
-		Creater:               tk.Account,
-		JoinDepartmentRequest: req,
-		Status:                Pending,
-	}
-
-	return ins, nil
-}
-
-// ApplicationForm todo
-type ApplicationForm struct {
-	Creater  string                `bson:"creater" json:"creater"`     // 申请人
-	CreateAt ftime.Time            `bson:"create_at" json:"create_at"` // 创建时间
-	UpdateAt ftime.Time            `bson:"update_at" json:"update_at"` // 更新时间
-	Status   ApplicationFormStatus `bson:"status" json:"status"`       // 状态
-	*JoinDepartmentRequest
-}
-
 // DealApplicationFormRequest todo
 type DealApplicationFormRequest struct {
 	*token.Session
@@ -194,22 +171,41 @@ type DealApplicationFormRequest struct {
 	Status  ApplicationFormStatus `json:"status"`  // 状态
 }
 
-// ApplicationFormSet todo
-type ApplicationFormSet struct {
-	*request.PageRequest
+// NewQueryApplicationFormRequetFromHTTP todo
+func NewQueryApplicationFormRequetFromHTTP(r *http.Request) *QueryApplicationFormRequet {
+	req := NewQueryApplicationFormRequet()
+	req.PageRequest = request.NewPageRequestFromHTTP(r)
 
-	Total int64              `json:"total"`
-	Items []*ApplicationForm `json:"items"`
+	qs := r.URL.Query()
+	req.Account = qs.Get("account")
+	req.DepartmentID = qs.Get("department_id")
+	req.SkipItems = qs.Get("skip_items") == "true"
+	return req
 }
 
-// Add 添加
-func (s *ApplicationFormSet) Add(e *ApplicationForm) {
-	s.Items = append(s.Items, e)
+// NewQueryApplicationFormRequet todo
+func NewQueryApplicationFormRequet() *QueryApplicationFormRequet {
+	return &QueryApplicationFormRequet{
+		Session:     token.NewSession(),
+		PageRequest: request.NewPageRequest(20, 1),
+		SkipItems:   false,
+	}
 }
 
 // QueryApplicationFormRequet todo
 type QueryApplicationFormRequet struct {
+	*request.PageRequest
 	*token.Session
 	Account      string
 	DepartmentID string
+	SkipItems    bool
+}
+
+// Validate 请求参数校验
+func (req *QueryApplicationFormRequet) Validate() error {
+	if req.Account == "" && req.DepartmentID == "" {
+		return fmt.Errorf("account and department_id required one")
+	}
+
+	return nil
 }

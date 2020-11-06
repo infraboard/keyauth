@@ -70,3 +70,39 @@ func (r *describeDepartmentRequest) FindFilter() bson.M {
 
 	return filter
 }
+
+func newQueryApplicationFormRequest(req *department.QueryApplicationFormRequet) *queryApplicationFormRequest {
+	return &queryApplicationFormRequest{req}
+}
+
+type queryApplicationFormRequest struct {
+	*department.QueryApplicationFormRequet
+}
+
+func (r *queryApplicationFormRequest) FindOptions() *options.FindOptions {
+	pageSize := int64(r.PageSize)
+	skip := int64(r.PageSize) * int64(r.PageNumber-1)
+
+	opt := &options.FindOptions{
+		Sort:  bson.D{{Key: "create_at", Value: -1}},
+		Limit: &pageSize,
+		Skip:  &skip,
+	}
+
+	return opt
+}
+
+func (r *queryApplicationFormRequest) FindFilter() bson.M {
+	filter := bson.M{}
+
+	tk := r.GetToken()
+	filter["domain"] = tk.Domain
+	if r.Account != "" {
+		filter["_id"] = r.Account
+	}
+	if r.DepartmentID != "" {
+		filter["department_id"] = r.DepartmentID
+	}
+
+	return filter
+}
