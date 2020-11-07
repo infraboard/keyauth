@@ -12,6 +12,7 @@ func NewApplicationForm(req *JoinDepartmentRequest) (*ApplicationForm, error) {
 
 	ins := &ApplicationForm{
 		ID:                    xid.New().String(),
+		Domain:                tk.Domain,
 		CreateAt:              ftime.Now(),
 		UpdateAt:              ftime.Now(),
 		Creater:               tk.Account,
@@ -31,12 +32,13 @@ func NewDeafultApplicationForm() *ApplicationForm {
 
 // ApplicationForm todo
 type ApplicationForm struct {
-	ID       string                `bson:"_id" json:"id"`              // 申请单ID
-	Creater  string                `bson:"creater" json:"creater"`     // 申请人
-	CreateAt ftime.Time            `bson:"create_at" json:"create_at"` // 创建时间
-	UpdateAt ftime.Time            `bson:"update_at" json:"update_at"` // 更新时间
-	Status   ApplicationFormStatus `bson:"status" json:"status"`       // 状态
-	*JoinDepartmentRequest
+	ID                     string                `bson:"_id" json:"id"`              // 申请单ID
+	Domain                 string                `bson:"domain" json:"domain"`       // 域
+	Creater                string                `bson:"creater" json:"creater"`     // 申请人
+	CreateAt               ftime.Time            `bson:"create_at" json:"create_at"` // 创建时间
+	UpdateAt               ftime.Time            `bson:"update_at" json:"update_at"` // 更新时间
+	Status                 ApplicationFormStatus `bson:"status" json:"status"`       // 状态
+	*JoinDepartmentRequest `bson:",inline"`
 }
 
 // NewDApplicationFormSet 实例化

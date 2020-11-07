@@ -1,6 +1,8 @@
 package mongo
 
 import (
+	"fmt"
+
 	"github.com/infraboard/mcube/exception"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -104,6 +106,33 @@ func (r *queryApplicationFormRequest) FindFilter() bson.M {
 	if r.DepartmentID != "" {
 		filter["department_id"] = r.DepartmentID
 	}
+	if r.Status != nil {
+		filter["status"] = 0
+	}
 
+	fmt.Print(filter)
+
+	return filter
+}
+
+func newDescribeApplicationForm(req *department.DescribeApplicationFormRequet) *describeApplicationForm {
+	return &describeApplicationForm{
+		DescribeApplicationFormRequet: req,
+	}
+}
+
+type describeApplicationForm struct {
+	*department.DescribeApplicationFormRequet
+}
+
+func (r *describeApplicationForm) FindFilter() bson.M {
+	tk := r.GetToken()
+
+	filter := bson.M{}
+	filter["domain"] = tk.Domain
+
+	if r.ID != "" {
+		filter["_id"] = r.ID
+	}
 	return filter
 }

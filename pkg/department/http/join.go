@@ -3,6 +3,7 @@ package http
 import (
 	"net/http"
 
+	"github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 
@@ -58,6 +59,7 @@ func (h *handler) QueryJoinApply(w http.ResponseWriter, r *http.Request) {
 
 // Create 创建主账号
 func (h *handler) DealJoinApply(w http.ResponseWriter, r *http.Request) {
+	rctx := context.GetContext(r)
 	tk, err := pkg.GetTokenFromContext(r)
 	if err != nil {
 		response.Failed(w, err)
@@ -70,6 +72,7 @@ func (h *handler) DealJoinApply(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	req.WithToken(tk)
+	req.ID = rctx.PS.ByName("id")
 
 	ins, err := h.service.DealApplicationForm(req)
 	if err != nil {

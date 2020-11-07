@@ -22,6 +22,7 @@ type Service interface {
 	DeleteDepartment(*DeleteDepartmentRequest) error
 
 	QueryApplicationForm(*QueryApplicationFormRequet) (*ApplicationFormSet, error)
+	DescribeApplicationForm(*DescribeApplicationFormRequet) (*ApplicationForm, error)
 	JoinDepartment(*JoinDepartmentRequest) (*ApplicationForm, error)
 	DealApplicationForm(*DealApplicationFormRequest) (*ApplicationForm, error)
 }
@@ -156,11 +157,15 @@ type JoinDepartmentRequest struct {
 	DepartmentID string `bson:"department_id" json:"department_id" validate:"required"` // 申请加入的部门
 	Message      string `bson:"message" json:"message"`                                 // 留言
 
-	*token.Session
+	*token.Session `bson:"-"`
 }
 
 // Validate todo
 func (req *JoinDepartmentRequest) Validate() error {
+	if req.GetToken() == nil {
+		return fmt.Errorf("token required")
+	}
+
 	return validate.Struct(req)
 }
 
@@ -174,14 +179,14 @@ func NewDefaultDealApplicationFormRequest() *DealApplicationFormRequest {
 // DealApplicationFormRequest todo
 type DealApplicationFormRequest struct {
 	*token.Session
-	Account string                `json:"account"` // 用户
+	ID      string                `json:"id"`      // 用户
 	Status  ApplicationFormStatus `json:"status"`  // 状态
 	Message string                `json:"message"` // 备注
 }
 
 // Validate todo
 func (req *DealApplicationFormRequest) Validate() error {
-	if req.Account == "" {
+	if req.ID == "" {
 		return fmt.Errorf("account required one")
 	}
 
@@ -219,14 +224,33 @@ type QueryApplicationFormRequet struct {
 	*token.Session
 	Account      string
 	DepartmentID string
+	Status       *ApplicationFormStatus
 	SkipItems    bool
 }
 
 // Validate 请求参数校验
 func (req *QueryApplicationFormRequet) Validate() error {
+	if req.GetToken() == nil {
+		return fmt.Errorf("token required")
+	}
+
 	if req.Account == "" && req.DepartmentID == "" {
 		return fmt.Errorf("account and department_id required one")
 	}
 
 	return nil
+}
+
+// NewDescribeApplicationFormRequetWithID todo
+func NewDescribeApplicationFormRequetWithID(id string) *DescribeApplicationFormRequet {
+	return &DescribeApplicationFormRequet{
+		Session: token.NewSession(),
+		ID:      id,
+	}
+}
+
+// DescribeApplicationFormRequet todo
+type DescribeApplicationFormRequet struct {
+	*token.Session
+	ID string
 }

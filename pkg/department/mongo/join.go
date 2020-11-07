@@ -6,8 +6,13 @@ import (
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/types/ftime"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/infraboard/keyauth/pkg/department"
+)
+
+var (
+	pending = department.Pending
 )
 
 func (s *service) JoinDepartment(req *department.JoinDepartmentRequest) (*department.ApplicationForm, error) {
@@ -21,12 +26,26 @@ func (s *service) JoinDepartment(req *department.JoinDepartmentRequest) (*depart
 		return nil, err
 	}
 
+	// 一个用户只能申请加入一个部门
+	query := department.NewQueryApplicationFormRequet()
+	query.SkipItems = true
+	query.Account = req.Account
+	query.Status = &pending
+	query.WithTokenGetter(req)
+	as, err := s.QueryApplicationForm(query)
+	if err != nil {
+		return nil, err
+	}
+	if as.Total > 1 {
+		return nil, exception.NewBadRequest("your has an join_apply pendding")
+	}
+
 	ins, err := department.NewApplicationForm(req)
 	if err != nil {
 		return nil, err
 	}
 
-	if _, err := s.dc.InsertOne(context.TODO(), ins); err != nil {
+	if _, err := s.ac.InsertOne(context.TODO(), ins); err != nil {
 		return nil, exception.NewInternalServerError("inserted join_apply(%s) document error, %s",
 			ins.Creater, err)
 	}
@@ -39,24 +58,15 @@ func (s *service) DealApplicationForm(req *department.DealApplicationFormRequest
 		return nil, exception.NewBadRequest("validate deal application form request error, %s", err)
 	}
 
-	query := department.NewQueryApplicationFormRequet()
-	query.WithTokenGetter(req)
-	query.Account = req.Account
+	descReq := department.NewDescribeApplicationFormRequetWithID(req.ID)
+	descReq.WithTokenGetter(req)
 
-	as, err := s.QueryApplicationForm(query)
+	af, err := s.DescribeApplicationForm(descReq)
 	if err != nil {
 		return nil, err
 	}
-	if as.Length() == 0 {
-		return nil, exception.NewBadRequest("application form not found")
-	}
-
-	if as.Length() > 1 {
-		s.log.Errorf("there has more than one application form to account, only deal first one")
-	}
 
 	// 判断用户申请的部门是否还存在
-	af := as.Items[0]
 	dp, err := s.DescribeDepartment(department.NewDescriptDepartmentRequestWithID(af.DepartmentID))
 	if err != nil {
 		return nil, err
@@ -67,10 +77,13 @@ func (s *service) DealApplicationForm(req *department.DealApplicationFormRequest
 		return nil, exception.NewPermissionDeny("only department manger can deal join apply")
 	}
 
+	// 修改用户的归属部门
+
+	// 持久化数据
 	af.UpdateAt = ftime.Now()
 	af.Status = req.Status
 	af.Message = req.Message
-	_, err = s.dc.UpdateOne(context.TODO(), bson.M{"_id": af.Account}, bson.M{"$set": af})
+	_, err = s.ac.UpdateOne(context.TODO(), bson.M{"_id": af.Account}, bson.M{"$set": af})
 	if err != nil {
 		return nil, exception.NewInternalServerError("update account(%s) application form  error, %s", af.Account, err)
 	}
@@ -87,7 +100,7 @@ func (s *service) QueryApplicationForm(req *department.QueryApplicationFormReque
 	set := department.NewDApplicationFormSet(req.PageRequest)
 
 	if !req.SkipItems {
-		resp, err := s.dc.Find(context.TODO(), query.FindFilter(), query.FindOptions())
+		resp, err := s.ac.Find(context.TODO(), query.FindFilter(), query.FindOptions())
 
 		if err != nil {
 			return nil, exception.NewInternalServerError("find application form error, error is %s", err)
@@ -105,10 +118,26 @@ func (s *service) QueryApplicationForm(req *department.QueryApplicationFormReque
 	}
 
 	// count
-	count, err := s.dc.CountDocuments(context.TODO(), query.FindFilter())
+	count, err := s.ac.CountDocuments(context.TODO(), query.FindFilter())
 	if err != nil {
 		return nil, exception.NewInternalServerError("get application form count error, error is %s", err)
 	}
 	set.Total = count
+	return set, nil
+}
+
+func (s *service) DescribeApplicationForm(req *department.DescribeApplicationFormRequet) (
+	*department.ApplicationForm, error) {
+	r := newDescribeApplicationForm(req)
+
+	ins := department.NewDefaultDepartment()
+	if err := s.ac.FindOne(context.TODO(), r.FindFilter()).Decode(ins); err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, exception.NewNotFound("application form %s not found", req)
+		}
+
+		return nil, exception.NewInternalServerError("find application form %s error, %s", req.ID, err)
+	}
+
 	return nil, nil
 }

@@ -64,6 +64,10 @@ func (s *service) Config() error {
 			Keys: bsonx.Doc{{Key: "create_at", Value: bsonx.Int32(-1)}},
 		},
 	}
+	_, err := dc.Indexes().CreateMany(context.Background(), dcIndexs)
+	if err != nil {
+		return err
+	}
 
 	ac := db.Collection("join_apply")
 	acIndexs := []mongo.IndexModel{
@@ -71,13 +75,7 @@ func (s *service) Config() error {
 			Keys: bsonx.Doc{{Key: "create_at", Value: bsonx.Int32(-1)}},
 		},
 	}
-
-	_, err := dc.Indexes().CreateMany(context.Background(), dcIndexs)
-	if err != nil {
-		return err
-	}
-
-	_, err = dc.Indexes().CreateMany(context.Background(), acIndexs)
+	_, err = ac.Indexes().CreateMany(context.Background(), acIndexs)
 	if err != nil {
 		return err
 	}

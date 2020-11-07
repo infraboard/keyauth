@@ -26,7 +26,7 @@ func (h *handler) Registry(router router.SubRouter) {
 	appRouter.BasePath("join_apply")
 	appRouter.Handle("POST", "/", h.CreateJoinApply).AddLabel(label.Create)
 	appRouter.Handle("GET", "/", h.QueryJoinApply).AddLabel(label.List)
-	appRouter.Handle("PATCH", "/", h.DealJoinApply).AddLabel(label.Update)
+	appRouter.Handle("PATCH", "/:id", h.DealJoinApply).AddLabel(label.Update)
 
 	appRouter.BasePath("departments")
 	appRouter.Permission(true)
