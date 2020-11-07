@@ -9,6 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/infraboard/keyauth/pkg/department"
+	"github.com/infraboard/keyauth/pkg/user"
 )
 
 var (
@@ -66,6 +67,10 @@ func (s *service) DealApplicationForm(req *department.DealApplicationFormRequest
 		return nil, err
 	}
 
+	if !af.Status.Is(department.Pending) {
+		return nil, exception.NewBadRequest("application form has deal")
+	}
+
 	// 判断用户申请的部门是否还存在
 	dp, err := s.DescribeDepartment(department.NewDescriptDepartmentRequestWithID(af.DepartmentID))
 	if err != nil {
@@ -78,14 +83,32 @@ func (s *service) DealApplicationForm(req *department.DealApplicationFormRequest
 	}
 
 	// 修改用户的归属部门
+	u, err := s.user.DescribeAccount(user.NewDescriptAccountRequestWithAccount(af.Account))
+	if err != nil {
+		return nil, err
+	}
+
+	if u.HasDepartment() {
+		return nil, exception.NewBadRequest("user has deparment can't join other")
+	}
+
+	u.DepartmentID = af.DepartmentID
+	patchReq := user.NewPutAccountRequest()
+	patchReq.Profile = u.Profile
+	patchReq.WithTokenGetter(req)
+
+	_, err = s.user.UpdateAccountProfile(patchReq)
+	if err != nil {
+		return nil, err
+	}
 
 	// 持久化数据
 	af.UpdateAt = ftime.Now()
 	af.Status = req.Status
 	af.Message = req.Message
-	_, err = s.ac.UpdateOne(context.TODO(), bson.M{"_id": af.Account}, bson.M{"$set": af})
+	_, err = s.ac.UpdateOne(context.TODO(), bson.M{"_id": af.ID}, bson.M{"$set": af})
 	if err != nil {
-		return nil, exception.NewInternalServerError("update account(%s) application form  error, %s", af.Account, err)
+		return nil, exception.NewInternalServerError("update id(%s) application form  error, %s", af.Account, err)
 	}
 
 	return af, nil
@@ -130,7 +153,7 @@ func (s *service) DescribeApplicationForm(req *department.DescribeApplicationFor
 	*department.ApplicationForm, error) {
 	r := newDescribeApplicationForm(req)
 
-	ins := department.NewDefaultDepartment()
+	ins := department.NewDeafultApplicationForm()
 	if err := s.ac.FindOne(context.TODO(), r.FindFilter()).Decode(ins); err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, exception.NewNotFound("application form %s not found", req)
@@ -139,5 +162,5 @@ func (s *service) DescribeApplicationForm(req *department.DescribeApplicationFor
 		return nil, exception.NewInternalServerError("find application form %s error, %s", req.ID, err)
 	}
 
-	return nil, nil
+	return ins, nil
 }

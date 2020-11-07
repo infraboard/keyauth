@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/request"
 )
 
@@ -198,7 +199,7 @@ func (req *DealApplicationFormRequest) Validate() error {
 }
 
 // NewQueryApplicationFormRequetFromHTTP todo
-func NewQueryApplicationFormRequetFromHTTP(r *http.Request) *QueryApplicationFormRequet {
+func NewQueryApplicationFormRequetFromHTTP(r *http.Request) (*QueryApplicationFormRequet, error) {
 	req := NewQueryApplicationFormRequet()
 	req.PageRequest = request.NewPageRequestFromHTTP(r)
 
@@ -206,7 +207,13 @@ func NewQueryApplicationFormRequetFromHTTP(r *http.Request) *QueryApplicationFor
 	req.Account = qs.Get("account")
 	req.DepartmentID = qs.Get("department_id")
 	req.SkipItems = qs.Get("skip_items") == "true"
-	return req
+
+	status, err := ParseApplicationFormStatus(qs.Get("status"))
+	if err != nil {
+		return nil, exception.NewBadRequest("parse status error, %s", err)
+	}
+	req.Status = &status
+	return req, nil
 }
 
 // NewQueryApplicationFormRequet todo

@@ -45,7 +45,11 @@ func (h *handler) QueryJoinApply(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	req := department.NewQueryApplicationFormRequetFromHTTP(r)
+	req, err := department.NewQueryApplicationFormRequetFromHTTP(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
 	req.WithToken(tk)
 
 	ins, err := h.service.QueryApplicationForm(req)
@@ -55,6 +59,28 @@ func (h *handler) QueryJoinApply(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, ins)
+}
+
+// Create 创建主账号
+func (h *handler) GetJoinApply(w http.ResponseWriter, r *http.Request) {
+	rctx := context.GetContext(r)
+	tk, err := pkg.GetTokenFromContext(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	req := department.NewDescribeApplicationFormRequetWithID(rctx.PS.ByName("id"))
+	req.WithToken(tk)
+
+	ins, err := h.service.DescribeApplicationForm(req)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	response.Success(w, ins)
+	return
 }
 
 // Create 创建主账号

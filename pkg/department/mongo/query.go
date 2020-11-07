@@ -1,8 +1,6 @@
 package mongo
 
 import (
-	"fmt"
-
 	"github.com/infraboard/mcube/exception"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -101,16 +99,14 @@ func (r *queryApplicationFormRequest) FindFilter() bson.M {
 	filter["domain"] = tk.Domain
 
 	if r.Account != "" {
-		filter["_id"] = r.Account
+		filter["account"] = r.Account
 	}
 	if r.DepartmentID != "" {
 		filter["department_id"] = r.DepartmentID
 	}
 	if r.Status != nil {
-		filter["status"] = 0
+		filter["status"] = r.Status
 	}
-
-	fmt.Print(filter)
 
 	return filter
 }
@@ -134,5 +130,6 @@ func (r *describeApplicationForm) FindFilter() bson.M {
 	if r.ID != "" {
 		filter["_id"] = r.ID
 	}
+
 	return filter
 }

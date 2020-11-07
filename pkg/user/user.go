@@ -130,6 +130,11 @@ type Profile struct {
 	ExpiresDays  int    `bson:"expires_days" json:"expires_days"`                      // 用户多久未登录时(天), 冻结改用户, 防止僵尸用户的账号被利用
 }
 
+// HasDepartment todo
+func (req *Profile) HasDepartment() bool {
+	return req.DepartmentID != ""
+}
+
 // Patch todo
 func (req *Profile) Patch(data *Profile) {
 	patchData, _ := json.Marshal(data)
@@ -226,6 +231,7 @@ func (s *Set) Add(u *User) {
 // NewPutAccountRequest todo
 func NewPutAccountRequest() *UpdateAccountRequest {
 	return &UpdateAccountRequest{
+		Session:    token.NewSession(),
 		UpdateMode: common.PutUpdateMode,
 		Profile:    NewProfile(),
 	}
