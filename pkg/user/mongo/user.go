@@ -65,6 +65,7 @@ func (s *service) UpdateAccountProfile(req *user.UpdateAccountRequest) (*user.Us
 	}
 
 	u.UpdateAt = ftime.Now()
+	u.IsInitialized = u.Profile.IsInitialized()
 
 	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": u.Account}, bson.M{"$set": u})
 	if err != nil {
