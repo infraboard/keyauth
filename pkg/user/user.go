@@ -62,10 +62,9 @@ type User struct {
 	Roles                 []string   `bson:"-" json:"roles,omitempty"`             // 用户的角色(当携带Namesapce查询时会有)
 	*CreateAccountRequest `bson:",inline"`
 
-	HashedPassword *Password              `bson:"password" json:"password,omitempty"`   // 密码相关信息
-	Status         *Status                `bson:"status" json:"status,omitempty"`       // 用户状态
-	IsInitialized  bool                   `bson:"is_initialized" json:"is_initialized"` // 用户是否初始化
-	Department     *department.Department `bson:"-" json:"department,omitempty"`        // 部门
+	HashedPassword *Password              `bson:"password" json:"password,omitempty"` // 密码相关信息
+	Status         *Status                `bson:"status" json:"status,omitempty"`     // 用户状态
+	Department     *department.Department `bson:"-" json:"department,omitempty"`      // 部门
 }
 
 // Block 锁用户
@@ -105,6 +104,7 @@ type CreateAccountRequest struct {
 	*Profile       `bson:",inline"`
 	CreateType     CreateType `bson:"create_type" json:"create_type"`               // 创建方式
 	Password       string     `bson:"-" json:"password" validate:"required,lte=80"` // 密码相关信息
+	IsInitialized  bool       `bson:"is_initialized" json:"is_initialized"`         // 用户是否初始化
 }
 
 // NewProfile todo
