@@ -29,6 +29,7 @@ func New(owner string, req *CreateDomainRequst) (*Domain, error) {
 		UpdateAt:           ftime.Now(),
 		Owner:              owner,
 		CreateDomainRequst: req,
+		SecuritySetting:    NewDefaultSecuritySetting(),
 	}
 
 	return d, nil
@@ -68,10 +69,11 @@ func (s *Set) Add(d *Domain) {
 
 // Domain a tenant container, example an company or organization.
 type Domain struct { // 域ID
-	CreateAt            ftime.Time `bson:"create_at" json:"create_at"` // 创建时间
-	UpdateAt            ftime.Time `bson:"update_at" json:"update_at"` // 更新时间
-	Owner               string     `bson:"owner" json:"owner"`         // 域拥有者
-	*CreateDomainRequst `bson:",inline"`
+	CreateAt            ftime.Time       `bson:"create_at" json:"create_at"` // 创建时间
+	UpdateAt            ftime.Time       `bson:"update_at" json:"update_at"` // 更新时间
+	Owner               string           `bson:"owner" json:"owner"`         // 域拥有者
+	*CreateDomainRequst `bson:",inline"` // 域信息
+	*SecuritySetting    `bson:",inline"` // 安全设置
 }
 
 func (d *Domain) String() string {
