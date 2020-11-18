@@ -30,23 +30,25 @@ func (req *SecuritySetting) Patch(data *SecuritySetting) {
 // NewDefaulPasswordSecurity todo
 func NewDefaulPasswordSecurity() *PasswordSecurity {
 	return &PasswordSecurity{
-		Length:             8,
-		IncludeNumber:      true,
-		IncludeLowerLetter: true,
-		IncludeUpperLetter: false,
-		IncludeSymbols:     false,
-		RepeateLimite:      1,
+		Length:              8,
+		IncludeNumber:       true,
+		IncludeLowerLetter:  true,
+		IncludeUpperLetter:  false,
+		IncludeSymbols:      false,
+		RepeateLimite:       1,
+		PasswrodExpiredDays: 30,
 	}
 }
 
 // PasswordSecurity 密码安全设置
 type PasswordSecurity struct {
-	Length             int  `bson:"length" json:"length"`                             // 密码长度
-	IncludeNumber      bool `bson:"include_number" json:"include_number"`             // 包含数字
-	IncludeLowerLetter bool `bson:"include_lower_letter" json:"include_lower_letter"` // 包含小写字母
-	IncludeUpperLetter bool `bson:"include_upper_letter" json:"include_upper_letter"` // 包含大写字母
-	IncludeSymbols     bool `bson:"include_symbols" json:"include_symbols"`           // 包含特殊字符
-	RepeateLimite      uint `bson:"repeate_limite" json:"repeate_limite"`             // 重复限制
+	Length              int  `bson:"length" json:"length"`                               // 密码长度
+	IncludeNumber       bool `bson:"include_number" json:"include_number"`               // 包含数字
+	IncludeLowerLetter  bool `bson:"include_lower_letter" json:"include_lower_letter"`   // 包含小写字母
+	IncludeUpperLetter  bool `bson:"include_upper_letter" json:"include_upper_letter"`   // 包含大写字母
+	IncludeSymbols      bool `bson:"include_symbols" json:"include_symbols"`             // 包含特殊字符
+	RepeateLimite       uint `bson:"repeate_limite" json:"repeate_limite"`               // 重复限制
+	PasswrodExpiredDays uint `bson:"password_expired_days" json:"password_expired_days"` // 密码过期时间, 密码过期后要求用户重置密码
 }
 
 // Validate todo
@@ -85,8 +87,8 @@ func NewDefaultLoginSecurity() *LoginSecurity {
 	return &LoginSecurity{
 		ExceptionLock: true,
 		ExceptionLockConfig: &ExceptionLockConfig{
-			PasswrodExpiredDays: 0,
-			NotLoginDays:        30,
+			OtherPlaceLogin: true,
+			NotLoginDays:    30,
 		},
 		RetryLock: true,
 		RetryLockConfig: &RetryLockConig{
@@ -112,8 +114,8 @@ type LoginSecurity struct {
 
 // ExceptionLockConfig todo
 type ExceptionLockConfig struct {
-	PasswrodExpiredDays uint `bson:"password_expired_days" json:"password_expired_days"` // 密码过期时间, 密码过期后要求用户重置密码
-	NotLoginDays        uint `bson:"not_login_days" json:"not_login_days"`               // 未登录天数,
+	OtherPlaceLogin bool `bson:"password_expired_days" json:"password_expired_days"` // 异地登录
+	NotLoginDays    uint `bson:"not_login_days" json:"not_login_days"`               // 未登录天数,
 }
 
 // IPLimiteConfig todo
