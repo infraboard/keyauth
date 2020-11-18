@@ -29,6 +29,7 @@ func (h *handler) Registry(router router.SubRouter) {
 	domainRouter.Handle("PUT", "/:name", h.PutDomain).AddLabel(label.Update)
 	domainRouter.Handle("PATCH", "/:name", h.PatchDomain).AddLabel(label.Update)
 	domainRouter.Handle("DELETE", "/:name", h.DeleteDomain).AddLabel(label.Delete)
+	domainRouter.Handle("PUT", "/:name/security", h.UpdateDomainSecurity).AddLabel(label.Update)
 }
 
 func (h *handler) Config() error {

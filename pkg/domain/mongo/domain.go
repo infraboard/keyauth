@@ -80,11 +80,22 @@ func (s *service) UpdateDomain(req *domain.UpdateDomainRequest) (*domain.Domain,
 	if err != nil {
 		return nil, err
 	}
+
 	switch req.UpdateMode {
 	case types.PutUpdateMode:
-		*d.CreateDomainRequst = *req.CreateDomainRequst
+		if req.CreateDomainRequst != nil {
+			*d.CreateDomainRequst = *req.CreateDomainRequst
+		}
+		if req.SecuritySetting != nil {
+			*d.SecuritySetting = *req.SecuritySetting
+		}
 	case types.PatchUpdateMode:
-		d.CreateDomainRequst.Patch(req.CreateDomainRequst)
+		if req.CreateDomainRequst != nil {
+			d.CreateDomainRequst.Patch(req.CreateDomainRequst)
+		}
+		if req.SecuritySetting != nil {
+			d.SecuritySetting.Patch(req.SecuritySetting)
+		}
 	default:
 		return nil, exception.NewBadRequest("unknown update mode: %s", req.UpdateMode)
 	}

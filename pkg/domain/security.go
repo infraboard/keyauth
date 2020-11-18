@@ -1,5 +1,12 @@
 package domain
 
+import (
+	"encoding/json"
+	"fmt"
+
+	"github.com/infraboard/keyauth/common/password"
+)
+
 // NewDefaultSecuritySetting todo
 func NewDefaultSecuritySetting() *SecuritySetting {
 	return &SecuritySetting{
@@ -12,6 +19,12 @@ func NewDefaultSecuritySetting() *SecuritySetting {
 type SecuritySetting struct {
 	PasswordSecurity *PasswordSecurity `bson:"password_security" json:"password_security"` // 密码安全
 	LoginSecurity    *LoginSecurity    `bson:"login_security" json:"login_security"`       // 登录安全
+}
+
+// Patch todo
+func (req *SecuritySetting) Patch(data *SecuritySetting) {
+	patchData, _ := json.Marshal(data)
+	json.Unmarshal(patchData, req)
 }
 
 // NewDefaulPasswordSecurity todo
@@ -34,6 +47,37 @@ type PasswordSecurity struct {
 	IncludeUpperLetter bool `bson:"include_upper_letter" json:"include_upper_letter"` // 包含大写字母
 	IncludeSymbols     bool `bson:"include_symbols" json:"include_symbols"`           // 包含特殊字符
 	RepeateLimite      uint `bson:"repeate_limite" json:"repeate_limite"`             // 重复限制
+}
+
+// Validate todo
+func (p *PasswordSecurity) Validate(pass string) error {
+	v := password.NewValidater(pass)
+
+	if ok := v.LengthOK(p.Length); !ok {
+		return fmt.Errorf("password length less than %d", p.Length)
+	}
+	if p.IncludeNumber {
+		if ok := v.IncludeNumbers(); !ok {
+			return fmt.Errorf("must include numbers")
+		}
+	}
+	if p.IncludeLowerLetter {
+		if ok := v.IncludeLowercaseLetters(); !ok {
+			return fmt.Errorf("must include lower letter")
+		}
+	}
+	if p.IncludeUpperLetter {
+		if ok := v.IncludeUppercaseLetters(); !ok {
+			return fmt.Errorf("must include upper letter")
+		}
+	}
+	if p.IncludeSymbols {
+		if ok := v.IncludeSymbols(); !ok {
+			return fmt.Errorf("must include symbols")
+		}
+	}
+
+	return nil
 }
 
 // NewDefaultLoginSecurity todo

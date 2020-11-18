@@ -112,3 +112,27 @@ func (h *handler) DeleteDomain(w http.ResponseWriter, r *http.Request) {
 	response.Success(w, "delete ok")
 	return
 }
+
+func (h *handler) UpdateDomainSecurity(w http.ResponseWriter, r *http.Request) {
+	rctx := context.GetContext(r)
+
+	// 查找出原来的domain
+	req := domain.NewPutDomainRequest()
+	req.Name = rctx.PS.ByName("name")
+	req.SecuritySetting = domain.NewDefaultSecuritySetting()
+
+	// 解析需要更新的数据
+	if err := request.GetDataFromRequest(r, req.SecuritySetting); err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	ins, err := h.service.UpdateDomain(req)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	response.Success(w, ins)
+	return
+}

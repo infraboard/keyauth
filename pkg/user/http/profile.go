@@ -105,7 +105,7 @@ func (h *handler) QueryDomain(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func (h *handler) UpdateDomain(w http.ResponseWriter, r *http.Request) {
+func (h *handler) UpdateDomainInfo(w http.ResponseWriter, r *http.Request) {
 	tk, err := pkg.GetTokenFromContext(r)
 	if err != nil {
 		response.Failed(w, err)
@@ -118,6 +118,34 @@ func (h *handler) UpdateDomain(w http.ResponseWriter, r *http.Request) {
 
 	// 解析需要更新的数据
 	if err := request.GetDataFromRequest(r, req.CreateDomainRequst); err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	ins, err := h.domain.UpdateDomain(req)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	response.Success(w, ins)
+	return
+}
+
+func (h *handler) UpdateDomainSecurity(w http.ResponseWriter, r *http.Request) {
+	tk, err := pkg.GetTokenFromContext(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	// 查找出原来的domain
+	req := domain.NewPatchDomainRequest()
+	req.Name = tk.Domain
+	req.SecuritySetting = domain.NewDefaultSecuritySetting()
+
+	// 解析需要更新的数据
+	if err := request.GetDataFromRequest(r, req.SecuritySetting); err != nil {
 		response.Failed(w, err)
 		return
 	}

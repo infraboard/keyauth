@@ -127,4 +127,18 @@ func NewPatchDomainRequest() *UpdateDomainRequest {
 type UpdateDomainRequest struct {
 	UpdateMode types.UpdateMode `json:"update_mode"`
 	*CreateDomainRequst
+	*SecuritySetting
+}
+
+// Validate 更新校验
+func (req *UpdateDomainRequest) Validate() error {
+	if req.CreateDomainRequst == nil && req.SecuritySetting == nil {
+		return fmt.Errorf("domain info or security setting required")
+	}
+
+	if err := req.CreateDomainRequst.Validate(); err != nil {
+		return err
+	}
+
+	return nil
 }
