@@ -71,7 +71,7 @@ func (s *service) QueryDomain(req *domain.QueryDomainRequest) (*domain.Set, erro
 	return domainSet, nil
 }
 
-func (s *service) UpdateDomain(req *domain.UpdateDomainRequest) (*domain.Domain, error) {
+func (s *service) UpdateDomain(req *domain.UpdateDomainInfoRequest) (*domain.Domain, error) {
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest(err.Error())
 	}
@@ -83,19 +83,9 @@ func (s *service) UpdateDomain(req *domain.UpdateDomainRequest) (*domain.Domain,
 
 	switch req.UpdateMode {
 	case types.PutUpdateMode:
-		if req.CreateDomainRequst != nil {
-			*d.CreateDomainRequst = *req.CreateDomainRequst
-		}
-		if req.SecuritySetting != nil {
-			*d.SecuritySetting = *req.SecuritySetting
-		}
+		*d.CreateDomainRequst = *req.CreateDomainRequst
 	case types.PatchUpdateMode:
-		if req.CreateDomainRequst != nil {
-			d.CreateDomainRequst.Patch(req.CreateDomainRequst)
-		}
-		if req.SecuritySetting != nil {
-			d.SecuritySetting.Patch(req.SecuritySetting)
-		}
+		d.CreateDomainRequst.Patch(req.CreateDomainRequst)
 	default:
 		return nil, exception.NewBadRequest("unknown update mode: %s", req.UpdateMode)
 	}
@@ -107,6 +97,34 @@ func (s *service) UpdateDomain(req *domain.UpdateDomainRequest) (*domain.Domain,
 	}
 
 	return d, nil
+}
+
+func (s *service) UpdateDomainSecurity(req *domain.UpdateDomainSecurityRequest) (*domain.SecuritySetting, error) {
+	if err := req.Validate(); err != nil {
+		return nil, exception.NewBadRequest(err.Error())
+	}
+
+	d, err := s.DescriptionDomain(domain.NewDescriptDomainRequestWithName(req.Name))
+	if err != nil {
+		return nil, err
+	}
+
+	switch req.UpdateMode {
+	case types.PutUpdateMode:
+		*d.SecuritySetting = *req.SecuritySetting
+	case types.PatchUpdateMode:
+		d.SecuritySetting.Patch(req.SecuritySetting)
+	default:
+		return nil, exception.NewBadRequest("unknown update mode: %s", req.UpdateMode)
+	}
+
+	d.UpdateAt = ftime.Now()
+	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": d.Name}, bson.M{"$set": d})
+	if err != nil {
+		return nil, exception.NewInternalServerError("update domain(%s) error, %s", d.Name, err)
+	}
+
+	return d.SecuritySetting, nil
 }
 
 func (s *service) DeleteDomain(id string) error {

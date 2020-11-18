@@ -93,8 +93,10 @@ func NewDefaultLoginSecurity() *LoginSecurity {
 			RetryLimite:  5,
 			LockedMinite: 30,
 		},
-		IPLimite:       false,
-		IPLimiteConfig: &IPLimiteConfig{},
+		IPLimite: false,
+		IPLimiteConfig: &IPLimiteConfig{
+			IP: []string{},
+		},
 	}
 }
 

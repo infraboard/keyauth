@@ -12,11 +12,13 @@ import (
 
 // Service is an domain service
 type Service interface {
-	UpdateDomain(req *UpdateDomainRequest) (*Domain, error)
 	CreateDomain(ownerID string, req *CreateDomainRequst) (*Domain, error)
+	UpdateDomain(req *UpdateDomainInfoRequest) (*Domain, error)
 	DescriptionDomain(req *DescriptDomainRequest) (*Domain, error)
 	QueryDomain(req *QueryDomainRequest) (*Set, error)
 	DeleteDomain(id string) error
+
+	UpdateDomainSecurity(req *UpdateDomainSecurityRequest) (*SecuritySetting, error)
 }
 
 // NewQueryDomainRequest 查询domian列表
@@ -108,32 +110,51 @@ func (req *CreateDomainRequst) Patch(data *CreateDomainRequst) {
 }
 
 // NewPutDomainRequest todo
-func NewPutDomainRequest() *UpdateDomainRequest {
-	return &UpdateDomainRequest{
+func NewPutDomainRequest() *UpdateDomainInfoRequest {
+	return &UpdateDomainInfoRequest{
 		UpdateMode:         types.PutUpdateMode,
 		CreateDomainRequst: NewCreateDomainRequst(),
 	}
 }
 
 // NewPatchDomainRequest todo
-func NewPatchDomainRequest() *UpdateDomainRequest {
-	return &UpdateDomainRequest{
+func NewPatchDomainRequest() *UpdateDomainInfoRequest {
+	return &UpdateDomainInfoRequest{
 		UpdateMode:         types.PatchUpdateMode,
 		CreateDomainRequst: NewCreateDomainRequst(),
 	}
 }
 
-// UpdateDomainRequest todo
-type UpdateDomainRequest struct {
+// NewPutDomainSecurityRequest todo
+func NewPutDomainSecurityRequest() *UpdateDomainSecurityRequest {
+	return &UpdateDomainSecurityRequest{
+		UpdateMode:      types.PutUpdateMode,
+		SecuritySetting: NewDefaultSecuritySetting(),
+	}
+}
+
+// UpdateDomainSecurityRequest todo
+type UpdateDomainSecurityRequest struct {
+	Name       string           `json:"domain_name"`
 	UpdateMode types.UpdateMode `json:"update_mode"`
-	*CreateDomainRequst
 	*SecuritySetting
 }
 
+// Validate todo
+func (req *UpdateDomainSecurityRequest) Validate() error {
+	return nil
+}
+
+// UpdateDomainInfoRequest todo
+type UpdateDomainInfoRequest struct {
+	UpdateMode types.UpdateMode `json:"update_mode"`
+	*CreateDomainRequst
+}
+
 // Validate 更新校验
-func (req *UpdateDomainRequest) Validate() error {
-	if req.CreateDomainRequst == nil && req.SecuritySetting == nil {
-		return fmt.Errorf("domain info or security setting required")
+func (req *UpdateDomainInfoRequest) Validate() error {
+	if req.CreateDomainRequst == nil {
+		return fmt.Errorf("domain base info required")
 	}
 
 	if err := req.CreateDomainRequst.Validate(); err != nil {

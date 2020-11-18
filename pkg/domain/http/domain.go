@@ -117,7 +117,7 @@ func (h *handler) UpdateDomainSecurity(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
 
 	// 查找出原来的domain
-	req := domain.NewPutDomainRequest()
+	req := domain.NewPutDomainSecurityRequest()
 	req.Name = rctx.PS.ByName("name")
 	req.SecuritySetting = domain.NewDefaultSecuritySetting()
 
@@ -127,7 +127,7 @@ func (h *handler) UpdateDomainSecurity(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ins, err := h.service.UpdateDomain(req)
+	ins, err := h.service.UpdateDomainSecurity(req)
 	if err != nil {
 		response.Failed(w, err)
 		return

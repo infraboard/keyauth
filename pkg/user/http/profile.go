@@ -140,9 +140,8 @@ func (h *handler) UpdateDomainSecurity(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 查找出原来的domain
-	req := domain.NewPatchDomainRequest()
+	req := domain.NewPutDomainSecurityRequest()
 	req.Name = tk.Domain
-	req.SecuritySetting = domain.NewDefaultSecuritySetting()
 
 	// 解析需要更新的数据
 	if err := request.GetDataFromRequest(r, req.SecuritySetting); err != nil {
@@ -150,7 +149,7 @@ func (h *handler) UpdateDomainSecurity(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ins, err := h.domain.UpdateDomain(req)
+	ins, err := h.domain.UpdateDomainSecurity(req)
 	if err != nil {
 		response.Failed(w, err)
 		return

@@ -39,6 +39,7 @@ func New(owner string, req *CreateDomainRequst) (*Domain, error) {
 func NewDefault() *Domain {
 	return &Domain{
 		CreateDomainRequst: NewCreateDomainRequst(),
+		SecuritySetting:    NewDefaultSecuritySetting(),
 	}
 }
 
@@ -73,7 +74,7 @@ type Domain struct { // 域ID
 	UpdateAt            ftime.Time       `bson:"update_at" json:"update_at"` // 更新时间
 	Owner               string           `bson:"owner" json:"owner"`         // 域拥有者
 	*CreateDomainRequst `bson:",inline"` // 域信息
-	*SecuritySetting    `bson:",inline"` // 安全设置
+	SecuritySetting     *SecuritySetting `bson:"security_setting" json:"security_setting"` // 安全设置
 }
 
 func (d *Domain) String() string {
