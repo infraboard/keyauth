@@ -42,17 +42,22 @@ func NewDefaulPasswordSecurity() *PasswordSecurity {
 
 // PasswordSecurity 密码安全设置
 type PasswordSecurity struct {
-	Length              int  `bson:"length" json:"length"`                               // 密码长度
-	IncludeNumber       bool `bson:"include_number" json:"include_number"`               // 包含数字
-	IncludeLowerLetter  bool `bson:"include_lower_letter" json:"include_lower_letter"`   // 包含小写字母
-	IncludeUpperLetter  bool `bson:"include_upper_letter" json:"include_upper_letter"`   // 包含大写字母
-	IncludeSymbols      bool `bson:"include_symbols" json:"include_symbols"`             // 包含特殊字符
-	RepeateLimite       uint `bson:"repeate_limite" json:"repeate_limite"`               // 重复限制
-	PasswrodExpiredDays uint `bson:"password_expired_days" json:"password_expired_days"` // 密码过期时间, 密码过期后要求用户重置密码
+	Length              int  `bson:"length" json:"length" validate:"required,min=8,max=64"`                                // 密码长度
+	IncludeNumber       bool `bson:"include_number" json:"include_number"`                                                 // 包含数字
+	IncludeLowerLetter  bool `bson:"include_lower_letter" json:"include_lower_letter"`                                     // 包含小写字母
+	IncludeUpperLetter  bool `bson:"include_upper_letter" json:"include_upper_letter"`                                     // 包含大写字母
+	IncludeSymbols      bool `bson:"include_symbols" json:"include_symbols"`                                               // 包含特殊字符
+	RepeateLimite       uint `bson:"repeate_limite" json:"repeate_limite" validate:"required,min=1,max=24"`                // 重复限制
+	PasswrodExpiredDays uint `bson:"password_expired_days" json:"password_expired_days" validate:"required,min=0,max=365"` // 密码过期时间, 密码过期后要求用户重置密码
 }
 
-// Validate todo
-func (p *PasswordSecurity) Validate(pass string) error {
+// Validate 校验对象合法性
+func (p *PasswordSecurity) Validate() error {
+	return validate.Struct(p)
+}
+
+// Check todo
+func (p *PasswordSecurity) Check(pass string) error {
 	v := password.NewValidater(pass)
 
 	if ok := v.LengthOK(p.Length); !ok {
@@ -114,8 +119,8 @@ type LoginSecurity struct {
 
 // ExceptionLockConfig todo
 type ExceptionLockConfig struct {
-	OtherPlaceLogin bool `bson:"password_expired_days" json:"password_expired_days"` // 异地登录
-	NotLoginDays    uint `bson:"not_login_days" json:"not_login_days"`               // 未登录天数,
+	OtherPlaceLogin bool `bson:"other_place_login" json:"other_place_login"` // 异地登录
+	NotLoginDays    uint `bson:"not_login_days" json:"not_login_days"`       // 未登录天数,
 }
 
 // IPLimiteConfig todo

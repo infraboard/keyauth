@@ -10,6 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 
 	common "github.com/infraboard/keyauth/common/types"
+	"github.com/infraboard/keyauth/pkg/domain"
 	"github.com/infraboard/keyauth/pkg/policy"
 	"github.com/infraboard/keyauth/pkg/user"
 	"github.com/infraboard/keyauth/pkg/user/types"
@@ -86,8 +87,23 @@ func (s *service) UpdateAccountPassword(req *user.UpdatePasswordRequest) (*user.
 		return nil, err
 	}
 
-	if err := u.ChangePassword(req.OldPass, req.NewPass); err != nil {
+	// 更加域设置的规则检测密码强度
+	descDom := domain.NewDescriptDomainRequestWithName(u.Domain)
+	dom, err := s.domain.DescriptionDomain(descDom)
+	if err != nil {
 		return nil, err
+	}
+	if err := dom.SecuritySetting.PasswordSecurity.Check(req.NewPass); err != nil {
+		return nil, err
+	}
+
+	// 判断是不是历史密码
+	if u.HashedPassword.IsHistory(req.NewPass) {
+		return nil, exception.NewBadRequest("")
+	}
+
+	if err := u.ChangePassword(req.OldPass, req.NewPass, dom.SecuritySetting.PasswordSecurity.RepeateLimite); err != nil {
+		return nil, exception.NewBadRequest("validate new password security error, %s", err)
 	}
 
 	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": u.Account}, bson.M{"$set": bson.M{

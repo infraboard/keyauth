@@ -83,7 +83,7 @@ func (u *User) Desensitize() {
 }
 
 // ChangePassword 修改用户密码
-func (u *User) ChangePassword(old, new string) error {
+func (u *User) ChangePassword(old, new string, maxHistory uint) error {
 	// 确认旧密码
 	if err := u.HashedPassword.CheckPassword(old); err != nil {
 		return err
@@ -94,7 +94,7 @@ func (u *User) ChangePassword(old, new string) error {
 	if err != nil {
 		return exception.NewBadRequest(err.Error())
 	}
-	u.HashedPassword.Update(newPass)
+	u.HashedPassword.Update(newPass, maxHistory)
 	return nil
 }
 
@@ -198,6 +198,7 @@ type Password struct {
 	CreateAt  ftime.Time `bson:"create_at" json:"create_at,omitempty" ` // 密码创建时间
 	UpdateAt  ftime.Time `bson:"update_at" json:"update_at,omitempty"`  // 密码更新时间
 	NeedReset bool       `bson:"need_reset" json:"need_reset"`          // 密码需要被重置
+	History   []string   `bson:"history" json:"history"`                // 历史密码
 }
 
 // CheckPassword 判断password 是否正确
@@ -209,8 +210,36 @@ func (p *Password) CheckPassword(password string) error {
 	return nil
 }
 
+// IsHistory 检测是否是历史密码
+func (p *Password) IsHistory(password string) bool {
+	for _, pass := range p.History {
+		err := bcrypt.CompareHashAndPassword([]byte(pass), []byte(password))
+		if err != nil {
+			return true
+		}
+	}
+
+	return false
+}
+
+// HistoryCount 保存了几个历史密码
+func (p *Password) HistoryCount() int {
+	return len(p.History)
+}
+
+func (p *Password) rotaryHistory(maxHistory uint) {
+	if uint(p.HistoryCount()) < maxHistory {
+		p.History = append(p.History, p.Password)
+	} else {
+		remainHistry := p.History[:p.HistoryCount()]
+		p.History = []string{p.Password}
+		p.History = append(p.History, remainHistry...)
+	}
+}
+
 // Update 更新密码
-func (p *Password) Update(new *Password) {
+func (p *Password) Update(new *Password, maxHistory uint) {
+	p.rotaryHistory(maxHistory)
 	p.Password = new.Password
 	p.UpdateAt = ftime.Now()
 }

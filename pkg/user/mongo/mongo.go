@@ -10,6 +10,7 @@ import (
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/department"
+	"github.com/infraboard/keyauth/pkg/domain"
 	"github.com/infraboard/keyauth/pkg/policy"
 	"github.com/infraboard/keyauth/pkg/user"
 	"github.com/infraboard/mcube/logger"
@@ -28,6 +29,7 @@ type service struct {
 	notifyCachPre string
 	policy        policy.Service
 	depart        department.Service
+	domain        domain.Service
 }
 
 func (s *service) Config() error {
@@ -38,6 +40,11 @@ func (s *service) Config() error {
 
 	if pkg.Department == nil {
 		return fmt.Errorf("dependence department service is nil")
+	}
+	s.depart = pkg.Department
+
+	if pkg.Domain == nil {
+		return fmt.Errorf("dependence domain service is nil")
 	}
 	s.depart = pkg.Department
 

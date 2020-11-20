@@ -142,7 +142,7 @@ type UpdateDomainSecurityRequest struct {
 
 // Validate todo
 func (req *UpdateDomainSecurityRequest) Validate() error {
-	return nil
+	return validate.Struct(req)
 }
 
 // UpdateDomainInfoRequest todo
