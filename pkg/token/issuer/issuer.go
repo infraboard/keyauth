@@ -70,6 +70,13 @@ func (i *issuer) checkUser(user, pass string) (*user.User, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	d, err := i.getDomain(u.Domain)
+	if err != nil {
+		return nil, err
+	}
+	u.HashedPassword.ISExpired(d.SecuritySetting.PasswordSecurity.PasswrodExpiredDays)
+
 	if err := u.HashedPassword.CheckPassword(pass); err != nil {
 		return nil, err
 	}
@@ -80,6 +87,11 @@ func (i *issuer) getUser(name string) (*user.User, error) {
 	req := user.NewDescriptAccountRequest()
 	req.Account = name
 	return i.user.DescribeAccount(req)
+}
+
+func (i *issuer) getDomain(name string) (*domain.Domain, error) {
+	req := domain.NewDescriptDomainRequestWithName(name)
+	return i.domain.DescriptionDomain(req)
 }
 
 func (i *issuer) setTokenDomain(tk *token.Token) error {

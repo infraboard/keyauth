@@ -3,6 +3,7 @@ package user
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/infraboard/mcube/exception"
@@ -194,11 +195,16 @@ func NewHashedPassword(password string) (*Password, error) {
 // Password user's password
 type Password struct {
 	Password  string     `bson:"password" json:"password,omitempty"`    // hash过后的密码
-	ExpireAt  ftime.Time `bson:"expire_at" json:"expire_at,omitempty" ` // 密码过期时间
 	CreateAt  ftime.Time `bson:"create_at" json:"create_at,omitempty" ` // 密码创建时间
 	UpdateAt  ftime.Time `bson:"update_at" json:"update_at,omitempty"`  // 密码更新时间
 	NeedReset bool       `bson:"need_reset" json:"need_reset"`          // 密码需要被重置
 	History   []string   `bson:"history" json:"history"`                // 历史密码
+}
+
+// ISExpired 是否过期
+func (p *Password) ISExpired(expiredDays uint) bool {
+	delta := time.Now().Sub(p.UpdateAt.T())
+	return delta.Hours()/24 > float64(expiredDays)
 }
 
 // CheckPassword 判断password 是否正确
