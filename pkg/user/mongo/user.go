@@ -81,7 +81,7 @@ func (s *service) UpdateAccountPassword(req *user.UpdatePasswordRequest) (*user.
 	}
 
 	descReq := user.NewDescriptAccountRequest()
-	descReq.Account = req.GetToken().Account
+	descReq.Account = req.Account
 	u, err := s.DescribeAccount(descReq)
 	if err != nil {
 		return nil, err
@@ -99,11 +99,11 @@ func (s *service) UpdateAccountPassword(req *user.UpdatePasswordRequest) (*user.
 
 	// 判断是不是历史密码
 	if u.HashedPassword.IsHistory(req.NewPass) {
-		return nil, exception.NewBadRequest("")
+		return nil, exception.NewBadRequest("password must not last n")
 	}
 
 	if err := u.ChangePassword(req.OldPass, req.NewPass, dom.SecuritySetting.PasswordSecurity.RepeateLimite); err != nil {
-		return nil, exception.NewBadRequest("validate new password security error, %s", err)
+		return nil, exception.NewBadRequest("change password error, %s", err)
 	}
 
 	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": u.Account}, bson.M{"$set": bson.M{

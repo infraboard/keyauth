@@ -65,22 +65,30 @@ type issuer struct {
 	log     logger.Logger
 }
 
-func (i *issuer) checkUser(user, pass string) (*user.User, error) {
+func (i *issuer) checkUserPass(user, pass string) (*user.User, error) {
 	u, err := i.getUser(user)
 	if err != nil {
 		return nil, err
 	}
 
-	d, err := i.getDomain(u.Domain)
-	if err != nil {
-		return nil, err
-	}
-	u.HashedPassword.ISExpired(d.SecuritySetting.PasswordSecurity.PasswrodExpiredDays)
-
 	if err := u.HashedPassword.CheckPassword(pass); err != nil {
 		return nil, err
 	}
 	return u, nil
+}
+
+func (i *issuer) checkUserPassExpired(u *user.User) error {
+	d, err := i.getDomain(u.Domain)
+	if err != nil {
+		return err
+	}
+
+	err = u.HashedPassword.ISExpired(d.SecuritySetting.PasswordSecurity.PasswrodExpiredDays)
+	if err != nil {
+		return exception.NewPasswordExired("%s, please reset", err)
+	}
+
+	return nil
 }
 
 func (i *issuer) getUser(name string) (*user.User, error) {
@@ -124,10 +132,15 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 
 	switch req.GrantType {
 	case token.PASSWORD:
-		u, checkErr := i.checkUser(req.Username, req.Password)
+		u, checkErr := i.checkUserPass(req.Username, req.Password)
 		if checkErr != nil {
 			i.log.Debugf("issue password token error, %s", checkErr)
 			return nil, exception.NewUnauthorized("user or password not connrect")
+		}
+
+		if err := i.checkUserPassExpired(u); err != nil {
+			i.log.Debugf("issue password token error, %s", err)
+			return nil, exception.NewPasswordExired("password expired").WithData(u.Account)
 		}
 
 		tk := i.issueUserToken(app, u, token.PASSWORD)

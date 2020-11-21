@@ -18,7 +18,26 @@ func (h *handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 
 	// 解析需要更新的数据
 	req := user.NewUpdatePasswordRequest()
-	req.WithToken(tk)
+	if err := request.GetDataFromRequest(r, req); err != nil {
+		response.Failed(w, err)
+		return
+	}
+	req.Account = tk.Account
+
+	pass, err := h.service.UpdateAccountPassword(req)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	pass.Password = ""
+	response.Success(w, pass)
+	return
+}
+
+func (h *handler) ResetPassword(w http.ResponseWriter, r *http.Request) {
+	// 解析需要更新的数据
+	req := user.NewUpdatePasswordRequest()
 	if err := request.GetDataFromRequest(r, req); err != nil {
 		response.Failed(w, err)
 		return

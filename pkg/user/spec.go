@@ -138,23 +138,20 @@ func NewCreateUserRequest() *CreateAccountRequest {
 
 // NewUpdatePasswordRequest todo
 func NewUpdatePasswordRequest() *UpdatePasswordRequest {
-	return &UpdatePasswordRequest{
-		Session: token.NewSession(),
-	}
+	return &UpdatePasswordRequest{}
 }
 
 // UpdatePasswordRequest todo
 type UpdatePasswordRequest struct {
-	*token.Session `json:"-"`
-	OldPass        string `json:"old_pass,omitempty"`
-	NewPass        string `json:"new_pass,omitempty"`
+	Account string `json:"account"`
+	OldPass string `json:"old_pass,omitempty"`
+	NewPass string `json:"new_pass,omitempty"`
 }
 
 // Validate tood
 func (req *UpdatePasswordRequest) Validate() error {
-	tk := req.GetToken()
-	if tk == nil {
-		return fmt.Errorf("token required")
+	if req.Account == "" {
+		return fmt.Errorf("account required")
 	}
 
 	if req.OldPass == req.NewPass {
@@ -163,6 +160,10 @@ func (req *UpdatePasswordRequest) Validate() error {
 
 	if req.NewPass == "" || req.OldPass == "" {
 		return fmt.Errorf("old_pass and new_pass required")
+	}
+
+	if req.Account == req.NewPass {
+		return fmt.Errorf("password must not equal account")
 	}
 
 	return nil

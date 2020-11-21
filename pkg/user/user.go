@@ -202,9 +202,17 @@ type Password struct {
 }
 
 // ISExpired 是否过期
-func (p *Password) ISExpired(expiredDays uint) bool {
-	delta := time.Now().Sub(p.UpdateAt.T())
-	return delta.Hours()/24 > float64(expiredDays)
+func (p *Password) ISExpired(expiredDays uint) error {
+	// 为0标识不过期
+	if expiredDays == 0 {
+		return nil
+	}
+
+	delta := uint(time.Now().Sub(p.UpdateAt.T()).Hours() / 24)
+	if delta > expiredDays {
+		return fmt.Errorf("password expired %d days", delta-expiredDays)
+	}
+	return nil
 }
 
 // CheckPassword 判断password 是否正确

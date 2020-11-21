@@ -46,7 +46,7 @@ func (s *service) Config() error {
 	if pkg.Domain == nil {
 		return fmt.Errorf("dependence domain service is nil")
 	}
-	s.depart = pkg.Department
+	s.domain = pkg.Domain
 
 	db := conf.C().Mongo.GetDB()
 	uc := db.Collection("user")
