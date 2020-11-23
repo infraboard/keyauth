@@ -8,43 +8,16 @@ import (
 	"net/smtp"
 	"strings"
 
-	"github.com/infraboard/keyauth/common/tls"
+	"github.com/infraboard/keyauth/pkg/system/notify"
 )
 
-// Config todo
-type Config struct {
-	Host         string      `bson:"host" json:"host"`
-	AuthUserName string      `bson:"username" json:"username"`
-	AuthPassword string      `bson:"password" json:"password,omitempty"`
-	AuthSecret   string      `bson:"secret" json:"secret,omitempty"`
-	AuthIdentity string      `bson:"identity" json:"identity,omitempty"`
-	Hello        string      `bson:"hello" json:"hello,omitempty"`
-	From         string      `bson:"from" json:"from,omitempty"`
-	SkipAuth     bool        `bson:"skip_auth" json:"skip_auth"`
-	RequireTLS   bool        `bson:"require_tls" json:"require_tls"`
-	TLSConfig    *tls.Config `bson:"tls_config" json:"tls_config"`
-}
-
-func (c *Config) validate() error {
-	if c.Host == "" {
-		return errors.New("邮件客户端服务器地址未配置")
+// NewSender todo
+func NewSender(conf *Config) (notify.MailSender, error) {
+	if err := conf.validate(); err != nil {
+		return nil, err
 	}
 
-	if c.AuthUserName == "" {
-		return errors.New("邮件发送者未配置")
-	}
-
-	if !c.SkipAuth {
-		if c.AuthUserName == "" || c.AuthPassword == "" {
-			return errors.New("启用认证后, 需要配置用户名和密码")
-		}
-	}
-
-	if c.From == "" {
-		c.From = fmt.Sprintf("%s<%s>", strings.Split(c.AuthUserName, "@")[0], c.AuthUserName)
-	}
-
-	return nil
+	return &sender{Config: conf}, nil
 }
 
 type sender struct {
@@ -52,7 +25,7 @@ type sender struct {
 }
 
 // Send 发送邮件
-func (s *sender) Send(to string, msg []byte) error {
+func (s *sender) Send(req *notify.SendMailRequest) error {
 	c, err := s.client()
 	if err != nil {
 		return err
@@ -68,7 +41,7 @@ func (s *sender) Send(to string, msg []byte) error {
 	}
 
 	// 设置收信人
-	toAddrs, err := mail.ParseAddressList(to)
+	toAddrs, err := mail.ParseAddressList(req.To)
 	if err != nil {
 		return fmt.Errorf("parsing to addresses: %s", err)
 	}
@@ -76,6 +49,11 @@ func (s *sender) Send(to string, msg []byte) error {
 		if err := c.Rcpt(addr.Address); err != nil {
 			return fmt.Errorf("sending rcpt to: %s", err)
 		}
+	}
+
+	msg, err := req.PrepareBody()
+	if err != nil {
+		return fmt.Errorf("parpare body error")
 	}
 
 	// 设置内容
