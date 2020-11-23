@@ -9,6 +9,15 @@ import (
 	"github.com/infraboard/keyauth/common/tls"
 )
 
+// LoadConfigFromEnv todo
+func LoadConfigFromEnv() (*Config, error) {
+	cfg := &Config{TLSConfig: &tls.Config{}}
+	if err := env.Parse(cfg); err != nil {
+		return nil, fmt.Errorf("load config from env, %s", err.Error())
+	}
+	return cfg, nil
+}
+
 // NewPasswordConfig todo
 func NewPasswordConfig(host, user, pass string) *Config {
 	return &Config{
@@ -31,15 +40,6 @@ type Config struct {
 	SkipAuth     bool        `bson:"skip_auth" json:"skip_auth" env:"K_EMAIL_SKIP_AUTH"`
 	RequireTLS   bool        `bson:"require_tls" json:"require_tls" env:"K_EMAIL_REQUIRE_TLS"`
 	TLSConfig    *tls.Config `bson:"tls_config" json:"tls_config"`
-}
-
-// LoadConfigFromEnv todo
-func LoadConfigFromEnv() (*Config, error) {
-	cfg := &Config{TLSConfig: &tls.Config{}}
-	if err := env.Parse(cfg); err != nil {
-		return nil, fmt.Errorf("load config from env, %s", err.Error())
-	}
-	return cfg, nil
 }
 
 func (c *Config) validate() error {
