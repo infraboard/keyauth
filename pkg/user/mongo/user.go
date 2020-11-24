@@ -79,30 +79,50 @@ func (s *service) UpdateAccountPassword(req *user.UpdatePasswordRequest) (*user.
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest("check update pass request error, %s", err)
 	}
+	return s.changePass(req.Account, req.OldPass, req.NewPass, req.IsReset(), false)
+}
 
+func (s *service) ResetExpiredPassword(req *user.ResetExpiredRequest) (*user.Password, error) {
+	if err := req.Validate(); err != nil {
+		return nil, exception.NewBadRequest("check reset pass request error, %s", err)
+	}
+	return s.changePass(req.Account, req.OldPass, req.NewPass, false, true)
+}
+
+func (s *service) changePass(account, old, new string, isReset bool, checkAllow bool) (*user.Password, error) {
 	descReq := user.NewDescriptAccountRequest()
-	descReq.Account = req.Account
+	descReq.Account = account
 	u, err := s.DescribeAccount(descReq)
 	if err != nil {
 		return nil, err
 	}
 
-	// 更加域设置的规则检测密码强度
+	// 更加域设置的规则检测密码安全
 	descDom := domain.NewDescriptDomainRequestWithName(u.Domain)
 	dom, err := s.domain.DescriptionDomain(descDom)
 	if err != nil {
 		return nil, err
 	}
-	if err := dom.SecuritySetting.PasswordSecurity.Check(req.NewPass); err != nil {
+
+	// 检测是否允许更新密码
+	if checkAllow {
+		err = dom.SecuritySetting.PasswordSecurity.AllowResetPassword(u.HashedPassword)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// 检测密码强度
+	if err := dom.SecuritySetting.PasswordSecurity.Check(new); err != nil {
 		return nil, err
 	}
 
 	// 判断是不是历史密码
-	if u.HashedPassword.IsHistory(req.NewPass) {
+	if u.HashedPassword.IsHistory(new) {
 		return nil, exception.NewBadRequest("password must not last n")
 	}
 
-	if err := u.ChangePassword(req.OldPass, req.NewPass, dom.SecuritySetting.PasswordSecurity.RepeateLimite); err != nil {
+	if err := u.ChangePassword(old, new, dom.SecuritySetting.GetPasswordRepeateLimite(), isReset); err != nil {
 		return nil, exception.NewBadRequest("change password error, %s", err)
 	}
 

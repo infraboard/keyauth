@@ -18,6 +18,7 @@ func (h *handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 
 	// 解析需要更新的数据
 	req := user.NewUpdatePasswordRequest()
+	req.WithToken(tk)
 	if err := request.GetDataFromRequest(r, req); err != nil {
 		response.Failed(w, err)
 		return
@@ -35,15 +36,15 @@ func (h *handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func (h *handler) ResetPassword(w http.ResponseWriter, r *http.Request) {
+func (h *handler) ResetExpiredPassword(w http.ResponseWriter, r *http.Request) {
 	// 解析需要更新的数据
-	req := user.NewUpdatePasswordRequest()
+	req := user.NewResetExpiredRequest()
 	if err := request.GetDataFromRequest(r, req); err != nil {
 		response.Failed(w, err)
 		return
 	}
 
-	pass, err := h.service.UpdateAccountPassword(req)
+	pass, err := h.service.ResetExpiredPassword(req)
 	if err != nil {
 		response.Failed(w, err)
 		return

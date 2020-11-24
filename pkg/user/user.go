@@ -83,7 +83,7 @@ func (u *User) Desensitize() {
 }
 
 // ChangePassword 修改用户密码
-func (u *User) ChangePassword(old, new string, maxHistory uint) error {
+func (u *User) ChangePassword(old, new string, maxHistory uint, needReset bool) error {
 	// 确认旧密码
 	if err := u.HashedPassword.CheckPassword(old); err != nil {
 		return err
@@ -94,6 +94,7 @@ func (u *User) ChangePassword(old, new string, maxHistory uint) error {
 	if err != nil {
 		return exception.NewBadRequest(err.Error())
 	}
+	newPass.NeedReset = needReset
 	u.HashedPassword.Update(newPass, maxHistory)
 	return nil
 }

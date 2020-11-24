@@ -24,10 +24,18 @@ type SecuritySetting struct {
 	LoginSecurity    *LoginSecurity    `bson:"login_security" json:"login_security"`       // 登录安全
 }
 
+// GetPasswordRepeateLimite todo
+func (s *SecuritySetting) GetPasswordRepeateLimite() uint {
+	if s.PasswordSecurity == nil {
+		return 0
+	}
+	return s.PasswordSecurity.RepeateLimite
+}
+
 // Patch todo
-func (req *SecuritySetting) Patch(data *SecuritySetting) {
+func (s *SecuritySetting) Patch(data *SecuritySetting) {
 	patchData, _ := json.Marshal(data)
-	json.Unmarshal(patchData, req)
+	json.Unmarshal(patchData, s)
 }
 
 // NewDefaulPasswordSecurity todo
@@ -67,8 +75,7 @@ func (p *PasswordSecurity) IsPasswordExpired(pass *user.Password) error {
 		return nil
 	}
 
-	updateBefore := time.Now().Sub(pass.UpdateAt.T()).Hours() / 24
-	delta := int(updateBefore) - int(p.PasswrodExpiredDays)
+	delta := p.expiredDelta(pass.UpdateAt.T())
 	if delta > 0 {
 		if delta <= int(p.AllowExpiredResetDays) {
 			return exception.NewPasswordReset("password expired %d days, need reset", delta)
@@ -77,6 +84,26 @@ func (p *PasswordSecurity) IsPasswordExpired(pass *user.Password) error {
 	}
 
 	return nil
+}
+
+// AllowResetPassword todo
+func (p *PasswordSecurity) AllowResetPassword(pass *user.Password) error {
+	if p.AllowExpiredResetDays == 0 {
+		return fmt.Errorf("needn't reset expired password")
+	}
+
+	delta := p.expiredDelta(pass.UpdateAt.T())
+	if delta > int(p.AllowExpiredResetDays) {
+		return fmt.Errorf("out of reset time, expired days %d, allow reset days: %d please find",
+			delta, p.AllowExpiredResetDays)
+	}
+
+	return nil
+}
+
+func (p *PasswordSecurity) expiredDelta(updateAt time.Time) int {
+	updateBefore := uint(time.Now().Sub(updateAt).Hours() / 24)
+	return int(updateBefore) - int(p.PasswrodExpiredDays)
 }
 
 // Check todo

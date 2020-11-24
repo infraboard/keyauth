@@ -53,7 +53,7 @@ func (h *handler) Registry(router router.SubRouter) {
 	passRouter := router.ResourceRouter("password")
 	passRouter.BasePath("password")
 	passRouter.Handle("PUT", "/", h.UpdatePassword).AddLabel(label.Update)
-	passRouter.Handle("PUT", "/reset", h.ResetPassword).AddLabel(label.Update).DisableAuth()
+	passRouter.Handle("PUT", "/reset", h.ResetExpiredPassword).AddLabel(label.Update).DisableAuth()
 }
 
 func (h *handler) Config() error {

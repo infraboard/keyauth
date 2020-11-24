@@ -27,6 +27,7 @@ type Service interface {
 	// 更新用户
 	UpdateAccountProfile(*UpdateAccountRequest) (*User, error)
 	UpdateAccountPassword(*UpdatePasswordRequest) (*Password, error)
+	ResetExpiredPassword(*ResetExpiredRequest) (*Password, error)
 }
 
 // NewDescriptAccountRequest 查询详情请求
@@ -138,18 +139,53 @@ func NewCreateUserRequest() *CreateAccountRequest {
 
 // NewUpdatePasswordRequest todo
 func NewUpdatePasswordRequest() *UpdatePasswordRequest {
-	return &UpdatePasswordRequest{}
+	return &UpdatePasswordRequest{
+		Session: token.NewSession(),
+	}
 }
 
 // UpdatePasswordRequest todo
 type UpdatePasswordRequest struct {
+	*token.Session `json:"-"`
+	ResetExpiredRequest
+}
+
+// IsReset 密码是否需要被重置, 如果不是自己设置的密码 都需要被用户自己重置
+func (req *UpdatePasswordRequest) IsReset() bool {
+	if req.Session == nil || req.GetToken() == nil {
+		return false
+	}
+
+	if req.Account == req.GetToken().Account {
+		return false
+	}
+
+	return true
+}
+
+// Validate tood
+func (req *UpdatePasswordRequest) Validate() error {
+	if req.Session == nil || req.GetToken() == nil {
+		return fmt.Errorf("token required")
+	}
+
+	return req.ResetExpiredRequest.Validate()
+}
+
+// NewResetExpiredRequest todo
+func NewResetExpiredRequest() *ResetExpiredRequest {
+	return &ResetExpiredRequest{}
+}
+
+// ResetExpiredRequest todo
+type ResetExpiredRequest struct {
 	Account string `json:"account"`
 	OldPass string `json:"old_pass,omitempty"`
 	NewPass string `json:"new_pass,omitempty"`
 }
 
 // Validate tood
-func (req *UpdatePasswordRequest) Validate() error {
+func (req *ResetExpiredRequest) Validate() error {
 	if req.Account == "" {
 		return fmt.Errorf("account required")
 	}
@@ -165,6 +201,5 @@ func (req *UpdatePasswordRequest) Validate() error {
 	if req.Account == req.NewPass {
 		return fmt.Errorf("password must not equal account")
 	}
-
 	return nil
 }
