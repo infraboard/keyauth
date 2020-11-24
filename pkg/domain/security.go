@@ -30,25 +30,27 @@ func (req *SecuritySetting) Patch(data *SecuritySetting) {
 // NewDefaulPasswordSecurity todo
 func NewDefaulPasswordSecurity() *PasswordSecurity {
 	return &PasswordSecurity{
-		Length:              8,
-		IncludeNumber:       true,
-		IncludeLowerLetter:  true,
-		IncludeUpperLetter:  false,
-		IncludeSymbols:      false,
-		RepeateLimite:       1,
-		PasswrodExpiredDays: 30,
+		Length:                8,
+		IncludeNumber:         true,
+		IncludeLowerLetter:    true,
+		IncludeUpperLetter:    false,
+		IncludeSymbols:        false,
+		RepeateLimite:         1,
+		PasswrodExpiredDays:   90,
+		AllowExpiredResetDays: 30,
 	}
 }
 
 // PasswordSecurity 密码安全设置
 type PasswordSecurity struct {
-	Length              int  `bson:"length" json:"length" validate:"required,min=8,max=64"`                                // 密码长度
-	IncludeNumber       bool `bson:"include_number" json:"include_number"`                                                 // 包含数字
-	IncludeLowerLetter  bool `bson:"include_lower_letter" json:"include_lower_letter"`                                     // 包含小写字母
-	IncludeUpperLetter  bool `bson:"include_upper_letter" json:"include_upper_letter"`                                     // 包含大写字母
-	IncludeSymbols      bool `bson:"include_symbols" json:"include_symbols"`                                               // 包含特殊字符
-	RepeateLimite       uint `bson:"repeate_limite" json:"repeate_limite" validate:"required,min=1,max=24"`                // 重复限制
-	PasswrodExpiredDays uint `bson:"password_expired_days" json:"password_expired_days" validate:"required,min=0,max=365"` // 密码过期时间, 密码过期后要求用户重置密码
+	Length                int  `bson:"length" json:"length" validate:"required,min=8,max=64"`                                      // 密码长度
+	IncludeNumber         bool `bson:"include_number" json:"include_number"`                                                       // 包含数字
+	IncludeLowerLetter    bool `bson:"include_lower_letter" json:"include_lower_letter"`                                           // 包含小写字母
+	IncludeUpperLetter    bool `bson:"include_upper_letter" json:"include_upper_letter"`                                           // 包含大写字母
+	IncludeSymbols        bool `bson:"include_symbols" json:"include_symbols"`                                                     // 包含特殊字符
+	RepeateLimite         uint `bson:"repeate_limite" json:"repeate_limite" validate:"required,min=1,max=24"`                      // 重复限制
+	PasswrodExpiredDays   uint `bson:"password_expired_days" json:"password_expired_days" validate:"required,min=0,max=365"`       // 密码过期时间, 密码过期后要求用户重置密码
+	AllowExpiredResetDays uint `bson:"allow_expired_reset_days" json:"allow_expired_reset_days" validate:"required,min=0,max=365"` // 允许重置的时间周期
 }
 
 // Validate 校验对象合法性
