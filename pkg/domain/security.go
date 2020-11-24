@@ -3,8 +3,11 @@ package domain
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/infraboard/keyauth/common/password"
+	"github.com/infraboard/keyauth/pkg/user"
+	"github.com/infraboard/mcube/exception"
 )
 
 // NewDefaultSecuritySetting todo
@@ -56,6 +59,24 @@ type PasswordSecurity struct {
 // Validate 校验对象合法性
 func (p *PasswordSecurity) Validate() error {
 	return validate.Struct(p)
+}
+
+// IsPasswordExpired todo
+func (p *PasswordSecurity) IsPasswordExpired(pass *user.Password) error {
+	if p.PasswrodExpiredDays == 0 {
+		return nil
+	}
+
+	updateBefore := time.Now().Sub(pass.UpdateAt.T()).Hours() / 24
+	delta := int(updateBefore) - int(p.PasswrodExpiredDays)
+	if delta > 0 {
+		if delta <= int(p.AllowExpiredResetDays) {
+			return exception.NewPasswordReset("password expired %d days, need reset", delta)
+		}
+		return exception.NewPasswordExired("password expired %d days", delta)
+	}
+
+	return nil
 }
 
 // Check todo

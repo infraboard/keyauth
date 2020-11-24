@@ -3,7 +3,6 @@ package user
 import (
 	"encoding/json"
 	"fmt"
-	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/infraboard/mcube/exception"
@@ -199,20 +198,6 @@ type Password struct {
 	UpdateAt  ftime.Time `bson:"update_at" json:"update_at,omitempty"`  // 密码更新时间
 	NeedReset bool       `bson:"need_reset" json:"need_reset"`          // 密码需要被重置
 	History   []string   `bson:"history" json:"history"`                // 历史密码
-}
-
-// ISExpired 是否过期
-func (p *Password) ISExpired(expiredDays uint) error {
-	// 为0标识不过期
-	if expiredDays == 0 {
-		return nil
-	}
-
-	delta := uint(time.Now().Sub(p.UpdateAt.T()).Hours() / 24)
-	if delta > expiredDays {
-		return fmt.Errorf("password expired %d days", delta-expiredDays)
-	}
-	return nil
 }
 
 // CheckPassword 判断password 是否正确

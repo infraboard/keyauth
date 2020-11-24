@@ -83,9 +83,9 @@ func (i *issuer) checkUserPassExpired(u *user.User) error {
 		return err
 	}
 
-	err = u.HashedPassword.ISExpired(d.SecuritySetting.PasswordSecurity.PasswrodExpiredDays)
+	err = d.SecuritySetting.PasswordSecurity.IsPasswordExpired(u.HashedPassword)
 	if err != nil {
-		return exception.NewPasswordExired("%s, please reset", err)
+		return err
 	}
 
 	return nil
@@ -140,7 +140,10 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 
 		if err := i.checkUserPassExpired(u); err != nil {
 			i.log.Debugf("issue password token error, %s", err)
-			return nil, exception.NewPasswordExired("password expired").WithData(u.Account)
+			if v, ok := err.(exception.APIException); ok {
+				v.WithData(u.Account)
+			}
+			return nil, err
 		}
 
 		tk := i.issueUserToken(app, u, token.PASSWORD)
