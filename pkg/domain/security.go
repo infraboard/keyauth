@@ -93,6 +93,11 @@ func (p *PasswordSecurity) AllowResetPassword(pass *user.Password) error {
 	}
 
 	delta := p.expiredDelta(pass.UpdateAt.T())
+
+	if delta < 0 {
+		return fmt.Errorf("your password not exirped can't reset")
+	}
+
 	if delta > int(p.AllowExpiredResetDays) {
 		return fmt.Errorf("out of reset time, expired days %d, allow reset days: %d please find",
 			delta, p.AllowExpiredResetDays)

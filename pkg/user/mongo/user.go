@@ -97,7 +97,7 @@ func (s *service) changePass(account, old, new string, isReset bool, checkAllow 
 		return nil, err
 	}
 
-	// 更加域设置的规则检测密码安全
+	// 根据域设置的规则检测密码策略
 	descDom := domain.NewDescriptDomainRequestWithName(u.Domain)
 	dom, err := s.domain.DescriptionDomain(descDom)
 	if err != nil {
@@ -119,7 +119,7 @@ func (s *service) changePass(account, old, new string, isReset bool, checkAllow 
 
 	// 判断是不是历史密码
 	if u.HashedPassword.IsHistory(new) {
-		return nil, exception.NewBadRequest("password must not last n")
+		return nil, exception.NewBadRequest("password must not last %d", dom.SecuritySetting.PasswordSecurity.RepeateLimite)
 	}
 
 	if err := u.ChangePassword(old, new, dom.SecuritySetting.GetPasswordRepeateLimite(), isReset); err != nil {
