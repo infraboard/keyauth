@@ -83,6 +83,26 @@ func (p *PasswordSecurity) IsPasswordExpired(pass *user.Password) error {
 	return nil
 }
 
+// SetPasswordNeedReset todo
+func (p *PasswordSecurity) SetPasswordNeedReset(pass *user.Password) {
+	// 密码用不过期, 不需要重置
+	if p.PasswrodExpiredDays == 0 {
+		return
+	}
+
+	// 计算密码是否过期
+	delta := p.expiredDelta(pass.UpdateAt.T())
+	if delta >= 0 {
+		pass.SetExpired()
+		return
+	}
+
+	// 计算是否即将过期, 需要用户重置
+	if -delta < int(p.BeforeExpiredRemindDays) {
+		pass.SetNeedReset("密码%d天后过期, 请重置密码", -delta)
+	}
+}
+
 func (p *PasswordSecurity) expiredDelta(updateAt time.Time) int {
 	updateBefore := uint(time.Now().Sub(updateAt).Hours() / 24)
 	return int(updateBefore) - int(p.PasswrodExpiredDays)

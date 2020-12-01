@@ -142,7 +142,7 @@ func (s *service) DescribeAccount(req *user.DescriptAccountRequest) (*user.User,
 		return nil, err
 	}
 
-	dom.SecuritySetting.PasswordSecurity.IsPasswordExpired(ins.HashedPassword)
+	dom.SecuritySetting.PasswordSecurity.SetPasswordNeedReset(ins.HashedPassword)
 	return ins, nil
 }
 

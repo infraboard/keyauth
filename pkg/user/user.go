@@ -78,6 +78,7 @@ func (u *User) Block(reason string) {
 func (u *User) Desensitize() {
 	if u.HashedPassword != nil {
 		u.HashedPassword.Password = ""
+		u.HashedPassword.History = []string{}
 	}
 	return
 }
@@ -199,7 +200,20 @@ type Password struct {
 	UpdateAt    ftime.Time `bson:"update_at" json:"update_at,omitempty"`  // 密码更新时间
 	NeedReset   bool       `bson:"need_reset" json:"need_reset"`          // 密码需要被重置
 	ResetReason string     `bson:"reset_reason" json:"reset_reason"`      // 需要重置的原因
-	History     []string   `bson:"history" json:"history"`                // 历史密码
+	History     []string   `bson:"history" json:"history,omitempty"`      // 历史密码
+
+	IsExpired bool `bson:"-" json:"is_expired"` // 是否过期
+}
+
+// SetExpired 密码过期
+func (p *Password) SetExpired() {
+	p.IsExpired = true
+}
+
+// SetNeedReset 需要被重置
+func (p *Password) SetNeedReset(format string, a ...interface{}) {
+	p.NeedReset = true
+	p.ResetReason = fmt.Sprintf(format, a...)
 }
 
 // CheckPassword 判断password 是否正确
