@@ -95,8 +95,7 @@ func (u *User) ChangePassword(old, new string, maxHistory uint, needReset bool) 
 	if err != nil {
 		return exception.NewBadRequest(err.Error())
 	}
-	newPass.NeedReset = needReset
-	u.HashedPassword.Update(newPass, maxHistory)
+	u.HashedPassword.Update(newPass, maxHistory, needReset)
 	return nil
 }
 
@@ -229,7 +228,7 @@ func (p *Password) CheckPassword(password string) error {
 func (p *Password) IsHistory(password string) bool {
 	for _, pass := range p.History {
 		err := bcrypt.CompareHashAndPassword([]byte(pass), []byte(password))
-		if err != nil {
+		if err == nil {
 			return true
 		}
 	}
@@ -246,17 +245,21 @@ func (p *Password) rotaryHistory(maxHistory uint) {
 	if uint(p.HistoryCount()) < maxHistory {
 		p.History = append(p.History, p.Password)
 	} else {
-		remainHistry := p.History[:p.HistoryCount()]
+		remainHistry := p.History[:maxHistory]
 		p.History = []string{p.Password}
 		p.History = append(p.History, remainHistry...)
 	}
 }
 
 // Update 更新密码
-func (p *Password) Update(new *Password, maxHistory uint) {
+func (p *Password) Update(new *Password, maxHistory uint, needReset bool) {
 	p.rotaryHistory(maxHistory)
 	p.Password = new.Password
+	p.NeedReset = needReset
 	p.UpdateAt = ftime.Now()
+	if !needReset {
+		p.ResetReason = ""
+	}
 }
 
 // NewUserSet 实例

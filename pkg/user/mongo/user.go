@@ -104,7 +104,7 @@ func (s *service) changePass(account, old, new string, isReset bool) (*user.Pass
 
 	// 判断是不是历史密码
 	if u.HashedPassword.IsHistory(new) {
-		return nil, exception.NewBadRequest("password must not last %d", dom.SecuritySetting.PasswordSecurity.RepeateLimite)
+		return nil, exception.NewBadRequest("password not last %d used", dom.SecuritySetting.PasswordSecurity.RepeateLimite)
 	}
 
 	if err := u.ChangePassword(old, new, dom.SecuritySetting.GetPasswordRepeateLimite(), isReset); err != nil {
@@ -119,6 +119,7 @@ func (s *service) changePass(account, old, new string, isReset bool) (*user.Pass
 		return nil, exception.NewInternalServerError("update user(%s) password error, %s", u.Account, err)
 	}
 
+	u.Desensitize()
 	return u.HashedPassword, nil
 }
 
