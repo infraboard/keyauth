@@ -79,17 +79,10 @@ func (s *service) UpdateAccountPassword(req *user.UpdatePasswordRequest) (*user.
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest("check update pass request error, %s", err)
 	}
-	return s.changePass(req.Account, req.OldPass, req.NewPass, req.IsReset(), false)
+	return s.changePass(req.Account, req.OldPass, req.NewPass, req.IsReset())
 }
 
-func (s *service) ResetExpiredPassword(req *user.ResetExpiredRequest) (*user.Password, error) {
-	if err := req.Validate(); err != nil {
-		return nil, exception.NewBadRequest("check reset pass request error, %s", err)
-	}
-	return s.changePass(req.Account, req.OldPass, req.NewPass, false, true)
-}
-
-func (s *service) changePass(account, old, new string, isReset bool, checkAllow bool) (*user.Password, error) {
+func (s *service) changePass(account, old, new string, isReset bool) (*user.Password, error) {
 	descReq := user.NewDescriptAccountRequest()
 	descReq.Account = account
 	u, err := s.DescribeAccount(descReq)
@@ -102,14 +95,6 @@ func (s *service) changePass(account, old, new string, isReset bool, checkAllow 
 	dom, err := s.domain.DescriptionDomain(descDom)
 	if err != nil {
 		return nil, err
-	}
-
-	// 检测是否允许更新密码
-	if checkAllow {
-		err = dom.SecuritySetting.PasswordSecurity.AllowResetPassword(u.HashedPassword)
-		if err != nil {
-			return nil, err
-		}
 	}
 
 	// 检测密码强度
@@ -142,9 +127,9 @@ func (s *service) DescribeAccount(req *user.DescriptAccountRequest) (*user.User,
 	if err != nil {
 		return nil, err
 	}
-	user := user.NewDefaultUser()
 
-	if err := s.col.FindOne(context.TODO(), r.FindFilter()).Decode(user); err != nil {
+	ins := user.NewDefaultUser()
+	if err := s.col.FindOne(context.TODO(), r.FindFilter()).Decode(ins); err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, exception.NewNotFound("user %s not found", req)
 		}
@@ -152,7 +137,13 @@ func (s *service) DescribeAccount(req *user.DescriptAccountRequest) (*user.User,
 		return nil, exception.NewInternalServerError("find user %s error, %s", req, err)
 	}
 
-	return user, nil
+	dom, err := s.domain.DescriptionDomain(domain.NewDescriptDomainRequestWithName(ins.Domain))
+	if err != nil {
+		return nil, err
+	}
+
+	dom.SecuritySetting.PasswordSecurity.IsPasswordExpired(ins.HashedPassword)
+	return ins, nil
 }
 
 func (s *service) BlockAccount(account, reason string) error {

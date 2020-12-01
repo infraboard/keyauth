@@ -194,11 +194,12 @@ func NewHashedPassword(password string) (*Password, error) {
 
 // Password user's password
 type Password struct {
-	Password  string     `bson:"password" json:"password,omitempty"`    // hash过后的密码
-	CreateAt  ftime.Time `bson:"create_at" json:"create_at,omitempty" ` // 密码创建时间
-	UpdateAt  ftime.Time `bson:"update_at" json:"update_at,omitempty"`  // 密码更新时间
-	NeedReset bool       `bson:"need_reset" json:"need_reset"`          // 密码需要被重置
-	History   []string   `bson:"history" json:"history"`                // 历史密码
+	Password    string     `bson:"password" json:"password,omitempty"`    // hash过后的密码
+	CreateAt    ftime.Time `bson:"create_at" json:"create_at,omitempty" ` // 密码创建时间
+	UpdateAt    ftime.Time `bson:"update_at" json:"update_at,omitempty"`  // 密码更新时间
+	NeedReset   bool       `bson:"need_reset" json:"need_reset"`          // 密码需要被重置
+	ResetReason string     `bson:"reset_reason" json:"reset_reason"`      // 需要重置的原因
+	History     []string   `bson:"history" json:"history"`                // 历史密码
 }
 
 // CheckPassword 判断password 是否正确

@@ -35,22 +35,3 @@ func (h *handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 	response.Success(w, pass)
 	return
 }
-
-func (h *handler) ResetExpiredPassword(w http.ResponseWriter, r *http.Request) {
-	// 解析需要更新的数据
-	req := user.NewResetExpiredRequest()
-	if err := request.GetDataFromRequest(r, req); err != nil {
-		response.Failed(w, err)
-		return
-	}
-
-	pass, err := h.service.ResetExpiredPassword(req)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
-	pass.Password = ""
-	response.Success(w, pass)
-	return
-}

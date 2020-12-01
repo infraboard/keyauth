@@ -27,7 +27,6 @@ type Service interface {
 	// 更新用户
 	UpdateAccountProfile(*UpdateAccountRequest) (*User, error)
 	UpdateAccountPassword(*UpdatePasswordRequest) (*Password, error)
-	ResetExpiredPassword(*ResetExpiredRequest) (*Password, error)
 }
 
 // NewDescriptAccountRequest 查询详情请求
