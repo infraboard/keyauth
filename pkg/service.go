@@ -18,6 +18,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/role"
 	"github.com/infraboard/keyauth/pkg/session"
 	"github.com/infraboard/keyauth/pkg/storage"
+	"github.com/infraboard/keyauth/pkg/system"
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
 )
@@ -57,6 +58,8 @@ var (
 	Storage storage.Service
 	// Session 审计服务
 	Session session.Service
+	// System 系统服务
+	System system.Service
 )
 
 var (
@@ -183,6 +186,12 @@ func RegistryService(name string, svr Service) {
 			registryError(name)
 		}
 		Session = value
+		addService(name, svr)
+	case system.Service:
+		if System != nil {
+			registryError(name)
+		}
+		System = value
 		addService(name, svr)
 	default:
 		panic(fmt.Sprintf("unknown service type %s", name))
