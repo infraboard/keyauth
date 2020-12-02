@@ -5,7 +5,7 @@
 
 keyauth是一个微服务权限治理中心, 提供用户认证与授权管理.
 
-demo访问地址: [Demo](http://keyauth.nbtuan.vip/) 用户: admin, 密码: 123456
+demo访问地址: [Demo](http://keyauth.nbtuan.vip/) 用户: admin, 密码: 12345678mM@1
 
 ## 功能
 

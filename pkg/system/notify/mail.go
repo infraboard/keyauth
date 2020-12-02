@@ -22,13 +22,13 @@ func NewSendMailRequest() *SendMailRequest {
 
 // SendMailRequest todo
 type SendMailRequest struct {
-	From    string
-	To      string
-	Cc      string
-	Subject string
-	Content string
+	From    string `json:"from,omitempty"`
+	To      string `json:"to,omitempty"`
+	Cc      string `json:"cc,omitempty"`
+	Subject string `json:"subject,omitempty"`
+	Content string `json:"content,omitempty"`
 
-	buffer *bytes.Buffer
+	buffer *bytes.Buffer `json:"-"`
 }
 
 // PrepareBody todo

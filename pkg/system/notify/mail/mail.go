@@ -179,7 +179,7 @@ func (s *sender) client() (*smtp.Client, error) {
 		}
 	}
 
-	// 更加服务器推荐的方式选择认证方式
+	// 根据服务器推荐的方式选择认证方式
 	if !s.SkipAuth {
 		if ok, mech := c.Extension("AUTH"); ok {
 			auth, err := s.auth(mech)
