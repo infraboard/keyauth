@@ -19,9 +19,9 @@ type handler struct {
 
 // Registry 注册HTTP服务路由
 func (h *handler) Registry(router router.SubRouter) {
-	geoipRouter := router.ResourceRouter("system_config")
-	geoipRouter.BasePath("system_config")
-	geoipRouter.Permission(true)
+	r := router.ResourceRouter("system_config")
+	r.BasePath("system_config")
+	r.Permission(true)
 }
 
 func (h *handler) Config() error {

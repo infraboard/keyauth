@@ -26,6 +26,13 @@ func LoadTenCentSMSConfigFromEnv() (*TenCentSMS, error) {
 	return cfg, nil
 }
 
+// Config 短信配置
+type Config struct {
+	Provider   Provider    `bson:"provider" json:"provider"`
+	TencentSMS *TenCentSMS `bson:"tencent_sms" json:"tencent_sms"`
+	ALISMS     *ALISMS     `bson:"ali_sms" json:"ali_sms"`
+}
+
 // TenCentSMS todo
 // 接口和相关文档请参考https://console.cloud.tencent.com/api/explorer?Product=sms&Version=2019-07-11&Action=SendSms&SignVersion=
 type TenCentSMS struct {

@@ -1,8 +1,13 @@
 package system
 
+import (
+	"github.com/infraboard/keyauth/pkg/system/notify/mail"
+	"github.com/infraboard/keyauth/pkg/system/notify/sms"
+)
+
 // Service 存储服务
 type Service interface {
-	CreateConfig() (*Config, error)
-	UpdateConfig() (*Config, error)
+	UpdateEmail(*mail.Config) error
+	UpdateSMS(*sms.Config) error
 	GetConfig() (*Config, error)
 }
