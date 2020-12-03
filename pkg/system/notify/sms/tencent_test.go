@@ -11,12 +11,12 @@ import (
 
 func TestSendMail(t *testing.T) {
 	should := assert.New(t)
-	conf, err := sms.LoadTenCentSMSConfigFromEnv()
+	conf, err := sms.LoadSMSConfigFromEnv()
 	if should.NoError(err) {
-		sd, err := sms.NewTenCentSMSSender(conf)
+		sd, err := sms.NewSMSSender(conf)
 		if should.NoError(err) {
 			req := notify.NewSendSMSRequest()
-			req.TemplateID = conf.TemplateID
+			req.TemplateID = conf.TencentSMS.TemplateID
 			req.ParamSet = []string{"409933", "10"}
 			req.PhoneNumberSet = []string{"+8618108053819"}
 			should.NoError(sd.Send(req))

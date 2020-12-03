@@ -17,9 +17,9 @@ var (
 	validate = validator.New()
 )
 
-// LoadTenCentSMSConfigFromEnv todo
-func LoadTenCentSMSConfigFromEnv() (*TenCentSMS, error) {
-	cfg := &TenCentSMS{}
+// LoadSMSConfigFromEnv todo
+func LoadSMSConfigFromEnv() (*Config, error) {
+	cfg := &Config{}
 	if err := env.Parse(cfg); err != nil {
 		return nil, fmt.Errorf("load config from env, %s", err.Error())
 	}

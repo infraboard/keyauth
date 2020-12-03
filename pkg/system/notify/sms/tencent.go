@@ -10,8 +10,8 @@ import (
 	"github.com/infraboard/keyauth/pkg/system/notify"
 )
 
-// NewTenCentSMSSender todo
-func NewTenCentSMSSender(conf *TenCentSMS) (notify.SMSSender, error) {
+// newTenCentSMSSender todo
+func newTenCentSMSSender(conf *TenCentSMS) (notify.SMSSender, error) {
 	s := &tencent{TenCentSMS: conf}
 	if err := s.init(); err != nil {
 		return nil, err
