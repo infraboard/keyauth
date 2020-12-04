@@ -1,13 +1,13 @@
 package mongo
 
 import (
+	"github.com/infraboard/mcube/logger"
+	"github.com/infraboard/mcube/logger/zap"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/system"
-	"github.com/infraboard/mcube/logger"
-	"github.com/infraboard/mcube/logger/zap"
 )
 
 var (
@@ -17,16 +17,19 @@ var (
 
 type service struct {
 	log logger.Logger
-	db  *mongo.Database
+	col *mongo.Collection
 }
 
 func (s *service) Config() error {
-	s.db = conf.C().Mongo.GetDB()
-	s.log = zap.L().Named("Storage")
+	s.log = zap.L().Named("System Config")
+	db := conf.C().Mongo.GetDB()
+	ac := db.Collection("system_config")
+
+	s.col = ac
 	return nil
 }
 
 func init() {
 	var _ system.Service = Service
-	pkg.RegistryService("storage", Service)
+	pkg.RegistryService("system_config", Service)
 }
