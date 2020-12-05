@@ -13,6 +13,10 @@ import (
 )
 
 func (s *service) UpdateEmail(mailConf *mail.Config) error {
+	if err := mailConf.Validate(); err != nil {
+		return exception.NewBadRequest("validate mail config error, %s", err)
+	}
+
 	_, err := s.GetConfig()
 	if exception.IsNotFoundError(err) {
 		conf := system.NewDefaultConfig()
@@ -26,6 +30,10 @@ func (s *service) UpdateEmail(mailConf *mail.Config) error {
 }
 
 func (s *service) UpdateSMS(smsConf *sms.Config) error {
+	if err := smsConf.Validate(); err != nil {
+		return exception.NewBadRequest("validate mail config error, %s", err)
+	}
+
 	_, err := s.GetConfig()
 	if exception.IsNotFoundError(err) {
 		conf := system.NewDefaultConfig()

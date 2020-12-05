@@ -13,7 +13,7 @@ import (
 
 // NewSender todo
 func NewSender(conf *Config) (notify.MailSender, error) {
-	if err := conf.validate(); err != nil {
+	if err := conf.Validate(); err != nil {
 		return nil, err
 	}
 

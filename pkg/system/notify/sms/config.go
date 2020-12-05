@@ -42,6 +42,18 @@ type Config struct {
 	ALISMS     *ALISMS     `bson:"ali_sms" json:"ali_sms"`
 }
 
+// Validate todo
+func (c *Config) Validate() error {
+	switch c.Provider {
+	case ProviderTenCent:
+		return c.TencentSMS.Validate()
+	case ProviderALI:
+		return fmt.Errorf("not impl")
+	default:
+		return fmt.Errorf("unknown provider type: %s", c.Provider)
+	}
+}
+
 // TenCentSMS todo
 // 接口和相关文档请参考https://console.cloud.tencent.com/api/explorer?Product=sms&Version=2019-07-11&Action=SendSms&SignVersion=
 type TenCentSMS struct {

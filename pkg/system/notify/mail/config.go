@@ -49,7 +49,8 @@ type Config struct {
 	TLSConfig    *tls.Config `bson:"tls_config" json:"tls_config"`
 }
 
-func (c *Config) validate() error {
+// Validate todo
+func (c *Config) Validate() error {
 	if c.Host == "" {
 		return errors.New("邮件客户端服务器地址未配置")
 	}
