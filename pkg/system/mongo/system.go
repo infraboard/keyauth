@@ -12,22 +12,39 @@ import (
 	"github.com/infraboard/mcube/exception"
 )
 
-func (s *service) UpdateEmail(*mail.Config) error {
-	return nil
+func (s *service) UpdateEmail(mailConf *mail.Config) error {
+	_, err := s.GetConfig()
+	if exception.IsNotFoundError(err) {
+		conf := system.NewDefaultConfig()
+		*conf.Email = *mailConf
+		if err := s.save(conf); err != nil {
+			return err
+		}
+	}
+
+	return s.updateEmail(mailConf)
 }
 
-func (s *service) UpdateSMS(*sms.Config) error {
-	return nil
+func (s *service) UpdateSMS(smsConf *sms.Config) error {
+	_, err := s.GetConfig()
+	if exception.IsNotFoundError(err) {
+		conf := system.NewDefaultConfig()
+		*conf.SMS = *smsConf
+		if err := s.save(conf); err != nil {
+			return err
+		}
+	}
+	return s.updateSMS(smsConf)
 }
 
-func (s *service) GetConfig(version string) (*system.Config, error) {
+func (s *service) GetConfig() (*system.Config, error) {
 	conf := system.NewDefaultConfig()
-	if err := s.col.FindOne(context.TODO(), bson.M{"_id": version}).Decode(conf); err != nil {
+	if err := s.col.FindOne(context.TODO(), bson.M{"_id": conf.Version}).Decode(conf); err != nil {
 		if err == mongo.ErrNoDocuments {
-			return nil, exception.NewNotFound("version: %s system config %s not found", version)
+			return nil, exception.NewNotFound("version: %s system config %s not found", conf.Version)
 		}
 
-		return nil, exception.NewInternalServerError("find system config %s error, %s", version, err)
+		return nil, exception.NewInternalServerError("find system config %s error, %s", conf.Version, err)
 	}
 
 	return conf, nil
