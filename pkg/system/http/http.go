@@ -3,7 +3,6 @@ package http
 import (
 	"errors"
 
-	"github.com/infraboard/mcube/http/label"
 	"github.com/infraboard/mcube/http/router"
 
 	"github.com/infraboard/keyauth/pkg"
@@ -22,8 +21,10 @@ type handler struct {
 func (h *handler) Registry(router router.SubRouter) {
 	r := router.ResourceRouter("system_config")
 	r.BasePath("system_config")
-	r.Handle("POST", "/email/test", h.TestEmailSend).AddLabel(label.Create)
-	r.Handle("POST", "/sms/test", h.TestSMSSend).AddLabel(label.Create)
+	r.Handle("POST", "/email/", h.EmailSetting)
+	r.Handle("POST", "/email/test", h.TestEmailSend)
+	r.Handle("POST", "/sms/", h.SMSSetting)
+	r.Handle("POST", "/sms/test", h.TestSMSSend)
 }
 
 func (h *handler) Config() error {
