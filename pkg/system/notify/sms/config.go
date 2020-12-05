@@ -26,6 +26,15 @@ func LoadSMSConfigFromEnv() (*Config, error) {
 	return cfg, nil
 }
 
+// NewDeautlConfig todo
+func NewDeautlConfig() *Config {
+	return &Config{
+		Provider:   ProviderTenCent,
+		TencentSMS: &TenCentSMS{},
+		ALISMS:     &ALISMS{},
+	}
+}
+
 // Config 短信配置
 type Config struct {
 	Provider   Provider    `bson:"provider" json:"provider"`

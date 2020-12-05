@@ -8,6 +8,7 @@ import (
 	"github.com/infraboard/mcube/http/response"
 
 	"github.com/infraboard/keyauth/pkg"
+	"github.com/infraboard/keyauth/pkg/system"
 	"github.com/infraboard/keyauth/pkg/system/notify"
 	"github.com/infraboard/keyauth/pkg/system/notify/mail"
 	"github.com/infraboard/keyauth/pkg/system/notify/sms"
@@ -32,7 +33,7 @@ func (h *handler) TestEmailSend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	conf, err := h.service.GetConfig()
+	conf, err := h.service.GetConfig(system.DEFAULT_CONFIG_VERSION)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -66,7 +67,7 @@ func (h *handler) TestSMSSend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	conf, err := h.service.GetConfig()
+	conf, err := h.service.GetConfig(system.DEFAULT_CONFIG_VERSION)
 	if err != nil {
 		response.Failed(w, err)
 		return

@@ -9,5 +9,5 @@ import (
 type Service interface {
 	UpdateEmail(*mail.Config) error
 	UpdateSMS(*sms.Config) error
-	GetConfig() (*Config, error)
+	GetConfig(version string) (*Config, error)
 }

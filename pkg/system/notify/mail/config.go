@@ -18,13 +18,20 @@ func LoadConfigFromEnv() (*Config, error) {
 	return cfg, nil
 }
 
-// NewPasswordConfig todo
-func NewPasswordConfig(host, user, pass string) *Config {
+// NewEmailConfig todo
+func NewEmailConfig(host, user, pass string) *Config {
 	return &Config{
 		Host:         host,
 		AuthUserName: user,
 		AuthPassword: pass,
 		TLSConfig:    &tls.Config{},
+	}
+}
+
+// NewDeaultConfig todo
+func NewDeaultConfig() *Config {
+	return &Config{
+		TLSConfig: &tls.Config{},
 	}
 }
 
