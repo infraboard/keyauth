@@ -31,34 +31,34 @@ func LoadConfigFromEnv() (*Config, error) {
 // NewDefaultConfig todo
 func NewDefaultConfig() *Config {
 	return &Config{
-		Provider:   ProviderTenCent,
-		TencentSMS: &TenCentSMS{},
-		ALISMS:     &ALISMS{},
+		EnabledProvider: ProviderTenCent,
+		Tencent:         &TenCentConfig{},
+		ALI:             &ALI{},
 	}
 }
 
 // Config 短信配置
 type Config struct {
-	Provider   Provider    `bson:"provider" json:"provider"`
-	TencentSMS *TenCentSMS `bson:"tencent_sms" json:"tencent_sms"`
-	ALISMS     *ALISMS     `bson:"ali_sms" json:"ali_sms"`
+	EnabledProvider Provider       `bson:"enabled_provider" json:"enabled_provider"`
+	Tencent         *TenCentConfig `bson:"tencent" json:"tencent"`
+	ALI             *ALI           `bson:"ali" json:"ali"`
 }
 
 // Validate todo
 func (c *Config) Validate() error {
-	switch c.Provider {
+	switch c.EnabledProvider {
 	case ProviderTenCent:
-		return c.TencentSMS.Validate()
+		return c.Tencent.Validate()
 	case ProviderALI:
 		return fmt.Errorf("not impl")
 	default:
-		return fmt.Errorf("unknown provider type: %s", c.Provider)
+		return fmt.Errorf("unknown provider type: %s", c.EnabledProvider)
 	}
 }
 
-// TenCentSMS todo
+// TenCentConfig todo
 // 接口和相关文档请参考https://console.cloud.tencent.com/api/explorer?Product=sms&Version=2019-07-11&Action=SendSms&SignVersion=
-type TenCentSMS struct {
+type TenCentConfig struct {
 	Endpoint   string `json:"endpoint" env:"K_SMS_TENCENT_ENDPOINT"`
 	SecretID   string `json:"secret_id" validate:"required,lte=64" env:"K_SMS_TENCENT_SECRET_ID"`
 	SecretKey  string `json:"secret_key" validate:"required,lte=64" env:"K_SMS_TENCENT_SECRET_KEY"`
@@ -68,12 +68,12 @@ type TenCentSMS struct {
 }
 
 // Validate todo
-func (s *TenCentSMS) Validate() error {
+func (s *TenCentConfig) Validate() error {
 	return validate.Struct(s)
 }
 
 // GetEndpoint todo
-func (s *TenCentSMS) GetEndpoint() string {
+func (s *TenCentConfig) GetEndpoint() string {
 	if s.Endpoint != "" {
 		return s.Endpoint
 	}

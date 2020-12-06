@@ -8,13 +8,13 @@ import (
 
 // NewSender todo
 func NewSender(conf *Config) (notify.SMSSender, error) {
-	switch conf.Provider {
+	switch conf.EnabledProvider {
 	case ProviderTenCent:
-		return newTenCentSMSSender(conf.TencentSMS)
+		return newTenCentSMSSender(conf.Tencent)
 	case ProviderALI:
 		return nil, fmt.Errorf("not impl")
 	default:
-		return nil, fmt.Errorf("unknwon provier, %s", conf.Provider)
+		return nil, fmt.Errorf("unknwon provier, %s", conf.EnabledProvider)
 	}
 
 }

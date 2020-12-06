@@ -1,5 +1,5 @@
 package sms
 
-// ALISMS todo
-type ALISMS struct {
+// ALI todo
+type ALI struct {
 }

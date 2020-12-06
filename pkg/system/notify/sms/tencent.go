@@ -2,6 +2,7 @@ package sms
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
@@ -13,14 +14,14 @@ import (
 )
 
 // newTenCentSMSSender todo
-func newTenCentSMSSender(conf *TenCentSMS) (notify.SMSSender, error) {
+func newTenCentSMSSender(conf *TenCentConfig) (notify.SMSSender, error) {
 	if err := conf.Validate(); err != nil {
 		return nil, fmt.Errorf("validate tencent sms config error, %s", err)
 	}
 
 	s := &tencent{
-		TenCentSMS: conf,
-		log:        zap.L().Named("TenCent SMS"),
+		TenCentConfig: conf,
+		log:           zap.L().Named("TenCent SMS"),
 	}
 	if err := s.init(); err != nil {
 		return nil, err
@@ -29,7 +30,7 @@ func newTenCentSMSSender(conf *TenCentSMS) (notify.SMSSender, error) {
 }
 
 type tencent struct {
-	*TenCentSMS
+	*TenCentConfig
 
 	sms *sms.Client
 	log logger.Logger
@@ -75,7 +76,7 @@ func (s *tencent) Send(req *notify.SendSMSRequest) error {
 	}
 
 	for i := range response.Response.SendStatusSet {
-		if *(response.Response.SendStatusSet[i].Code) != "OK" {
+		if strings.ToUpper(*(response.Response.SendStatusSet[i].Code)) != "OK" {
 			return fmt.Errorf("send sms error, response is %s", response.ToJsonString())
 		}
 	}

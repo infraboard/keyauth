@@ -16,7 +16,7 @@ func TestSendMail(t *testing.T) {
 		sd, err := sms.NewSender(conf)
 		if should.NoError(err) {
 			req := notify.NewSendSMSRequest()
-			req.TemplateID = conf.TencentSMS.TemplateID
+			req.TemplateID = conf.Tencent.TemplateID
 			req.ParamSet = []string{"409933", "10"}
 			req.PhoneNumberSet = []string{"+8618108053819"}
 			should.NoError(sd.Send(req))
