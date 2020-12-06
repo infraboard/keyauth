@@ -8,6 +8,9 @@ import (
 	"net/smtp"
 	"strings"
 
+	"github.com/infraboard/mcube/logger"
+	"github.com/infraboard/mcube/logger/zap"
+
 	"github.com/infraboard/keyauth/pkg/system/notify"
 )
 
@@ -17,11 +20,16 @@ func NewSender(conf *Config) (notify.MailSender, error) {
 		return nil, err
 	}
 
-	return &sender{Config: conf}, nil
+	return &sender{
+		Config: conf,
+		log:    zap.L().Named("Mail Sender"),
+	}, nil
 }
 
 type sender struct {
 	*Config
+
+	log logger.Logger
 }
 
 // Send 发送邮件
@@ -32,6 +40,7 @@ func (s *sender) Send(req *notify.SendMailRequest) error {
 
 	c, err := s.client()
 	if err != nil {
+		s.log.Errorf("new smtp client error, %s", err)
 		return err
 	}
 
@@ -61,18 +70,23 @@ func (s *sender) Send(req *notify.SendMailRequest) error {
 	}
 
 	// 设置内容
+	s.log.Debugf("start issues a DATA command to the server ...")
 	w, err := c.Data()
 	if err != nil {
 		return err
 	}
+
+	s.log.Debugf("start send message to the server ...")
 	_, err = w.Write(msg)
 	if err != nil {
 		return err
 	}
+
 	err = w.Close()
 	if err != nil {
 		return err
 	}
+
 	return c.Quit()
 }
 
@@ -122,6 +136,8 @@ func (s *sender) auth(mechs string) (smtp.Auth, error) {
 }
 
 func (s *sender) client() (*smtp.Client, error) {
+	s.log.Debug("start new smtp client ...")
+
 	// We need to know the hostname for both auth and TLS.
 	var c *smtp.Client
 
@@ -147,12 +163,14 @@ func (s *sender) client() (*smtp.Client, error) {
 		if err != nil {
 			return nil, err
 		}
+		s.log.Debug("new tls smtp client ok")
 	} else {
 		// Connect to the SMTP smarthost.
 		c, err = smtp.Dial(s.Host)
 		if err != nil {
 			return nil, err
 		}
+		s.log.Debug("new smtp client ok")
 	}
 
 	// 发送自定义Hello数据
@@ -165,6 +183,7 @@ func (s *sender) client() (*smtp.Client, error) {
 
 	// Global Config guarantees RequireTLS is not nil.
 	if s.RequireTLS {
+		s.log.Debug("start STARTTLS ...")
 		if ok, _ := c.Extension("STARTTLS"); !ok {
 			return nil, fmt.Errorf("require_tls: true (default), but %q does not advertise the STARTTLS extension", s.Host)
 		}
@@ -181,22 +200,29 @@ func (s *sender) client() (*smtp.Client, error) {
 		if err := c.StartTLS(tlsConf); err != nil {
 			return nil, fmt.Errorf("starttls failed: %s", err)
 		}
+		s.log.Debug("start STARTTLS ok")
 	}
 
 	// 根据服务器推荐的方式选择认证方式
 	if !s.SkipAuth {
+		s.log.Debug("start auth ...")
 		if ok, mech := c.Extension("AUTH"); ok {
 			auth, err := s.auth(mech)
 			if err != nil {
 				return nil, err
 			}
-			if auth != nil {
-				if err := c.Auth(auth); err != nil {
-					return nil, fmt.Errorf("%T failed: %s", auth, err)
-				}
+
+			if auth == nil {
+				return nil, fmt.Errorf("auth mechanism is nil")
 			}
+
+			if err := c.Auth(auth); err != nil {
+				return nil, fmt.Errorf("%T failed: %s", auth, err)
+			}
+			s.log.Debug("auth ok")
 		}
 	}
 
+	s.log.Debug("new smtp client ok")
 	return c, nil
 }
