@@ -110,7 +110,7 @@ func (h *handler) TestSMSSend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	req := mail.NewDeaultTestSendRequest()
+	req := sms.NewDeaultTestSendRequest()
 	if err := request.GetDataFromRequest(r, req); err != nil {
 		response.Failed(w, err)
 		return

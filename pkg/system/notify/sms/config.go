@@ -5,6 +5,7 @@ import (
 
 	"github.com/caarlos0/env/v6"
 	"github.com/go-playground/validator/v10"
+
 	"github.com/infraboard/keyauth/pkg/system/notify"
 )
 

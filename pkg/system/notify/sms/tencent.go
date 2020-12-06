@@ -3,6 +3,8 @@ package sms
 import (
 	"fmt"
 
+	"github.com/infraboard/mcube/logger"
+	"github.com/infraboard/mcube/logger/zap"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
 	sms "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/sms/v20190711"
@@ -12,7 +14,14 @@ import (
 
 // newTenCentSMSSender todo
 func newTenCentSMSSender(conf *TenCentSMS) (notify.SMSSender, error) {
-	s := &tencent{TenCentSMS: conf}
+	if err := conf.Validate(); err != nil {
+		return nil, fmt.Errorf("validate tencent sms config error, %s", err)
+	}
+
+	s := &tencent{
+		TenCentSMS: conf,
+		log:        zap.L().Named("TenCent SMS"),
+	}
 	if err := s.init(); err != nil {
 		return nil, err
 	}
@@ -23,6 +32,7 @@ type tencent struct {
 	*TenCentSMS
 
 	sms *sms.Client
+	log logger.Logger
 }
 
 func (s *tencent) init() error {
@@ -42,6 +52,15 @@ func (s *tencent) init() error {
 
 // Send todo
 func (s *tencent) Send(req *notify.SendSMSRequest) error {
+	// 补充默认模板ID
+	if req.TemplateID == "" {
+		req.TemplateID = s.TemplateID
+	}
+
+	if err := req.Validate(); err != nil {
+		return fmt.Errorf("validate send sms request error, %s", err)
+	}
+
 	request := sms.NewSendSmsRequest()
 
 	request.PhoneNumberSet = common.StringPtrs(req.PhoneNumberSet)
@@ -54,6 +73,13 @@ func (s *tencent) Send(req *notify.SendSMSRequest) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("%s", response.ToJsonString())
+
+	for i := range response.Response.SendStatusSet {
+		if *(response.Response.SendStatusSet[i].Code) != "OK" {
+			return fmt.Errorf("send sms error, response is %s", response.ToJsonString())
+		}
+	}
+
+	s.log.Debugf("send sms response success: %s", response.ToJsonString())
 	return nil
 }
