@@ -8,7 +8,6 @@ import (
 	"github.com/infraboard/mcube/http/response"
 
 	"github.com/infraboard/keyauth/pkg"
-	"github.com/infraboard/keyauth/pkg/system/notify"
 	"github.com/infraboard/keyauth/pkg/system/notify/mail"
 	"github.com/infraboard/keyauth/pkg/system/notify/sms"
 	"github.com/infraboard/keyauth/pkg/user/types"
@@ -49,20 +48,13 @@ func (h *handler) TestEmailSend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	req := notify.NewSendMailRequest()
+	req := mail.NewDeaultTestSendRequest()
 	if err := request.GetDataFromRequest(r, req); err != nil {
 		response.Failed(w, err)
 		return
 	}
 
-	conf, err := h.service.GetConfig()
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
-	sd, err := mail.NewSender(conf.Email)
-	if err := sd.Send(req); err != nil {
+	if err := req.Send(); err != nil {
 		response.Failed(w, err)
 		return
 	}
