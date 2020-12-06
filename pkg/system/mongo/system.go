@@ -49,7 +49,7 @@ func (s *service) GetConfig() (*system.Config, error) {
 	conf := system.NewDefaultConfig()
 	if err := s.col.FindOne(context.TODO(), bson.M{"_id": conf.Version}).Decode(conf); err != nil {
 		if err == mongo.ErrNoDocuments {
-			return nil, exception.NewNotFound("version: %s system config %s not found", conf.Version)
+			return nil, exception.NewNotFound("version: %s system config not found", conf.Version)
 		}
 
 		return nil, exception.NewInternalServerError("find system config %s error, %s", conf.Version, err)

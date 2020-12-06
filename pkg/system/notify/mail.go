@@ -6,6 +6,13 @@ import (
 	"io"
 	"net/textproto"
 	"time"
+
+	"github.com/go-playground/validator/v10"
+)
+
+// use a single instance of Validate, it caches struct info
+var (
+	validate = validator.New()
 )
 
 // MailSender 投递消息器
@@ -22,20 +29,24 @@ func NewSendMailRequest() *SendMailRequest {
 
 // SendMailRequest todo
 type SendMailRequest struct {
-	From    string `json:"from,omitempty"`
-	To      string `json:"to,omitempty"`
+	To      string `json:"to,omitempty" validate:"required"`
 	Cc      string `json:"cc,omitempty"`
-	Subject string `json:"subject,omitempty"`
-	Content string `json:"content,omitempty"`
+	Subject string `json:"subject,omitempty" validate:"required"`
+	Content string `json:"content,omitempty" validate:"required"`
 
 	buffer *bytes.Buffer `json:"-"`
 }
 
+// Validate todo
+func (req *SendMailRequest) Validate() error {
+	return validate.Struct(req)
+}
+
 // PrepareBody todo
-func (req *SendMailRequest) PrepareBody() ([]byte, error) {
+func (req *SendMailRequest) PrepareBody(from string) ([]byte, error) {
 	// 设置邮件Header
 	headers := textproto.MIMEHeader{}
-	headers.Set("From", req.From)
+	headers.Set("From", from)
 	headers.Set("To", req.To)
 	headers.Set("Cc", req.Cc)
 

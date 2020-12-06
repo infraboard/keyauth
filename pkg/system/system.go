@@ -14,8 +14,8 @@ const (
 func NewDefaultConfig() *Config {
 	return &Config{
 		Version: DEFAULT_CONFIG_VERSION,
-		Email:   mail.NewDeaultConfig(),
-		SMS:     sms.NewDeautlConfig(),
+		Email:   mail.NewDefaultConfig(),
+		SMS:     sms.NewDefaultConfig(),
 	}
 }
 

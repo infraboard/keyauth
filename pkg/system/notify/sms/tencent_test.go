@@ -11,9 +11,9 @@ import (
 
 func TestSendMail(t *testing.T) {
 	should := assert.New(t)
-	conf, err := sms.LoadSMSConfigFromEnv()
+	conf, err := sms.LoadConfigFromEnv()
 	if should.NoError(err) {
-		sd, err := sms.NewSMSSender(conf)
+		sd, err := sms.NewSender(conf)
 		if should.NoError(err) {
 			req := notify.NewSendSMSRequest()
 			req.TemplateID = conf.TencentSMS.TemplateID

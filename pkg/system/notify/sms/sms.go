@@ -6,8 +6,8 @@ import (
 	"github.com/infraboard/keyauth/pkg/system/notify"
 )
 
-// NewSMSSender todo
-func NewSMSSender(conf *Config) (notify.SMSSender, error) {
+// NewSender todo
+func NewSender(conf *Config) (notify.SMSSender, error) {
 	switch conf.Provider {
 	case ProviderTenCent:
 		return newTenCentSMSSender(conf.TencentSMS)

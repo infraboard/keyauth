@@ -5,6 +5,7 @@ import (
 
 	"github.com/caarlos0/env/v6"
 	"github.com/go-playground/validator/v10"
+	"github.com/infraboard/keyauth/pkg/system/notify"
 )
 
 const (
@@ -17,8 +18,8 @@ var (
 	validate = validator.New()
 )
 
-// LoadSMSConfigFromEnv todo
-func LoadSMSConfigFromEnv() (*Config, error) {
+// LoadConfigFromEnv todo
+func LoadConfigFromEnv() (*Config, error) {
 	cfg := &Config{}
 	if err := env.Parse(cfg); err != nil {
 		return nil, fmt.Errorf("load config from env, %s", err.Error())
@@ -26,8 +27,8 @@ func LoadSMSConfigFromEnv() (*Config, error) {
 	return cfg, nil
 }
 
-// NewDeautlConfig todo
-func NewDeautlConfig() *Config {
+// NewDefaultConfig todo
+func NewDefaultConfig() *Config {
 	return &Config{
 		Provider:   ProviderTenCent,
 		TencentSMS: &TenCentSMS{},
@@ -77,4 +78,28 @@ func (s *TenCentSMS) GetEndpoint() string {
 	}
 
 	return DEFAULT_TENCENT_SMS_ENDPOINT
+}
+
+// NewDeaultTestSendRequest todo
+func NewDeaultTestSendRequest() *TestSendRequest {
+	return &TestSendRequest{
+		SendSMSRequest: notify.NewSendSMSRequest(),
+		Config:         NewDefaultConfig(),
+	}
+}
+
+// TestSendRequest todo
+type TestSendRequest struct {
+	*notify.SendSMSRequest
+	*Config
+}
+
+// Send todo
+func (req *TestSendRequest) Send() error {
+	sd, err := NewSender(req.Config)
+	if err != nil {
+		return err
+	}
+
+	return sd.Send(req.SendSMSRequest)
 }

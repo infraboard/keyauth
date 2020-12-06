@@ -7,6 +7,7 @@ import (
 
 	"github.com/caarlos0/env/v6"
 	"github.com/infraboard/keyauth/common/tls"
+	"github.com/infraboard/keyauth/pkg/system/notify"
 )
 
 // LoadConfigFromEnv todo
@@ -28,8 +29,8 @@ func NewEmailConfig(host, user, pass string) *Config {
 	}
 }
 
-// NewDeaultConfig todo
-func NewDeaultConfig() *Config {
+// NewDefaultConfig todo
+func NewDefaultConfig() *Config {
 	return &Config{
 		TLSConfig: &tls.Config{},
 	}
@@ -52,16 +53,16 @@ type Config struct {
 // Validate todo
 func (c *Config) Validate() error {
 	if c.Host == "" {
-		return errors.New("邮件客户端服务器地址未配置")
+		return errors.New("host, 邮件客户端服务器地址未配置")
 	}
 
 	if c.AuthUserName == "" {
-		return errors.New("邮件发送者未配置")
+		return errors.New("username, 邮件发送用户未配置")
 	}
 
 	if !c.SkipAuth {
 		if c.AuthUserName == "" || c.AuthPassword == "" {
-			return errors.New("启用认证后, 需要配置用户名和密码")
+			return errors.New("启用认证后, 需要配置用户名和密码(usernme, password)")
 		}
 	}
 
@@ -70,4 +71,28 @@ func (c *Config) Validate() error {
 	}
 
 	return nil
+}
+
+// NewDeaultTestSendRequest todo
+func NewDeaultTestSendRequest() *TestSendRequest {
+	return &TestSendRequest{
+		SendMailRequest: notify.NewSendMailRequest(),
+		Config:          NewDefaultConfig(),
+	}
+}
+
+// TestSendRequest todo
+type TestSendRequest struct {
+	*notify.SendMailRequest
+	*Config
+}
+
+// Send todo
+func (req *TestSendRequest) Send() error {
+	sd, err := NewSender(req.Config)
+	if err != nil {
+		return err
+	}
+
+	return sd.Send(req.SendMailRequest)
 }

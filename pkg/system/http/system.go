@@ -14,6 +14,28 @@ import (
 	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
+func (h *handler) GetSystemConfig(w http.ResponseWriter, r *http.Request) {
+	tk, err := pkg.GetTokenFromContext(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	if !tk.UserType.Is(types.SupperAccount) {
+		response.Failed(w, exception.NewPermissionDeny("only system admin can operate"))
+		return
+	}
+
+	conf, err := h.service.GetConfig()
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	response.Success(w, conf)
+	return
+}
+
 func (h *handler) TestEmailSend(w http.ResponseWriter, r *http.Request) {
 	tk, err := pkg.GetTokenFromContext(r)
 	if err != nil {
@@ -60,7 +82,7 @@ func (h *handler) EmailSetting(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	req := mail.NewDeaultConfig()
+	req := mail.NewDefaultConfig()
 	if err := request.GetDataFromRequest(r, req); err != nil {
 		response.Failed(w, err)
 		return
@@ -88,20 +110,13 @@ func (h *handler) TestSMSSend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	req := notify.NewSendSMSRequest()
+	req := mail.NewDeaultTestSendRequest()
 	if err := request.GetDataFromRequest(r, req); err != nil {
 		response.Failed(w, err)
 		return
 	}
 
-	conf, err := h.service.GetConfig()
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
-	sd, err := sms.NewSMSSender(conf.SMS)
-	if err := sd.Send(req); err != nil {
+	if err := req.Send(); err != nil {
 		response.Failed(w, err)
 		return
 	}
@@ -122,7 +137,7 @@ func (h *handler) SMSSetting(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	req := sms.NewDeautlConfig()
+	req := sms.NewDefaultConfig()
 	if err := request.GetDataFromRequest(r, req); err != nil {
 		response.Failed(w, err)
 		return

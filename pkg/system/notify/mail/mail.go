@@ -26,6 +26,10 @@ type sender struct {
 
 // Send 发送邮件
 func (s *sender) Send(req *notify.SendMailRequest) error {
+	if err := req.Validate(); err != nil {
+		return fmt.Errorf("validate send mail request error, %s", err)
+	}
+
 	c, err := s.client()
 	if err != nil {
 		return err
@@ -51,7 +55,7 @@ func (s *sender) Send(req *notify.SendMailRequest) error {
 		}
 	}
 
-	msg, err := req.PrepareBody()
+	msg, err := req.PrepareBody(s.From)
 	if err != nil {
 		return fmt.Errorf("parpare body error")
 	}
