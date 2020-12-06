@@ -22,9 +22,9 @@ func (h *handler) Registry(router router.SubRouter) {
 	r := router.ResourceRouter("system_config")
 	r.BasePath("system_config")
 	r.Handle("GET", "/", h.GetSystemConfig)
-	r.Handle("POST", "/email/", h.EmailSetting)
+	r.Handle("POST", "/email/", h.SettingEmail)
 	r.Handle("POST", "/email/test", h.TestEmailSend)
-	r.Handle("POST", "/sms/", h.SMSSetting)
+	r.Handle("POST", "/sms/", h.SettingSMS)
 	r.Handle("POST", "/sms/test", h.TestSMSSend)
 }
 

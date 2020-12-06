@@ -44,6 +44,11 @@ type Config struct {
 	ALI             *ALI           `bson:"ali" json:"ali"`
 }
 
+// Desensitize 脱敏
+func (c *Config) Desensitize() {
+	c.Tencent.SecretKey = ""
+}
+
 // Validate todo
 func (c *Config) Validate() error {
 	switch c.EnabledProvider {

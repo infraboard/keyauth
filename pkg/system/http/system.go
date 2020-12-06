@@ -32,6 +32,7 @@ func (h *handler) GetSystemConfig(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	conf.Desensitize()
 	response.Success(w, conf)
 	return
 }
@@ -70,7 +71,7 @@ func (h *handler) TestEmailSend(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func (h *handler) EmailSetting(w http.ResponseWriter, r *http.Request) {
+func (h *handler) SettingEmail(w http.ResponseWriter, r *http.Request) {
 	tk, err := pkg.GetTokenFromContext(r)
 	if err != nil {
 		response.Failed(w, err)
@@ -94,7 +95,7 @@ func (h *handler) EmailSetting(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.Success(w, "ok")
+	response.Success(w, req)
 	return
 }
 
@@ -125,7 +126,7 @@ func (h *handler) TestSMSSend(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func (h *handler) SMSSetting(w http.ResponseWriter, r *http.Request) {
+func (h *handler) SettingSMS(w http.ResponseWriter, r *http.Request) {
 	tk, err := pkg.GetTokenFromContext(r)
 	if err != nil {
 		response.Failed(w, err)
@@ -149,6 +150,6 @@ func (h *handler) SMSSetting(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.Success(w, "ok")
+	response.Success(w, req)
 	return
 }

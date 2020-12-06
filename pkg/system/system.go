@@ -25,3 +25,9 @@ type Config struct {
 	Email   *mail.Config `bson:"email" json:"email"`
 	SMS     *sms.Config  `bson:"sms" json:"sms"`
 }
+
+// Desensitize 脱敏
+func (c *Config) Desensitize() {
+	c.Email.Desensitize()
+	c.SMS.Desensitize()
+}

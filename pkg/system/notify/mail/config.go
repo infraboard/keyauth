@@ -50,6 +50,12 @@ type Config struct {
 	TLSConfig    *tls.Config `bson:"tls_config" json:"tls_config"`
 }
 
+// Desensitize 脱敏
+func (c *Config) Desensitize() {
+	c.AuthPassword = ""
+	c.AuthSecret = ""
+}
+
 // Validate todo
 func (c *Config) Validate() error {
 	if c.Host == "" {
