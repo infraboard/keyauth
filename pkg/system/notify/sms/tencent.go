@@ -58,6 +58,9 @@ func (s *tencent) Send(req *notify.SendSMSRequest) error {
 		req.TemplateID = s.TemplateID
 	}
 
+	// 补充默认+86
+	req.InjectDefaultIsoCode()
+
 	if err := req.Validate(); err != nil {
 		return fmt.Errorf("validate send sms request error, %s", err)
 	}

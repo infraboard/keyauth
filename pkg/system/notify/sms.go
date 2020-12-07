@@ -1,5 +1,7 @@
 package notify
 
+import "strings"
+
 // SMSSender 短信投递
 type SMSSender interface {
 	Send(*SendSMSRequest) error
@@ -20,4 +22,13 @@ type SendSMSRequest struct {
 // Validate todo
 func (req *SendSMSRequest) Validate() error {
 	return validate.Struct(req)
+}
+
+// InjectDefaultIsoCode todo
+func (req *SendSMSRequest) InjectDefaultIsoCode() {
+	for i, number := range req.PhoneNumberSet {
+		if !strings.HasPrefix(number, "+") {
+			req.PhoneNumberSet[i] = "+86" + number
+		}
+	}
 }
