@@ -11,6 +11,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/system/notify/mail"
 	"github.com/infraboard/keyauth/pkg/system/notify/sms"
 	"github.com/infraboard/keyauth/pkg/user/types"
+	"github.com/infraboard/keyauth/pkg/verifycode"
 )
 
 func (h *handler) GetSystemConfig(w http.ResponseWriter, r *http.Request) {
@@ -137,6 +138,34 @@ func (h *handler) SettingSMS(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = h.service.UpdateSMS(req)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	response.Success(w, req)
+	return
+}
+
+func (h *handler) SettingVerifyCode(w http.ResponseWriter, r *http.Request) {
+	tk, err := pkg.GetTokenFromContext(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	if !tk.UserType.Is(types.SupperAccount) {
+		response.Failed(w, exception.NewPermissionDeny("only system admin can operate"))
+		return
+	}
+
+	req := verifycode.NewDefaultConfig()
+	if err := request.GetDataFromRequest(r, req); err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	err = h.service.UpdateVerifyCode(req)
 	if err != nil {
 		response.Failed(w, err)
 		return

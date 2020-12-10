@@ -26,6 +26,7 @@ func (h *handler) Registry(router router.SubRouter) {
 	r.Handle("POST", "/email/test", h.TestEmailSend)
 	r.Handle("POST", "/sms/", h.SettingSMS)
 	r.Handle("POST", "/sms/test", h.TestSMSSend)
+	r.Handle("POST", "/verify_code/", h.SettingVerifyCode)
 }
 
 func (h *handler) Config() error {

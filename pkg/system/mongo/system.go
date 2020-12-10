@@ -3,13 +3,14 @@ package mongo
 import (
 	"context"
 
+	"github.com/infraboard/mcube/exception"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/infraboard/keyauth/pkg/system"
 	"github.com/infraboard/keyauth/pkg/system/notify/mail"
 	"github.com/infraboard/keyauth/pkg/system/notify/sms"
-	"github.com/infraboard/mcube/exception"
+	"github.com/infraboard/keyauth/pkg/verifycode"
 )
 
 func (s *service) UpdateEmail(mailConf *mail.Config) error {
@@ -43,6 +44,23 @@ func (s *service) UpdateSMS(smsConf *sms.Config) error {
 		}
 	}
 	return s.updateSMS(smsConf)
+}
+
+func (s *service) UpdateVerifyCode(vfconf *verifycode.Config) error {
+	if err := vfconf.Validate(); err != nil {
+		return exception.NewBadRequest("validate verify code config error, %s", err)
+	}
+
+	_, err := s.GetConfig()
+	if exception.IsNotFoundError(err) {
+		conf := system.NewDefaultConfig()
+		*conf.VerifyCode = *vfconf
+		if err := s.save(conf); err != nil {
+			return err
+		}
+	}
+
+	return s.updateVerifyCode(vfconf)
 }
 
 func (s *service) GetConfig() (*system.Config, error) {
