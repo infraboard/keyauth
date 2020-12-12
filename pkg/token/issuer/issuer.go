@@ -83,6 +83,7 @@ func (i *issuer) checkUserPassExpired(u *user.User) error {
 		return err
 	}
 
+	// 检测密码是否过期
 	err = d.SecuritySetting.PasswordSecurity.IsPasswordExpired(u.HashedPassword)
 	if err != nil {
 		return err

@@ -92,7 +92,7 @@ func (p *PasswordSecurity) SetPasswordNeedReset(pass *user.Password) {
 
 	// 计算密码是否过期
 	delta := p.expiredDelta(pass.UpdateAt.T())
-	if delta >= 0 {
+	if delta > 0 {
 		pass.SetExpired()
 		return
 	}
