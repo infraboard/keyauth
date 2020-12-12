@@ -180,7 +180,7 @@ type Status struct {
 
 // NewHashedPassword 生产hash后的密码对象
 func NewHashedPassword(password string) (*Password, error) {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 10)
 	if err != nil {
 		return nil, err
 	}

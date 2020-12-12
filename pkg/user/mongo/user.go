@@ -85,11 +85,13 @@ func (s *service) UpdateAccountPassword(req *user.UpdatePasswordRequest) (*user.
 func (s *service) changePass(account, old, new string, isReset bool) (*user.Password, error) {
 	descReq := user.NewDescriptAccountRequest()
 	descReq.Account = account
+	s.log.Debugf("query user account ...")
 	u, err := s.DescribeAccount(descReq)
 	if err != nil {
 		return nil, err
 	}
 
+	s.log.Debugf("query domain security setting ...")
 	// 根据域设置的规则检测密码策略
 	descDom := domain.NewDescriptDomainRequestWithName(u.Domain)
 	dom, err := s.domain.DescriptionDomain(descDom)
@@ -97,20 +99,24 @@ func (s *service) changePass(account, old, new string, isReset bool) (*user.Pass
 		return nil, err
 	}
 
+	s.log.Debugf("check password  strength ...")
 	// 检测密码强度
 	if err := dom.SecuritySetting.PasswordSecurity.Check(new); err != nil {
 		return nil, err
 	}
 
+	s.log.Debugf("check password  is history ...")
 	// 判断是不是历史密码
 	if u.HashedPassword.IsHistory(new) {
 		return nil, exception.NewBadRequest("password not last %d used", dom.SecuritySetting.PasswordSecurity.RepeateLimite)
 	}
 
+	s.log.Debugf("change password ...")
 	if err := u.ChangePassword(old, new, dom.SecuritySetting.GetPasswordRepeateLimite(), isReset); err != nil {
 		return nil, exception.NewBadRequest("change password error, %s", err)
 	}
 
+	s.log.Debugf("save password to db ...")
 	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": u.Account}, bson.M{"$set": bson.M{
 		"password": u.HashedPassword,
 	}})
