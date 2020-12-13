@@ -17,6 +17,7 @@ type Code struct {
 // NewDefaultConfig todo
 func NewDefaultConfig() *Config {
 	return &Config{
+		NotifyType:    NotifyTypeMail,
 		ExpireMinutes: 10,
 		MailTemplate:  "您的动态验证码为：{1}，{2}分钟内有效！，如非本人操作，请忽略本短信！",
 	}
@@ -24,9 +25,10 @@ func NewDefaultConfig() *Config {
 
 // Config todo
 type Config struct {
-	ExpireMinutes uint   `json:"expire_minutes" validate:"required,gte=10,lte=600"` // 验证码默认过期时间
-	MailTemplate  string `json:"mail_template"`                                     // 邮件通知时的模板
-	SmsTemplateID string `json:"sms_template_id"`                                   // 短信通知时的云商模板ID
+	NotifyType    NotifyType `json:"notify_type"`
+	ExpireMinutes uint       `json:"expire_minutes" validate:"required,gte=10,lte=600"` // 验证码默认过期时间
+	MailTemplate  string     `json:"mail_template"`                                     // 邮件通知时的模板
+	SmsTemplateID string     `json:"sms_template_id"`                                   // 短信通知时的云商模板ID
 }
 
 // Validate todo
