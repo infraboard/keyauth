@@ -2,6 +2,7 @@ package verifycode
 
 import (
 	"github.com/go-playground/validator/v10"
+	"github.com/infraboard/mcube/types/ftime"
 )
 
 // use a single instance of Validate, it caches struct info
@@ -11,7 +12,9 @@ var (
 
 // Code todo
 type Code struct {
-	Number string `bson:"number" json:"number"`
+	Number  string     `bson:"_id" json:"number"`
+	Account string     `bson:"account" json:"account"`
+	IssueAt ftime.Time `bson:"issue_at" json:"issue_at"`
 }
 
 // NewDefaultConfig todo

@@ -21,6 +21,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/system"
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
+	"github.com/infraboard/keyauth/pkg/verifycode"
 )
 
 var (
@@ -60,6 +61,8 @@ var (
 	Session session.Service
 	// System 系统服务
 	System system.Service
+	// VerifyCode 校验码服务
+	VerifyCode verifycode.Service
 )
 
 var (
@@ -192,6 +195,12 @@ func RegistryService(name string, svr Service) {
 			registryError(name)
 		}
 		System = value
+		addService(name, svr)
+	case verifycode.Service:
+		if System != nil {
+			registryError(name)
+		}
+		VerifyCode = value
 		addService(name, svr)
 	default:
 		panic(fmt.Sprintf("unknown service type %s", name))

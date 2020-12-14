@@ -64,3 +64,59 @@ func (t *NotifyType) UnmarshalJSON(b []byte) error {
 	*t = ins
 	return nil
 }
+
+var (
+	enumIssueTypeShowMap = map[IssueType]string{
+		IssueTypePass:  "pass",
+		IssueTypeToken: "token",
+	}
+
+	enumIssueTypeIDMap = map[string]IssueType{
+		"pass":  IssueTypePass,
+		"token": IssueTypeToken,
+	}
+)
+
+// ParseIssueType Parse IssueType from string
+func ParseIssueType(str string) (IssueType, error) {
+	key := strings.Trim(string(str), `"`)
+	v, ok := enumIssueTypeIDMap[key]
+	if !ok {
+		return 0, fmt.Errorf("unknown Status: %s", str)
+	}
+
+	return v, nil
+}
+
+// Is todo
+func (t IssueType) Is(target IssueType) bool {
+	return t == target
+}
+
+// String stringer
+func (t IssueType) String() string {
+	v, ok := enumIssueTypeShowMap[t]
+	if !ok {
+		return "unknown"
+	}
+
+	return v
+}
+
+// MarshalJSON todo
+func (t IssueType) MarshalJSON() ([]byte, error) {
+	b := bytes.NewBufferString(`"`)
+	b.WriteString(t.String())
+	b.WriteString(`"`)
+	return b.Bytes(), nil
+}
+
+// UnmarshalJSON todo
+func (t *IssueType) UnmarshalJSON(b []byte) error {
+	ins, err := ParseIssueType(string(b))
+	if err != nil {
+		return err
+	}
+	*t = ins
+	return nil
+}
