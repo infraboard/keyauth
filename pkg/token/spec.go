@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/infraboard/mcube/http/request"
 )
@@ -85,6 +86,16 @@ func (req *IssueTokenRequest) WithRemoteIP(ip string) {
 // GetRemoteIP todo
 func (req *IssueTokenRequest) GetRemoteIP() string {
 	return req.ip
+}
+
+// GetDomainNameFromAccount todo
+func (req *IssueTokenRequest) GetDomainNameFromAccount() string {
+	d := strings.Split(req.Username, "@")
+	if len(d) == 2 {
+		return d[1]
+	}
+
+	return ""
 }
 
 // Validate 校验请求

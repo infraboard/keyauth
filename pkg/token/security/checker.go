@@ -6,7 +6,9 @@ import (
 
 	"github.com/infraboard/mcube/cache"
 	"github.com/infraboard/mcube/logger"
+	"github.com/infraboard/mcube/logger/zap"
 
+	"github.com/infraboard/keyauth/pkg/domain"
 	"github.com/infraboard/keyauth/pkg/token"
 )
 
@@ -34,26 +36,38 @@ type IPProtectChecker interface {
 }
 
 // NewChecker todo
-func NewChecker() Checker {
-	return &checker{}
+func NewChecker(
+	cache cache.Cache,
+	domain domain.Service,
+	maxRetry int,
+	retryTTL time.Duration,
+) Checker {
+	return &checker{
+		domain:   domain,
+		cache:    cache,
+		maxRetry: maxRetry,
+		retryTTL: retryTTL,
+		log:      zap.L().Named("Login Security"),
+	}
 }
 
-// FailedLogin 记录
 type checker struct {
+	domain   domain.Service
 	cache    cache.Cache
 	maxRetry int
 	retryTTL time.Duration
 	log      logger.Logger
 }
 
-// CheckBlook 判断是否被阻断
 func (c *checker) MaxFailedRetryCheck(req *token.IssueTokenRequest) error {
 	count := 0
 	err := c.cache.Get(req.AbnormalUserCheckKey(), count)
 	if err != nil {
 		c.log.Errorf("get key %s from cache error, %s", req.AbnormalUserCheckKey())
 	}
-	if count > c.maxRetry {
+
+	maxRetry, _ := c.getRetryConfig(req)
+	if count > maxRetry {
 		return fmt.Errorf("max retry(5)")
 	}
 
@@ -62,14 +76,19 @@ func (c *checker) MaxFailedRetryCheck(req *token.IssueTokenRequest) error {
 
 func (c *checker) UpdateFailedRetry(req *token.IssueTokenRequest) error {
 	count := 0
-	err := c.cache.Get(req.AbnormalUserCheckKey(), count)
-	if err != nil {
-		c.log.Errorf("get key %s from cache error, %s", req.AbnormalUserCheckKey())
-	}
-
-	err = c.cache.PutWithTTL(req.AbnormalUserCheckKey(), count+1, c.retryTTL)
-	if err != nil {
-		c.log.Errorf("set key %s to cache error, %s", req.AbnormalUserCheckKey())
+	if c.cache.IsExist(req.AbnormalUserCheckKey()) {
+		// 之前已经登陆失败过
+		err := c.cache.Put(req.AbnormalUserCheckKey(), count+1)
+		if err != nil {
+			c.log.Errorf("set key %s to cache error, %s", req.AbnormalUserCheckKey())
+		}
+	} else {
+		// 首次登陆失败
+		_, retryTTL := c.getRetryConfig(req)
+		err := c.cache.PutWithTTL(req.AbnormalUserCheckKey(), count+1, retryTTL)
+		if err != nil {
+			c.log.Errorf("set key %s to cache error, %s", req.AbnormalUserCheckKey())
+		}
 	}
 	return nil
 }
@@ -80,4 +99,21 @@ func (c *checker) OtherPlaceLoggedInChecK(req *token.IssueTokenRequest) error {
 
 func (c *checker) IPProtectCheck(req *token.IssueTokenRequest) error {
 	return nil
+}
+
+// 如果子用户包含DomainName, 则获取Doman的设置
+func (c *checker) getRetryConfig(req *token.IssueTokenRequest) (int, time.Duration) {
+	domainName := req.GetDomainNameFromAccount()
+	if domainName != "" {
+		dm, err := c.domain.DescriptionDomain(domain.NewDescriptDomainRequestWithName(domainName))
+		if err != nil {
+			c.log.Errorf("get domain by name error, %s", err)
+			return c.maxRetry, c.retryTTL
+		}
+
+		rc := dm.SecuritySetting.LoginSecurity.RetryLockConfig
+		return rc.RetryLimiteInt(), rc.LockedMiniteDuration()
+	}
+
+	return c.maxRetry, c.retryTTL
 }

@@ -79,13 +79,11 @@ func (s *service) Config() error {
 	}
 	s.issuer = issuer
 
-	s.checker = security.NewChecker()
-
 	c := cache.C()
 	if c == nil {
 		return fmt.Errorf("denpence cache service is nil")
 	}
-	s.cache = c
+	s.checker = security.NewChecker(c, pkg.Domain, 5, time.Minute*10)
 
 	db := conf.C().Mongo.GetDB()
 	col := db.Collection("token")

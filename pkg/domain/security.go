@@ -186,3 +186,13 @@ type RetryLockConig struct {
 	RetryLimite  uint `bson:"retry_limite" json:"retry_limite"`   // 重试限制
 	LockedMinite uint `bson:"locked_minite" json:"locked_minite"` // 锁定时长
 }
+
+// RetryLimiteInt todo
+func (c *RetryLockConig) RetryLimiteInt() int {
+	return int(c.RetryLimite)
+}
+
+// LockedMiniteDuration todo
+func (c *RetryLockConig) LockedMiniteDuration() time.Duration {
+	return time.Duration(c.LockedMinite) * time.Minute
+}
