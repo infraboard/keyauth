@@ -1,7 +1,13 @@
 package verifycode
 
 import (
+	"math/rand"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/go-playground/validator/v10"
+	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/types/ftime"
 )
 
@@ -9,6 +15,19 @@ import (
 var (
 	validate = validator.New()
 )
+
+// NewCode todo
+func NewCode(req *IssueCodeRequest) (*Code, error) {
+	if err := req.Validate(); err != nil {
+		return nil, exception.NewBadRequest("validate issue code request error, %s", err)
+	}
+
+	return &Code{
+		Number:  GenRandomCode(6),
+		Account: req.Account(),
+		IssueAt: ftime.Now(),
+	}, nil
+}
 
 // Code todo
 type Code struct {
@@ -37,4 +56,15 @@ type Config struct {
 // Validate todo
 func (conf *Config) Validate() error {
 	return validate.Struct(conf)
+}
+
+// GenRandomCode todo
+func GenRandomCode(length uint) string {
+	numbers := []string{}
+	rand.Seed(time.Now().Unix())
+	for i := 0; i < int(length); i++ {
+		numbers = append(numbers, strconv.Itoa(rand.Intn(9)))
+	}
+
+	return strings.Join(numbers, "")
 }

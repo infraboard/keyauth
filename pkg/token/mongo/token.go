@@ -13,14 +13,14 @@ import (
 )
 
 func (s *service) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) {
-	fl := s.inspectRequest(req)
-	if err := fl.CheckBlook(); err != nil {
-		return nil, exception.NewBadRequest("inspect request error, %s", err)
+	// 检查安全性
+	if err := s.checker.MaxFailedRetryCheck(req); err != nil {
+		return nil, exception.NewBadRequest("max retry error, %s", err)
 	}
 
 	tk, err := s.issuer.IssueToken(req)
 	if err != nil {
-		s.saveAbnormalLogin(req, fl)
+		s.checker.UpdateFailedRetry(req)
 		return nil, err
 	}
 	tk.WithRemoteIP(req.GetRemoteIP())
@@ -33,23 +33,12 @@ func (s *service) IssueToken(req *token.IssueTokenRequest) (*token.Token, error)
 	}
 	tk.SessionID = sess.ID
 
+	// 保存入库
 	if err := s.saveToken(tk); err != nil {
 		return nil, err
 	}
 
 	return tk, nil
-}
-
-func (s *service) inspectRequest(req *token.IssueTokenRequest) *FailedLogin {
-	fl := NewFailedLogin()
-	s.cache.Get(req.AbnormalUserCheckKey(), fl)
-	return fl
-}
-
-// 记录登录失败的次数
-func (s *service) saveAbnormalLogin(req *token.IssueTokenRequest, fl *FailedLogin) {
-	fl.Inc()
-	s.cache.PutWithTTL("abnormal_"+req.Username, fl, s.retryTTL)
 }
 
 func (s *service) ValidateToken(req *token.ValidateTokenRequest) (*token.Token, error) {

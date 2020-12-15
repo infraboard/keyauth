@@ -8,6 +8,7 @@ import (
 
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
+	"github.com/infraboard/keyauth/pkg/token/issuer"
 	"github.com/infraboard/keyauth/pkg/verifycode"
 )
 
@@ -17,7 +18,8 @@ var (
 )
 
 type service struct {
-	col *mongo.Collection
+	col    *mongo.Collection
+	issuer issuer.Issuer
 }
 
 func (s *service) Config() error {
@@ -34,8 +36,13 @@ func (s *service) Config() error {
 	if err != nil {
 		return err
 	}
-
 	s.col = col
+
+	is, err := issuer.NewTokenIssuer()
+	if err != nil {
+		return err
+	}
+	s.issuer = is
 	return nil
 }
 

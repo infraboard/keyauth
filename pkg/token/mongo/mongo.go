@@ -21,6 +21,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/session"
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/token/issuer"
+	"github.com/infraboard/keyauth/pkg/token/security"
 	"github.com/infraboard/keyauth/pkg/user"
 )
 
@@ -43,6 +44,7 @@ type service struct {
 	session  session.Service
 	cache    cache.Cache
 	retryTTL time.Duration
+	checker  security.Checker
 }
 
 func (s *service) Config() error {
@@ -76,6 +78,8 @@ func (s *service) Config() error {
 		return err
 	}
 	s.issuer = issuer
+
+	s.checker = security.NewChecker()
 
 	c := cache.C()
 	if c == nil {
