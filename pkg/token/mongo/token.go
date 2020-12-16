@@ -14,10 +14,11 @@ import (
 
 func (s *service) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) {
 	// 检查安全性
-	if err := s.checker.MaxFailedRetryCheck(req); err != nil {
-		return nil, exception.NewBadRequest("max retry error, %s", err)
+	if err := s.securityCheck(req); err != nil {
+		return nil, exception.NewBadRequest("security check failed, %s", err)
 	}
 
+	// 颁发Token
 	tk, err := s.issuer.IssueToken(req)
 	if err != nil {
 		s.checker.UpdateFailedRetry(req)
@@ -39,6 +40,33 @@ func (s *service) IssueToken(req *token.IssueTokenRequest) (*token.Token, error)
 	}
 
 	return tk, nil
+}
+
+func (s *service) securityCheck(req *token.IssueTokenRequest) error {
+	// 连续登录失败检测
+	if err := s.checker.MaxFailedRetryCheck(req); err != nil {
+		return exception.NewBadRequest("max retry error, %s", err)
+	}
+
+	// 异地登录检测
+	err := s.checker.OtherPlaceLoggedInChecK(req)
+	if err != nil {
+		return err
+	}
+
+	// 长时间未登录检测
+	err = s.checker.NotLoginDaysChecK(req)
+	if err != nil {
+		return err
+	}
+
+	// IP保护检测
+	err = s.checker.IPProtectCheck(req)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *service) ValidateToken(req *token.ValidateTokenRequest) (*token.Token, error) {

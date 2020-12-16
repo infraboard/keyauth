@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"time"
 
 	"github.com/infraboard/mcube/cache"
 	"github.com/infraboard/mcube/logger"
@@ -42,8 +41,6 @@ type service struct {
 	issuer   issuer.Issuer
 	endpoint endpoint.Service
 	session  session.Service
-	cache    cache.Cache
-	retryTTL time.Duration
 	checker  security.Checker
 }
 
@@ -83,7 +80,10 @@ func (s *service) Config() error {
 	if c == nil {
 		return fmt.Errorf("denpence cache service is nil")
 	}
-	s.checker = security.NewChecker(c, pkg.Domain, 5, time.Minute*10)
+	s.checker, err = security.NewChecker()
+	if err != nil {
+		return fmt.Errorf("new checker error, %s", err)
+	}
 
 	db := conf.C().Mongo.GetDB()
 	col := db.Collection("token")
@@ -105,7 +105,6 @@ func (s *service) Config() error {
 
 	s.col = col
 	s.log = zap.L().Named("token")
-	s.retryTTL = 5 * time.Minute
 	return nil
 }
 
