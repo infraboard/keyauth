@@ -10,6 +10,7 @@ import (
 
 	"github.com/infraboard/keyauth/pkg/session"
 	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/verifycode"
 )
 
 func (s *service) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) {
@@ -43,6 +44,17 @@ func (s *service) IssueToken(req *token.IssueTokenRequest) (*token.Token, error)
 }
 
 func (s *service) securityCheck(req *token.IssueTokenRequest) error {
+	// 如果有校验码, 则直接通过校验码检测用户身份安全
+	if req.VerifyCode != "" {
+		s.log.Debugf("verify code provided, check code ...")
+		_, err := s.code.CheckCode(verifycode.NewCheckCodeRequest(req.VerifyCode))
+		if err != nil {
+			return exception.NewPermissionDeny("verify code invalidate, error, %s", err)
+		}
+		s.log.Debugf("verfiy code check passed")
+		return nil
+	}
+
 	// 连续登录失败检测
 	if err := s.checker.MaxFailedRetryCheck(req); err != nil {
 		return exception.NewBadRequest("max retry error, %s", err)

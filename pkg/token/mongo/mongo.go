@@ -22,6 +22,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/token/issuer"
 	"github.com/infraboard/keyauth/pkg/token/security"
 	"github.com/infraboard/keyauth/pkg/user"
+	"github.com/infraboard/keyauth/pkg/verifycode"
 )
 
 var (
@@ -42,6 +43,7 @@ type service struct {
 	endpoint endpoint.Service
 	session  session.Service
 	checker  security.Checker
+	code     verifycode.Service
 }
 
 func (s *service) Config() error {
@@ -69,6 +71,11 @@ func (s *service) Config() error {
 		return errors.New("denpence session service is nil")
 	}
 	s.session = pkg.Session
+
+	if pkg.VerifyCode == nil {
+		return errors.New("denpence verify code service is nil")
+	}
+	s.code = pkg.VerifyCode
 
 	issuer, err := issuer.NewTokenIssuer()
 	if err != nil {

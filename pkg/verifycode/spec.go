@@ -88,6 +88,11 @@ func (req *IssueByTokenRequest) ValidateByToken() error {
 	return nil
 }
 
+// NewCheckCodeRequest todo
+func NewCheckCodeRequest(code string) *CheckCodeRequest {
+	return &CheckCodeRequest{Code: code}
+}
+
 // CheckCodeRequest 验证码校验请求
 type CheckCodeRequest struct {
 	Code string

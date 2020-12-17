@@ -42,6 +42,7 @@ func NewIssueTokenByPassword(clientID, clientSecret, user, pass string) *IssueTo
 
 // IssueTokenRequest 颁发token请求
 type IssueTokenRequest struct {
+	VerifyCode   string    `json:"verify_code,omitempty"`                              // 验证码, 如果需要二次验证时，需要改参数
 	ClientID     string    `json:"client_id,omitempty" validate:"required,lte=80"`     // 客户端ID
 	ClientSecret string    `json:"client_secret,omitempty" validate:"required,lte=80"` // 客户端凭证
 	Username     string    `json:"username,omitempty" validate:"lte=40"`               // 用户名
