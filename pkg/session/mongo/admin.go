@@ -22,5 +22,5 @@ func (s *service) QueryUserLastSession(req *session.QueryUserLastSessionRequest)
 
 		return nil, exception.NewInternalServerError("find session %s error, %s", req.Account, err)
 	}
-	return nil, nil
+	return ins, nil
 }

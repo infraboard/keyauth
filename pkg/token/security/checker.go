@@ -2,6 +2,7 @@ package security
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/infraboard/mcube/cache"
 	"github.com/infraboard/mcube/exception"
@@ -60,6 +61,7 @@ func (c *checker) MaxFailedRetryCheck(req *token.IssueTokenRequest) error {
 		c.log.Debugf("retry lock check disabled, don't check")
 		return nil
 	}
+	c.log.Debugf("max failed retry lock check enabled, checking ...")
 
 	var count uint
 	err := c.cache.Get(req.AbnormalUserCheckKey(), count)
@@ -115,6 +117,8 @@ func (c *checker) OtherPlaceLoggedInChecK(req *token.IssueTokenRequest) error {
 		return nil
 	}
 
+	c.log.Debugf("other place login check enabled, checking ...")
+
 	// 查询当前登陆IP地域
 	login, err := c.ip2Regin.LookupIP(req.GetRemoteIP())
 	if err != nil {
@@ -149,6 +153,7 @@ func (c *checker) NotLoginDaysChecK(req *token.IssueTokenRequest) error {
 		c.log.Debugf("exception check disabled, don't check")
 		return nil
 	}
+	c.log.Debugf("not login days check enabled, checking ...")
 
 	// 查询出用户上次登陆的地域
 	queryReq := session.NewQueryUserLastSessionRequest(req.Username)
@@ -163,7 +168,13 @@ func (c *checker) NotLoginDaysChecK(req *token.IssueTokenRequest) error {
 	}
 
 	if us != nil {
-
+		days := uint(us.LoginAt.T().Sub(time.Now()).Hours() / 24)
+		c.log.Debugf("user %d days not login", days)
+		maxDays := ss.LoginSecurity.ExceptionLockConfig.NotLoginDays
+		if days > maxDays {
+			return fmt.Errorf("user not login days %d", days)
+		}
+		c.log.Debugf("not login days check passed, days: %d, max days: %d", days, maxDays)
 	}
 
 	return nil
@@ -175,6 +186,8 @@ func (c *checker) IPProtectCheck(req *token.IssueTokenRequest) error {
 		c.log.Debugf("ip limite check disabled, don't check")
 		return nil
 	}
+
+	c.log.Debugf("ip limite check enabled, checking ...")
 
 	return nil
 }
