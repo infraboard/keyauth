@@ -114,3 +114,37 @@ func (r *describeSessionRequest) FindFilter() bson.M {
 
 	return filter
 }
+
+func newQueryUserLastSessionRequest(req *session.QueryUserLastSessionRequest) (*queryUserLastSessionRequest, error) {
+	if err := req.Validate(); err != nil {
+		return nil, err
+	}
+
+	return &queryUserLastSessionRequest{
+		QueryUserLastSessionRequest: req,
+		pageSize:                    1,
+	}, nil
+}
+
+type queryUserLastSessionRequest struct {
+	pageSize int64
+	*session.QueryUserLastSessionRequest
+}
+
+func (r *queryUserLastSessionRequest) FindOptions() *options.FindOneOptions {
+	opt := &options.FindOneOptions{
+		Sort: bson.D{{Key: "login_at", Value: -1}},
+	}
+
+	return opt
+}
+
+func (r *queryUserLastSessionRequest) FindFilter() bson.M {
+	filter := bson.M{}
+
+	if r.Account != "" {
+		filter["account"] = r.Account
+	}
+
+	return filter
+}

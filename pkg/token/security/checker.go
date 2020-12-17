@@ -5,7 +5,6 @@ import (
 
 	"github.com/infraboard/mcube/cache"
 	"github.com/infraboard/mcube/exception"
-	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
 
@@ -16,30 +15,6 @@ import (
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
 )
-
-// Checker 安全检测
-type Checker interface {
-	MaxTryChecker
-	ExceptionLockChecKer
-	IPProtectChecker
-}
-
-// MaxTryChecker todo 失败重试限制
-type MaxTryChecker interface {
-	MaxFailedRetryCheck(*token.IssueTokenRequest) error
-	UpdateFailedRetry(*token.IssueTokenRequest) error
-}
-
-// ExceptionLockChecKer 异地登录限制
-type ExceptionLockChecKer interface {
-	OtherPlaceLoggedInChecK(*token.IssueTokenRequest) error
-	NotLoginDaysChecK(*token.IssueTokenRequest) error
-}
-
-// IPProtectChecker todo
-type IPProtectChecker interface {
-	IPProtectCheck(*token.IssueTokenRequest) error
-}
 
 // NewChecker todo
 func NewChecker() (Checker, error) {
@@ -89,7 +64,7 @@ func (c *checker) MaxFailedRetryCheck(req *token.IssueTokenRequest) error {
 	var count uint
 	err := c.cache.Get(req.AbnormalUserCheckKey(), count)
 	if err != nil {
-		c.log.Errorf("get key %s from cache error, %s", req.AbnormalUserCheckKey())
+		c.log.Errorf("get key %s from cache error, %s", req.AbnormalUserCheckKey(), err)
 	}
 
 	rc := ss.LoginSecurity.RetryLockConfig
@@ -147,15 +122,20 @@ func (c *checker) OtherPlaceLoggedInChecK(req *token.IssueTokenRequest) error {
 	}
 
 	// 查询出用户上次登陆的地域
-	sessSet, err := c.session.QuerySession(session.NewQuerySessionRequest(request.NewPageRequest(1, 1)))
+	queryReq := session.NewQueryUserLastSessionRequest(req.Username)
+	us, err := c.session.QueryUserLastSession(queryReq)
 	if err != nil {
+		if exception.IsNotFoundError(err) {
+			c.log.Debugf("user %s last login session not found", req.Username)
+			return nil
+		}
+
 		return err
 	}
 
-	if sessSet.Length() > 0 {
-		last := sessSet.Items[0]
-		c.log.Debugf("user last login city: %s (%d)", last.City, last.CityID)
-		if login.CityID != last.CityID {
+	if us != nil {
+		c.log.Debugf("user last login city: %s (%d)", us.City, us.CityID)
+		if login.CityID != us.CityID {
 			return exception.NewOtherPlaceLoggedIn("异地登录, 请输入验证码后再次提及")
 		}
 	}
@@ -171,14 +151,19 @@ func (c *checker) NotLoginDaysChecK(req *token.IssueTokenRequest) error {
 	}
 
 	// 查询出用户上次登陆的地域
-	sessSet, err := c.session.QuerySession(session.NewQuerySessionRequest(request.NewPageRequest(1, 1)))
+	queryReq := session.NewQueryUserLastSessionRequest(req.Username)
+	us, err := c.session.QueryUserLastSession(queryReq)
 	if err != nil {
+		if exception.IsNotFoundError(err) {
+			c.log.Debugf("user %s last login session not found", req.Username)
+			return nil
+		}
+
 		return err
 	}
 
-	if sessSet.Length() > 0 {
-		last := sessSet.Items[0]
-		c.log.Debugf("user last login city: %s (%d)", last.City, last.CityID)
+	if us != nil {
+
 	}
 
 	return nil

@@ -14,10 +14,21 @@ import (
 
 // Service todo
 type Service interface {
+	UserService
+	AdminService
+}
+
+// UserService 用户端接口
+type UserService interface {
 	Login(*token.Token) (*Session, error)
 	Logout(*LogoutRequest) error
 	DescribeSession(*DescribeSessionRequest) (*Session, error)
 	QuerySession(*QuerySessionRequest) (*Set, error)
+}
+
+// AdminService admin接口
+type AdminService interface {
+	QueryUserLastSession(*QueryUserLastSessionRequest) (*Session, error)
 }
 
 // NewQuerySessionRequestFromHTTP 列表查询请求
@@ -165,4 +176,21 @@ func NewLogoutRequest(sessionID string) *LogoutRequest {
 type LogoutRequest struct {
 	SessionID string
 	Account   string
+}
+
+// NewQueryUserLastSessionRequest todo
+func NewQueryUserLastSessionRequest(account string) *QueryUserLastSessionRequest {
+	return &QueryUserLastSessionRequest{
+		Account: account,
+	}
+}
+
+// QueryUserLastSessionRequest todo
+type QueryUserLastSessionRequest struct {
+	Account string `validate:"required"`
+}
+
+// Validate todo
+func (req *QueryUserLastSessionRequest) Validate() error {
+	return validate.Struct(req)
 }
