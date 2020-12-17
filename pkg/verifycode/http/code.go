@@ -12,6 +12,8 @@ import (
 
 func (h *handler) IssueCodeByPass(w http.ResponseWriter, r *http.Request) {
 	req := verifycode.NewIssueCodeRequestByPass()
+	// 从Header中获取client凭证, 如果有
+	req.ClientID, req.ClientSecret, _ = r.BasicAuth()
 	if err := request.GetDataFromRequest(r, req); err != nil {
 		response.Failed(w, err)
 		return

@@ -23,17 +23,29 @@ func NewCode(req *IssueCodeRequest) (*Code, error) {
 	}
 
 	return &Code{
-		Number:  GenRandomCode(6),
-		Account: req.Account(),
-		IssueAt: ftime.Now(),
+		Number:        GenRandomCode(6),
+		Username:      req.Account(),
+		IssueAt:       ftime.Now(),
+		ExpiredMinite: 10,
 	}, nil
+}
+
+// NewDefaultCode todo
+func NewDefaultCode() *Code {
+	return &Code{}
 }
 
 // Code todo
 type Code struct {
-	Number  string     `bson:"_id" json:"number"`
-	Account string     `bson:"account" json:"account"`
-	IssueAt ftime.Time `bson:"issue_at" json:"issue_at"`
+	Number        string     `bson:"_id" json:"number"`
+	Username      string     `bson:"username" json:"username"`
+	IssueAt       ftime.Time `bson:"issue_at" json:"issue_at"`
+	ExpiredMinite uint       `bson:"expired_minite" json:"expired_minite"`
+}
+
+// IsExpired todo
+func (c *Code) IsExpired() bool {
+	return time.Now().Sub(c.IssueAt.T()).Minutes() > float64(c.ExpiredMinite)
 }
 
 // NewDefaultConfig todo
@@ -63,7 +75,13 @@ func GenRandomCode(length uint) string {
 	numbers := []string{}
 	rand.Seed(time.Now().Unix())
 	for i := 0; i < int(length); i++ {
-		numbers = append(numbers, strconv.Itoa(rand.Intn(9)))
+		c := rand.Intn(9)
+		// 第一位不能为0
+		if c == 0 {
+			c = 1
+		}
+
+		numbers = append(numbers, strconv.Itoa(c))
 	}
 
 	return strings.Join(numbers, "")

@@ -23,7 +23,6 @@ demo访问地址: [Demo](http://keyauth.nbtuan.vip/) 用户: admin, 密码: 1234
     + 权限模型: 基于工作空间的【RBAC】授权 
     + 角色管理: 基于标签的权限条目匹配, 灵活编辑角色
     + 服务目录: 服务将功能注册到keyauth, keyauth基于这些服务功能 提供RBAC鉴权机制
-
 ## 快速开发
 
 ```sh

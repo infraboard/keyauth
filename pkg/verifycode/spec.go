@@ -53,7 +53,7 @@ func (req *IssueCodeRequest) Validate() error {
 func (req *IssueCodeRequest) Account() string {
 	switch req.IssueType {
 	case IssueTypePass:
-		return req.IssueByPassRequest.Account
+		return req.IssueByPassRequest.Username
 	case IssueTypeToken:
 		return req.IssueByTokenRequest.GetAccount()
 	default:
@@ -63,7 +63,7 @@ func (req *IssueCodeRequest) Account() string {
 
 // IssueByPassRequest todo
 type IssueByPassRequest struct {
-	Account      string `json:"account" validate:"required"`
+	Username     string `json:"username" validate:"required"`
 	Password     string `json:"password" validate:"required"`
 	ClientID     string `json:"client_id" validate:"required"`
 	ClientSecret string `json:"client_secret" validate:"required"`
@@ -95,5 +95,11 @@ func NewCheckCodeRequest(code string) *CheckCodeRequest {
 
 // CheckCodeRequest 验证码校验请求
 type CheckCodeRequest struct {
-	Code string
+	Username string `validate:"required"`
+	Code     string `validate:"required"`
+}
+
+// Validate todo
+func (req *CheckCodeRequest) Validate() error {
+	return validate.Struct(req)
 }

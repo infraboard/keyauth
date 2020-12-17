@@ -31,6 +31,11 @@
 }
 ```
 
+## 另一个选择 GeoIP-CN
+```
+https://r.coding-space.cn/r/4341 最小巧、最准确、最实用的中国大陆IP段+GeoIP2数据库
+```
+
 ## 验证
 可以到 [iP地址归属地查询](https://www.ip138.com/) 查询IP地址然后比对, 判断地址库正确性
 

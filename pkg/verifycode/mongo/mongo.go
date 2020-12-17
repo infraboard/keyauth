@@ -2,14 +2,18 @@ package mongo
 
 import (
 	"context"
+	"fmt"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/x/bsonx"
 
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
+	"github.com/infraboard/keyauth/pkg/system"
 	"github.com/infraboard/keyauth/pkg/token/issuer"
 	"github.com/infraboard/keyauth/pkg/verifycode"
+	"github.com/infraboard/mcube/logger"
+	"github.com/infraboard/mcube/logger/zap"
 )
 
 var (
@@ -20,6 +24,8 @@ var (
 type service struct {
 	col    *mongo.Collection
 	issuer issuer.Issuer
+	system system.Service
+	log    logger.Logger
 }
 
 func (s *service) Config() error {
@@ -38,11 +44,17 @@ func (s *service) Config() error {
 	}
 	s.col = col
 
+	if pkg.System == nil {
+		return fmt.Errorf("depence system config service is required")
+	}
+	s.system = pkg.System
+
 	is, err := issuer.NewTokenIssuer()
 	if err != nil {
 		return err
 	}
 	s.issuer = is
+	s.log = zap.L().Named("Verify Code")
 	return nil
 }
 

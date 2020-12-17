@@ -197,7 +197,7 @@ func RegistryService(name string, svr Service) {
 		System = value
 		addService(name, svr)
 	case verifycode.Service:
-		if System != nil {
+		if VerifyCode != nil {
 			registryError(name)
 		}
 		VerifyCode = value
