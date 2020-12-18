@@ -47,7 +47,7 @@ func (s *service) securityCheck(req *token.IssueTokenRequest) error {
 	// 如果有校验码, 则直接通过校验码检测用户身份安全
 	if req.VerifyCode != "" {
 		s.log.Debugf("verify code provided, check code ...")
-		_, err := s.code.CheckCode(verifycode.NewCheckCodeRequest(req.VerifyCode))
+		err := s.code.CheckCode(verifycode.NewCheckCodeRequest(req.Username, req.VerifyCode))
 		if err != nil {
 			return exception.NewPermissionDeny("verify code invalidate, error, %s", err)
 		}

@@ -46,24 +46,29 @@ func (s *service) IssueCode(req *verifycode.IssueCodeRequest) (*verifycode.Code,
 	return code, nil
 }
 
-func (s *service) CheckCode(req *verifycode.CheckCodeRequest) (*verifycode.Code, error) {
+func (s *service) CheckCode(req *verifycode.CheckCodeRequest) error {
 	if err := req.Validate(); err != nil {
-		return nil, exception.NewBadRequest("validate check code request error, %s", err)
+		return exception.NewBadRequest("validate check code request error, %s", err)
 	}
 
 	code := verifycode.NewDefaultCode()
 	if err := s.col.FindOne(context.TODO(), bson.M{"_id": req.HashID()}).Decode(code); err != nil {
 		if err == mongo.ErrNoDocuments {
-			return nil, exception.NewNotFound("code: %s  not found", req.Number)
+			return exception.NewNotFound("verify code: %s  not found", req.Number)
 		}
 
-		return nil, exception.NewInternalServerError("find system config %s error, %s", req.Number, err)
+		return exception.NewInternalServerError("find system config %s error, %s", req.Number, err)
 	}
 
 	// 校验Token是否过期
 	if code.IsExpired() {
-		return nil, exception.NewPermissionDeny("code is expired")
+		return exception.NewPermissionDeny("verify code is expired")
 	}
 
-	return code, nil
+	// 没过去验证成功, 删除
+	if err := s.delete(code); err != nil {
+		s.log.Errorf("delete check ok verify code error, %s", err)
+	}
+
+	return nil
 }

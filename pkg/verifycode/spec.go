@@ -10,7 +10,7 @@ import (
 // Service 验证码服务
 type Service interface {
 	IssueCode(*IssueCodeRequest) (*Code, error)
-	CheckCode(*CheckCodeRequest) (*Code, error)
+	CheckCode(*CheckCodeRequest) error
 }
 
 // NewIssueCodeRequestByPass todo
@@ -90,8 +90,11 @@ func (req *IssueByTokenRequest) ValidateByToken() error {
 }
 
 // NewCheckCodeRequest todo
-func NewCheckCodeRequest(number string) *CheckCodeRequest {
-	return &CheckCodeRequest{Number: number}
+func NewCheckCodeRequest(username, number string) *CheckCodeRequest {
+	return &CheckCodeRequest{
+		Username: username,
+		Number:   number,
+	}
 }
 
 // CheckCodeRequest 验证码校验请求
