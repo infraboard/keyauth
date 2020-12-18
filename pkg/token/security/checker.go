@@ -137,6 +137,12 @@ func (c *checker) OtherPlaceLoggedInChecK(req *token.IssueTokenRequest) error {
 		return err
 	}
 
+	// city为0 表示内网IP, 不错异地登录校验
+	if us.CityID == 0 {
+		c.log.Warnf("city id is 0, 内网IP skip OtherPlaceLoggedInChecK")
+		return nil
+	}
+
 	if us != nil {
 		c.log.Debugf("user last login city: %s (%d)", us.City, us.CityID)
 		if login.CityID != us.CityID {
