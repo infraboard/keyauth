@@ -52,12 +52,12 @@ func (s *service) CheckCode(req *verifycode.CheckCodeRequest) (*verifycode.Code,
 	}
 
 	code := verifycode.NewDefaultCode()
-	if err := s.col.FindOne(context.TODO(), bson.M{"_id": req.Code, "username": req.Username}).Decode(code); err != nil {
+	if err := s.col.FindOne(context.TODO(), bson.M{"_id": req.HashID()}).Decode(code); err != nil {
 		if err == mongo.ErrNoDocuments {
-			return nil, exception.NewNotFound("code: %s  not found", req.Code)
+			return nil, exception.NewNotFound("code: %s  not found", req.Number)
 		}
 
-		return nil, exception.NewInternalServerError("find system config %s error, %s", req.Code, err)
+		return nil, exception.NewInternalServerError("find system config %s error, %s", req.Number, err)
 	}
 
 	// 校验Token是否过期

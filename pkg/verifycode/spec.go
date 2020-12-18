@@ -2,6 +2,7 @@ package verifycode
 
 import (
 	"fmt"
+	"hash/fnv"
 
 	"github.com/infraboard/keyauth/pkg/token"
 )
@@ -89,17 +90,25 @@ func (req *IssueByTokenRequest) ValidateByToken() error {
 }
 
 // NewCheckCodeRequest todo
-func NewCheckCodeRequest(code string) *CheckCodeRequest {
-	return &CheckCodeRequest{Code: code}
+func NewCheckCodeRequest(number string) *CheckCodeRequest {
+	return &CheckCodeRequest{Number: number}
 }
 
 // CheckCodeRequest 验证码校验请求
 type CheckCodeRequest struct {
-	Username string `validate:"required"`
-	Code     string `validate:"required"`
+	Username string `bson:"username" json:"username" validate:"required"`
+	Number   string `bson:"number" json:"number" validate:"required"`
 }
 
 // Validate todo
 func (req *CheckCodeRequest) Validate() error {
 	return validate.Struct(req)
+}
+
+// HashID todo
+func (req *CheckCodeRequest) HashID() string {
+	hash := fnv.New32a()
+	hash.Write([]byte(req.Username))
+	hash.Write([]byte(req.Number))
+	return fmt.Sprintf("%x", hash.Sum32())
 }

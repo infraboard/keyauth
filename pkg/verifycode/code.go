@@ -22,12 +22,19 @@ func NewCode(req *IssueCodeRequest) (*Code, error) {
 		return nil, exception.NewBadRequest("validate issue code request error, %s", err)
 	}
 
-	return &Code{
-		Number:        GenRandomCode(6),
-		Username:      req.Account(),
-		IssueAt:       ftime.Now(),
-		ExpiredMinite: 10,
-	}, nil
+	cr := CheckCodeRequest{
+		Number:   GenRandomCode(6),
+		Username: req.Account(),
+	}
+
+	c := &Code{
+		ID:               cr.HashID(),
+		CheckCodeRequest: cr,
+		IssueAt:          ftime.Now(),
+		ExpiredMinite:    10,
+	}
+
+	return c, nil
 }
 
 // NewDefaultCode todo
@@ -37,10 +44,10 @@ func NewDefaultCode() *Code {
 
 // Code todo
 type Code struct {
-	Number        string     `bson:"_id" json:"number"`
-	Username      string     `bson:"username" json:"username"`
-	IssueAt       ftime.Time `bson:"issue_at" json:"issue_at"`
-	ExpiredMinite uint       `bson:"expired_minite" json:"expired_minite"`
+	ID               string `bson:"_id" json:"id"`
+	CheckCodeRequest `bson:",inline"`
+	IssueAt          ftime.Time `bson:"issue_at" json:"issue_at"`
+	ExpiredMinite    uint       `bson:"expired_minite" json:"expired_minite"`
 }
 
 // IsExpired todo
