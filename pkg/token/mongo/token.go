@@ -16,7 +16,7 @@ import (
 func (s *service) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) {
 	// 检查安全性
 	if err := s.securityCheck(req); err != nil {
-		return nil, exception.NewBadRequest("security check failed, %s", err)
+		return nil, exception.NewVerifyCodeRequiredError("security check failed, %s", err)
 	}
 
 	// 颁发Token
