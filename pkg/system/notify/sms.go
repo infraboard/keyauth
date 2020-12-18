@@ -19,6 +19,16 @@ type SendSMSRequest struct {
 	PhoneNumberSet []string `json:"phone_number_set" validate:"required"`
 }
 
+// AddParams todo
+func (req *SendSMSRequest) AddParams(params ...string) {
+	req.ParamSet = append(req.ParamSet, params...)
+}
+
+// AddPhone todo
+func (req *SendSMSRequest) AddPhone(params ...string) {
+	req.PhoneNumberSet = append(req.PhoneNumberSet, params...)
+}
+
 // Validate todo
 func (req *SendSMSRequest) Validate() error {
 	return validate.Struct(req)

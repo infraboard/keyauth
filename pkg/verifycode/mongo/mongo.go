@@ -11,6 +11,7 @@ import (
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/system"
 	"github.com/infraboard/keyauth/pkg/token/issuer"
+	"github.com/infraboard/keyauth/pkg/user"
 	"github.com/infraboard/keyauth/pkg/verifycode"
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
@@ -26,6 +27,7 @@ type service struct {
 	issuer issuer.Issuer
 	system system.Service
 	log    logger.Logger
+	user   user.Service
 }
 
 func (s *service) Config() error {
@@ -48,6 +50,11 @@ func (s *service) Config() error {
 		return fmt.Errorf("depence system config service is required")
 	}
 	s.system = pkg.System
+
+	if pkg.User == nil {
+		return fmt.Errorf("depence user service is required")
+	}
+	s.user = pkg.User
 
 	is, err := issuer.NewTokenIssuer()
 	if err != nil {

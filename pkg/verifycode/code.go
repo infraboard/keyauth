@@ -1,6 +1,7 @@
 package verifycode
 
 import (
+	"fmt"
 	"math/rand"
 	"strconv"
 	"strings"
@@ -55,6 +56,11 @@ func (c *Code) IsExpired() bool {
 	return time.Now().Sub(c.IssueAt.T()).Minutes() > float64(c.ExpiredMinite)
 }
 
+// ExpiredMiniteString todo
+func (c *Code) ExpiredMiniteString() string {
+	return fmt.Sprintf("%d", c.ExpiredMinite)
+}
+
 // NewDefaultConfig todo
 func NewDefaultConfig() *Config {
 	return &Config{
@@ -70,6 +76,12 @@ type Config struct {
 	ExpireMinutes uint       `json:"expire_minutes" validate:"required,gte=10,lte=600"` // 验证码默认过期时间
 	MailTemplate  string     `json:"mail_template"`                                     // 邮件通知时的模板
 	SmsTemplateID string     `json:"sms_template_id"`                                   // 短信通知时的云商模板ID
+}
+
+// RenderMailTemplate todo
+func (conf *Config) RenderMailTemplate(number, expiiredMinite string) string {
+	t1 := strings.ReplaceAll(conf.MailTemplate, "{1}", number)
+	return strings.ReplaceAll(t1, "{2}", expiiredMinite)
 }
 
 // Validate todo

@@ -9,7 +9,7 @@ import (
 
 // Service 验证码服务
 type Service interface {
-	IssueCode(*IssueCodeRequest) (*Code, error)
+	IssueCode(*IssueCodeRequest) (string, error)
 	CheckCode(*CheckCodeRequest) error
 }
 

@@ -2,19 +2,24 @@ package mongo
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/infraboard/mcube/exception"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
+	"github.com/infraboard/keyauth/pkg/system/notify"
+	"github.com/infraboard/keyauth/pkg/system/notify/mail"
+	"github.com/infraboard/keyauth/pkg/system/notify/sms"
 	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/user"
 	"github.com/infraboard/keyauth/pkg/verifycode"
 )
 
-func (s *service) IssueCode(req *verifycode.IssueCodeRequest) (*verifycode.Code, error) {
+func (s *service) IssueCode(req *verifycode.IssueCodeRequest) (string, error) {
 	code, err := verifycode.NewCode(req)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	// 根据系统配置设置校验码过期时间
@@ -34,16 +39,71 @@ func (s *service) IssueCode(req *verifycode.IssueCodeRequest) (*verifycode.Code,
 			req.Password),
 		)
 		if err != nil {
-			return nil, err
+			return "", err
 		}
 	}
 
 	if _, err := s.col.InsertOne(context.TODO(), code); err != nil {
-		return nil, exception.NewInternalServerError("inserted verify code(%s) document error, %s",
+		return "", exception.NewInternalServerError("inserted verify code(%s) document error, %s",
 			code, err)
 	}
 
-	return code, nil
+	// 发送验证码
+	msg, err := s.sendCode(code)
+	if err != nil {
+		return "", exception.NewInternalServerError("send verify code error, %s", err)
+	}
+
+	return msg, nil
+}
+
+func (s *service) sendCode(code *verifycode.Code) (string, error) {
+	system, err := s.system.GetConfig()
+	if err != nil {
+		return "", fmt.Errorf("query system config error, %s", err)
+	}
+
+	u, err := s.user.DescribeAccount(user.NewDescriptAccountRequestWithAccount(code.Username))
+	if err != nil {
+		return "", fmt.Errorf("get user error, %s", err)
+	}
+
+	var message string
+	vc := system.VerifyCode
+	switch vc.NotifyType {
+	case verifycode.NotifyTypeMail:
+		sender, err := mail.NewSender(system.Email)
+		if err != nil {
+			return "", fmt.Errorf("new sms sender error, %s", err)
+		}
+		req := notify.NewSendMailRequest()
+		req.To = u.Email
+		req.Subject = "验证码"
+		req.Content = vc.RenderMailTemplate(code.Number, code.ExpiredMiniteString())
+		if err := sender.Send(req); err != nil {
+			return "", fmt.Errorf("send verify code by mail error, %s", err)
+		}
+		message = fmt.Sprintf("验证码已通过邮件发送到你的邮箱: %s, 请及时查收", u.Email)
+		s.log.Debugf("send verify code to user: %s by mail ok", code.Username)
+	case verifycode.NotifyTypeSMS:
+		sender, err := sms.NewSender(system.SMS)
+		if err != nil {
+			return "", fmt.Errorf("new sms sender error, %s", err)
+		}
+		req := notify.NewSendSMSRequest()
+		req.AddPhone(u.Phone)
+		req.TemplateID = vc.SmsTemplateID
+		req.AddParams(code.Number, code.ExpiredMiniteString())
+		if err := sender.Send(req); err != nil {
+			return "", fmt.Errorf("send verify code by sms error, %s", err)
+		}
+		message = fmt.Sprintf("验证码已通过短信发送到你的手机: %s, 请及时查收", u.Phone)
+		s.log.Debugf("send verify code to user: %s by sms ok", code.Username)
+	default:
+		return "", fmt.Errorf("unknown notify type %s", vc.NotifyType)
+	}
+
+	return message, nil
 }
 
 func (s *service) CheckCode(req *verifycode.CheckCodeRequest) error {
