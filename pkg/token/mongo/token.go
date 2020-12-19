@@ -44,6 +44,17 @@ func (s *service) IssueToken(req *token.IssueTokenRequest) (*token.Token, error)
 }
 
 func (s *service) securityCheck(req *token.IssueTokenRequest) error {
+	// 连续登录失败检测
+	if err := s.checker.MaxFailedRetryCheck(req); err != nil {
+		return exception.NewBadRequest("max retry error, %s", err)
+	}
+
+	// IP保护检测
+	err := s.checker.IPProtectCheck(req)
+	if err != nil {
+		return err
+	}
+
 	// 如果有校验码, 则直接通过校验码检测用户身份安全
 	if req.VerifyCode != "" {
 		s.log.Debugf("verify code provided, check code ...")
@@ -55,25 +66,14 @@ func (s *service) securityCheck(req *token.IssueTokenRequest) error {
 		return nil
 	}
 
-	// 连续登录失败检测
-	if err := s.checker.MaxFailedRetryCheck(req); err != nil {
-		return exception.NewBadRequest("max retry error, %s", err)
-	}
-
 	// 异地登录检测
-	err := s.checker.OtherPlaceLoggedInChecK(req)
+	err = s.checker.OtherPlaceLoggedInChecK(req)
 	if err != nil {
 		return err
 	}
 
 	// 长时间未登录检测
 	err = s.checker.NotLoginDaysChecK(req)
-	if err != nil {
-		return err
-	}
-
-	// IP保护检测
-	err = s.checker.IPProtectCheck(req)
 	if err != nil {
 		return err
 	}
