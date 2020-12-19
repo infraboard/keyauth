@@ -19,8 +19,8 @@ type MaxTryChecker interface {
 
 // ExceptionLockChecKer 异地登录限制
 type ExceptionLockChecKer interface {
-	OtherPlaceLoggedInChecK(*token.IssueTokenRequest) error
-	NotLoginDaysChecK(*token.IssueTokenRequest) error
+	OtherPlaceLoggedInChecK(*token.Token) error
+	NotLoginDaysChecK(*token.Token) error
 }
 
 // IPProtectChecker todo

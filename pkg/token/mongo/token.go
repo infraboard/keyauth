@@ -14,9 +14,9 @@ import (
 )
 
 func (s *service) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) {
-	// 检查安全性
-	if err := s.securityCheck(req); err != nil {
-		return nil, exception.NewVerifyCodeRequiredError("security check failed, %s", err)
+	// 连续登录失败检测
+	if err := s.loginBeforeCheck(req); err != nil {
+		return nil, exception.NewBadRequest("安全检测失败, %s", err)
 	}
 
 	// 颁发Token
@@ -27,6 +27,11 @@ func (s *service) IssueToken(req *token.IssueTokenRequest) (*token.Token, error)
 	}
 	tk.WithRemoteIP(req.GetRemoteIP())
 	tk.WithUerAgent(req.GetUserAgent())
+
+	// 安全登录检测, 检测登录风险
+	if err := s.securityCheck(req.VerifyCode, tk); err != nil {
+		return nil, exception.NewVerifyCodeRequiredError("security check failed, %s", err)
+	}
 
 	// 登录会话
 	sess, err := s.session.Login(tk)
@@ -43,7 +48,7 @@ func (s *service) IssueToken(req *token.IssueTokenRequest) (*token.Token, error)
 	return tk, nil
 }
 
-func (s *service) securityCheck(req *token.IssueTokenRequest) error {
+func (s *service) loginBeforeCheck(req *token.IssueTokenRequest) error {
 	// 连续登录失败检测
 	if err := s.checker.MaxFailedRetryCheck(req); err != nil {
 		return exception.NewBadRequest("max retry error, %s", err)
@@ -55,10 +60,14 @@ func (s *service) securityCheck(req *token.IssueTokenRequest) error {
 		return err
 	}
 
+	return nil
+}
+
+func (s *service) securityCheck(code string, tk *token.Token) error {
 	// 如果有校验码, 则直接通过校验码检测用户身份安全
-	if req.VerifyCode != "" {
+	if code != "" {
 		s.log.Debugf("verify code provided, check code ...")
-		err := s.code.CheckCode(verifycode.NewCheckCodeRequest(req.Username, req.VerifyCode))
+		err := s.code.CheckCode(verifycode.NewCheckCodeRequest(tk.Account, code))
 		if err != nil {
 			return exception.NewPermissionDeny("verify code invalidate, error, %s", err)
 		}
@@ -67,13 +76,13 @@ func (s *service) securityCheck(req *token.IssueTokenRequest) error {
 	}
 
 	// 异地登录检测
-	err = s.checker.OtherPlaceLoggedInChecK(req)
+	err := s.checker.OtherPlaceLoggedInChecK(tk)
 	if err != nil {
 		return err
 	}
 
 	// 长时间未登录检测
-	err = s.checker.NotLoginDaysChecK(req)
+	err = s.checker.NotLoginDaysChecK(tk)
 	if err != nil {
 		return err
 	}

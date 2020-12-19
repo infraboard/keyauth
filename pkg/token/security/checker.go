@@ -56,7 +56,7 @@ type checker struct {
 }
 
 func (c *checker) MaxFailedRetryCheck(req *token.IssueTokenRequest) error {
-	ss := c.getOrDefaultSecuritySetting(req)
+	ss := c.getOrDefaultSecuritySettingWithUser(req.Username)
 	if !ss.LoginSecurity.RetryLock {
 		c.log.Debugf("retry lock check disabled, don't check")
 		return nil
@@ -78,7 +78,7 @@ func (c *checker) MaxFailedRetryCheck(req *token.IssueTokenRequest) error {
 }
 
 func (c *checker) UpdateFailedRetry(req *token.IssueTokenRequest) error {
-	ss := c.getOrDefaultSecuritySetting(req)
+	ss := c.getOrDefaultSecuritySettingWithUser(req.Username)
 	if !ss.LoginSecurity.RetryLock {
 		c.log.Debugf("retry lock check disabled, don't check")
 		return nil
@@ -105,8 +105,8 @@ func (c *checker) UpdateFailedRetry(req *token.IssueTokenRequest) error {
 	return nil
 }
 
-func (c *checker) OtherPlaceLoggedInChecK(req *token.IssueTokenRequest) error {
-	ss := c.getOrDefaultSecuritySetting(req)
+func (c *checker) OtherPlaceLoggedInChecK(tk *token.Token) error {
+	ss := c.getOrDefaultSecuritySettingWithDomain(tk.Domain)
 	if !ss.LoginSecurity.ExceptionLock {
 		c.log.Debugf("exception check disabled, don't check")
 		return nil
@@ -120,17 +120,17 @@ func (c *checker) OtherPlaceLoggedInChecK(req *token.IssueTokenRequest) error {
 	c.log.Debugf("other place login check enabled, checking ...")
 
 	// 查询当前登陆IP地域
-	login, err := c.ip2Regin.LookupIP(req.GetRemoteIP())
+	login, err := c.ip2Regin.LookupIP(tk.GetRemoteIP())
 	if err != nil {
 		return err
 	}
 
 	// 查询出用户上次登陆的地域
-	queryReq := session.NewQueryUserLastSessionRequest(req.Username)
+	queryReq := session.NewQueryUserLastSessionRequest(tk.Account)
 	us, err := c.session.QueryUserLastSession(queryReq)
 	if err != nil {
 		if exception.IsNotFoundError(err) {
-			c.log.Debugf("user %s last login session not found", req.Username)
+			c.log.Debugf("user %s last login session not found", tk.Account)
 			return nil
 		}
 
@@ -153,8 +153,8 @@ func (c *checker) OtherPlaceLoggedInChecK(req *token.IssueTokenRequest) error {
 	return nil
 }
 
-func (c *checker) NotLoginDaysChecK(req *token.IssueTokenRequest) error {
-	ss := c.getOrDefaultSecuritySetting(req)
+func (c *checker) NotLoginDaysChecK(tk *token.Token) error {
+	ss := c.getOrDefaultSecuritySettingWithUser(tk.Domain)
 	if !ss.LoginSecurity.ExceptionLock {
 		c.log.Debugf("exception check disabled, don't check")
 		return nil
@@ -162,11 +162,11 @@ func (c *checker) NotLoginDaysChecK(req *token.IssueTokenRequest) error {
 	c.log.Debugf("not login days check enabled, checking ...")
 
 	// 查询出用户上次登陆的地域
-	queryReq := session.NewQueryUserLastSessionRequest(req.Username)
+	queryReq := session.NewQueryUserLastSessionRequest(tk.Account)
 	us, err := c.session.QueryUserLastSession(queryReq)
 	if err != nil {
 		if exception.IsNotFoundError(err) {
-			c.log.Debugf("user %s last login session not found", req.Username)
+			c.log.Debugf("user %s last login session not found", tk.Account)
 			return nil
 		}
 
@@ -187,7 +187,7 @@ func (c *checker) NotLoginDaysChecK(req *token.IssueTokenRequest) error {
 }
 
 func (c *checker) IPProtectCheck(req *token.IssueTokenRequest) error {
-	ss := c.getOrDefaultSecuritySetting(req)
+	ss := c.getOrDefaultSecuritySettingWithUser(req.Username)
 	if !ss.LoginSecurity.IPLimite {
 		c.log.Debugf("ip limite check disabled, don't check")
 		return nil
@@ -198,15 +198,20 @@ func (c *checker) IPProtectCheck(req *token.IssueTokenRequest) error {
 	return nil
 }
 
-func (c *checker) getOrDefaultSecuritySetting(req *token.IssueTokenRequest) *domain.SecuritySetting {
+func (c *checker) getOrDefaultSecuritySettingWithUser(account string) *domain.SecuritySetting {
 	ss := domain.NewDefaultSecuritySetting()
-	u, err := c.user.DescribeAccount(user.NewDescriptAccountRequestWithAccount(req.Username))
+	u, err := c.user.DescribeAccount(user.NewDescriptAccountRequestWithAccount(account))
 	if err != nil {
 		c.log.Errorf("get user account error, %s, use default setting to check", err)
 		return ss
 	}
 
-	d, err := c.domain.DescriptionDomain(domain.NewDescriptDomainRequestWithName(u.Domain))
+	return c.getOrDefaultSecuritySettingWithDomain(u.Domain)
+}
+
+func (c *checker) getOrDefaultSecuritySettingWithDomain(dom string) *domain.SecuritySetting {
+	ss := domain.NewDefaultSecuritySetting()
+	d, err := c.domain.DescriptionDomain(domain.NewDescriptDomainRequestWithName(dom))
 	if err != nil {
 		c.log.Errorf("get domain error, %s, use default setting to check", err)
 		return ss
