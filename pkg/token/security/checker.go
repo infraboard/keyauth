@@ -146,7 +146,7 @@ func (c *checker) OtherPlaceLoggedInChecK(tk *token.Token) error {
 	if us != nil {
 		c.log.Debugf("user last login city: %s (%d)", us.City, us.CityID)
 		if login.CityID != us.CityID {
-			return exception.NewOtherPlaceLoggedIn("异地登录, 请输入验证码后再次提交")
+			return fmt.Errorf("异地登录, 请输入验证码后再次提交")
 		}
 	}
 

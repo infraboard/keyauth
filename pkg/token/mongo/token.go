@@ -28,9 +28,9 @@ func (s *service) IssueToken(req *token.IssueTokenRequest) (*token.Token, error)
 	tk.WithRemoteIP(req.GetRemoteIP())
 	tk.WithUerAgent(req.GetUserAgent())
 
-	// 安全登录检测, 检测登录风险
+	// 安全登录检测
 	if err := s.securityCheck(req.VerifyCode, tk); err != nil {
-		return nil, exception.NewVerifyCodeRequiredError("security check failed, %s", err)
+		return nil, err
 	}
 
 	// 登录会话
@@ -78,13 +78,13 @@ func (s *service) securityCheck(code string, tk *token.Token) error {
 	// 异地登录检测
 	err := s.checker.OtherPlaceLoggedInChecK(tk)
 	if err != nil {
-		return err
+		return exception.NewVerifyCodeRequiredError("异常检测: %s", err)
 	}
 
 	// 长时间未登录检测
 	err = s.checker.NotLoginDaysChecK(tk)
 	if err != nil {
-		return err
+		return exception.NewVerifyCodeRequiredError("异常检测: %s", err)
 	}
 
 	return nil
