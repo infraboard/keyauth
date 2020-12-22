@@ -174,7 +174,7 @@ func (c *checker) NotLoginDaysChecK(tk *token.Token) error {
 	}
 
 	if us != nil {
-		days := uint(us.LoginAt.T().Sub(time.Now()).Hours() / 24)
+		days := uint(time.Now().Sub(us.LoginAt.T()).Hours() / 24)
 		c.log.Debugf("user %d days not login", days)
 		maxDays := ss.LoginSecurity.ExceptionLockConfig.NotLoginDays
 		if days > maxDays {
