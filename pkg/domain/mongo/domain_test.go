@@ -29,7 +29,11 @@ func (s *suit) SetUp() {
 	mock.Load()
 
 	svr := mongo.Service
-	svr.Config()
+	err := svr.Config()
+	if err != nil {
+		panic(err)
+	}
+
 	s.service = svr
 
 	s.createReq = &domain.CreateDomainRequest{
