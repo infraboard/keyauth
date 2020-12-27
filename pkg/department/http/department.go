@@ -118,7 +118,7 @@ func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
 	qs := r.URL.Query()
 
-	req := department.NewDescriptDepartmentRequest()
+	req := department.NewDescribeDepartmentRequest()
 	req.WithToken(tk)
 	req.ID = rctx.PS.ByName("id")
 	req.WithSubCount = qs.Get("with_sub_count") == "true"

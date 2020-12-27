@@ -39,7 +39,7 @@ func NewDepartment(req *CreateDepartmentRequest, d Service, r role.Service, coun
 	}
 
 	if req.ParentID != "" {
-		pd, err := d.DescribeDepartment(NewDescriptDepartmentRequestWithID(req.ParentID))
+		pd, err := d.DescribeDepartment(NewDescribeDepartmentRequestWithID(req.ParentID))
 		if err != nil {
 			return nil, err
 		}

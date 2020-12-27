@@ -12,7 +12,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/domain"
 )
 
-func (s *service) CreateDomain(ownerID string, req *domain.CreateDomainRequst) (*domain.Domain, error) {
+func (s *service) CreateDomain(ownerID string, req *domain.CreateDomainRequest) (*domain.Domain, error) {
 	d, err := domain.New(ownerID, req)
 	if err != nil {
 		return nil, exception.NewBadRequest(err.Error())
@@ -24,7 +24,7 @@ func (s *service) CreateDomain(ownerID string, req *domain.CreateDomainRequst) (
 	return d, nil
 }
 
-func (s *service) DescriptionDomain(req *domain.DescriptDomainRequest) (*domain.Domain, error) {
+func (s *service) DescriptionDomain(req *domain.DescribeDomainRequest) (*domain.Domain, error) {
 	r, err := newDescDomainRequest(req)
 	if err != nil {
 		return nil, exception.NewBadRequest(err.Error())
@@ -76,16 +76,16 @@ func (s *service) UpdateDomain(req *domain.UpdateDomainInfoRequest) (*domain.Dom
 		return nil, exception.NewBadRequest(err.Error())
 	}
 
-	d, err := s.DescriptionDomain(domain.NewDescriptDomainRequestWithName(req.Name))
+	d, err := s.DescriptionDomain(domain.NewDescribeDomainRequestWithName(req.Name))
 	if err != nil {
 		return nil, err
 	}
 
 	switch req.UpdateMode {
 	case types.PutUpdateMode:
-		*d.CreateDomainRequst = *req.CreateDomainRequst
+		*d.CreateDomainRequest = *req.CreateDomainRequest
 	case types.PatchUpdateMode:
-		d.CreateDomainRequst.Patch(req.CreateDomainRequst)
+		d.CreateDomainRequest.Patch(req.CreateDomainRequest)
 	default:
 		return nil, exception.NewBadRequest("unknown update mode: %s", req.UpdateMode)
 	}
@@ -104,7 +104,7 @@ func (s *service) UpdateDomainSecurity(req *domain.UpdateDomainSecurityRequest) 
 		return nil, exception.NewBadRequest(err.Error())
 	}
 
-	d, err := s.DescriptionDomain(domain.NewDescriptDomainRequestWithName(req.Name))
+	d, err := s.DescriptionDomain(domain.NewDescribeDomainRequestWithName(req.Name))
 	if err != nil {
 		return nil, err
 	}

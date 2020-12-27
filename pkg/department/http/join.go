@@ -45,7 +45,7 @@ func (h *handler) QueryJoinApply(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	req, err := department.NewQueryApplicationFormRequetFromHTTP(r)
+	req, err := department.NewQueryApplicationFormRequestFromHTTP(r)
 	if err != nil {
 		response.Failed(w, err)
 		return

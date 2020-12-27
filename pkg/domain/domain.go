@@ -15,7 +15,7 @@ var (
 )
 
 // New 新建一个domain
-func New(owner string, req *CreateDomainRequst) (*Domain, error) {
+func New(owner string, req *CreateDomainRequest) (*Domain, error) {
 	if owner == "" {
 		return nil, errors.New("domain required owner")
 	}
@@ -25,11 +25,11 @@ func New(owner string, req *CreateDomainRequst) (*Domain, error) {
 	}
 
 	d := &Domain{
-		CreateAt:           ftime.Now(),
-		UpdateAt:           ftime.Now(),
-		Owner:              owner,
-		CreateDomainRequst: req,
-		SecuritySetting:    NewDefaultSecuritySetting(),
+		CreateAt:            ftime.Now(),
+		UpdateAt:            ftime.Now(),
+		Owner:               owner,
+		CreateDomainRequest: req,
+		SecuritySetting:     NewDefaultSecuritySetting(),
 	}
 
 	return d, nil
@@ -38,8 +38,8 @@ func New(owner string, req *CreateDomainRequst) (*Domain, error) {
 // NewDefault todo
 func NewDefault() *Domain {
 	return &Domain{
-		CreateDomainRequst: NewCreateDomainRequst(),
-		SecuritySetting:    NewDefaultSecuritySetting(),
+		CreateDomainRequest: NewCreateDomainRequest(),
+		SecuritySetting:     NewDefaultSecuritySetting(),
 	}
 }
 
@@ -70,11 +70,11 @@ func (s *Set) Add(d *Domain) {
 
 // Domain a tenant container, example an company or organization.
 type Domain struct { // 域ID
-	CreateAt            ftime.Time       `bson:"create_at" json:"create_at"` // 创建时间
-	UpdateAt            ftime.Time       `bson:"update_at" json:"update_at"` // 更新时间
-	Owner               string           `bson:"owner" json:"owner"`         // 域拥有者
-	*CreateDomainRequst `bson:",inline"` // 域信息
-	SecuritySetting     *SecuritySetting `bson:"security_setting" json:"security_setting"` // 安全设置
+	CreateAt             ftime.Time       `bson:"create_at" json:"create_at"`               // 创建时间
+	UpdateAt             ftime.Time       `bson:"update_at" json:"update_at"`               // 更新时间
+	Owner                string           `bson:"owner" json:"owner"`                       // 域拥有者
+	*CreateDomainRequest `bson:",inline"`                                                   // 域信息
+	SecuritySetting      *SecuritySetting `bson:"security_setting" json:"security_setting"` // 安全设置
 }
 
 func (d *Domain) String() string {

@@ -68,7 +68,7 @@ func (s *service) Registry(req *endpoint.RegistryRequest) error {
 	tk := req.GetToken()
 
 	// 查询该服务
-	svr, err := s.micro.DescribeService(micro.NewDescriptServiceRequestWithAccount(tk.Account))
+	svr, err := s.micro.DescribeService(micro.NewDescribeServiceRequestWithAccount(tk.Account))
 	if err != nil {
 		return err
 	}

@@ -49,7 +49,7 @@ func (s *service) queryAccount(req *queryUserRequest) (*user.Set, error) {
 
 			// 补充用户的部门信息
 			if req.WithDepartment && u.DepartmentID != "" {
-				depart, err := s.depart.DescribeDepartment(department.NewDescriptDepartmentRequestWithID(u.DepartmentID))
+				depart, err := s.depart.DescribeDepartment(department.NewDescribeDepartmentRequestWithID(u.DepartmentID))
 				if err != nil {
 					s.log.Errorf("get user department error, %s", err)
 				} else {

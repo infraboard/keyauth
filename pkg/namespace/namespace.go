@@ -34,7 +34,7 @@ func NewNamespace(req *CreateNamespaceRequest, depart department.Service) (*Name
 		CreateNamespaceRequest: req,
 	}
 
-	descD := department.NewDescriptDepartmentRequest()
+	descD := department.NewDescribeDepartmentRequest()
 	descD.WithTokenGetter(req)
 	descD.ID = req.DepartmentID
 	d, err := depart.DescribeDepartment(descD)

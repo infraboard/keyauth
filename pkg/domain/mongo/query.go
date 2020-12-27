@@ -37,7 +37,7 @@ func (r *request) FindFilter() bson.M {
 	return filter
 }
 
-func newDescDomainRequest(req *domain.DescriptDomainRequest) (*descDomain, error) {
+func newDescDomainRequest(req *domain.DescribeDomainRequest) (*descDomain, error) {
 	if err := req.Validate(); err != nil {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func newDescDomainRequest(req *domain.DescriptDomainRequest) (*descDomain, error
 }
 
 type descDomain struct {
-	*domain.DescriptDomainRequest
+	*domain.DescribeDomainRequest
 }
 
 func (req *descDomain) FindFilter() bson.M {

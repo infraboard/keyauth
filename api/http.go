@@ -104,7 +104,7 @@ func (s *HTTPService) RegistryEndpoints() error {
 		return fmt.Errorf("dependence micro service is nil")
 	}
 
-	desc := micro.NewDescriptServiceRequest()
+	desc := micro.NewDescribeServiceRequest()
 	desc.Name = version.ServiceName
 	svr, err := pkg.Micro.DescribeService(desc)
 	if err != nil {

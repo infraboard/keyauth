@@ -71,7 +71,7 @@ func (s *service) QueryNamespace(req *namespace.QueryNamespaceRequest) (
 
 		// 补充用户的部门信息
 		if req.WithDepartment && ins.DepartmentID != "" {
-			depart, err := s.depart.DescribeDepartment(department.NewDescriptDepartmentRequestWithID(ins.DepartmentID))
+			depart, err := s.depart.DescribeDepartment(department.NewDescribeDepartmentRequestWithID(ins.DepartmentID))
 			if err != nil {
 				s.log.Errorf("get user department error, %s", err)
 			} else {
@@ -110,7 +110,7 @@ func (s *service) DescribeNamespace(req *namespace.DescriptNamespaceRequest) (
 
 	// 补充用户的部门信息
 	if req.WithDepartment && ins.DepartmentID != "" {
-		depart, err := s.depart.DescribeDepartment(department.NewDescriptDepartmentRequestWithID(ins.DepartmentID))
+		depart, err := s.depart.DescribeDepartment(department.NewDescribeDepartmentRequestWithID(ins.DepartmentID))
 		if err != nil {
 			s.log.Errorf("get user department error, %s", err)
 		} else {

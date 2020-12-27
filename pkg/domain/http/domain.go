@@ -26,7 +26,7 @@ func (h *handler) ListDomains(w http.ResponseWriter, r *http.Request) {
 func (h *handler) GetDomain(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
 
-	req := domain.NewDescriptDomainRequest()
+	req := domain.NewDescribeDomainRequest()
 	req.Name = rctx.PS.ByName("name")
 	d, err := h.service.DescriptionDomain(req)
 	if err != nil {
@@ -39,7 +39,7 @@ func (h *handler) GetDomain(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) CreateDomain(w http.ResponseWriter, r *http.Request) {
-	req := domain.NewCreateDomainRequst()
+	req := domain.NewCreateDomainRequest()
 	if err := request.GetDataFromRequest(r, req); err != nil {
 		response.Failed(w, err)
 		return
@@ -63,7 +63,7 @@ func (h *handler) PutDomain(w http.ResponseWriter, r *http.Request) {
 	req.Name = rctx.PS.ByName("name")
 
 	// 解析需要更新的数据
-	if err := request.GetDataFromRequest(r, req.CreateDomainRequst); err != nil {
+	if err := request.GetDataFromRequest(r, req.CreateDomainRequest); err != nil {
 		response.Failed(w, err)
 		return
 	}
@@ -86,7 +86,7 @@ func (h *handler) PatchDomain(w http.ResponseWriter, r *http.Request) {
 	req.Name = rctx.PS.ByName("name")
 
 	// 解析需要更新的数据
-	if err := request.GetDataFromRequest(r, req.CreateDomainRequst); err != nil {
+	if err := request.GetDataFromRequest(r, req.CreateDomainRequest); err != nil {
 		response.Failed(w, err)
 		return
 	}

@@ -222,7 +222,7 @@ func (i *Initialer) initUser() (*user.User, error) {
 }
 
 func (i *Initialer) initDomain(ownerID string) (*domain.Domain, error) {
-	req := domain.NewCreateDomainRequst()
+	req := domain.NewCreateDomainRequest()
 	req.Name = domain.AdminDomainName
 	req.Description = strings.TrimSpace(i.domainDesc)
 	return pkg.Domain.CreateDomain(ownerID, req)

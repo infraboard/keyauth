@@ -175,7 +175,7 @@ func (s *service) DescribeService(req *micro.DescribeMicroRequest) (
 	return ins, nil
 }
 
-func (s *service) RefreshServicToken(req *micro.DescribeMicroRequest) (
+func (s *service) RefreshServiceToken(req *micro.DescribeMicroRequest) (
 	*token.Token, error) {
 	ins, err := s.DescribeService(req)
 	if err != nil {
@@ -203,7 +203,7 @@ func (s *service) DeleteService(req *micro.DeleteMicroRequest) error {
 		return exception.NewBadRequest("validate delete service error, %s", err)
 	}
 
-	describeReq := micro.NewDescriptServiceRequest()
+	describeReq := micro.NewDescribeServiceRequest()
 	describeReq.ID = req.ID
 	svr, err := s.DescribeService(describeReq)
 	if err != nil {

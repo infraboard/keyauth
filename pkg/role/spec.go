@@ -88,8 +88,8 @@ type DescribeRoleRequest struct {
 	Type            *Type
 }
 
-// Valiate todo
-func (req *DescribeRoleRequest) Valiate() error {
+// Validate todo
+func (req *DescribeRoleRequest) Validate() error {
 	if req.ID == "" && req.Name == "" {
 		return fmt.Errorf("id or name required")
 	}

@@ -211,7 +211,7 @@ func (c *checker) getOrDefaultSecuritySettingWithUser(account string) *domain.Se
 
 func (c *checker) getOrDefaultSecuritySettingWithDomain(dom string) *domain.SecuritySetting {
 	ss := domain.NewDefaultSecuritySetting()
-	d, err := c.domain.DescriptionDomain(domain.NewDescriptDomainRequestWithName(dom))
+	d, err := c.domain.DescriptionDomain(domain.NewDescribeDomainRequestWithName(dom))
 	if err != nil {
 		c.log.Errorf("get domain error, %s, use default setting to check", err)
 		return ss

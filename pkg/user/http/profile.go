@@ -92,7 +92,7 @@ func (h *handler) QueryDomain(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	req := domain.NewDescriptDomainRequest()
+	req := domain.NewDescribeDomainRequest()
 	req.Name = tk.Domain
 
 	ins, err := h.domain.DescriptionDomain(req)
@@ -117,7 +117,7 @@ func (h *handler) UpdateDomainInfo(w http.ResponseWriter, r *http.Request) {
 	req.Name = tk.Domain
 
 	// 解析需要更新的数据
-	if err := request.GetDataFromRequest(r, req.CreateDomainRequst); err != nil {
+	if err := request.GetDataFromRequest(r, req.CreateDomainRequest); err != nil {
 		response.Failed(w, err)
 		return
 	}

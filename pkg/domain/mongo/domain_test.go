@@ -22,7 +22,7 @@ type suit struct {
 	shoud *assert.Assertions
 
 	service   domain.Service
-	createReq *domain.CreateDomainRequst
+	createReq *domain.CreateDomainRequest
 }
 
 func (s *suit) SetUp() {
@@ -32,7 +32,7 @@ func (s *suit) SetUp() {
 	svr.Config()
 	s.service = svr
 
-	s.createReq = &domain.CreateDomainRequst{
+	s.createReq = &domain.CreateDomainRequest{
 		Name:        "test domain01",
 		DisplayName: "仅仅测试",
 	}

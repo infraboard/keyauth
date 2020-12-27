@@ -22,7 +22,7 @@ func (s *service) JoinDepartment(req *department.JoinDepartmentRequest) (*depart
 	}
 
 	// 检测部署是否存在
-	_, err := s.DescribeDepartment(department.NewDescriptDepartmentRequestWithID(req.DepartmentID))
+	_, err := s.DescribeDepartment(department.NewDescribeDepartmentRequestWithID(req.DepartmentID))
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +72,7 @@ func (s *service) DealApplicationForm(req *department.DealApplicationFormRequest
 	}
 
 	// 判断用户申请的部门是否还存在
-	dp, err := s.DescribeDepartment(department.NewDescriptDepartmentRequestWithID(af.DepartmentID))
+	dp, err := s.DescribeDepartment(department.NewDescribeDepartmentRequestWithID(af.DepartmentID))
 	if err != nil {
 		return nil, err
 	}

@@ -99,7 +99,7 @@ func (i *issuer) getUser(name string) (*user.User, error) {
 }
 
 func (i *issuer) getDomain(name string) (*domain.Domain, error) {
-	req := domain.NewDescriptDomainRequestWithName(name)
+	req := domain.NewDescribeDomainRequestWithName(name)
 	return i.domain.DescriptionDomain(req)
 }
 

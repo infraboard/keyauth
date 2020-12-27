@@ -52,7 +52,7 @@ func (h *handler) CreateService(w http.ResponseWriter, r *http.Request) {
 func (h *handler) GetService(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
 
-	req := micro.NewDescriptServiceRequest()
+	req := micro.NewDescribeServiceRequest()
 	req.ID = rctx.PS.ByName("id")
 
 	d, err := h.service.DescribeService(req)
@@ -87,7 +87,7 @@ func (h *handler) DestroyService(w http.ResponseWriter, r *http.Request) {
 func (h *handler) GetServiceToken(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
 
-	req := micro.NewDescriptServiceRequest()
+	req := micro.NewDescribeServiceRequest()
 	req.ID = rctx.PS.ByName("id")
 
 	d, err := h.service.DescribeService(req)
@@ -109,10 +109,10 @@ func (h *handler) GetServiceToken(w http.ResponseWriter, r *http.Request) {
 func (h *handler) RefreshServiceToken(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
 
-	req := micro.NewDescriptServiceRequest()
+	req := micro.NewDescribeServiceRequest()
 	req.ID = rctx.PS.ByName("id")
 
-	d, err := h.service.RefreshServicToken(req)
+	d, err := h.service.RefreshServiceToken(req)
 	if err != nil {
 		response.Failed(w, err)
 		return

@@ -93,7 +93,7 @@ func (s *service) changePass(account, old, new string, isReset bool) (*user.Pass
 
 	s.log.Debugf("query domain security setting ...")
 	// 根据域设置的规则检测密码策略
-	descDom := domain.NewDescriptDomainRequestWithName(u.Domain)
+	descDom := domain.NewDescribeDomainRequestWithName(u.Domain)
 	dom, err := s.domain.DescriptionDomain(descDom)
 	if err != nil {
 		return nil, err
@@ -144,7 +144,7 @@ func (s *service) DescribeAccount(req *user.DescriptAccountRequest) (*user.User,
 		return nil, exception.NewInternalServerError("find user %s error, %s", req, err)
 	}
 
-	dom, err := s.domain.DescriptionDomain(domain.NewDescriptDomainRequestWithName(ins.Domain))
+	dom, err := s.domain.DescriptionDomain(domain.NewDescribeDomainRequestWithName(ins.Domain))
 	if err != nil {
 		return nil, err
 	}

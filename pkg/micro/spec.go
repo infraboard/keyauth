@@ -14,7 +14,7 @@ type Service interface {
 	QueryService(req *QueryMicroRequest) (*Set, error)
 	DescribeService(req *DescribeMicroRequest) (*Micro, error)
 	DeleteService(req *DeleteMicroRequest) error
-	RefreshServicToken(req *DescribeMicroRequest) (*token.Token, error)
+	RefreshServiceToken(req *DescribeMicroRequest) (*token.Token, error)
 }
 
 // NewQueryMicroRequest 列表查询请求
@@ -29,15 +29,15 @@ type QueryMicroRequest struct {
 	*request.PageRequest
 }
 
-// NewDescriptServiceRequestWithAccount new实例
-func NewDescriptServiceRequestWithAccount(account string) *DescribeMicroRequest {
-	req := NewDescriptServiceRequest()
+// NewDescribeServiceRequestWithAccount new实例
+func NewDescribeServiceRequestWithAccount(account string) *DescribeMicroRequest {
+	req := NewDescribeServiceRequest()
 	req.Account = account
 	return req
 }
 
-// NewDescriptServiceRequest new实例
-func NewDescriptServiceRequest() *DescribeMicroRequest {
+// NewDescribeServiceRequest new实例
+func NewDescribeServiceRequest() *DescribeMicroRequest {
 	return &DescribeMicroRequest{}
 }
 

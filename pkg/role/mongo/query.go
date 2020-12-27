@@ -10,7 +10,7 @@ import (
 )
 
 func newDescribeRoleRequest(req *role.DescribeRoleRequest) (*describeRoleRequest, error) {
-	if err := req.Valiate(); err != nil {
+	if err := req.Validate(); err != nil {
 		return nil, err
 	}
 	return &describeRoleRequest{req}, nil

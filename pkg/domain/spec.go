@@ -12,9 +12,9 @@ import (
 
 // Service is an domain service
 type Service interface {
-	CreateDomain(ownerID string, req *CreateDomainRequst) (*Domain, error)
+	CreateDomain(ownerID string, req *CreateDomainRequest) (*Domain, error)
 	UpdateDomain(req *UpdateDomainInfoRequest) (*Domain, error)
-	DescriptionDomain(req *DescriptDomainRequest) (*Domain, error)
+	DescriptionDomain(req *DescribeDomainRequest) (*Domain, error)
 	QueryDomain(req *QueryDomainRequest) (*Set, error)
 	DeleteDomain(id string) error
 
@@ -26,7 +26,7 @@ func NewQueryDomainRequest(page *request.PageRequest) *QueryDomainRequest {
 	return &QueryDomainRequest{
 		PageRequest:           page,
 		Session:               token.NewSession(),
-		DescriptDomainRequest: NewDescriptDomainRequest(),
+		DescribeDomainRequest: NewDescribeDomainRequest(),
 	}
 }
 
@@ -34,7 +34,7 @@ func NewQueryDomainRequest(page *request.PageRequest) *QueryDomainRequest {
 type QueryDomainRequest struct {
 	*token.Session
 	*request.PageRequest
-	*DescriptDomainRequest
+	*DescribeDomainRequest
 }
 
 // Validate 校验请求合法
@@ -42,25 +42,25 @@ func (req *QueryDomainRequest) Validate() error {
 	return nil
 }
 
-// NewDescriptDomainRequest 查询详情请求
-func NewDescriptDomainRequest() *DescriptDomainRequest {
-	return &DescriptDomainRequest{}
+// NewDescribeDomainRequest 查询详情请求
+func NewDescribeDomainRequest() *DescribeDomainRequest {
+	return &DescribeDomainRequest{}
 }
 
-// NewDescriptDomainRequestWithName 查询详情请求
-func NewDescriptDomainRequestWithName(name string) *DescriptDomainRequest {
-	return &DescriptDomainRequest{
+// NewDescribeDomainRequestWithName 查询详情请求
+func NewDescribeDomainRequestWithName(name string) *DescribeDomainRequest {
+	return &DescribeDomainRequest{
 		Name: name,
 	}
 }
 
-// DescriptDomainRequest 查询domain详情请求
-type DescriptDomainRequest struct {
+// DescribeDomainRequest 查询domain详情请求
+type DescribeDomainRequest struct {
 	Name string `json:"name,omitempty"`
 }
 
 // Validate todo
-func (req *DescriptDomainRequest) Validate() error {
+func (req *DescribeDomainRequest) Validate() error {
 	if req.Name == "" {
 		return fmt.Errorf("name required")
 	}
@@ -68,15 +68,15 @@ func (req *DescriptDomainRequest) Validate() error {
 	return nil
 }
 
-// NewCreateDomainRequst todo
-func NewCreateDomainRequst() *CreateDomainRequst {
-	return &CreateDomainRequst{
+// NewCreateDomainRequest todo
+func NewCreateDomainRequest() *CreateDomainRequest {
+	return &CreateDomainRequest{
 		Enabled: true,
 	}
 }
 
-// CreateDomainRequst 创建请求
-type CreateDomainRequst struct {
+// CreateDomainRequest 创建请求
+type CreateDomainRequest struct {
 	Name           string `bson:"_id" json:"name" validate:"required,lte=60"`               // 公司或者组织名称
 	DisplayName    string `bson:"display_name" json:"display_name" validate:"lte=80"`       // 全称
 	LogoPath       string `bson:"logo_path" json:"logo_path" validate:"lte=200"`            // 公司LOGO图片的URL
@@ -95,16 +95,16 @@ type CreateDomainRequst struct {
 }
 
 // Validate 校验请求是否合法
-func (req *CreateDomainRequst) Validate() error {
+func (req *CreateDomainRequest) Validate() error {
 	return validate.Struct(req)
 }
 
-func (req *CreateDomainRequst) String() string {
+func (req *CreateDomainRequest) String() string {
 	return fmt.Sprint(*req)
 }
 
 // Patch todo
-func (req *CreateDomainRequst) Patch(data *CreateDomainRequst) {
+func (req *CreateDomainRequest) Patch(data *CreateDomainRequest) {
 	patchData, _ := json.Marshal(data)
 	json.Unmarshal(patchData, req)
 }
@@ -112,16 +112,16 @@ func (req *CreateDomainRequst) Patch(data *CreateDomainRequst) {
 // NewPutDomainRequest todo
 func NewPutDomainRequest() *UpdateDomainInfoRequest {
 	return &UpdateDomainInfoRequest{
-		UpdateMode:         types.PutUpdateMode,
-		CreateDomainRequst: NewCreateDomainRequst(),
+		UpdateMode:          types.PutUpdateMode,
+		CreateDomainRequest: NewCreateDomainRequest(),
 	}
 }
 
 // NewPatchDomainRequest todo
 func NewPatchDomainRequest() *UpdateDomainInfoRequest {
 	return &UpdateDomainInfoRequest{
-		UpdateMode:         types.PatchUpdateMode,
-		CreateDomainRequst: NewCreateDomainRequst(),
+		UpdateMode:          types.PatchUpdateMode,
+		CreateDomainRequest: NewCreateDomainRequest(),
 	}
 }
 
@@ -148,16 +148,16 @@ func (req *UpdateDomainSecurityRequest) Validate() error {
 // UpdateDomainInfoRequest todo
 type UpdateDomainInfoRequest struct {
 	UpdateMode types.UpdateMode `json:"update_mode"`
-	*CreateDomainRequst
+	*CreateDomainRequest
 }
 
 // Validate 更新校验
 func (req *UpdateDomainInfoRequest) Validate() error {
-	if req.CreateDomainRequst == nil {
+	if req.CreateDomainRequest == nil {
 		return fmt.Errorf("domain base info required")
 	}
 
-	if err := req.CreateDomainRequst.Validate(); err != nil {
+	if err := req.CreateDomainRequest.Validate(); err != nil {
 		return err
 	}
 

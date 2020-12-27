@@ -77,16 +77,16 @@ func (req *QueryDepartmentRequest) Validate() error {
 	return nil
 }
 
-// NewDescriptDepartmentRequest new实例
-func NewDescriptDepartmentRequest() *DescribeDeparmentRequest {
+// NewDescribeDepartmentRequest new实例
+func NewDescribeDepartmentRequest() *DescribeDeparmentRequest {
 	return &DescribeDeparmentRequest{
 		Session: token.NewSession(),
 	}
 }
 
-// NewDescriptDepartmentRequestWithID new实例
-func NewDescriptDepartmentRequestWithID(id string) *DescribeDeparmentRequest {
-	req := NewDescriptDepartmentRequest()
+// NewDescribeDepartmentRequestWithID new实例
+func NewDescribeDepartmentRequestWithID(id string) *DescribeDeparmentRequest {
+	req := NewDescribeDepartmentRequest()
 	req.ID = id
 	return req
 }
@@ -198,8 +198,8 @@ func (req *DealApplicationFormRequest) Validate() error {
 	return nil
 }
 
-// NewQueryApplicationFormRequetFromHTTP todo
-func NewQueryApplicationFormRequetFromHTTP(r *http.Request) (*QueryApplicationFormRequet, error) {
+// NewQueryApplicationFormRequestFromHTTP todo
+func NewQueryApplicationFormRequestFromHTTP(r *http.Request) (*QueryApplicationFormRequet, error) {
 	req := NewQueryApplicationFormRequet()
 	req.PageRequest = request.NewPageRequestFromHTTP(r)
 

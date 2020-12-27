@@ -170,7 +170,7 @@ func (s *service) DeleteDepartment(req *department.DeleteDepartmentRequest) erro
 	}
 
 	// 判断部门是否还有子部门
-	desc := department.NewDescriptDepartmentRequest()
+	desc := department.NewDescribeDepartmentRequest()
 	desc.ID = req.ID
 	desc.WithSubCount = true
 	desc.WithTokenGetter(req)
@@ -213,7 +213,7 @@ func (s *service) UpdateDepartment(req *department.UpdateDepartmentRequest) (*de
 		return nil, exception.NewBadRequest("validate update department error, %s", err)
 	}
 
-	dp, err := s.DescribeDepartment(department.NewDescriptDepartmentRequestWithID(req.ID))
+	dp, err := s.DescribeDepartment(department.NewDescribeDepartmentRequestWithID(req.ID))
 	if err != nil {
 		return nil, err
 	}
