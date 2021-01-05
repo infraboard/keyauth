@@ -1,0 +1,115 @@
+syntax = "proto3";
+
+package pb;
+option go_package = ".;pb";
+
+import "token.proto";
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+message DescribeTokenRequest {
+    string access_token = 1 [
+        (gogoproto.jsontag) = "access_token", 
+        (gogoproto.moretags) = "validate:\"lte=80\""
+        ];
+    string refresh_token = 2 [
+        (gogoproto.jsontag) = "refresh_token", 
+        (gogoproto.moretags) = "validate:\"lte=80\""
+        ];
+}
+
+message ValidateTokenRequest {
+    string namespace_id = 1 [
+        (gogoproto.jsontag) = "namespace_id", 
+        (gogoproto.moretags) = "validate:\"required\""
+        ];
+    string endpoint_id = 2 [
+        (gogoproto.jsontag) = "endpoint_id", 
+        (gogoproto.moretags) = "validate:\"required\""
+        ];
+    DescribeTokenRequest token = 3 [
+        (gogoproto.embed) = true, 
+        (gogoproto.jsontag) = ""
+        ];
+}
+
+message IssueTokenRequest {
+    string client_id = 1 [
+        (gogoproto.jsontag) = "client_id",
+        (gogoproto.moretags) = "validate:\"required\""
+        ];
+    string client_secret =2 [
+        (gogoproto.jsontag) = "client_secret",
+        (gogoproto.moretags) = "validate:\"required\""
+        ];
+    string verify_code = 3 [
+        (gogoproto.jsontag) = "verify_code"
+        ];
+    string username = 4 [
+        (gogoproto.jsontag) = "username"
+        ];
+    string password = 5 [
+        (gogoproto.jsontag) = "password"
+        ];
+    string refresh_token = 6 [
+        (gogoproto.jsontag) = "refresh_token"
+        ];
+    string access_token = 7 [
+        (gogoproto.jsontag) = "access_token"
+        ];
+    string code = 8 [
+        (gogoproto.jsontag) = "code"
+        ];
+    string state = 9 [
+        (gogoproto.jsontag) = "state"
+        ];
+    GrantType grant_type = 10 [
+        (gogoproto.jsontag) = "grant_type"
+        ];
+    TokenType type = 11 [
+        (gogoproto.jsontag) = "type"
+        ];
+    string scope = 12 [
+        (gogoproto.jsontag) = "scope"
+        ];
+}
+
+message RevolkTokenRequest {
+    string client_id = 1 [
+        (gogoproto.jsontag) = "client_id", 
+        (gogoproto.moretags) = "validate:\"required\""
+        ];
+    string client_secret =2 [
+        (gogoproto.jsontag) = "client_secret", 
+        (gogoproto.moretags) = "validate:\"required\""
+        ];
+    bool logout_session =3 [
+        (gogoproto.jsontag) = "logout_session"
+        ];
+    DescribeTokenRequest token = 4 [
+        (gogoproto.embed) = true, 
+        (gogoproto.jsontag) = ""
+        ];
+}
+
+message QueryTokenRequest {
+    string application_id = 1 [
+        (gogoproto.jsontag) = "application_id"
+        ];
+    GrantType grant_type = 2 [
+        (gogoproto.jsontag) = "grant_type"
+        ];
+}
+
+message BlockTokenRequest {
+    string access_token = 1 [
+        (gogoproto.jsontag) = "access_token"
+        ];
+    string block_reason = 2 [
+        (gogoproto.jsontag) = "block_reason"
+        ];
+    BlockType block_type = 3 [
+        (gogoproto.jsontag) = "block_type"
+        ];
+}
+
+   

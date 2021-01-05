@@ -174,7 +174,7 @@ func (s *service) QueryToken(req *token.QueryTokenRequest) (*token.Set, error) {
 		return nil, exception.NewInternalServerError("find token error, error is %s", err)
 	}
 
-	tokenSet := token.NewTokenSet(req.PageRequest)
+	tokenSet := token.NewTokenSet()
 	// 循环
 	for resp.Next(context.TODO()) {
 		tk := new(token.Token)

@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/types/ftime"
 
 	"github.com/infraboard/keyauth/pkg/user/types"
@@ -157,16 +156,14 @@ func (t *Token) Desensitize() {
 }
 
 // NewTokenSet 实例化
-func NewTokenSet(req *request.PageRequest) *Set {
+func NewTokenSet() *Set {
 	return &Set{
-		PageRequest: req,
+		Items: []*Token{},
 	}
 }
 
 // Set token列表
 type Set struct {
-	*request.PageRequest
-
 	Total int64    `json:"total"`
 	Items []*Token `json:"items"`
 }

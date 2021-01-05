@@ -21,7 +21,7 @@ func LoadedHTTP() []string {
 
 // HTTPAPI restful 服务
 type HTTPAPI interface {
-	Registry(router router.SubRouter)
+	Registry(router.SubRouter)
 	Config() error
 }
 

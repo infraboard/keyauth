@@ -38,14 +38,14 @@ func NewHTTPService() *HTTPService {
 		// WriteTimeout:      25 * time.Second,
 		IdleTimeout:    120 * time.Second,
 		MaxHeaderBytes: 1 << 20,
-		Addr:           conf.C().App.Addr(),
+		Addr:           conf.C().App.HTTPAddr(),
 		Handler:        r,
 	}
 
 	return &HTTPService{
 		r:      r,
 		server: server,
-		l:      zap.L().Named("API"),
+		l:      zap.L().Named("HTTP Service"),
 		c:      conf.C(),
 	}
 }
@@ -73,7 +73,7 @@ func (s *HTTPService) Start() error {
 	s.l.Infof("service endpoints registry success: \n%s", s.r.GetEndpoints())
 
 	// 启动HTTP服务
-	s.l.Infof("服务启动成功, 监听地址: %s", s.server.Addr)
+	s.l.Infof("HTTP 服务开始启动, 监听地址: %s ...", s.server.Addr)
 	if err := s.server.ListenAndServe(); err != nil {
 		if err == http.ErrServerClosed {
 			s.l.Info("service is stopped")

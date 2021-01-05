@@ -39,5 +39,8 @@ init: # Init Service
 clean: ## Remove previous build
 	@rm -f dist/*
 
+codegen: # Init Service
+	@cd pkg/token/pb && protoc -I=.  -I${GOPATH}/src -I${GOPATH}/src/github.com/gogo/protobuf/protobuf  --gofast_out=plugins=grpc:.  *.proto
+
 help: ## Display this help screen
 	@grep -h -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'

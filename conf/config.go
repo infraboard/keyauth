@@ -47,22 +47,28 @@ func (c *Config) InitGloabl() error {
 }
 
 type app struct {
-	Name string `toml:"name" env:"K_APP_NAME"`
-	Host string `toml:"host" env:"K_APP_HOST"`
-	Port string `toml:"port" env:"K_APP_PORT"`
-	Key  string `toml:"key" env:"K_APP_KEY"`
+	Name     string `toml:"name" env:"K_APP_NAME"`
+	Host     string `toml:"host" env:"K_APP_HOST"`
+	HTTPPort string `toml:"http_port" env:"K_HTTP_PORT"`
+	GRPCPort string `toml:"grpc_port" env:"K_GRPC_PORT"`
+	Key      string `toml:"key" env:"K_APP_KEY"`
 }
 
-func (a *app) Addr() string {
-	return a.Host + ":" + a.Port
+func (a *app) HTTPAddr() string {
+	return a.Host + ":" + a.HTTPPort
+}
+
+func (a *app) GRPCAddr() string {
+	return a.Host + ":" + a.GRPCPort
 }
 
 func newDefaultAPP() *app {
 	return &app{
-		Name: "keyauth",
-		Host: "127.0.0.1",
-		Port: "8050",
-		Key:  "default",
+		Name:     "keyauth",
+		Host:     "127.0.0.1",
+		HTTPPort: "8050",
+		GRPCPort: "18050",
+		Key:      "default",
 	}
 }
 

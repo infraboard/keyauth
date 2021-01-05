@@ -84,9 +84,11 @@ var serviceCmd = &cobra.Command{
 
 func newService(cnf *conf.Config) (*service, error) {
 	http := api.NewHTTPService()
+	grpc := api.NewGRPCService()
 
 	svr := &service{
 		http: http,
+		grpc: grpc,
 		log:  zap.L().Named("CLI"),
 	}
 
@@ -95,14 +97,17 @@ func newService(cnf *conf.Config) (*service, error) {
 
 type service struct {
 	http *api.HTTPService
+	grpc *api.GRPCService
 
 	log  logger.Logger
 	stop context.CancelFunc
 }
 
 func (s *service) start() error {
-	s.log.Infof("loaded pkg: %v", pkg.LoadedService())
-	s.log.Infof("loaded http: %s", pkg.LoadedHTTP())
+	s.log.Infof("loaded domain pkg: %v", pkg.LoadedService())
+	s.log.Infof("loaded http service: %s", pkg.LoadedHTTP())
+	s.log.Infof("loaded grpc service: %s", pkg.LoadedGRPC())
+	go s.grpc.Start()
 	return s.http.Start()
 }
 
