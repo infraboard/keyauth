@@ -125,7 +125,7 @@ func NewInitialerFromCLI() (*Initialer, error) {
 func NewInitialer() *Initialer {
 	return &Initialer{
 		mockTK: &token.Token{
-			UserType: types.SupperAccount,
+			UserType: types.UserType_SUPPER,
 			Domain:   domain.AdminDomainName,
 		},
 	}
@@ -202,7 +202,7 @@ func (i *Initialer) Run() error {
 func (i *Initialer) checkIsInit() error {
 	req := user.NewQueryAccountRequest()
 	req.WithToken(i.mockTK)
-	userSet, err := pkg.User.QueryAccount(types.SupperAccount, req)
+	userSet, err := pkg.User.QueryAccount(types.UserType_SUPPER, req)
 	if err != nil {
 		return err
 	}
@@ -218,7 +218,7 @@ func (i *Initialer) initUser() (*user.User, error) {
 	req.WithToken(i.mockTK)
 	req.Account = strings.TrimSpace(i.username)
 	req.Password = strings.TrimSpace(i.password)
-	return pkg.User.CreateAccount(types.SupperAccount, req)
+	return pkg.User.CreateAccount(types.UserType_SUPPER, req)
 }
 
 func (i *Initialer) initDomain(ownerID string) (*domain.Domain, error) {
@@ -263,7 +263,7 @@ func (i *Initialer) getAdminToken(app *application.Application, u *user.User) er
 	}
 
 	req := token.NewIssueTokenByPassword(app.ClientID, app.ClientSecret, u.Account, u.Password)
-	tk, err := pkg.Token.IssueToken(req)
+	tk, err := pkg.Token.IssueToken(nil, req)
 	if err != nil {
 		return err
 	}
