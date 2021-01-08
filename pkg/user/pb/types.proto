@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package user;
+option go_package = "github.com/infraboard/keyauth/pkg/user/types";
+
+enum UserType {
+    SUB = 0;
+    PRIMARY = 1;
+    SERVICE = 2;
+    SUPPER = 3;
+}

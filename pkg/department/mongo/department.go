@@ -141,7 +141,7 @@ func (s *service) queryUserCount(departmentID string, tk *token.Token) (int64, e
 	queryU.SkipItems = true
 	queryU.WithALLSub = true
 	queryU.WithToken(tk)
-	us, err := s.user.QueryAccount(types.SubAccount, queryU)
+	us, err := s.user.QueryAccount(types.UserType_SUB, queryU)
 	if err != nil {
 		return 0, exception.NewInternalServerError("query department user count error, error is %s", err)
 	}
@@ -187,7 +187,7 @@ func (s *service) DeleteDepartment(req *department.DeleteDepartmentRequest) erro
 	userReq.SkipItems = true
 	userReq.DepartmentID = req.ID
 	userReq.WithTokenGetter(req)
-	userSet, err := s.user.QueryAccount(types.SubAccount, userReq)
+	userSet, err := s.user.QueryAccount(types.UserType_SUB, userReq)
 
 	if err != nil {
 		return exception.NewBadRequest("quer department user error, %s", err)

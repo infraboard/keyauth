@@ -39,7 +39,7 @@ func (i *internal) Auth(r *http.Request, entry router.Entry) (
 		}
 		req.AccessToken = accessToken
 
-		tk, err = Token.ValidateToken(req)
+		tk, err = Token.ValidateToken(nil, req)
 		if err != nil {
 			return nil, err
 		}
@@ -47,7 +47,7 @@ func (i *internal) Auth(r *http.Request, entry router.Entry) (
 
 	if entry.PermissionEnable && tk != nil {
 		// 如果是超级管理员不做权限校验, 直接放行
-		if tk.UserType.Is(types.SupperAccount) {
+		if tk.UserType.Is(types.UserType_SUPPER) {
 			return tk, nil
 		}
 

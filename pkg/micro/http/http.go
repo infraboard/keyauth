@@ -17,7 +17,7 @@ var (
 
 type handler struct {
 	service micro.Service
-	token   token.Service
+	token   token.TokenServiceServer
 }
 
 // Registry 注册HTTP服务路由

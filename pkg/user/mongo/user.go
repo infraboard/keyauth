@@ -16,7 +16,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
-func (s *service) QueryAccount(t types.Type, req *user.QueryAccountRequest) (*user.Set, error) {
+func (s *service) QueryAccount(t types.UserType, req *user.QueryAccountRequest) (*user.Set, error) {
 	r, err := newQueryUserRequest(req)
 	if err != nil {
 		return nil, err
@@ -26,7 +26,7 @@ func (s *service) QueryAccount(t types.Type, req *user.QueryAccountRequest) (*us
 	return s.queryAccount(r)
 }
 
-func (s *service) CreateAccount(t types.Type, req *user.CreateAccountRequest) (*user.User, error) {
+func (s *service) CreateAccount(t types.UserType, req *user.CreateAccountRequest) (*user.User, error) {
 	u, err := user.New(req)
 	if err != nil {
 		return nil, err

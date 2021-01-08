@@ -1,4 +1,8 @@
-package token
+package session
+
+import (
+	"github.com/infraboard/keyauth/pkg/token"
+)
 
 // NewSession todo
 func NewSession() *Session {
@@ -7,11 +11,11 @@ func NewSession() *Session {
 
 // Session 请求上下文信息
 type Session struct {
-	tk *Token
+	tk *token.Token
 }
 
 // WithToken 携带token
-func (s *Session) WithToken(tk *Token) {
+func (s *Session) WithToken(tk *token.Token) {
 	s.tk = tk
 }
 
@@ -21,7 +25,7 @@ func (s *Session) WithTokenGetter(gt Getter) {
 }
 
 // GetToken 获取token
-func (s *Session) GetToken() *Token {
+func (s *Session) GetToken() *token.Token {
 	return s.tk
 }
 
@@ -36,5 +40,5 @@ func (s *Session) GetAccount() string {
 
 // Getter 获取token
 type Getter interface {
-	GetToken() *Token
+	GetToken() *token.Token
 }

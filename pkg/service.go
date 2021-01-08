@@ -32,7 +32,7 @@ var (
 	// Application 应用
 	Application application.Service
 	// Token 令牌服务
-	Token token.Service
+	Token token.TokenServiceServer
 	// Micro todo
 	Micro micro.Service
 	// Role 角色服务
@@ -106,7 +106,7 @@ func RegistryService(name string, svr Service) {
 		}
 		Application = value
 		addService(name, svr)
-	case token.Service:
+	case token.TokenServiceServer:
 		if Token != nil {
 			registryError(name)
 		}

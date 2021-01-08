@@ -9,7 +9,7 @@ import (
 	"github.com/infraboard/mcube/types/ftime"
 	"github.com/rs/xid"
 
-	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/token/session"
 )
 
 // use a single instance of Validate, it caches struct info
@@ -49,7 +49,7 @@ func New(req *CreateMicroRequest) (*Micro, error) {
 // NewCreateMicroRequest todo
 func NewCreateMicroRequest() *CreateMicroRequest {
 	return &CreateMicroRequest{
-		Session: token.NewSession(),
+		Session: session.NewSession(),
 		Enabled: true,
 		Label:   map[string]string{},
 		Type:    BuildIn,
@@ -58,14 +58,14 @@ func NewCreateMicroRequest() *CreateMicroRequest {
 
 // CreateMicroRequest 服务创建请求
 type CreateMicroRequest struct {
-	*token.Session  `bson:"-" json:"-"`
-	Type            Type              `bson:"type" json:"type"`                                     // 服务类型
-	Name            string            `bson:"name" json:"name" validate:"required,lte=200"`         // 名称
-	Label           map[string]string `bson:"label" json:"label" validate:"lte=80"`                 // 服务标签
-	Description     string            `bson:"description" json:"description,omitempty"`             // 描述信息
-	Enabled         bool              `bson:"enabled" json:"enabled"`                               // 是否启用该服务
-	TokenExpireTime int64             `bson:"token_expire_time" json:"token_expire_time,omitempty"` // 凭证申请的token的过期时间
-	RoleID          string            `bson:"role_id" json:"role_id,omitempty"`                     // 服务角色
+	*session.Session `bson:"-" json:"-"`
+	Type             Type              `bson:"type" json:"type"`                                     // 服务类型
+	Name             string            `bson:"name" json:"name" validate:"required,lte=200"`         // 名称
+	Label            map[string]string `bson:"label" json:"label" validate:"lte=80"`                 // 服务标签
+	Description      string            `bson:"description" json:"description,omitempty"`             // 描述信息
+	Enabled          bool              `bson:"enabled" json:"enabled"`                               // 是否启用该服务
+	TokenExpireTime  int64             `bson:"token_expire_time" json:"token_expire_time,omitempty"` // 凭证申请的token的过期时间
+	RoleID           string            `bson:"role_id" json:"role_id,omitempty"`                     // 服务角色
 }
 
 // Validate 校验请求是否合法

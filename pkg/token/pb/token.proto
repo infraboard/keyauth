@@ -1,139 +1,62 @@
 syntax = "proto3";
 
-package pb;
-option go_package = ".;pb";
+package token;
+option go_package = "github.com/infraboard/keyauth/pkg/token";
 
-import "github.com/gogo/protobuf/gogoproto/gogo.proto";
-
-enum UserType {
-    SubAccount = 0;
-    PrimaryAccount = 1;
-    ServiceAccount = 2;
-    SupperAccount = 3;
-}
+import "pkg/user/pb/types.proto";
 
 enum GrantType {
-    PASSWORD = 0;
-    LDAP = 1;
-    REFRESH = 2;
-    CLIENT = 3;
-    AUTHCODE = 4;
-    IMPLICIT = 5;
+    NULL = 0;
+    UNKNOWN = 1;
+    PASSWORD = 2;
+    LDAP = 3;
+    REFRESH = 4;
+    ACCESS = 5;
+    CLIENT = 6;
+    AUTH_CODE = 7;
+    IMPLICIT = 8;
 }
 
 enum TokenType {
-    Bearer = 0;
+    BEARER = 0;
     MAC = 1;
     JWT = 2;
 }
 
 enum BlockType {
-    SessionTerminated = 0;
-    OtherClientLoggedIn = 1;
-    OtherPlaceLoggedIn = 2;
-    OtherIPLoggedIn = 3;
+    SESSION_TERMINATED = 0;
+    OTHER_CLIENT_LOGGED_IN = 1;
+    OTHER_PLACE_LOGGED_IN = 2;
+    OTHER_IP_LOGGED_IN = 3;
 }
 
 message Token {
-    string session_id = 2 [
-        (gogoproto.jsontag) = "session_id", 
-        (gogoproto.moretags) = "bson:\"session_id\""
-        ];
-    string access_token = 3 [
-        (gogoproto.jsontag) = "access_token", 
-        (gogoproto.moretags) = "bson:\"_id\""
-        ];
-    string refresh_token = 4 [
-        (gogoproto.jsontag) = "refresh_token", 
-        (gogoproto.moretags) = "bson:\"refresh_token\""
-        ];
-    int64 create_at = 5 [
-        (gogoproto.jsontag) = "create_at", 
-        (gogoproto.moretags) = "bson:\"create_at\""
-        ];
-    int64 access_expired_at = 6 [
-        (gogoproto.jsontag) = "access_expired_at", 
-        (gogoproto.moretags) = "bson:\"access_expired_at\""
-        ];
-    int64 refresh_expired_at = 7 [
-        (gogoproto.jsontag) = "refresh_expired_at", 
-        (gogoproto.moretags) = "bson:\"refresh_expired_at\""
-        ];
-    string domain = 8 [
-        (gogoproto.jsontag) = "domain", 
-        (gogoproto.moretags) = "bson:\"domain\""
-        ];
-    UserType user_type = 9 [
-        (gogoproto.jsontag) = "user_type", 
-        (gogoproto.moretags) = "bson:\"user_type\""
-        ];
-    string account = 10 [
-        (gogoproto.jsontag) = "account", 
-        (gogoproto.moretags) = "bson:\"account\""
-        ];
-    string application_id = 11 [
-        (gogoproto.jsontag) = "application_id", 
-        (gogoproto.moretags) = "bson:\"application_id\""
-        ];
-    string application_name = 12 [
-        (gogoproto.jsontag) = "application_name", 
-        (gogoproto.moretags) = "bson:\"application_name\""
-        ];
-    string client_id = 13 [
-        (gogoproto.jsontag) = "client_id", 
-        (gogoproto.moretags) = "bson:\"client_id\""
-        ];
-    GrantType start_grant_type = 14 [
-        (gogoproto.jsontag) = "start_grant_type", 
-        (gogoproto.moretags) = "bson:\"start_grant_type\""
-        ];
-    GrantType grant_type = 15 [
-        (gogoproto.jsontag) = "grant_type", 
-        (gogoproto.moretags) = "bson:\"grant_type\""
-        ];
-    TokenType type = 16 [
-        (gogoproto.jsontag) = "type", 
-        (gogoproto.moretags) = "bson:\"type\""
-        ];
-    string scope = 17 [
-        (gogoproto.jsontag) = "scope", 
-        (gogoproto.moretags) = "bson:\"scope\""
-        ];
-    string description = 18 [
-        (gogoproto.jsontag) = "description", 
-        (gogoproto.moretags) = "bson:\"description\""
-        ];
-    bool is_block = 19 [
-        (gogoproto.jsontag) = "is_block", 
-        (gogoproto.moretags) = "bson:\"is_block\""
-        ];
-    BlockType block_type = 20 [
-        (gogoproto.jsontag) = "block_type", 
-        (gogoproto.moretags) = "bson:\"block_type\""
-        ];
-    int64 block_at = 21 [
-        (gogoproto.jsontag) = "block_at", 
-        (gogoproto.moretags) = "bson:\"block_at\""
-        ];
-    string block_reason = 22 [
-        (gogoproto.jsontag) = "block_reason", 
-        (gogoproto.moretags) = "bson:\"block_reason\""
-        ];
-    string remote_ip = 23 [
-        (gogoproto.jsontag) = "-",
-        (gogoproto.moretags) = "bson:\"-\""
-        ];
-    string user_agent = 24 [
-        (gogoproto.jsontag) = "-",
-        (gogoproto.moretags) = "bson:\"-\""
-        ];
+    string session_id = 2;
+    string access_token = 3;
+    string refresh_token = 4;
+    int64 create_at = 5;
+    int64 access_expired_at = 6;
+    int64 refresh_expired_at = 7;
+    string domain = 8;
+    user.UserType user_type = 9;
+    string account = 10;
+    string application_id = 11;
+    string application_name = 12;
+    string client_id = 13;
+    GrantType start_grant_type = 14;
+    GrantType grant_type = 15;
+    TokenType type = 16;
+    string scope = 17;
+    string description = 18;
+    bool is_block = 19;
+    BlockType block_type = 20;
+    int64 block_at = 21;
+    string block_reason = 22;
+    string remote_ip = 23;
+    string user_agent = 24;
 }
 
 message Set {
-    int64 total = 1 [
-        (gogoproto.jsontag) = "total"
-        ];
-    repeated Token items = 2 [
-        (gogoproto.jsontag) = "items"
-        ];
+    int64 total = 1;
+    repeated Token items = 2;
 }

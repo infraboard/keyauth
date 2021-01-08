@@ -7,7 +7,7 @@ import (
 
 	"github.com/infraboard/mcube/http/request"
 
-	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/token/session"
 )
 
 // Service todo
@@ -22,7 +22,7 @@ type Service interface {
 func NewQueryNamespaceRequestFromHTTP(r *http.Request) *QueryNamespaceRequest {
 	qs := r.URL.Query()
 	return &QueryNamespaceRequest{
-		Session:           token.NewSession(),
+		Session:           session.NewSession(),
 		PageRequest:       request.NewPageRequestFromHTTP(r),
 		DepartmentID:      qs.Get("department_id"),
 		WithDepartment:    qs.Get("with_department") == "true",
@@ -33,7 +33,7 @@ func NewQueryNamespaceRequestFromHTTP(r *http.Request) *QueryNamespaceRequest {
 // NewQueryNamespaceRequest 列表查询请求
 func NewQueryNamespaceRequest(pageReq *request.PageRequest) *QueryNamespaceRequest {
 	return &QueryNamespaceRequest{
-		Session:        token.NewSession(),
+		Session:        session.NewSession(),
 		PageRequest:    pageReq,
 		WithDepartment: false,
 	}
@@ -41,7 +41,7 @@ func NewQueryNamespaceRequest(pageReq *request.PageRequest) *QueryNamespaceReque
 
 // QueryNamespaceRequest 查询应用列表
 type QueryNamespaceRequest struct {
-	*token.Session
+	*session.Session
 	*request.PageRequest
 	DepartmentID      string
 	WithSubDepartment bool
@@ -58,13 +58,13 @@ func NewNewDescriptNamespaceRequestWithID(id string) *DescriptNamespaceRequest {
 // NewDescriptNamespaceRequest new实例
 func NewDescriptNamespaceRequest() *DescriptNamespaceRequest {
 	return &DescriptNamespaceRequest{
-		Session: token.NewSession(),
+		Session: session.NewSession(),
 	}
 }
 
 // DescriptNamespaceRequest 查询应用详情
 type DescriptNamespaceRequest struct {
-	*token.Session
+	*session.Session
 	ID             string `json:"id,omitempty"`
 	WithDepartment bool
 }
@@ -85,14 +85,14 @@ func (req *DescriptNamespaceRequest) Validate() error {
 // NewDeleteNamespaceRequestWithID todo
 func NewDeleteNamespaceRequestWithID(id string) *DeleteNamespaceRequest {
 	return &DeleteNamespaceRequest{
-		Session: token.NewSession(),
+		Session: session.NewSession(),
 		ID:      id,
 	}
 }
 
 // DeleteNamespaceRequest todo
 type DeleteNamespaceRequest struct {
-	*token.Session
+	*session.Session
 	ID string
 }
 

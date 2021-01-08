@@ -13,7 +13,7 @@ import (
 	"github.com/infraboard/keyauth/common/types"
 	"github.com/infraboard/keyauth/pkg/counter"
 	"github.com/infraboard/keyauth/pkg/role"
-	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/token/session"
 )
 
 // use a single instance of Validate, it caches struct info
@@ -126,18 +126,18 @@ func (d *Department) Path() string {
 // NewCreateDepartmentRequest todo
 func NewCreateDepartmentRequest() *CreateDepartmentRequest {
 	return &CreateDepartmentRequest{
-		Session: token.NewSession(),
+		Session: session.NewSession(),
 	}
 }
 
 // CreateDepartmentRequest 创建部门请求
 type CreateDepartmentRequest struct {
-	*token.Session `bson:"-" json:"-"`
-	Name           string `bson:"name" json:"name" validate:"required,lte=60"`               // 部门名称
-	DisplayName    string `bson:"display_name" json:"display_name"`                          // 显示名称
-	ParentID       string `bson:"parent_id" json:"parent_id" validate:"lte=200"`             // 上级部门ID
-	Manager        string `bson:"manager" json:"manager" validate:"required,lte=200"`        // 部门管理者account
-	DefaultRoleID  string `bson:"default_role_id" json:"default_role_id" validate:"lte=200"` // 部门成员默认角色
+	*session.Session `bson:"-" json:"-"`
+	Name             string `bson:"name" json:"name" validate:"required,lte=60"`               // 部门名称
+	DisplayName      string `bson:"display_name" json:"display_name"`                          // 显示名称
+	ParentID         string `bson:"parent_id" json:"parent_id" validate:"lte=200"`             // 上级部门ID
+	Manager          string `bson:"manager" json:"manager" validate:"required,lte=200"`        // 部门管理者account
+	DefaultRoleID    string `bson:"default_role_id" json:"default_role_id" validate:"lte=200"` // 部门成员默认角色
 }
 
 // Validate 校验参数的合法性

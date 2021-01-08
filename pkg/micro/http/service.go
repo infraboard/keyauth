@@ -96,7 +96,7 @@ func (h *handler) GetServiceToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tk, err := h.token.DescribeToken(token.NewDescribeTokenRequestWithAccessToken(d.AccessToken))
+	tk, err := h.token.DescribeToken(nil, token.NewDescribeTokenRequestWithAccessToken(d.AccessToken))
 	tk.Desensitize()
 	if err != nil {
 		response.Failed(w, err)

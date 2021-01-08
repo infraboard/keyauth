@@ -7,7 +7,7 @@ import (
 
 	"github.com/infraboard/keyauth/common/dryrun"
 	"github.com/infraboard/keyauth/pkg/provider/ldap"
-	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/token/session"
 )
 
 // LDAP todo
@@ -22,7 +22,7 @@ type LDAP interface {
 // NewSaveLDAPConfigRequest todo
 func NewSaveLDAPConfigRequest() *SaveLDAPConfigRequest {
 	return &SaveLDAPConfigRequest{
-		Session: token.NewSession(),
+		Session: session.NewSession(),
 		Enabled: true,
 		Config:  ldap.NewDefaultConfig(),
 		DryRun:  dryrun.NewDryRun(),
@@ -31,10 +31,10 @@ func NewSaveLDAPConfigRequest() *SaveLDAPConfigRequest {
 
 // SaveLDAPConfigRequest todo
 type SaveLDAPConfigRequest struct {
-	Enabled        bool `bson:"enabled" json:"enabled"`
-	*ldap.Config   `bson:",inline"`
-	*token.Session `bson:"-" json:"-"`
-	*dryrun.DryRun `bson:"-" json:"-"`
+	Enabled          bool `bson:"enabled" json:"enabled"`
+	*ldap.Config     `bson:",inline"`
+	*session.Session `bson:"-" json:"-"`
+	*dryrun.DryRun   `bson:"-" json:"-"`
 }
 
 // Validate todo
@@ -45,14 +45,14 @@ func (req *SaveLDAPConfigRequest) Validate() error {
 // NewQueryLDAPConfigRequest todo
 func NewQueryLDAPConfigRequest(pageReq *request.PageRequest) *QueryLDAPConfigRequest {
 	return &QueryLDAPConfigRequest{
-		Session:     token.NewSession(),
+		Session:     session.NewSession(),
 		PageRequest: pageReq,
 	}
 }
 
 // QueryLDAPConfigRequest 查询LDAP配置
 type QueryLDAPConfigRequest struct {
-	*token.Session
+	*session.Session
 	*request.PageRequest
 }
 

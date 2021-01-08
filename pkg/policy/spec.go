@@ -5,8 +5,9 @@ import (
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/mcube/http/request"
+
+	"github.com/infraboard/keyauth/pkg/token/session"
 )
 
 // use a single instance of Validate, it caches struct info
@@ -39,7 +40,7 @@ func NewQueryPolicyRequestFromHTTP(r *http.Request) *QueryPolicyRequest {
 // NewQueryPolicyRequest 列表查询请求
 func NewQueryPolicyRequest(pageReq *request.PageRequest) *QueryPolicyRequest {
 	return &QueryPolicyRequest{
-		Session:       token.NewSession(),
+		Session:       session.NewSession(),
 		PageRequest:   pageReq,
 		WithRole:      false,
 		WithNamespace: false,
@@ -49,7 +50,7 @@ func NewQueryPolicyRequest(pageReq *request.PageRequest) *QueryPolicyRequest {
 // QueryPolicyRequest 获取子账号列表
 type QueryPolicyRequest struct {
 	*request.PageRequest
-	*token.Session
+	*session.Session
 
 	Account       string `json:"account,omitempty"`
 	RoleID        string `json:"role_id,omitempty"`
@@ -67,13 +68,13 @@ func (req *QueryPolicyRequest) Validate() error {
 // NewDescriptPolicyRequest new实例
 func NewDescriptPolicyRequest() *DescribePolicyRequest {
 	return &DescribePolicyRequest{
-		Session: token.NewSession(),
+		Session: session.NewSession(),
 	}
 }
 
 // DescribePolicyRequest todo
 type DescribePolicyRequest struct {
-	*token.Session
+	*session.Session
 	ID string
 }
 
@@ -117,18 +118,18 @@ func NewDeletePolicyRequestWithRoleID(roleID string) *DeletePolicyRequest {
 // NewDeletePolicyRequest todo
 func NewDeletePolicyRequest() *DeletePolicyRequest {
 	return &DeletePolicyRequest{
-		Session: token.NewSession(),
+		Session: session.NewSession(),
 	}
 }
 
 // DeletePolicyRequest todo
 type DeletePolicyRequest struct {
-	*token.Session `json:"-"`
-	ID             string `json:"id,omitempty"`
-	Account        string `json:"account,omitempty"`
-	RoleID         string `json:"role_id,omitempty"`
-	NamespaceID    string `json:"namespace_id,omitempty"`
-	Type           *Type  `json:"type,omitempty"`
+	*session.Session `json:"-"`
+	ID               string `json:"id,omitempty"`
+	Account          string `json:"account,omitempty"`
+	RoleID           string `json:"role_id,omitempty"`
+	NamespaceID      string `json:"namespace_id,omitempty"`
+	Type             *Type  `json:"type,omitempty"`
 }
 
 // Validate todo

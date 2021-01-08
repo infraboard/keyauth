@@ -4,8 +4,10 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/mcube/http/request"
+
+	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/token/session"
 )
 
 // Service token管理服务
@@ -60,7 +62,7 @@ func (req *DescribeMicroRequest) Validate() error {
 // NewDeleteMicroRequestWithID todo
 func NewDeleteMicroRequestWithID(id string) *DeleteMicroRequest {
 	return &DeleteMicroRequest{
-		Session: token.NewSession(),
+		Session: session.NewSession(),
 		ID:      id,
 	}
 }
@@ -81,6 +83,6 @@ func (req *DeleteMicroRequest) Validate() error {
 
 // DeleteMicroRequest todo
 type DeleteMicroRequest struct {
-	*token.Session
+	*session.Session
 	ID string
 }

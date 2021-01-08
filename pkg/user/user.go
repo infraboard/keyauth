@@ -12,7 +12,7 @@ import (
 
 	common "github.com/infraboard/keyauth/common/types"
 	"github.com/infraboard/keyauth/pkg/department"
-	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/token/session"
 	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
@@ -55,11 +55,11 @@ func NewDefaultUser() *User {
 
 // User info
 type User struct {
-	CreateAt              ftime.Time `bson:"create_at" json:"create_at,omitempty"` // 用户创建的时间
-	UpdateAt              ftime.Time `bson:"update_at" json:"update_at,omitempty"` // 修改时间
-	Domain                string     `bson:"domain" json:"domain,omitempty"`       // 如果是子账号和服务账号 都需要继承主用户Domain
-	Type                  types.Type `bson:"type"  json:"type"`                    // 是否是主账号
-	Roles                 []string   `bson:"-" json:"roles,omitempty"`             // 用户的角色(当携带Namesapce查询时会有)
+	CreateAt              ftime.Time     `bson:"create_at" json:"create_at,omitempty"` // 用户创建的时间
+	UpdateAt              ftime.Time     `bson:"update_at" json:"update_at,omitempty"` // 修改时间
+	Domain                string         `bson:"domain" json:"domain,omitempty"`       // 如果是子账号和服务账号 都需要继承主用户Domain
+	Type                  types.UserType `bson:"type"  json:"type"`                    // 是否是主账号
+	Roles                 []string       `bson:"-" json:"roles,omitempty"`             // 用户的角色(当携带Namesapce查询时会有)
 	*CreateAccountRequest `bson:",inline"`
 
 	HashedPassword *Password              `bson:"password" json:"password,omitempty"` // 密码相关信息
@@ -101,10 +101,10 @@ func (u *User) ChangePassword(old, new string, maxHistory uint, needReset bool) 
 
 // CreateAccountRequest 创建用户请求
 type CreateAccountRequest struct {
-	*token.Session `bson:"-" json:"-"`
-	*Profile       `bson:",inline"`
-	CreateType     CreateType `bson:"create_type" json:"create_type"`               // 创建方式
-	Password       string     `bson:"-" json:"password" validate:"required,lte=80"` // 密码相关信息
+	*session.Session `bson:"-" json:"-"`
+	*Profile         `bson:",inline"`
+	CreateType       CreateType `bson:"create_type" json:"create_type"`               // 创建方式
+	Password         string     `bson:"-" json:"password" validate:"required,lte=80"` // 密码相关信息
 }
 
 // NewProfile todo
@@ -159,7 +159,7 @@ func (req *CreateAccountRequest) Validate() error {
 	}
 
 	// 非管理员, 主账号 可以创建子账号
-	if !tk.UserType.Is(types.SupperAccount, types.PrimaryAccount) {
+	if !tk.UserType.Is(types.UserType_SUPPER, types.UserType_PRIMARY) {
 		return fmt.Errorf("%s user can't create sub account", tk.UserType)
 	}
 
@@ -286,7 +286,7 @@ func (s *Set) Add(u *User) {
 // NewPutAccountRequest todo
 func NewPutAccountRequest() *UpdateAccountRequest {
 	return &UpdateAccountRequest{
-		Session:    token.NewSession(),
+		Session:    session.NewSession(),
 		UpdateMode: common.PutUpdateMode,
 		Profile:    NewProfile(),
 	}
@@ -295,7 +295,7 @@ func NewPutAccountRequest() *UpdateAccountRequest {
 // NewPatchAccountRequest todo
 func NewPatchAccountRequest() *UpdateAccountRequest {
 	return &UpdateAccountRequest{
-		Session:    token.NewSession(),
+		Session:    session.NewSession(),
 		UpdateMode: common.PatchUpdateMode,
 		Profile:    NewProfile(),
 	}
@@ -303,9 +303,9 @@ func NewPatchAccountRequest() *UpdateAccountRequest {
 
 // UpdateAccountRequest todo
 type UpdateAccountRequest struct {
-	*token.Session `bson:"-" json:"-"`
-	UpdateMode     common.UpdateMode `json:"update_mode"`
-	*Profile       `bson:",inline"`
+	*session.Session `bson:"-" json:"-"`
+	UpdateMode       common.UpdateMode `json:"update_mode"`
+	*Profile         `bson:",inline"`
 }
 
 // Validate 更新请求校验

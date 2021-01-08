@@ -15,7 +15,7 @@ var (
 )
 
 type handler struct {
-	service token.Service
+	service token.TokenServiceServer
 }
 
 // Registry 注册HTTP服务路由

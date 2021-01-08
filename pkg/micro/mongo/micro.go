@@ -65,7 +65,7 @@ func (s *service) createServiceAccount(tk *token.Token, name, pass string) (*use
 	req.WithToken(tk)
 	req.Account = name
 	req.Password = pass
-	return s.user.CreateAccount(types.ServiceAccount, req)
+	return s.user.CreateAccount(types.UserType_SERVICE, req)
 }
 
 func (s *service) createServiceToken(userAgent, remoteIP, user, pass string) (*token.Token, error) {
@@ -74,14 +74,14 @@ func (s *service) createServiceToken(userAgent, remoteIP, user, pass string) (*t
 		return nil, err
 	}
 	req := token.NewIssueTokenRequest()
-	req.GrantType = token.PASSWORD
+	req.GrantType = token.GrantType_PASSWORD
 	req.Username = user
 	req.Password = pass
-	req.ClientID = app.ClientID
+	req.ClientId = app.ClientID
 	req.ClientSecret = app.ClientSecret
 	req.WithRemoteIP(remoteIP)
 	req.WithUserAgent(userAgent)
-	return s.token.IssueToken(req)
+	return s.token.IssueToken(nil, req)
 }
 
 func (s *service) revolkServiceToken(accessToken string) error {
@@ -91,7 +91,8 @@ func (s *service) revolkServiceToken(accessToken string) error {
 	}
 	req := token.NewRevolkTokenRequest(app.ClientID, app.ClientSecret)
 	req.AccessToken = accessToken
-	return s.token.RevolkToken(req)
+	_, err = s.token.RevolkToken(nil, req)
+	return err
 }
 
 func (s *service) createPolicy(tk *token.Token, account, roleID string) (*policy.Policy, error) {
@@ -120,12 +121,12 @@ func (s *service) refreshServiceToken(at, rt string) (*token.Token, error) {
 		return nil, err
 	}
 	req := token.NewIssueTokenRequest()
-	req.GrantType = token.REFRESH
+	req.GrantType = token.GrantType_REFRESH
 	req.AccessToken = at
 	req.RefreshToken = rt
-	req.ClientID = app.ClientID
+	req.ClientId = app.ClientID
 	req.ClientSecret = app.ClientSecret
-	return s.token.IssueToken(req)
+	return s.token.IssueToken(nil, req)
 }
 
 func (s *service) QueryService(req *micro.QueryMicroRequest) (*micro.Set, error) {

@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/token/session"
 	"github.com/infraboard/mcube/http/request"
 )
 
@@ -37,7 +37,7 @@ func NewQueryRoleRequestFromHTTP(r *http.Request) *QueryRoleRequest {
 // NewQueryRoleRequest 列表查询请求
 func NewQueryRoleRequest(pageReq *request.PageRequest) *QueryRoleRequest {
 	return &QueryRoleRequest{
-		Session:         token.NewSession(),
+		Session:         session.NewSession(),
 		PageRequest:     pageReq,
 		WithPermissions: false,
 	}
@@ -45,7 +45,7 @@ func NewQueryRoleRequest(pageReq *request.PageRequest) *QueryRoleRequest {
 
 // QueryRoleRequest 查询请求
 type QueryRoleRequest struct {
-	*token.Session
+	*session.Session
 	*request.PageRequest
 
 	Type            *Type
@@ -64,7 +64,7 @@ func (req *QueryRoleRequest) Validate() error {
 // NewDescribeRoleRequestWithID todo
 func NewDescribeRoleRequestWithID(id string) *DescribeRoleRequest {
 	return &DescribeRoleRequest{
-		Session:         token.NewSession(),
+		Session:         session.NewSession(),
 		ID:              id,
 		WithPermissions: false,
 	}
@@ -73,7 +73,7 @@ func NewDescribeRoleRequestWithID(id string) *DescribeRoleRequest {
 // NewDescribeRoleRequestWithName todo
 func NewDescribeRoleRequestWithName(name string) *DescribeRoleRequest {
 	return &DescribeRoleRequest{
-		Session:         token.NewSession(),
+		Session:         session.NewSession(),
 		Name:            name,
 		WithPermissions: false,
 	}
@@ -81,7 +81,7 @@ func NewDescribeRoleRequestWithName(name string) *DescribeRoleRequest {
 
 // DescribeRoleRequest role详情
 type DescribeRoleRequest struct {
-	*token.Session
+	*session.Session
 	ID              string `json:"id"`
 	Name            string `json:"name,omitempty" validate:"required,lte=64"`
 	WithPermissions bool

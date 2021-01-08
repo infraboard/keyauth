@@ -9,15 +9,16 @@ import (
 	"github.com/infraboard/mcube/http/request"
 
 	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/token/session"
 	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
 // Service 用户服务
 type Service interface {
 	// 查询用户
-	QueryAccount(types.Type, *QueryAccountRequest) (*Set, error)
+	QueryAccount(types.UserType, *QueryAccountRequest) (*Set, error)
 	// 创建用户
-	CreateAccount(types.Type, *CreateAccountRequest) (*User, error)
+	CreateAccount(types.UserType, *CreateAccountRequest) (*User, error)
 	// 获取账号Profile
 	DescribeAccount(req *DescriptAccountRequest) (*User, error)
 	// 警用账号
@@ -84,7 +85,7 @@ func NewNewQueryAccountRequestFromHTTP(r *http.Request) *QueryAccountRequest {
 func NewQueryAccountRequest() *QueryAccountRequest {
 	return &QueryAccountRequest{
 		PageRequest:    request.NewPageRequest(20, 1),
-		Session:        token.NewSession(),
+		Session:        session.NewSession(),
 		WithDepartment: false,
 		SkipItems:      false,
 	}
@@ -92,7 +93,7 @@ func NewQueryAccountRequest() *QueryAccountRequest {
 
 // QueryAccountRequest 获取子账号列表
 type QueryAccountRequest struct {
-	*token.Session
+	*session.Session
 	*request.PageRequest
 	Accounts       []string
 	NamespaceID    string
@@ -131,7 +132,7 @@ func NewCreateUserRequestWithLDAPSync(username, password string, tk *token.Token
 // NewCreateUserRequest 创建请求
 func NewCreateUserRequest() *CreateAccountRequest {
 	return &CreateAccountRequest{
-		Session: token.NewSession(),
+		Session: session.NewSession(),
 		Profile: NewProfile(),
 	}
 }
@@ -139,13 +140,13 @@ func NewCreateUserRequest() *CreateAccountRequest {
 // NewUpdatePasswordRequest todo
 func NewUpdatePasswordRequest() *UpdatePasswordRequest {
 	return &UpdatePasswordRequest{
-		Session: token.NewSession(),
+		Session: session.NewSession(),
 	}
 }
 
 // UpdatePasswordRequest todo
 type UpdatePasswordRequest struct {
-	*token.Session `json:"-"`
+	*session.Session `json:"-"`
 	ResetExpiredRequest
 }
 

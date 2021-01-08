@@ -6,7 +6,7 @@ import (
 	"net"
 	"net/http"
 
-	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/token/session"
 )
 
 // Service todo
@@ -21,7 +21,7 @@ func NewUploadFileRequestFromHTTP(r *http.Request) (*UpdateDBFileRequest, error)
 
 	req := &UpdateDBFileRequest{
 		reader:  r.Body,
-		Session: token.NewSession(),
+		Session: session.NewSession(),
 	}
 
 	ctStr := qs.Get("content_type")
@@ -39,7 +39,7 @@ func NewUploadFileRequestFromHTTP(r *http.Request) (*UpdateDBFileRequest, error)
 
 // UpdateDBFileRequest 上传文件请求
 type UpdateDBFileRequest struct {
-	*token.Session
+	*session.Session
 	reader io.ReadCloser
 
 	ContentType DBFileContentType

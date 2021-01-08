@@ -10,7 +10,6 @@ import (
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
-	"github.com/infraboard/mcube/types/ftime"
 	"github.com/rs/xid"
 
 	"github.com/infraboard/keyauth/common/password"
@@ -57,7 +56,7 @@ func NewTokenIssuer() (Issuer, error) {
 // TokenIssuer 基于该数据进行扩展
 type issuer struct {
 	app     application.Service
-	token   token.Service
+	token   token.TokenServiceServer
 	user    user.Service
 	domain  domain.Service
 	ldap    provider.LDAP
@@ -126,13 +125,13 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 		return nil, err
 	}
 
-	app, err := i.CheckClient(req.ClientID, req.ClientSecret)
+	app, err := i.CheckClient(req.ClientId, req.ClientSecret)
 	if err != nil {
 		return nil, exception.NewUnauthorized(err.Error())
 	}
 
 	switch req.GrantType {
-	case token.PASSWORD:
+	case token.GrantType_PASSWORD:
 		u, checkErr := i.checkUserPass(req.Username, req.Password)
 		if checkErr != nil {
 			i.log.Debugf("issue password token error, %s", checkErr)
@@ -147,22 +146,22 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 			return nil, err
 		}
 
-		tk := i.issueUserToken(app, u, token.PASSWORD)
+		tk := i.issueUserToken(app, u, token.GrantType_PASSWORD)
 		switch u.Type {
-		case types.SupperAccount, types.PrimaryAccount:
+		case types.UserType_SUPPER, types.UserType_PRIMARY:
 			err := i.setTokenDomain(tk)
 			if err != nil {
 				return nil, fmt.Errorf("set token domain error, %s", err)
 			}
-		case types.ServiceAccount, types.SubAccount:
+		case types.UserType_SERVICE, types.UserType_SUB:
 			tk.Domain = u.Domain
 		}
 
 		return tk, nil
-	case token.REFRESH:
+	case token.GrantType_REFRESH:
 		validateReq := token.NewValidateTokenRequest()
 		validateReq.RefreshToken = req.RefreshToken
-		tk, err := i.token.ValidateToken(validateReq)
+		tk, err := i.token.ValidateToken(nil, validateReq)
 		if err != nil {
 			return nil, err
 		}
@@ -174,22 +173,22 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 		if err != nil {
 			return nil, err
 		}
-		newTK := i.issueUserToken(app, u, token.REFRESH)
+		newTK := i.issueUserToken(app, u, token.GrantType_REFRESH)
 		newTK.Domain = tk.Domain
 		newTK.StartGrantType = tk.GetStartGrantType()
-		newTK.SessionID = tk.SessionID
+		newTK.SessionId = tk.SessionId
 
 		revolkReq := token.NewRevolkTokenRequest(app.ClientID, app.ClientSecret)
 		revolkReq.AccessToken = req.AccessToken
 		revolkReq.LogoutSession = false
-		if err := i.token.RevolkToken(revolkReq); err != nil {
+		if _, err := i.token.RevolkToken(nil, revolkReq); err != nil {
 			return nil, err
 		}
 		return newTK, nil
-	case token.ACCESS:
+	case token.GrantType_ACCESS:
 		validateReq := token.NewValidateTokenRequest()
 		validateReq.AccessToken = req.AccessToken
-		tk, err := i.token.ValidateToken(validateReq)
+		tk, err := i.token.ValidateToken(nil, validateReq)
 		if err != nil {
 			return nil, exception.NewUnauthorized(err.Error())
 		}
@@ -197,10 +196,10 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 		if err != nil {
 			return nil, err
 		}
-		newTK := i.issueUserToken(app, u, token.ACCESS)
+		newTK := i.issueUserToken(app, u, token.GrantType_ACCESS)
 		newTK.Domain = tk.Domain
 		return newTK, nil
-	case token.LDAP:
+	case token.GrantType_LDAP:
 		userName, dn, err := i.genBaseDN(req.Username)
 		if err != nil {
 			return nil, err
@@ -224,12 +223,12 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 		if err != nil {
 			return nil, err
 		}
-		newTK := i.issueUserToken(app, u, token.LDAP)
+		newTK := i.issueUserToken(app, u, token.GrantType_LDAP)
 		newTK.Domain = ldapConf.Domain
 		return newTK, nil
-	case token.CLIENT:
+	case token.GrantType_CLIENT:
 		return nil, exception.NewInternalServerError("not impl")
-	case token.AUTHCODE:
+	case token.GrantType_AUTH_CODE:
 		return nil, exception.NewInternalServerError("not impl")
 	default:
 		return nil, exception.NewInternalServerError("unknown grant type %s", req.GrantType)
@@ -259,14 +258,14 @@ func (i *issuer) syncLDAPUser(tk *token.Token, userName string) (*user.User, err
 	descUser := user.NewDescriptAccountRequestWithAccount(userName)
 	u, err := i.user.DescribeAccount(descUser)
 
-	if u != nil && u.Type.Is(types.PrimaryAccount, types.SupperAccount) {
+	if u != nil && u.Type.Is(types.UserType_PRIMARY, types.UserType_SUPPER) {
 		return nil, exception.NewBadRequest("用户名和主账号用户名冲突, 请修改")
 	}
 
 	if err != nil {
 		if exception.IsNotFoundError(err) {
 			req := user.NewCreateUserRequestWithLDAPSync(userName, i.randomPass(), tk)
-			u, err = i.user.CreateAccount(types.SubAccount, req)
+			u, err = i.user.CreateAccount(types.UserType_SUB, req)
 			if err != nil {
 				return nil, err
 			}
@@ -290,9 +289,9 @@ func (i *issuer) randomPass() string {
 }
 
 func (i *issuer) mockBuildInToken(app *application.Application, userName, domainID string) *token.Token {
-	tk := i.newBearToken(app, token.LDAP)
+	tk := i.newBearToken(app, token.GrantType_LDAP)
 	tk.Account = userName
-	tk.UserType = types.PrimaryAccount
+	tk.UserType = types.UserType_PRIMARY
 	tk.Domain = domainID
 	return tk
 }
@@ -307,24 +306,24 @@ func (i *issuer) issueUserToken(app *application.Application, u *user.User, gt t
 func (i *issuer) newBearToken(app *application.Application, gt token.GrantType) *token.Token {
 	now := time.Now()
 	tk := &token.Token{
-		Type:            token.Bearer,
+		Type:            token.TokenType_BEARER,
 		AccessToken:     token.MakeBearer(24),
 		RefreshToken:    token.MakeBearer(32),
-		CreatedAt:       ftime.T(now),
-		ClientID:        app.ClientID,
+		CreateAt:        now.UnixNano() / 1000000,
+		ClientId:        app.ClientID,
 		GrantType:       gt,
-		ApplicationID:   app.ID,
+		ApplicationId:   app.ID,
 		ApplicationName: app.Name,
 	}
 
 	if app.AccessTokenExpireSecond != 0 {
 		accessExpire := now.Add(time.Duration(app.AccessTokenExpireSecond) * time.Second)
-		tk.AccessExpiredAt = ftime.T(accessExpire)
+		tk.AccessExpiredAt = accessExpire.UnixNano() / 1000000
 	}
 
 	if app.RefreshTokenExpiredSecond != 0 {
 		refreshExpir := now.Add(time.Duration(app.RefreshTokenExpiredSecond) * time.Second)
-		tk.RefreshExpiredAt = ftime.T(refreshExpir)
+		tk.RefreshExpiredAt = refreshExpir.UnixNano() / 1000000
 	}
 
 	return tk

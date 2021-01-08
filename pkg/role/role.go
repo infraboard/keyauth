@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/infraboard/keyauth/pkg/token"
-	"github.com/infraboard/keyauth/pkg/user/types"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/types/ftime"
 	"github.com/rs/xid"
 
 	"github.com/infraboard/keyauth/pkg/endpoint"
+	"github.com/infraboard/keyauth/pkg/token/session"
+	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
 const (
@@ -29,7 +29,7 @@ func New(req *CreateRoleRequest) (*Role, error) {
 		return nil, fmt.Errorf("token required")
 	}
 
-	if !tk.UserType.Is(types.SupperAccount) && !req.IsCumstomType() {
+	if !tk.UserType.Is(types.UserType_SUPPER) && !req.IsCumstomType() {
 		return nil, fmt.Errorf("only supper account can create global and build role")
 	}
 
@@ -78,7 +78,7 @@ func (r *Role) HasPermission(ep *endpoint.Endpoint) (*Permission, bool, error) {
 // NewCreateRoleRequest 实例化请求
 func NewCreateRoleRequest() *CreateRoleRequest {
 	return &CreateRoleRequest{
-		Session:     token.NewSession(),
+		Session:     session.NewSession(),
 		Permissions: []*Permission{},
 		Type:        CustomType,
 	}
@@ -86,11 +86,11 @@ func NewCreateRoleRequest() *CreateRoleRequest {
 
 // CreateRoleRequest 创建应用请求
 type CreateRoleRequest struct {
-	*token.Session `bson:"-" json:"-"`
-	Type           Type          `bson:"type" json:"type"`                                            // 角色类型
-	Name           string        `bson:"name" json:"name,omitempty" validate:"required,lte=30"`       // 应用名称
-	Description    string        `bson:"description" json:"description,omitempty" validate:"lte=400"` // 应用简单的描述
-	Permissions    []*Permission `bson:"permissions" json:"permissions,omitempty"`                    // 读权限
+	*session.Session `bson:"-" json:"-"`
+	Type             Type          `bson:"type" json:"type"`                                            // 角色类型
+	Name             string        `bson:"name" json:"name,omitempty" validate:"required,lte=30"`       // 应用名称
+	Description      string        `bson:"description" json:"description,omitempty" validate:"lte=400"` // 应用简单的描述
+	Permissions      []*Permission `bson:"permissions" json:"permissions,omitempty"`                    // 读权限
 }
 
 // IsCumstomType todo

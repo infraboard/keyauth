@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/token/session"
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/request"
 )
@@ -48,7 +48,7 @@ func NewQueryDepartmentRequestFromHTTP(r *http.Request) *QueryDepartmentRequest 
 // NewQueryDepartmentRequest todo
 func NewQueryDepartmentRequest() *QueryDepartmentRequest {
 	return &QueryDepartmentRequest{
-		Session:       token.NewSession(),
+		Session:       session.NewSession(),
 		PageRequest:   request.NewPageRequest(20, 1),
 		SkipItems:     false,
 		WithSubCount:  false,
@@ -58,7 +58,7 @@ func NewQueryDepartmentRequest() *QueryDepartmentRequest {
 
 // QueryDepartmentRequest todo
 type QueryDepartmentRequest struct {
-	*token.Session
+	*session.Session
 	*request.PageRequest
 	ParentID      *string
 	Keywords      string
@@ -80,7 +80,7 @@ func (req *QueryDepartmentRequest) Validate() error {
 // NewDescribeDepartmentRequest new实例
 func NewDescribeDepartmentRequest() *DescribeDeparmentRequest {
 	return &DescribeDeparmentRequest{
-		Session: token.NewSession(),
+		Session: session.NewSession(),
 	}
 }
 
@@ -93,7 +93,7 @@ func NewDescribeDepartmentRequestWithID(id string) *DescribeDeparmentRequest {
 
 // DescribeDeparmentRequest 详情查询
 type DescribeDeparmentRequest struct {
-	*token.Session
+	*session.Session
 	ID            string
 	Name          string
 	WithSubCount  bool
@@ -121,14 +121,14 @@ func (req *DescribeDeparmentRequest) Validate() error {
 // NewDeleteDepartmentRequestWithID todo
 func NewDeleteDepartmentRequestWithID(id string) *DeleteDepartmentRequest {
 	return &DeleteDepartmentRequest{
-		Session: token.NewSession(),
+		Session: session.NewSession(),
 		ID:      id,
 	}
 }
 
 // DeleteDepartmentRequest todo
 type DeleteDepartmentRequest struct {
-	*token.Session
+	*session.Session
 	ID string
 }
 
@@ -148,7 +148,7 @@ func (req *DeleteDepartmentRequest) Validate() error {
 // NewJoinDepartmentRequest todo
 func NewJoinDepartmentRequest() *JoinDepartmentRequest {
 	return &JoinDepartmentRequest{
-		Session: token.NewSession(),
+		Session: session.NewSession(),
 	}
 }
 
@@ -158,7 +158,7 @@ type JoinDepartmentRequest struct {
 	DepartmentID string `bson:"department_id" json:"department_id" validate:"required"` // 申请加入的部门
 	Message      string `bson:"message" json:"message"`                                 // 留言
 
-	*token.Session `bson:"-"`
+	*session.Session `bson:"-"`
 }
 
 // Validate todo
@@ -173,13 +173,13 @@ func (req *JoinDepartmentRequest) Validate() error {
 // NewDefaultDealApplicationFormRequest todo
 func NewDefaultDealApplicationFormRequest() *DealApplicationFormRequest {
 	return &DealApplicationFormRequest{
-		Session: token.NewSession(),
+		Session: session.NewSession(),
 	}
 }
 
 // DealApplicationFormRequest todo
 type DealApplicationFormRequest struct {
-	*token.Session
+	*session.Session
 	ID      string                `json:"id"`      // 用户
 	Status  ApplicationFormStatus `json:"status"`  // 状态
 	Message string                `json:"message"` // 备注
@@ -219,7 +219,7 @@ func NewQueryApplicationFormRequestFromHTTP(r *http.Request) (*QueryApplicationF
 // NewQueryApplicationFormRequet todo
 func NewQueryApplicationFormRequet() *QueryApplicationFormRequet {
 	return &QueryApplicationFormRequet{
-		Session:     token.NewSession(),
+		Session:     session.NewSession(),
 		PageRequest: request.NewPageRequest(20, 1),
 		SkipItems:   false,
 	}
@@ -228,7 +228,7 @@ func NewQueryApplicationFormRequet() *QueryApplicationFormRequet {
 // QueryApplicationFormRequet todo
 type QueryApplicationFormRequet struct {
 	*request.PageRequest
-	*token.Session
+	*session.Session
 	Account      string
 	DepartmentID string
 	Status       *ApplicationFormStatus
@@ -251,13 +251,13 @@ func (req *QueryApplicationFormRequet) Validate() error {
 // NewDescribeApplicationFormRequetWithID todo
 func NewDescribeApplicationFormRequetWithID(id string) *DescribeApplicationFormRequet {
 	return &DescribeApplicationFormRequet{
-		Session: token.NewSession(),
+		Session: session.NewSession(),
 		ID:      id,
 	}
 }
 
 // DescribeApplicationFormRequet todo
 type DescribeApplicationFormRequet struct {
-	*token.Session
+	*session.Session
 	ID string
 }

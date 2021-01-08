@@ -116,6 +116,6 @@ func (s *service) Config() error {
 }
 
 func init() {
-	var _ token.Service = Service
+	var _ token.TokenServiceServer = Service
 	pkg.RegistryService("token", Service)
 }

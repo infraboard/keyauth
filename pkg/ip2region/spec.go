@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/token/session"
 )
 
 // Service todo
@@ -38,14 +38,14 @@ func (ip IPInfo) String() string {
 func NewUploadFileRequestFromHTTP(r *http.Request) (*UpdateDBFileRequest, error) {
 	req := &UpdateDBFileRequest{
 		reader:  r.Body,
-		Session: token.NewSession(),
+		Session: session.NewSession(),
 	}
 	return req, nil
 }
 
 // UpdateDBFileRequest 上传文件请求
 type UpdateDBFileRequest struct {
-	*token.Session
+	*session.Session
 	reader io.ReadCloser
 }
 

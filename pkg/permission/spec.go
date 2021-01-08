@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/infraboard/keyauth/pkg/role"
-	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/token/session"
 	"github.com/infraboard/mcube/http/request"
 )
 
@@ -19,13 +19,13 @@ type Service interface {
 func NewQueryPermissionRequest(page *request.PageRequest) *QueryPermissionRequest {
 	return &QueryPermissionRequest{
 		PageRequest: page,
-		Session:     token.NewSession(),
+		Session:     session.NewSession(),
 	}
 }
 
 // QueryPermissionRequest 查询用户权限
 type QueryPermissionRequest struct {
-	*token.Session
+	*session.Session
 	*request.PageRequest
 	NamespaceID string
 }

@@ -1,12 +1,13 @@
 syntax = "proto3";
 
-package pb;
-option go_package = ".;pb";
+package token;
+option go_package = "github.com/infraboard/keyauth/pkg/token";
 
-import "request.proto";
-import "token.proto";
+import "pkg/token/pb/request.proto";
+import "pkg/token/pb/token.proto";
 
 service TokenService {
+    rpc IssueToken(IssueTokenRequest) returns (Token);
     rpc ValidateToken (ValidateTokenRequest) returns (Token);
 	rpc DescribeToken(DescribeTokenRequest) returns (Token);
     rpc RevolkToken(RevolkTokenRequest) returns (Token);

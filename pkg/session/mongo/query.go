@@ -5,6 +5,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/infraboard/keyauth/pkg/session"
+	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/mcube/exception"
 )
 
@@ -57,7 +58,7 @@ func (r *querySessionRequest) FindFilter() bson.M {
 		filter["city"] = r.LoginCity
 	}
 
-	if r.GrantType != "" {
+	if r.GrantType != token.GrantType_NULL {
 		filter["grant_type"] = r.GrantType
 	}
 

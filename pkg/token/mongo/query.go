@@ -59,8 +59,8 @@ type queryRequest struct {
 }
 
 func (r *queryRequest) FindOptions() *options.FindOptions {
-	pageSize := int64(r.PageSize)
-	skip := int64(r.PageSize) * int64(r.PageNumber-1)
+	pageSize := int64(r.Page.PageSize)
+	skip := int64(r.Page.PageSize) * int64(r.Page.PageNumber-1)
 
 	opt := &options.FindOptions{
 		Sort:  bson.D{{"create_at", -1}},
@@ -73,10 +73,10 @@ func (r *queryRequest) FindOptions() *options.FindOptions {
 
 func (r *queryRequest) FindFilter() bson.M {
 	filter := bson.M{}
-	if r.ApplicationID != "" {
-		filter["application_id"] = r.ApplicationID
+	if r.ApplicationId != "" {
+		filter["application_id"] = r.ApplicationId
 	}
-	if r.GrantType != "" {
+	if r.GrantType != token.GrantType_NULL {
 		filter["grant_type"] = r.GrantType
 	}
 	return filter

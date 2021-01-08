@@ -3,9 +3,9 @@ package mongo
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/infraboard/mcube/exception"
-	"github.com/infraboard/mcube/types/ftime"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/infraboard/keyauth/pkg/session"
@@ -13,7 +13,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/verifycode"
 )
 
-func (s *service) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) {
+func (s *service) IssueToken(ctx context.Context, req *token.IssueTokenRequest) (*token.Token, error) {
 	// 连续登录失败检测
 	if err := s.loginBeforeCheck(req); err != nil {
 		return nil, exception.NewBadRequest("安全检测失败, %s", err)
@@ -25,7 +25,7 @@ func (s *service) IssueToken(req *token.IssueTokenRequest) (*token.Token, error)
 		s.checker.UpdateFailedRetry(req)
 		return nil, err
 	}
-	tk.WithRemoteIP(req.GetRemoteIP())
+	tk.WithRemoteIP(req.GetRemoteIp())
 	tk.WithUerAgent(req.GetUserAgent())
 
 	// 安全登录检测
@@ -38,7 +38,7 @@ func (s *service) IssueToken(req *token.IssueTokenRequest) (*token.Token, error)
 	if err != nil {
 		return nil, err
 	}
-	tk.SessionID = sess.ID
+	tk.SessionId = sess.ID
 
 	// 保存入库
 	if err := s.saveToken(tk); err != nil {
@@ -90,12 +90,12 @@ func (s *service) securityCheck(code string, tk *token.Token) error {
 	return nil
 }
 
-func (s *service) ValidateToken(req *token.ValidateTokenRequest) (*token.Token, error) {
+func (s *service) ValidateToken(ctx context.Context, req *token.ValidateTokenRequest) (*token.Token, error) {
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest(err.Error())
 	}
 
-	tk, err := s.describeToken(newDescribeTokenRequest(req.DescribeTokenRequest))
+	tk, err := s.describeToken(newDescribeTokenRequest(req.MakeDescribeTokenRequest()))
 	if err != nil {
 		return nil, exception.NewUnauthorized(err.Error())
 	}
@@ -123,29 +123,29 @@ func (s *service) ValidateToken(req *token.ValidateTokenRequest) (*token.Token, 
 
 func (s *service) makeBlockExcption(bt token.BlockType, message string) exception.APIException {
 	switch bt {
-	case token.OtherClientLoggedIn:
+	case token.BlockType_OTHER_CLIENT_LOGGED_IN:
 		return exception.NewOtherClientsLoggedIn(message)
-	case token.SessionTerminated:
+	case token.BlockType_SESSION_TERMINATED:
 		return exception.NewSessionTerminated(message)
-	case token.OtherPlaceLoggedIn:
+	case token.BlockType_OTHER_PLACE_LOGGED_IN:
 		return exception.NewOtherPlaceLoggedIn(message)
-	case token.OtherIPLoggedIn:
+	case token.BlockType_OTHER_IP_LOGGED_IN:
 		return exception.NewOtherIPLoggedIn(message)
 	default:
 		return exception.NewInternalServerError("unknow block type: %s, message: %s", bt, message)
 	}
 }
 
-func (s *service) BlockToken(req *token.BlockTokenRequest) (*token.Token, error) {
-	tk, err := s.DescribeToken(token.NewDescribeTokenRequestWithAccessToken(req.AccessToken))
+func (s *service) BlockToken(ctx context.Context, req *token.BlockTokenRequest) (*token.Token, error) {
+	tk, err := s.DescribeToken(nil, token.NewDescribeTokenRequestWithAccessToken(req.AccessToken))
 	if err != nil {
 		return nil, fmt.Errorf("query session access token error, %s", err)
 	}
 
 	tk.IsBlock = true
-	tk.BlockType = req.BlcokType
-	tk.BlockReason = req.BlockReson
-	tk.BlockAt = ftime.Now()
+	tk.BlockType = req.BlockType
+	tk.BlockReason = req.BlockReason
+	tk.BlockAt = time.Now().UnixNano() / 1000000
 
 	if err := s.updateToken(tk); err != nil {
 		return nil, err
@@ -153,7 +153,7 @@ func (s *service) BlockToken(req *token.BlockTokenRequest) (*token.Token, error)
 	return tk, nil
 }
 
-func (s *service) DescribeToken(req *token.DescribeTokenRequest) (*token.Token, error) {
+func (s *service) DescribeToken(ctx context.Context, req *token.DescribeTokenRequest) (*token.Token, error) {
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest(err.Error())
 	}
@@ -166,7 +166,7 @@ func (s *service) DescribeToken(req *token.DescribeTokenRequest) (*token.Token, 
 	return tk, nil
 }
 
-func (s *service) QueryToken(req *token.QueryTokenRequest) (*token.Set, error) {
+func (s *service) QueryToken(ctx context.Context, req *token.QueryTokenRequest) (*token.Set, error) {
 	query := newQueryRequest(req)
 	resp, err := s.col.Find(context.TODO(), query.FindFilter(), query.FindOptions())
 
@@ -195,37 +195,37 @@ func (s *service) QueryToken(req *token.QueryTokenRequest) (*token.Set, error) {
 
 }
 
-func (s *service) RevolkToken(req *token.RevolkTokenRequest) error {
+func (s *service) RevolkToken(ctx context.Context, req *token.RevolkTokenRequest) (*token.Token, error) {
 	if err := req.Validate(); err != nil {
-		return exception.NewBadRequest(err.Error())
+		return nil, exception.NewBadRequest(err.Error())
 	}
 
 	// 检测撤销token的客户端是否合法
-	app, err := s.issuer.CheckClient(req.ClientID, req.ClientSecret)
+	app, err := s.issuer.CheckClient(req.ClientId, req.ClientSecret)
 	if err != nil {
-		return exception.NewUnauthorized(err.Error())
+		return nil, exception.NewUnauthorized(err.Error())
 	}
 
 	// 检测被撤销token的合法性
-	descReq := newDescribeTokenRequest(req.DescribeTokenRequest)
+	descReq := newDescribeTokenRequest(req.MakeDescribeTokenRequest())
 	tk, err := s.describeToken(descReq)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if err := tk.CheckTokenApplication(app.ID); err != nil {
-		return exception.NewPermissionDeny(err.Error())
+		return nil, exception.NewPermissionDeny(err.Error())
 	}
 
 	// 退出会话
 	if req.LogoutSession {
-		logoutReq := session.NewLogoutRequest(tk.SessionID)
+		logoutReq := session.NewLogoutRequest(tk.SessionId)
 		if err := s.session.Logout(logoutReq); err != nil {
-			return exception.NewInternalServerError("logout session error, %s", err)
+			return nil, exception.NewInternalServerError("logout session error, %s", err)
 		}
 	}
 
-	return s.destoryToken(descReq)
+	return tk, s.destoryToken(descReq)
 }
 
 func (s *service) destoryToken(req *describeTokenRequest) error {

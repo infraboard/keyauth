@@ -20,7 +20,7 @@ func newQueryUserRequest(req *user.QueryAccountRequest) (*queryUserRequest, erro
 }
 
 type queryUserRequest struct {
-	userType types.Type
+	userType types.UserType
 	*user.QueryAccountRequest
 }
 

@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/token/session"
 	"github.com/infraboard/mcube/http/request"
 )
 
@@ -43,13 +43,13 @@ type AdminInterface interface {
 // NewDescriptApplicationRequest new实例
 func NewDescriptApplicationRequest() *DescriptApplicationRequest {
 	return &DescriptApplicationRequest{
-		Session: token.NewSession(),
+		Session: session.NewSession(),
 	}
 }
 
 // DescriptApplicationRequest 查询应用详情
 type DescriptApplicationRequest struct {
-	*token.Session
+	*session.Session
 	ID       string `json:"id,omitempty"`
 	ClientID string `json:"client_id,omitempty"`
 }
@@ -80,7 +80,7 @@ type QueryApplicationRequest struct {
 // NewCreateApplicatonRequest 请求
 func NewCreateApplicatonRequest() *CreateApplicatonRequest {
 	return &CreateApplicatonRequest{
-		Session:                   token.NewSession(),
+		Session:                   session.NewSession(),
 		AccessTokenExpireSecond:   DefaultAccessTokenExpireSecond,
 		RefreshTokenExpiredSecond: DefaultRefreshTokenExpiredSecond,
 		ClientType:                Public,
@@ -89,7 +89,7 @@ func NewCreateApplicatonRequest() *CreateApplicatonRequest {
 
 // CreateApplicatonRequest 创建应用请求
 type CreateApplicatonRequest struct {
-	*token.Session            `bson:"-" json:"-"`
+	*session.Session          `bson:"-" json:"-"`
 	Name                      string     `bson:"name" json:"name,omitempty" validate:"required,lte=30"`          // 应用名称
 	Website                   string     `bson:"website" json:"website,omitempty" validate:"lte=200"`            // 应用的网站地址
 	LogoImage                 string     `bson:"logo_image" json:"logo_image,omitempty" validate:"lte=200"`      // 应用的LOGO

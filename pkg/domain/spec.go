@@ -7,7 +7,7 @@ import (
 	"github.com/infraboard/mcube/http/request"
 
 	"github.com/infraboard/keyauth/common/types"
-	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/token/session"
 )
 
 // Service is an domain service
@@ -25,14 +25,14 @@ type Service interface {
 func NewQueryDomainRequest(page *request.PageRequest) *QueryDomainRequest {
 	return &QueryDomainRequest{
 		PageRequest:           page,
-		Session:               token.NewSession(),
+		Session:               session.NewSession(),
 		DescribeDomainRequest: NewDescribeDomainRequest(),
 	}
 }
 
 // QueryDomainRequest 请求
 type QueryDomainRequest struct {
-	*token.Session
+	*session.Session
 	*request.PageRequest
 	*DescribeDomainRequest
 }

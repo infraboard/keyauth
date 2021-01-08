@@ -9,7 +9,7 @@ import (
 	"github.com/infraboard/mcube/http/router"
 	"github.com/infraboard/mcube/types/ftime"
 
-	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/token/session"
 	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
@@ -31,21 +31,21 @@ func NewRegistryRequest(version string, entries []*router.Entry) *RegistryReques
 	return &RegistryRequest{
 		Version: version,
 		Entries: entries,
-		Session: token.NewSession(),
+		Session: session.NewSession(),
 	}
 }
 
 // NewDefaultRegistryRequest todo
 func NewDefaultRegistryRequest() *RegistryRequest {
 	return &RegistryRequest{
-		Session: token.NewSession(),
+		Session: session.NewSession(),
 		Entries: []*router.Entry{},
 	}
 }
 
 // RegistryRequest 服务注册请求
 type RegistryRequest struct {
-	*token.Session
+	*session.Session
 	Version string          `json:"version" validate:"required,lte=32"`
 	Entries []*router.Entry `json:"entries"`
 }
@@ -61,7 +61,7 @@ func (req *RegistryRequest) Validate() error {
 		return fmt.Errorf("token required when service endpoints registry")
 	}
 
-	if !tk.UserType.Is(types.ServiceAccount) {
+	if !tk.UserType.Is(types.UserType_SERVICE) {
 		return fmt.Errorf("only service account can registry endpoints")
 	}
 

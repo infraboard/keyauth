@@ -32,7 +32,7 @@ type service struct {
 	enableCache   bool
 	notifyCachPre string
 
-	token    token.Service
+	token    token.TokenServiceServer
 	user     user.Service
 	app      application.Service
 	policy   policy.Service

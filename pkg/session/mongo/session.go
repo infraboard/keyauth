@@ -3,6 +3,7 @@ package mongo
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/types/ftime"
@@ -14,7 +15,7 @@ import (
 
 func (s *service) Login(tk *token.Token) (*session.Session, error) {
 	if tk.IsRefresh() {
-		sess, err := s.DescribeSession(session.NewDescribeSessionRequestWithID(tk.SessionID))
+		sess, err := s.DescribeSession(session.NewDescribeSessionRequestWithID(tk.SessionId))
 		if err != nil {
 			return nil, err
 		}
@@ -54,13 +55,13 @@ func (s *service) closeOldSession(tk *token.Token) {
 		return
 	}
 
-	blockReq := token.NewBlockTokenRequest(sess.AccessToken, token.OtherClientLoggedIn, "session closed by other login")
-	preTK, err := s.token.BlockToken(blockReq)
+	blockReq := token.NewBlockTokenRequest(sess.AccessToken, token.BlockType_OTHER_CLIENT_LOGGED_IN, "session closed by other login")
+	preTK, err := s.token.BlockToken(nil, blockReq)
 	if err != nil {
 		s.log.Errorf("block previous token error, %s", err)
 		return
 	}
-	sess.LogoutAt = preTK.EndAt()
+	sess.LogoutAt = ftime.Time(time.Unix(preTK.EndAt()/1000, 0))
 
 	if err := s.updateSession(sess); err != nil {
 		s.log.Errorf("block session error, %s", err)

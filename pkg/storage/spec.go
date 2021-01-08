@@ -5,7 +5,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/token/session"
 )
 
 // Service 存储服务
@@ -19,7 +19,7 @@ func NewUploadFileRequestFromHTTP(r *http.Request) *UploadFileRequest {
 	return &UploadFileRequest{
 		reader:  r.Body,
 		meta:    make(map[string]string),
-		Session: token.NewSession(),
+		Session: session.NewSession(),
 	}
 }
 
@@ -30,7 +30,7 @@ func NewUploadFileRequest(bucketName, fileName string, file io.ReadCloser) *Uplo
 		FileName:   fileName,
 		reader:     file,
 		meta:       make(map[string]string),
-		Session:    token.NewSession(),
+		Session:    session.NewSession(),
 	}
 }
 
@@ -39,7 +39,7 @@ type UploadFileRequest struct {
 	BucketName string
 	FileName   string
 
-	*token.Session
+	*session.Session
 	reader io.ReadCloser
 	meta   map[string]string
 }
@@ -73,7 +73,7 @@ func NewDownloadFileRequest(bucketName, fileID string, writer io.Writer) *Downlo
 		BucketName: bucketName,
 		FileID:     fileID,
 		writer:     writer,
-		Session:    token.NewSession(),
+		Session:    session.NewSession(),
 	}
 }
 
@@ -82,7 +82,7 @@ type DownloadFileRequest struct {
 	BucketName string
 	FileID     string
 
-	*token.Session
+	*session.Session
 	writer io.Writer
 }
 

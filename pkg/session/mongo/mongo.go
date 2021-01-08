@@ -27,7 +27,7 @@ type service struct {
 	notifyCachPre string
 
 	ip    ip2region.Service
-	token token.Service
+	token token.TokenServiceServer
 	log   logger.Logger
 }
 

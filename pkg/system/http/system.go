@@ -21,7 +21,7 @@ func (h *handler) GetSystemConfig(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !tk.UserType.Is(types.SupperAccount) {
+	if !tk.UserType.Is(types.UserType_SUPPER) {
 		response.Failed(w, exception.NewPermissionDeny("only system admin can operate"))
 		return
 	}
@@ -44,7 +44,7 @@ func (h *handler) TestEmailSend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !tk.UserType.Is(types.SupperAccount) {
+	if !tk.UserType.Is(types.UserType_SUPPER) {
 		response.Failed(w, exception.NewPermissionDeny("only system admin can operate"))
 		return
 	}
@@ -71,7 +71,7 @@ func (h *handler) SettingEmail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !tk.UserType.Is(types.SupperAccount) {
+	if !tk.UserType.Is(types.UserType_SUPPER) {
 		response.Failed(w, exception.NewPermissionDeny("only system admin can operate"))
 		return
 	}
@@ -99,7 +99,7 @@ func (h *handler) TestSMSSend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !tk.UserType.Is(types.SupperAccount) {
+	if !tk.UserType.Is(types.UserType_SUPPER) {
 		response.Failed(w, exception.NewPermissionDeny("only system admin can operate"))
 		return
 	}
@@ -126,7 +126,7 @@ func (h *handler) SettingSMS(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !tk.UserType.Is(types.SupperAccount) {
+	if !tk.UserType.Is(types.UserType_SUPPER) {
 		response.Failed(w, exception.NewPermissionDeny("only system admin can operate"))
 		return
 	}
@@ -154,7 +154,7 @@ func (h *handler) SettingVerifyCode(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !tk.UserType.Is(types.SupperAccount) {
+	if !tk.UserType.Is(types.UserType_SUPPER) {
 		response.Failed(w, exception.NewPermissionDeny("only system admin can operate"))
 		return
 	}

@@ -26,7 +26,7 @@ func (h *handler) CreateSubAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	d, err := h.service.CreateAccount(types.SubAccount, req)
+	d, err := h.service.CreateAccount(types.UserType_SUB, req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -46,7 +46,7 @@ func (h *handler) QuerySubAccount(w http.ResponseWriter, r *http.Request) {
 	req := user.NewNewQueryAccountRequestFromHTTP(r)
 	req.WithToken(tk)
 
-	d, err := h.service.QueryAccount(types.SubAccount, req)
+	d, err := h.service.QueryAccount(types.UserType_SUB, req)
 	if err != nil {
 		response.Failed(w, err)
 		return

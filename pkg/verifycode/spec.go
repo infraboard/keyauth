@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"hash/fnv"
 
-	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/token/session"
 )
 
 // Service 验证码服务
@@ -26,7 +26,7 @@ func NewIssueCodeRequestByToken() *IssueCodeRequest {
 	return &IssueCodeRequest{
 		IssueType: IssueTypeToken,
 		IssueByTokenRequest: IssueByTokenRequest{
-			Session: token.NewSession(),
+			Session: session.NewSession(),
 		},
 	}
 }
@@ -77,7 +77,7 @@ func (req *IssueByPassRequest) ValidateByPass() error {
 
 // IssueByTokenRequest todo
 type IssueByTokenRequest struct {
-	*token.Session
+	*session.Session
 }
 
 // ValidateByToken todo

@@ -10,6 +10,7 @@ import (
 	"github.com/infraboard/mcube/types/ftime"
 
 	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/token/session"
 )
 
 // Service todo
@@ -37,7 +38,7 @@ func NewQuerySessionRequestFromHTTP(r *http.Request) (*QuerySessionRequest, erro
 	qs := r.URL.Query()
 
 	req := &QuerySessionRequest{
-		Session:       token.NewSession(),
+		Session:       session.NewSession(),
 		PageRequest:   page,
 		Account:       qs.Get("account"),
 		ApplicationID: qs.Get("application_id"),
@@ -47,11 +48,7 @@ func NewQuerySessionRequestFromHTTP(r *http.Request) (*QuerySessionRequest, erro
 
 	gtStr := qs.Get("grant_type")
 	if gtStr != "" {
-		gt, err := token.ParseGrantTypeFromString(gtStr)
-		if err != nil {
-			return nil, err
-		}
-		req.GrantType = gt
+		req.GrantType = token.ParseGrantTypeFromString(gtStr)
 	}
 
 	startTime := qs.Get("start_time")
@@ -85,7 +82,7 @@ func NewQuerySessionRequestFromHTTP(r *http.Request) (*QuerySessionRequest, erro
 // NewQuerySessionRequest 列表查询请求
 func NewQuerySessionRequest(pageReq *request.PageRequest) *QuerySessionRequest {
 	return &QuerySessionRequest{
-		Session:     token.NewSession(),
+		Session:     session.NewSession(),
 		PageRequest: pageReq,
 	}
 }
@@ -93,17 +90,17 @@ func NewQuerySessionRequest(pageReq *request.PageRequest) *QuerySessionRequest {
 // NewQuerySessionRequestFromToken 列表查询请求
 func NewQuerySessionRequestFromToken(tk *token.Token) *QuerySessionRequest {
 	return &QuerySessionRequest{
-		Session:       token.NewSession(),
+		Session:       session.NewSession(),
 		PageRequest:   request.NewPageRequest(1, 1),
 		Account:       tk.Account,
-		ApplicationID: tk.ApplicationID,
+		ApplicationID: tk.ApplicationId,
 		GrantType:     tk.GrantType,
 	}
 }
 
 // QuerySessionRequest todo
 type QuerySessionRequest struct {
-	*token.Session
+	*session.Session
 	*request.PageRequest
 	Account        string
 	LoginIP        string

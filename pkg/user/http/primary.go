@@ -19,7 +19,7 @@ func (h *handler) CreatePrimayAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	d, err := h.service.CreateAccount(types.PrimaryAccount, req)
+	d, err := h.service.CreateAccount(types.UserType_PRIMARY, req)
 	if err != nil {
 		response.Failed(w, err)
 		return
