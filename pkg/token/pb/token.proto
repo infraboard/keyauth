@@ -3,6 +3,7 @@ syntax = "proto3";
 package token;
 option go_package = "github.com/infraboard/keyauth/pkg/token";
 
+import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
 import "pkg/user/pb/types.proto";
 
 enum GrantType {
@@ -31,29 +32,75 @@ enum BlockType {
 }
 
 message Token {
-    string session_id = 2;
-    string access_token = 3;
-    string refresh_token = 4;
-    int64 create_at = 5;
-    int64 access_expired_at = 6;
-    int64 refresh_expired_at = 7;
-    string domain = 8;
-    user.UserType user_type = 9;
-    string account = 10;
-    string application_id = 11;
-    string application_name = 12;
-    string client_id = 13;
-    GrantType start_grant_type = 14;
-    GrantType grant_type = 15;
-    TokenType type = 16;
-    string scope = 17;
-    string description = 18;
-    bool is_block = 19;
-    BlockType block_type = 20;
-    int64 block_at = 21;
-    string block_reason = 22;
-    string remote_ip = 23;
-    string user_agent = 24;
+    string session_id = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"session_id" json:"session_id"'}
+        ];
+    string access_token = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"_id" json:"access_token"'}
+        ];
+    string refresh_token = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"refresh_token" json:"refresh_token,omitempty"'}
+        ];
+    int64 create_at = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"create_at" json:"create_at,omitempty"'}
+        ];
+    int64 access_expired_at = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"access_expired_at" json:"access_expired_at,omitempty"'}
+        ];
+    int64 refresh_expired_at = 7[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"refresh_expired_at" json:"refresh_expired_at,omitempty"'}
+        ];
+    string domain = 8[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"domain" json:"domain,omitempty"'}
+        ];
+    user.UserType user_type = 9[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"user_type" json:"user_type,omitempty"'}
+        ];
+    string account = 10[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"account" json:"account,omitempty"'}
+        ];
+    string application_id = 11[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"application_id" json:"application_id,omitempty"'}
+        ];
+    string application_name = 12[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"application_name" json:"application_name,omitempty"'}
+        ];
+    string client_id = 13[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"client_id" json:"client_id,omitempty"'}
+        ];
+    GrantType start_grant_type = 14[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"start_grant_type" json:"start_grant_type,omitempty"'}
+        ];
+    GrantType grant_type = 15[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"grant_type" json:"grant_type,omitempty"'}
+        ];
+    TokenType type = 16[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"type" json:"type,omitempty"'}
+        ];
+    string scope = 17[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"scope" json:"scope,omitempty"'}
+        ];
+    string description = 18[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"description" json:"description,omitempty"'}
+        ];
+    bool is_block = 19[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"is_block" json:"is_block"'}
+        ];
+    BlockType block_type = 20[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"block_type" json:"block_type"'}
+        ];
+    int64 block_at = 21[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"block_at" json:"block_at"'}
+        ];
+    string block_reason = 22[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"block_reason" json:"block_reason,omitempty"'}
+        ];
+    string remote_ip = 23[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"-"'}
+        ];
+    string user_agent = 24[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"-"'}
+        ];
 }
 
 message Set {

@@ -31,6 +31,7 @@ var (
 )
 
 type service struct {
+	token.UnimplementedTokenServiceServer
 	col           *mongo.Collection
 	log           logger.Logger
 	enableCache   bool

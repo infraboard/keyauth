@@ -40,8 +40,13 @@ clean: ## Remove previous build
 	@rm -f dist/*
 
 codegen: # Init Service
-	@protoc -I=.  -I${GOPATH}/src --go_out=plugins=grpc:. --go_opt=module=github.com/infraboard/keyauth pkg/token/pb/*.proto
-	@protoc -I=.  -I${GOPATH}/src --go_out=plugins=grpc:. --go_opt=module=github.com/infraboard/keyauth pkg/user/pb/*.proto
+	@protoc -I=.  -I${GOPATH}/src --go-ext_out=. --go-ext_opt=module=${PKG} --go-grpc_out=. --go-grpc_opt=module=${PKG} pkg/token/pb/*.proto
+	@protoc -I=.  -I${GOPATH}/src --go-ext_out=. --go-ext_opt=module=${PKG} --go-grpc_out=. --go-grpc_opt=module=${PKG} pkg/user/pb/*.proto
+
+install: # Install depence go package
+	@go install github.com/golang/protobuf/protoc-gen-go
+	@go install google.golang.org/grpc/cmd/protoc-gen-go-grpc
+	@go install github.com/infraboard/protoc-gen-go-ext
 
 help: ## Display this help screen
 	@grep -h -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
