@@ -40,7 +40,6 @@ clean: ## Remove previous build
 	@rm -f dist/*
 
 codegen: # Init Service
-	@protoc -I=.  -I${GOPATH}/src --go-ext_out=. --go-ext_opt=module=${PKG} --go-grpc_out=. --go-grpc_opt=module=${PKG} pkg/token/pb/*.proto
 	@protoc -I=.  -I${GOPATH}/src --go-ext_out=. --go-ext_opt=module=${PKG} --go-grpc_out=. --go-grpc_opt=module=${PKG} pkg/user/pb/*.proto
 
 install: # Install depence go package

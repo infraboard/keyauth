@@ -113,12 +113,3 @@ func NewTokenSet() *Set {
 func (m *Set) Add(item *Token) {
 	m.Items = append(m.Items, item)
 }
-
-// ParseGrantTypeFromString todo
-func ParseGrantTypeFromString(t string) GrantType {
-	if v, ok := GrantType_value[t]; ok {
-		return GrantType(v)
-	}
-
-	return GrantType_UNKNOWN
-}

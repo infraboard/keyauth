@@ -48,7 +48,11 @@ func NewQuerySessionRequestFromHTTP(r *http.Request) (*QuerySessionRequest, erro
 
 	gtStr := qs.Get("grant_type")
 	if gtStr != "" {
-		req.GrantType = token.ParseGrantTypeFromString(gtStr)
+		gt, err := token.ParseGrantTypeFromString(gtStr)
+		if err != nil {
+			return nil, err
+		}
+		req.GrantType = gt
 	}
 
 	startTime := qs.Get("start_time")

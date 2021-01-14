@@ -258,7 +258,7 @@ func (i *issuer) syncLDAPUser(tk *token.Token, userName string) (*user.User, err
 	descUser := user.NewDescriptAccountRequestWithAccount(userName)
 	u, err := i.user.DescribeAccount(descUser)
 
-	if u != nil && u.Type.Is(types.UserType_PRIMARY, types.UserType_SUPPER) {
+	if u != nil && u.Type.IsIn(types.UserType_PRIMARY, types.UserType_SUPPER) {
 		return nil, exception.NewBadRequest("用户名和主账号用户名冲突, 请修改")
 	}
 

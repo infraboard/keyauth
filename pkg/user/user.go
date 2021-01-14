@@ -159,7 +159,7 @@ func (req *CreateAccountRequest) Validate() error {
 	}
 
 	// 非管理员, 主账号 可以创建子账号
-	if !tk.UserType.Is(types.UserType_SUPPER, types.UserType_PRIMARY) {
+	if !tk.UserType.IsIn(types.UserType_SUPPER, types.UserType_PRIMARY) {
 		return fmt.Errorf("%s user can't create sub account", tk.UserType)
 	}
 

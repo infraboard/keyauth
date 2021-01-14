@@ -61,7 +61,7 @@ func (req *RegistryRequest) Validate() error {
 		return fmt.Errorf("token required when service endpoints registry")
 	}
 
-	if !tk.UserType.Is(types.UserType_SERVICE) {
+	if !tk.UserType.IsIn(types.UserType_SERVICE) {
 		return fmt.Errorf("only service account can registry endpoints")
 	}
 

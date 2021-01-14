@@ -29,7 +29,7 @@ func New(req *CreateRoleRequest) (*Role, error) {
 		return nil, fmt.Errorf("token required")
 	}
 
-	if !tk.UserType.Is(types.UserType_SUPPER) && !req.IsCumstomType() {
+	if !tk.UserType.IsIn(types.UserType_SUPPER) && !req.IsCumstomType() {
 		return nil, fmt.Errorf("only supper account can create global and build role")
 	}
 

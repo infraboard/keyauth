@@ -49,7 +49,7 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !tk.UserType.Is(types.UserType_SUPPER, types.UserType_PRIMARY) {
+	if !tk.UserType.IsIn(types.UserType_SUPPER, types.UserType_PRIMARY) {
 		response.Failed(w, exception.NewPermissionDeny("只有域管理员可以设置域的LDAP"))
 		return
 	}
