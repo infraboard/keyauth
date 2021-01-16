@@ -13,7 +13,7 @@ import (
 )
 
 func (h *handler) CreateSubAccount(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromContext(r)
+	tk, err := pkg.GetTokenFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -37,7 +37,7 @@ func (h *handler) CreateSubAccount(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) QuerySubAccount(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromContext(r)
+	tk, err := pkg.GetTokenFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -73,7 +73,7 @@ func (h *handler) DescribeSubAccount(w http.ResponseWriter, r *http.Request) {
 func (h *handler) PatchSubAccount(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
 
-	tk, err := pkg.GetTokenFromContext(r)
+	tk, err := pkg.GetTokenFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return

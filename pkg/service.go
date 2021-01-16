@@ -29,8 +29,10 @@ var (
 	Domain domain.Service
 	// User 用户服务
 	User user.Service
-	// Application 应用
-	Application application.Service
+	// ApplicationUser 应用
+	ApplicationUser application.UserServiceServer
+	// ApplicationAdmin 应用
+	ApplicationAdmin application.AdminServiceServer
 	// Token 令牌服务
 	Token token.TokenServiceServer
 	// Micro todo
@@ -100,11 +102,17 @@ func RegistryService(name string, svr Service) {
 		}
 		User = value
 		addService(name, svr)
-	case application.Service:
-		if Application != nil {
+	case application.UserServiceServer:
+		if ApplicationUser != nil {
 			registryError(name)
 		}
-		Application = value
+		ApplicationUser = value
+		addService(name, svr)
+	case application.AdminServiceServer:
+		if ApplicationAdmin != nil {
+			registryError(name)
+		}
+		ApplicationAdmin = value
 		addService(name, svr)
 	case token.TokenServiceServer:
 		if Token != nil {

@@ -15,7 +15,8 @@ var (
 )
 
 type handler struct {
-	service application.Service
+	service application.UserServiceServer
+	admin   application.AdminServiceServer
 }
 
 // Registry 注册HTTP服务路由
@@ -31,11 +32,17 @@ func (h *handler) Registry(router router.SubRouter) {
 }
 
 func (h *handler) Config() error {
-	if pkg.Application == nil {
-		return errors.New("denpence application service is nil")
+	if pkg.ApplicationUser == nil {
+		return errors.New("denpence application user service is nil")
 	}
 
-	h.service = pkg.Application
+	h.service = pkg.ApplicationUser
+
+	if pkg.ApplicationAdmin == nil {
+		return errors.New("denpence application admin service is nil")
+	}
+
+	h.admin = pkg.ApplicationAdmin
 	return nil
 }
 

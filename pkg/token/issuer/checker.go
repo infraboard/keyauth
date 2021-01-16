@@ -6,8 +6,8 @@ import (
 
 func (i *issuer) CheckClient(clientID, clientSecret string) (*application.Application, error) {
 	req := application.NewDescriptApplicationRequest()
-	req.ClientID = clientID
-	app, err := i.app.DescriptionApplication(req)
+	req.ClientId = clientID
+	app, err := i.app.DescribeApplication(nil, req)
 	if err != nil {
 		return nil, err
 	}

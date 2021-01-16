@@ -25,7 +25,7 @@ import (
 
 // NewTokenIssuer todo
 func NewTokenIssuer() (Issuer, error) {
-	if pkg.Application == nil {
+	if pkg.ApplicationUser == nil {
 		return nil, fmt.Errorf("dependence service application is nil")
 	}
 	if pkg.User == nil {
@@ -46,7 +46,7 @@ func NewTokenIssuer() (Issuer, error) {
 		domain:  pkg.Domain,
 		token:   pkg.Token,
 		ldap:    pkg.LDAP,
-		app:     pkg.Application,
+		app:     pkg.ApplicationUser,
 		emailRE: regexp.MustCompile(`([a-zA-Z0-9]+)@([a-zA-Z0-9\.]+)\.([a-zA-Z0-9]+)`),
 		log:     zap.L().Named("Token Issuer"),
 	}
@@ -55,7 +55,7 @@ func NewTokenIssuer() (Issuer, error) {
 
 // TokenIssuer 基于该数据进行扩展
 type issuer struct {
-	app     application.Service
+	app     application.UserServiceServer
 	token   token.TokenServiceServer
 	user    user.Service
 	domain  domain.Service
@@ -178,7 +178,7 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 		newTK.StartGrantType = tk.GetStartGrantType()
 		newTK.SessionId = tk.SessionId
 
-		revolkReq := token.NewRevolkTokenRequest(app.ClientID, app.ClientSecret)
+		revolkReq := token.NewRevolkTokenRequest(app.ClientId, app.ClientSecret)
 		revolkReq.AccessToken = req.AccessToken
 		revolkReq.LogoutSession = false
 		if _, err := i.token.RevolkToken(nil, revolkReq); err != nil {
@@ -310,9 +310,9 @@ func (i *issuer) newBearToken(app *application.Application, gt token.GrantType) 
 		AccessToken:     token.MakeBearer(24),
 		RefreshToken:    token.MakeBearer(32),
 		CreateAt:        now.UnixNano() / 1000000,
-		ClientId:        app.ClientID,
+		ClientId:        app.ClientId,
 		GrantType:       gt,
-		ApplicationId:   app.ID,
+		ApplicationId:   app.Id,
 		ApplicationName: app.Name,
 	}
 
@@ -321,8 +321,8 @@ func (i *issuer) newBearToken(app *application.Application, gt token.GrantType) 
 		tk.AccessExpiredAt = accessExpire.UnixNano() / 1000000
 	}
 
-	if app.RefreshTokenExpiredSecond != 0 {
-		refreshExpir := now.Add(time.Duration(app.RefreshTokenExpiredSecond) * time.Second)
+	if app.RefreshTokenExpireSecond != 0 {
+		refreshExpir := now.Add(time.Duration(app.RefreshTokenExpireSecond) * time.Second)
 		tk.RefreshExpiredAt = refreshExpir.UnixNano() / 1000000
 	}
 

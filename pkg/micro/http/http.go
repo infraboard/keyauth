@@ -37,7 +37,7 @@ func (h *handler) Registry(router router.SubRouter) {
 }
 
 func (h *handler) Config() error {
-	if pkg.Application == nil {
+	if pkg.ApplicationAdmin == nil {
 		return errors.New("denpence application service is nil")
 	}
 	if pkg.Token == nil {

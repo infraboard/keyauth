@@ -6,3 +6,10 @@ const (
 	// AdminServiceApplicationName 颁发给服务管理的应用凭证
 	AdminServiceApplicationName = "admin-micro"
 )
+
+const (
+	// DefaultAccessTokenExpireSecond token默认过期时长
+	DefaultAccessTokenExpireSecond = 3600
+	// DefaultRefreshTokenExpiredSecond 刷新token默认过期时间
+	DefaultRefreshTokenExpiredSecond = DefaultAccessTokenExpireSecond * 4
+)

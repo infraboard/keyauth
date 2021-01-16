@@ -17,8 +17,8 @@ type queryRequest struct {
 }
 
 func (r *queryRequest) FindOptions() *options.FindOptions {
-	pageSize := int64(r.PageSize)
-	skip := int64(r.PageSize) * int64(r.PageNumber-1)
+	pageSize := int64(r.Page.PageSize)
+	skip := int64(r.Page.PageSize) * int64(r.Page.PageNumber-1)
 
 	opt := &options.FindOptions{
 		Sort:  bson.D{{"create_at", -1}},
@@ -35,7 +35,7 @@ func (r *queryRequest) FindFilter() bson.M {
 	return filter
 }
 
-func newDescribeQuery(req *application.DescriptApplicationRequest) (*describeRequest, error) {
+func newDescribeQuery(req *application.DescribeApplicationRequest) (*describeRequest, error) {
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest(err.Error())
 	}
@@ -44,17 +44,17 @@ func newDescribeQuery(req *application.DescriptApplicationRequest) (*describeReq
 }
 
 type describeRequest struct {
-	*application.DescriptApplicationRequest
+	*application.DescribeApplicationRequest
 }
 
 func (r *describeRequest) FindFilter() bson.M {
 	filter := bson.M{}
 
-	if r.ID != "" {
-		filter["_id"] = r.ID
+	if r.Id != "" {
+		filter["_id"] = r.Id
 	}
-	if r.ClientID != "" {
-		filter["client_id"] = r.ClientID
+	if r.ClientId != "" {
+		filter["client_id"] = r.ClientId
 	}
 
 	return filter

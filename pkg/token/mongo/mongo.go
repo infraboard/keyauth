@@ -37,7 +37,7 @@ type service struct {
 	enableCache   bool
 	notifyCachPre string
 
-	app      application.Service
+	app      application.UserServiceServer
 	user     user.Service
 	domain   domain.Service
 	issuer   issuer.Issuer
@@ -48,10 +48,10 @@ type service struct {
 }
 
 func (s *service) Config() error {
-	if pkg.Application == nil {
+	if pkg.ApplicationUser == nil {
 		return errors.New("denpence application service is nil")
 	}
-	s.app = pkg.Application
+	s.app = pkg.ApplicationUser
 
 	if pkg.User == nil {
 		return errors.New("denpence user service is nil")

@@ -34,7 +34,7 @@ type service struct {
 
 	token    token.TokenServiceServer
 	user     user.Service
-	app      application.Service
+	app      application.AdminServiceServer
 	policy   policy.Service
 	role     role.Service
 	endpoint endpoint.Service
@@ -76,10 +76,10 @@ func (s *service) configService() error {
 	}
 	s.token = pkg.Token
 
-	if pkg.Application == nil {
+	if pkg.ApplicationAdmin == nil {
 		return fmt.Errorf("dependence application service is nil, please load first")
 	}
-	s.app = pkg.Application
+	s.app = pkg.ApplicationAdmin
 
 	if pkg.User == nil {
 		return fmt.Errorf("dependence user service is nil, please load first")

@@ -7,8 +7,8 @@ import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
 import "pkg/user/pb/types.proto";
 
 enum GrantType {
-    NULL = 0; // NULL (null) 用户自己定义的策略
-    UNKNOWN = 1; // UNKNOWN (known) 用户自己定义的策略
+    NULL = 0;
+    UNKNOWN = 1;
     PASSWORD = 2;
     LDAP = 3;
     REFRESH = 4;

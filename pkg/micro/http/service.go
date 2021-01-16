@@ -27,7 +27,7 @@ func (h *handler) QueryService(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) CreateService(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromContext(r)
+	tk, err := pkg.GetTokenFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -66,7 +66,7 @@ func (h *handler) GetService(w http.ResponseWriter, r *http.Request) {
 
 // DestroyService 销毁服务
 func (h *handler) DestroyService(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromContext(r)
+	tk, err := pkg.GetTokenFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return

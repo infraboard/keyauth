@@ -12,7 +12,7 @@ import (
 
 func (h *handler) UploadGEOIPDBFile(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
-	tk, err := pkg.GetTokenFromContext(r)
+	tk, err := pkg.GetTokenFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return

@@ -213,7 +213,7 @@ func (s *service) RevolkToken(ctx context.Context, req *token.RevolkTokenRequest
 		return nil, err
 	}
 
-	if err := tk.CheckTokenApplication(app.ID); err != nil {
+	if err := tk.CheckTokenApplication(app.Id); err != nil {
 		return nil, exception.NewPermissionDeny(err.Error())
 	}
 

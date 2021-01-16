@@ -1,9 +1,10 @@
 package http
 
 import (
+	"context"
 	"net/http"
 
-	"github.com/infraboard/mcube/http/context"
+	httpctx "github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 
@@ -12,7 +13,7 @@ import (
 )
 
 func (h *handler) QueryUserApplication(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromContext(r)
+	tk, err := pkg.GetTokenFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -22,7 +23,8 @@ func (h *handler) QueryUserApplication(w http.ResponseWriter, r *http.Request) {
 	req := application.NewQueryApplicationRequest(page)
 	req.Account = tk.Account
 
-	apps, err := h.service.QueryApplication(req)
+	ctx := pkg.WithTokenContext(context.Background(), tk)
+	apps, err := h.service.QueryApplication(ctx, req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -34,7 +36,7 @@ func (h *handler) QueryUserApplication(w http.ResponseWriter, r *http.Request) {
 
 // CreateApplication 创建主账号
 func (h *handler) CreateUserApplication(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromContext(r)
+	tk, err := pkg.GetTokenFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -45,9 +47,9 @@ func (h *handler) CreateUserApplication(w http.ResponseWriter, r *http.Request) 
 		response.Failed(w, err)
 		return
 	}
-	req.WithToken(tk)
 
-	d, err := h.service.CreateUserApplication(req)
+	ctx := pkg.WithTokenContext(context.Background(), tk)
+	d, err := h.service.CreateUserApplication(ctx, req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -58,11 +60,20 @@ func (h *handler) CreateUserApplication(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h *handler) GetApplication(w http.ResponseWriter, r *http.Request) {
-	rctx := context.GetContext(r)
+	tk, err := pkg.GetTokenFromHTTPRequest(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	rctx := httpctx.GetContext(r)
 
 	req := application.NewDescriptApplicationRequest()
-	req.ID = rctx.PS.ByName("id")
-	d, err := h.service.DescriptionApplication(req)
+	req.Id = rctx.PS.ByName("id")
+
+	ctx := pkg.WithTokenContext(context.Background(), tk)
+
+	d, err := h.service.DescribeApplication(ctx, req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -74,9 +85,18 @@ func (h *handler) GetApplication(w http.ResponseWriter, r *http.Request) {
 
 // DestroyPrimaryAccount 注销账号
 func (h *handler) DestroyApplication(w http.ResponseWriter, r *http.Request) {
-	rctx := context.GetContext(r)
+	tk, err := pkg.GetTokenFromHTTPRequest(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
 
-	if err := h.service.DeleteApplication(rctx.PS.ByName("id")); err != nil {
+	rctx := httpctx.GetContext(r)
+
+	req := application.NewDeleteApplicationRequestWithID(rctx.PS.ByName("id"))
+	ctx := pkg.WithTokenContext(context.Background(), tk)
+
+	if _, err := h.service.DeleteApplication(ctx, req); err != nil {
 		response.Failed(w, err)
 		return
 	}

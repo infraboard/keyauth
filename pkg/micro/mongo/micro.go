@@ -69,7 +69,7 @@ func (s *service) createServiceAccount(tk *token.Token, name, pass string) (*use
 }
 
 func (s *service) createServiceToken(userAgent, remoteIP, user, pass string) (*token.Token, error) {
-	app, err := s.app.GetBuildInApplication(application.AdminServiceApplicationName)
+	app, err := s.app.GetBuildInApplication(nil, application.NewGetBuildInAdminApplicationRequest())
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func (s *service) createServiceToken(userAgent, remoteIP, user, pass string) (*t
 	req.GrantType = token.GrantType_PASSWORD
 	req.Username = user
 	req.Password = pass
-	req.ClientId = app.ClientID
+	req.ClientId = app.ClientId
 	req.ClientSecret = app.ClientSecret
 	req.WithRemoteIP(remoteIP)
 	req.WithUserAgent(userAgent)
@@ -85,11 +85,11 @@ func (s *service) createServiceToken(userAgent, remoteIP, user, pass string) (*t
 }
 
 func (s *service) revolkServiceToken(accessToken string) error {
-	app, err := s.app.GetBuildInApplication(application.AdminServiceApplicationName)
+	app, err := s.app.GetBuildInApplication(nil, application.NewGetBuildInAdminApplicationRequest())
 	if err != nil {
 		return err
 	}
-	req := token.NewRevolkTokenRequest(app.ClientID, app.ClientSecret)
+	req := token.NewRevolkTokenRequest(app.ClientId, app.ClientSecret)
 	req.AccessToken = accessToken
 	_, err = s.token.RevolkToken(nil, req)
 	return err
@@ -116,7 +116,7 @@ func (s *service) createPolicy(tk *token.Token, account, roleID string) (*policy
 }
 
 func (s *service) refreshServiceToken(at, rt string) (*token.Token, error) {
-	app, err := s.app.GetBuildInApplication(application.AdminServiceApplicationName)
+	app, err := s.app.GetBuildInApplication(nil, application.NewGetBuildInAdminApplicationRequest())
 	if err != nil {
 		return nil, err
 	}
@@ -124,7 +124,7 @@ func (s *service) refreshServiceToken(at, rt string) (*token.Token, error) {
 	req.GrantType = token.GrantType_REFRESH
 	req.AccessToken = at
 	req.RefreshToken = rt
-	req.ClientId = app.ClientID
+	req.ClientId = app.ClientId
 	req.ClientSecret = app.ClientSecret
 	return s.token.IssueToken(nil, req)
 }

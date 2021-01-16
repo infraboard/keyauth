@@ -33,8 +33,8 @@ const _ = proto.ProtoPackageIsVersion4
 type GrantType int32
 
 const (
-	GrantType_NULL      GrantType = 0 // NULL (null) 用户自己定义的策略
-	GrantType_UNKNOWN   GrantType = 1 // UNKNOWN (known) 用户自己定义的策略
+	GrantType_NULL      GrantType = 0
+	GrantType_UNKNOWN   GrantType = 1
 	GrantType_PASSWORD  GrantType = 2
 	GrantType_LDAP      GrantType = 3
 	GrantType_REFRESH   GrantType = 4

@@ -1,13 +1,14 @@
 package pkg
 
 import (
+	"context"
 	"encoding/base64"
 	"fmt"
 	"net/http"
 	"strings"
 
 	"github.com/infraboard/mcube/exception"
-	"github.com/infraboard/mcube/http/context"
+	httpcontext "github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/router"
 
@@ -92,15 +93,15 @@ func parseBasicAuth(auth string) (username, password string, ok bool) {
 	return cs[:s], cs[s+1:], true
 }
 
-// GetTokenFromContext 从上下文中获取Token
-func GetTokenFromContext(r *http.Request) (*token.Token, error) {
-	ctx := context.GetContext(r)
+// GetTokenFromHTTPRequest 从上下文中获取Token
+func GetTokenFromHTTPRequest(r *http.Request) (*token.Token, error) {
+	ctx := httpcontext.GetContext(r)
 
 	if ctx.AuthInfo == nil {
 		return nil, exception.NewInternalServerError("authInfo is not in request context, please check auth middleware")
 	}
 
-	tk, ok := context.GetContext(r).AuthInfo.(*token.Token)
+	tk, ok := httpcontext.GetContext(r).AuthInfo.(*token.Token)
 	if !ok {
 		return nil, exception.NewInternalServerError("authInfo is not token pointer")
 	}
@@ -108,4 +109,26 @@ func GetTokenFromContext(r *http.Request) (*token.Token, error) {
 	tk.WithRemoteIP(request.GetRemoteIP(r))
 	tk.WithUerAgent(r.UserAgent())
 	return tk, nil
+}
+
+// ContextKeyType key类型
+type contextKeyType string
+
+const (
+	// ContextKeyType_TOKEN token 上下文key
+	contextKeyTypeToken = contextKeyType("token")
+)
+
+// WithTokenContext todo
+func WithTokenContext(ctx context.Context, tk *token.Token) context.Context {
+	return context.WithValue(ctx, contextKeyTypeToken, tk)
+}
+
+// GetTokenFromContext 从上下文中获取token
+func GetTokenFromContext(ctx context.Context) *token.Token {
+	if v, ok := ctx.Value(contextKeyTypeToken).(*token.Token); ok {
+		return v
+	}
+
+	return token.NewDefaultToken()
 }

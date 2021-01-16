@@ -13,7 +13,7 @@ import (
 
 // 创建部门加入申请
 func (h *handler) CreateJoinApply(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromContext(r)
+	tk, err := pkg.GetTokenFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -39,7 +39,7 @@ func (h *handler) CreateJoinApply(w http.ResponseWriter, r *http.Request) {
 
 // 查询部门加入申请
 func (h *handler) QueryJoinApply(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromContext(r)
+	tk, err := pkg.GetTokenFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -64,7 +64,7 @@ func (h *handler) QueryJoinApply(w http.ResponseWriter, r *http.Request) {
 // Create 创建主账号
 func (h *handler) GetJoinApply(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
-	tk, err := pkg.GetTokenFromContext(r)
+	tk, err := pkg.GetTokenFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -86,7 +86,7 @@ func (h *handler) GetJoinApply(w http.ResponseWriter, r *http.Request) {
 // Create 创建主账号
 func (h *handler) DealJoinApply(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
-	tk, err := pkg.GetTokenFromContext(r)
+	tk, err := pkg.GetTokenFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return

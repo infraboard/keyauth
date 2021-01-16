@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package keyauth.application;
+option go_package = "github.com/infraboard/keyauth/pkg/application";
+
+import "pkg/application/pb/request.proto";
+import "pkg/application/pb/application.proto";
+
+service UserService {
+	rpc CreateUserApplication(CreateApplicatonRequest) returns(Application);
+	rpc DescribeApplication(DescribeApplicationRequest) returns(Application);
+	rpc QueryApplication(QueryApplicationRequest) returns(Set);
+	rpc DeleteApplication(DeleteApplicationRequest) returns(Application);
+}
+
+service AdminService {
+	rpc CreateBuildInApplication(CreateApplicatonRequest) returns (Application);
+	rpc GetBuildInApplication(GetBuildInApplicationRequest) returns(Application);
+}

@@ -1,0 +1,86 @@
+syntax = "proto3";
+
+package keyauth.application;
+option go_package = "github.com/infraboard/keyauth/pkg/application";
+
+import "pkg/application/pb/request.proto";
+import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
+
+// Application is oauth2's client: https://tools.ietf.org/html/rfc6749#section-2
+message Application {
+    // 唯一ID
+    string id = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"_id" json:"id"'}
+        ];
+    // 是否是内建应用
+    bool build_in =2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"build_in" json:"build_in"'}
+        ];
+    // 所处于域
+    string domain =3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"domain" json:"domain"'}
+        ];
+    // 应用属于那个用户
+    string user = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"user" json:"user"'}
+        ];
+    // 应用创建的时间
+    int64 create_at = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"create_at" json:"create_at"'}
+        ];
+    // 应用更新的时间
+    int64 update_at = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"update_at" json:"update_at"'}
+        ];
+    // 应用客户端ID
+    string client_id = 7[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"client_id" json:"client_id"'}
+        ];
+    // 应用客户端秘钥
+    string client_secret =8[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"client_secret" json:"client_secret"'}
+        ];
+    // 是否冻结应用, 冻结应用后, 该应用无法通过凭证获取访问凭证(token)
+    bool locked = 9[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"locked" json:"locked"'}
+        ];
+    // 应用名称
+    string name = 10[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"name" json:"name"'}
+        ];
+     // 应用的网站地址
+    string website = 11[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"website" json:"website"'}
+        ];
+    // 应用的LOGO
+    string logo_image = 12[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"logo_image" json:"logo_image"'}
+        ];
+    // 应用简单的描述
+    string description = 13[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"description" json:"description"'}
+        ];
+    // 应用重定向URI, Oauht2时需要该参数
+    string redirect_uri = 14[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"redirect_uri" json:"redirect_uri"'}
+        ];
+    // 应用申请的token的过期时间
+    int64 access_token_expire_second = 15[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"access_token_expire_second" json:"access_token_expire_second"'}
+        ];
+    // 刷新token过期时间
+    int64 refresh_token_expire_second = 16[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"refresh_token_expire_second" json:"refresh_token_expire_second"'}
+        ];
+    // 客户端类型
+    ClientType client_type = 17[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"client_type" json:"client_type"'}
+        ];
+}
+
+message Set {
+    int64 total = 1;
+    repeated Application items = 2;
+}
+
+

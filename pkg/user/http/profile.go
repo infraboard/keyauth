@@ -11,7 +11,7 @@ import (
 )
 
 func (h *handler) QueryProfile(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromContext(r)
+	tk, err := pkg.GetTokenFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -32,7 +32,7 @@ func (h *handler) QueryProfile(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) PutProfile(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromContext(r)
+	tk, err := pkg.GetTokenFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -59,7 +59,7 @@ func (h *handler) PutProfile(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) PatchProfile(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromContext(r)
+	tk, err := pkg.GetTokenFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -86,7 +86,7 @@ func (h *handler) PatchProfile(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) QueryDomain(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromContext(r)
+	tk, err := pkg.GetTokenFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -106,7 +106,7 @@ func (h *handler) QueryDomain(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) UpdateDomainInfo(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromContext(r)
+	tk, err := pkg.GetTokenFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -133,7 +133,7 @@ func (h *handler) UpdateDomainInfo(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) UpdateDomainSecurity(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromContext(r)
+	tk, err := pkg.GetTokenFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return

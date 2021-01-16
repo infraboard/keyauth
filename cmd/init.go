@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"strings"
@@ -163,7 +164,7 @@ func (i *Initialer) Run() error {
 	}
 	for index := range apps {
 		fmt.Printf("初始化应用: %s [成功]\n", apps[index].Name)
-		fmt.Printf("应用客户端ID: %s\n", apps[index].ClientID)
+		fmt.Printf("应用客户端ID: %s\n", apps[index].ClientId)
 		fmt.Printf("应用客户端凭证: %s\n", apps[index].ClientSecret)
 	}
 
@@ -233,22 +234,22 @@ func (i *Initialer) initApp(ownerID string) ([]*application.Application, error) 
 
 	req := application.NewCreateApplicatonRequest()
 	req.Name = application.AdminWebApplicationName
-	req.ClientType = application.Public
+	req.ClientType = application.ClientType_PUBLIC
 	req.Description = "Admin Web管理端"
-	req.WithToken(tk)
-	web, err := pkg.Application.CreateBuildInApplication(req)
+
+	ctx := pkg.WithTokenContext(context.Background(), tk)
+	web, err := pkg.ApplicationAdmin.CreateBuildInApplication(ctx, req)
 	if err != nil {
 		return nil, fmt.Errorf("create admin web applicaton error, %s", err)
 	}
 
 	req = application.NewCreateApplicatonRequest()
 	req.Name = application.AdminServiceApplicationName
-	req.ClientType = application.Confidential
+	req.ClientType = application.ClientType_CONFIDENTIAL
 	req.Description = "Admin Service 内置管理端, 服务注册后, 使用该端管理他们的凭证, 默认token不过期"
 	req.AccessTokenExpireSecond = 0
-	req.RefreshTokenExpiredSecond = 0
-	req.WithToken(tk)
-	svr, err := pkg.Application.CreateBuildInApplication(req)
+	req.RefreshTokenExpireSecond = 0
+	svr, err := pkg.ApplicationAdmin.CreateBuildInApplication(ctx, req)
 	if err != nil {
 		return nil, fmt.Errorf("create admin web applicaton error, %s", err)
 	}
@@ -262,7 +263,7 @@ func (i *Initialer) getAdminToken(app *application.Application, u *user.User) er
 		return fmt.Errorf("get admin token need app and admin user")
 	}
 
-	req := token.NewIssueTokenByPassword(app.ClientID, app.ClientSecret, u.Account, u.Password)
+	req := token.NewIssueTokenByPassword(app.ClientId, app.ClientSecret, u.Account, u.Password)
 	tk, err := pkg.Token.IssueToken(nil, req)
 	if err != nil {
 		return err

@@ -7,25 +7,32 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
+	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/application"
 )
 
-func (s *service) GetBuildInApplication(name string) (*application.Application, error) {
+type adminimpl struct {
+	*service
+	application.UnimplementedAdminServiceServer
+}
+
+func (s *adminimpl) GetBuildInApplication(ctx context.Context, req *application.GetBuildInApplicationRequest) (
+	*application.Application, error) {
 	app := new(application.Application)
-	if err := s.col.FindOne(context.TODO(), bson.M{"name": name, "build_in": true}).Decode(app); err != nil {
+	if err := s.col.FindOne(context.TODO(), bson.M{"name": req.Name, "build_in": true}).Decode(app); err != nil {
 		if err == mongo.ErrNoDocuments {
-			return nil, exception.NewNotFound("applicaiton %s not found", name)
+			return nil, exception.NewNotFound("applicaiton %s not found", req.Name)
 		}
 
-		return nil, exception.NewInternalServerError("find application %s error, %s", name, err)
+		return nil, exception.NewInternalServerError("find application %s error, %s", req.Name, err)
 	}
 
 	return app, nil
 }
 
-func (s *service) CreateBuildInApplication(req *application.CreateApplicatonRequest) (
+func (s *adminimpl) CreateBuildInApplication(ctx context.Context, req *application.CreateApplicatonRequest) (
 	*application.Application, error) {
-	account := req.GetToken().Account
+	account := pkg.GetTokenFromContext(ctx).Account
 	app, err := application.NewBuildInApplication(account, req)
 	if err != nil {
 		return nil, err

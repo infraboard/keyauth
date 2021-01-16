@@ -4,15 +4,23 @@ import (
 	"context"
 
 	"github.com/infraboard/mcube/exception"
+	"github.com/infraboard/mcube/http/request"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
+	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/application"
 )
 
-func (s *service) CreateUserApplication(req *application.CreateApplicatonRequest) (
+type userimpl struct {
+	*service
+	application.UnimplementedUserServiceServer
+}
+
+func (s *userimpl) CreateUserApplication(ctx context.Context, req *application.CreateApplicatonRequest) (
 	*application.Application, error) {
-	account := req.GetToken().Account
+
+	account := pkg.GetTokenFromContext(ctx).Account
 	app, err := application.NewUserApplicartion(account, req)
 	if err != nil {
 		return nil, err
@@ -21,7 +29,7 @@ func (s *service) CreateUserApplication(req *application.CreateApplicatonRequest
 	return s.save(app)
 }
 
-func (s *service) DescriptionApplication(req *application.DescriptApplicationRequest) (
+func (s *userimpl) DescribeApplication(ctx context.Context, req *application.DescribeApplicationRequest) (
 	*application.Application, error) {
 	r, err := newDescribeQuery(req)
 	if err != nil {
@@ -34,13 +42,13 @@ func (s *service) DescriptionApplication(req *application.DescriptApplicationReq
 			return nil, exception.NewNotFound("applicaiton %s not found", req)
 		}
 
-		return nil, exception.NewInternalServerError("find application %s error, %s", req.ID, err)
+		return nil, exception.NewInternalServerError("find application %s error, %s", req.Id, err)
 	}
 
 	return app, nil
 }
 
-func (s *service) QueryApplication(req *application.QueryApplicationRequest) (*application.Set, error) {
+func (s *userimpl) QueryApplication(ctx context.Context, req *application.QueryApplicationRequest) (*application.Set, error) {
 	r := newPaggingQuery(req)
 	resp, err := s.col.Find(context.TODO(), r.FindFilter(), r.FindOptions())
 
@@ -48,7 +56,7 @@ func (s *service) QueryApplication(req *application.QueryApplicationRequest) (*a
 		return nil, exception.NewInternalServerError("find domain error, error is %s", err)
 	}
 
-	appSet := application.NewApplicationSet(req.PageRequest)
+	appSet := application.NewApplicationSet(request.NewPageRequest(uint(req.Page.PageSize), uint(req.Page.PageNumber)))
 	// 循环
 	for resp.Next(context.TODO()) {
 		app := new(application.Application)
@@ -69,14 +77,14 @@ func (s *service) QueryApplication(req *application.QueryApplicationRequest) (*a
 	return appSet, nil
 }
 
-func (s *service) DeleteApplication(id string) error {
-	result, err := s.col.DeleteOne(context.TODO(), bson.M{"_id": id})
+func (s *userimpl) DeleteApplication(ctx context.Context, req *application.DeleteApplicationRequest) (*application.Application, error) {
+	result, err := s.col.DeleteOne(context.TODO(), bson.M{"_id": req.Id})
 	if err != nil {
-		return exception.NewInternalServerError("delete application(%s) error, %s", id, err)
+		return nil, exception.NewInternalServerError("delete application(%s) error, %s", req.Id, err)
 	}
 
 	if result.DeletedCount == 0 {
-		return exception.NewNotFound("app %s not found", id)
+		return nil, exception.NewNotFound("app %s not found", req.Id)
 	}
-	return nil
+	return nil, nil
 }

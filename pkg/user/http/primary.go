@@ -31,7 +31,7 @@ func (h *handler) CreatePrimayAccount(w http.ResponseWriter, r *http.Request) {
 
 // DestroyPrimaryAccount 注销账号
 func (h *handler) DestroyPrimaryAccount(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromContext(r)
+	tk, err := pkg.GetTokenFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
