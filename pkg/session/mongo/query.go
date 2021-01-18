@@ -9,23 +9,25 @@ import (
 	"github.com/infraboard/mcube/exception"
 )
 
-func newQueryLoginLogRequest(req *session.QuerySessionRequest) (*querySessionRequest, error) {
+func newQueryLoginLogRequest(tk *token.Token, req *session.QuerySessionRequest) (*querySessionRequest, error) {
 	if err := req.Validate(); err != nil {
 		return nil, err
 	}
 
 	return &querySessionRequest{
 		QuerySessionRequest: req,
+		token:               tk,
 	}, nil
 }
 
 type querySessionRequest struct {
+	token *token.Token
 	*session.QuerySessionRequest
 }
 
 func (r *querySessionRequest) FindOptions() *options.FindOptions {
-	pageSize := int64(r.PageSize)
-	skip := int64(r.PageSize) * int64(r.PageNumber-1)
+	pageSize := int64(r.Page.PageSize)
+	skip := int64(r.Page.PageSize) * int64(r.Page.PageNumber-1)
 
 	opt := &options.FindOptions{
 		Sort:  bson.D{{Key: "login_at", Value: -1}},
@@ -37,21 +39,20 @@ func (r *querySessionRequest) FindOptions() *options.FindOptions {
 }
 
 func (r *querySessionRequest) FindFilter() bson.M {
-	tk := r.GetToken()
 	filter := bson.M{
-		"domain": tk.Domain,
+		"domain": r.token.Domain,
 	}
 
 	if r.Account != "" {
 		filter["account"] = r.Account
 	}
 
-	if r.ApplicationID != "" {
-		filter["application_id"] = r.ApplicationID
+	if r.ApplicationId != "" {
+		filter["application_id"] = r.ApplicationId
 	}
 
-	if r.LoginIP != "" {
-		filter["login_ip"] = r.LoginIP
+	if r.LoginIp != "" {
+		filter["login_ip"] = r.LoginIp
 	}
 
 	if r.LoginCity != "" {
@@ -63,11 +64,11 @@ func (r *querySessionRequest) FindFilter() bson.M {
 	}
 
 	loginAt := bson.A{}
-	if r.StartLoginTime != nil {
+	if r.StartLoginTime != 0 {
 		loginAt = append(loginAt, bson.M{"login_at": bson.M{"$gte": r.StartLoginTime}})
 	}
 
-	if r.EndLoginTime != nil {
+	if r.EndLoginTime != 0 {
 		loginAt = append(loginAt, bson.M{"login_at": bson.M{"$lte": r.EndLoginTime}})
 	}
 	if len(loginAt) > 0 {
@@ -100,8 +101,8 @@ func (r *describeSessionRequest) FindOptions() *options.FindOneOptions {
 func (r *describeSessionRequest) FindFilter() bson.M {
 	filter := bson.M{}
 
-	if r.SessionID != "" {
-		filter["_id"] = r.SessionID
+	if r.SessionId != "" {
+		filter["_id"] = r.SessionId
 	}
 	if r.Domain != "" {
 		filter["domain"] = r.Domain

@@ -57,6 +57,6 @@ func (s *service) Config() error {
 func init() {
 	var _ application.AdminServiceServer = AdminService
 	var _ application.UserServiceServer = UserService
-	pkg.RegistryService("application_user", UserService)
 	pkg.RegistryService("application_admin", AdminService)
+	pkg.RegistryService("application_user", UserService)
 }

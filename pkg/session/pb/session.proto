@@ -1,0 +1,111 @@
+syntax = "proto3";
+
+package keyauth.session;
+option go_package = "github.com/infraboard/keyauth/pkg/session";
+
+import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
+import "pkg/user/pb/types.proto";
+import "pkg/token/pb/token.proto";
+
+// UserAgent todo
+message UserAgent {
+    string os = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"os" json:"os"'}
+        ];
+    string platform = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"platform" json:"platform"'}
+        ];
+    string engine_name = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"engine_name" json:"engine_name"'}
+        ];
+    string engine_version = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"engine_version" json:"engine_version"'}
+        ];
+    string browser_name = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"browser_name" json:"browser_name"'}
+        ];
+    string browser_version = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"browser_version" json:"browser_version"'}
+        ];
+}
+
+// IPInfo todo
+message IPInfo {
+    int64 city_id = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"city_id" json:"city_id"'}
+        ];
+    string country = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"country" json:"country"'}
+        ];
+    string region = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"region" json:"region"'}
+        ];
+    string province = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"province" json:"province"'}
+        ];
+    string city = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"city" json:"city"'}
+        ];
+    string isp = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"isp" json:"isp"'}
+        ];
+}
+
+// Session 登录回话
+message Session {
+    // 唯一ID
+    string id = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"_id" json:"id"'}
+        ];
+    // 所处域
+    string domain =2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"domain" json:"domain"'}
+        ];
+    // 用户名称
+    string account =3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"account" json:"account"'}
+        ];
+    // 用户类型
+    user.UserType user_type = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"user_type" json:"user_type"'}
+        ];
+    // 用户通过哪个端登录的
+    string application_id = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"application_id" json:"application_id"'}
+        ];
+    // 用户通过哪个端登录的
+    string application_name = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"application_name" json:"application_name"'}
+        ];
+    // 登录方式
+    token.GrantType grant_type = 7[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"grant_type" json:"grant_type"'}
+        ];
+    // 登录时间
+    int64 login_at =8[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"login_at" json:"login_at"'}
+        ];
+    // 登录IP
+    string login_ip = 9[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"login_ip" json:"login_ip"'}
+        ];
+    // 登出时间
+    int64 logout_at = 10[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"logout_at" json:"logout_at"'}
+        ];
+     // 应用的网站地址
+    string access_token = 11[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"access_token" json:"access_token"'}
+        ];
+    UserAgent user_agent = 12[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"user_agent" json:"user_agent"'}
+        ];
+    IPInfo ip_info = 13[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"ip_info" json:"ip_info"'}
+        ];
+}
+
+message Set {
+    int64 total = 1;
+    repeated Session items = 2;
+}

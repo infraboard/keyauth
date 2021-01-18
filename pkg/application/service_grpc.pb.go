@@ -18,9 +18,9 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserServiceClient interface {
 	CreateUserApplication(ctx context.Context, in *CreateApplicatonRequest, opts ...grpc.CallOption) (*Application, error)
-	DeleteApplication(ctx context.Context, in *DeleteApplicationRequest, opts ...grpc.CallOption) (*Application, error)
 	DescribeApplication(ctx context.Context, in *DescribeApplicationRequest, opts ...grpc.CallOption) (*Application, error)
 	QueryApplication(ctx context.Context, in *QueryApplicationRequest, opts ...grpc.CallOption) (*Set, error)
+	DeleteApplication(ctx context.Context, in *DeleteApplicationRequest, opts ...grpc.CallOption) (*Application, error)
 }
 
 type userServiceClient struct {
@@ -34,15 +34,6 @@ func NewUserServiceClient(cc grpc.ClientConnInterface) UserServiceClient {
 func (c *userServiceClient) CreateUserApplication(ctx context.Context, in *CreateApplicatonRequest, opts ...grpc.CallOption) (*Application, error) {
 	out := new(Application)
 	err := c.cc.Invoke(ctx, "/keyauth.application.UserService/CreateUserApplication", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *userServiceClient) DeleteApplication(ctx context.Context, in *DeleteApplicationRequest, opts ...grpc.CallOption) (*Application, error) {
-	out := new(Application)
-	err := c.cc.Invoke(ctx, "/keyauth.application.UserService/DeleteApplication", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -67,14 +58,23 @@ func (c *userServiceClient) QueryApplication(ctx context.Context, in *QueryAppli
 	return out, nil
 }
 
+func (c *userServiceClient) DeleteApplication(ctx context.Context, in *DeleteApplicationRequest, opts ...grpc.CallOption) (*Application, error) {
+	out := new(Application)
+	err := c.cc.Invoke(ctx, "/keyauth.application.UserService/DeleteApplication", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
 type UserServiceServer interface {
 	CreateUserApplication(context.Context, *CreateApplicatonRequest) (*Application, error)
-	DeleteApplication(context.Context, *DeleteApplicationRequest) (*Application, error)
 	DescribeApplication(context.Context, *DescribeApplicationRequest) (*Application, error)
 	QueryApplication(context.Context, *QueryApplicationRequest) (*Set, error)
+	DeleteApplication(context.Context, *DeleteApplicationRequest) (*Application, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -85,14 +85,14 @@ type UnimplementedUserServiceServer struct {
 func (UnimplementedUserServiceServer) CreateUserApplication(context.Context, *CreateApplicatonRequest) (*Application, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateUserApplication not implemented")
 }
-func (UnimplementedUserServiceServer) DeleteApplication(context.Context, *DeleteApplicationRequest) (*Application, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteApplication not implemented")
-}
 func (UnimplementedUserServiceServer) DescribeApplication(context.Context, *DescribeApplicationRequest) (*Application, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DescribeApplication not implemented")
 }
 func (UnimplementedUserServiceServer) QueryApplication(context.Context, *QueryApplicationRequest) (*Set, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryApplication not implemented")
+}
+func (UnimplementedUserServiceServer) DeleteApplication(context.Context, *DeleteApplicationRequest) (*Application, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteApplication not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -121,24 +121,6 @@ func _UserService_CreateUserApplication_Handler(srv interface{}, ctx context.Con
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).CreateUserApplication(ctx, req.(*CreateApplicatonRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _UserService_DeleteApplication_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteApplicationRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServiceServer).DeleteApplication(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/keyauth.application.UserService/DeleteApplication",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).DeleteApplication(ctx, req.(*DeleteApplicationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -179,6 +161,24 @@ func _UserService_QueryApplication_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_DeleteApplication_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteApplicationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).DeleteApplication(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/keyauth.application.UserService/DeleteApplication",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).DeleteApplication(ctx, req.(*DeleteApplicationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _UserService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "keyauth.application.UserService",
 	HandlerType: (*UserServiceServer)(nil),
@@ -188,16 +188,16 @@ var _UserService_serviceDesc = grpc.ServiceDesc{
 			Handler:    _UserService_CreateUserApplication_Handler,
 		},
 		{
-			MethodName: "DeleteApplication",
-			Handler:    _UserService_DeleteApplication_Handler,
-		},
-		{
 			MethodName: "DescribeApplication",
 			Handler:    _UserService_DescribeApplication_Handler,
 		},
 		{
 			MethodName: "QueryApplication",
 			Handler:    _UserService_QueryApplication_Handler,
+		},
+		{
+			MethodName: "DeleteApplication",
+			Handler:    _UserService_DeleteApplication_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -34,11 +34,11 @@ func (s *service) IssueToken(ctx context.Context, req *token.IssueTokenRequest) 
 	}
 
 	// 登录会话
-	sess, err := s.session.Login(tk)
+	sess, err := s.session.Login(ctx, tk)
 	if err != nil {
 		return nil, err
 	}
-	tk.SessionId = sess.ID
+	tk.SessionId = sess.Id
 
 	// 保存入库
 	if err := s.saveToken(tk); err != nil {
@@ -220,7 +220,7 @@ func (s *service) RevolkToken(ctx context.Context, req *token.RevolkTokenRequest
 	// 退出会话
 	if req.LogoutSession {
 		logoutReq := session.NewLogoutRequest(tk.SessionId)
-		if err := s.session.Logout(logoutReq); err != nil {
+		if _, err := s.session.Logout(ctx, logoutReq); err != nil {
 			return nil, exception.NewInternalServerError("logout session error, %s", err)
 		}
 	}

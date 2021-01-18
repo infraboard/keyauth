@@ -1,6 +1,7 @@
 package http
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/infraboard/mcube/exception"
@@ -22,9 +23,9 @@ func (h *handler) QueryLoginLog(w http.ResponseWriter, r *http.Request) {
 		response.Failed(w, exception.NewBadRequest("validate request error, %s", err))
 		return
 	}
-	req.WithToken(tk)
 
-	set, err := h.service.QuerySession(req)
+	ctx := pkg.WithTokenContext(context.Background(), tk)
+	set, err := h.service.QuerySession(ctx, req)
 	if err != nil {
 		response.Failed(w, err)
 		return

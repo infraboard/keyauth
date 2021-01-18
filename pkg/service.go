@@ -59,8 +59,10 @@ var (
 	IP2Region ip2region.Service
 	// Storage 对象存储服务
 	Storage storage.Service
-	// Session 审计服务
-	Session session.Service
+	// SessionAdmin 审计服务
+	SessionAdmin session.AdminServiceServer
+	// SessionUser todo
+	SessionUser session.UserServiceServer
 	// System 系统服务
 	System system.Service
 	// VerifyCode 校验码服务
@@ -192,11 +194,17 @@ func RegistryService(name string, svr Service) {
 		}
 		IP2Region = value
 		addService(name, svr)
-	case session.Service:
-		if Session != nil {
+	case session.AdminServiceServer:
+		if SessionAdmin != nil {
 			registryError(name)
 		}
-		Session = value
+		SessionAdmin = value
+		addService(name, svr)
+	case session.UserServiceServer:
+		if SessionUser != nil {
+			registryError(name)
+		}
+		SessionUser = value
 		addService(name, svr)
 	case system.Service:
 		if System != nil {

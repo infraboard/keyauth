@@ -8,7 +8,12 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func (s *service) QueryUserLastSession(req *session.QueryUserLastSessionRequest) (*session.Session, error) {
+type adminimpl struct {
+	*service
+	session.UnimplementedAdminServiceServer
+}
+
+func (s *adminimpl) QueryUserLastSession(ctx context.Context, req *session.QueryUserLastSessionRequest) (*session.Session, error) {
 	r, err := newQueryUserLastSessionRequest(req)
 	if err != nil {
 		return nil, exception.NewBadRequest("validate query session request error, %s", err)

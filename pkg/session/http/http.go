@@ -14,7 +14,7 @@ var (
 )
 
 type handler struct {
-	service session.Service
+	service session.UserServiceServer
 }
 
 // Registry 注册HTTP服务路由
@@ -30,7 +30,7 @@ func (h *handler) Config() error {
 		return errors.New("denpence domain service is nil")
 	}
 
-	h.service = pkg.Session
+	h.service = pkg.SessionUser
 	return nil
 }
 

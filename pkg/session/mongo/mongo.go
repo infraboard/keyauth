@@ -17,8 +17,10 @@ import (
 )
 
 var (
-	// Service 服务实例
-	Service = &service{}
+	// UserService 服务实例
+	UserService = &userimpl{service: &service{}}
+	// AdminService todo
+	AdminService = &adminimpl{service: &service{}}
 )
 
 type service struct {
@@ -65,6 +67,8 @@ func (s *service) Config() error {
 }
 
 func init() {
-	var _ session.Service = Service
-	pkg.RegistryService("session", Service)
+	var _ session.AdminServiceServer = AdminService
+	var _ session.UserServiceServer = UserService
+	pkg.RegistryService("application_admin", AdminService)
+	pkg.RegistryService("session_user", UserService)
 }

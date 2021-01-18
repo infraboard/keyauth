@@ -1,6 +1,7 @@
 package security
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -25,7 +26,7 @@ func NewChecker() (Checker, error) {
 	if pkg.User == nil {
 		return nil, fmt.Errorf("denpence user service required")
 	}
-	if pkg.Session == nil {
+	if pkg.SessionAdmin == nil {
 		return nil, fmt.Errorf("denpence session service required")
 	}
 	if pkg.IP2Region == nil {
@@ -39,7 +40,7 @@ func NewChecker() (Checker, error) {
 	return &checker{
 		domain:   pkg.Domain,
 		user:     pkg.User,
-		session:  pkg.Session,
+		session:  pkg.SessionAdmin,
 		cache:    c,
 		ip2Regin: pkg.IP2Region,
 		log:      zap.L().Named("Login Security"),
@@ -49,7 +50,7 @@ func NewChecker() (Checker, error) {
 type checker struct {
 	domain   domain.Service
 	user     user.Service
-	session  session.Service
+	session  session.AdminServiceServer
 	cache    cache.Cache
 	ip2Regin ip2region.Service
 	log      logger.Logger
@@ -127,7 +128,8 @@ func (c *checker) OtherPlaceLoggedInChecK(tk *token.Token) error {
 
 	// 查询出用户上次登陆的地域
 	queryReq := session.NewQueryUserLastSessionRequest(tk.Account)
-	us, err := c.session.QueryUserLastSession(queryReq)
+	ctx := pkg.WithTokenContext(context.Background(), tk)
+	us, err := c.session.QueryUserLastSession(ctx, queryReq)
 	if err != nil {
 		if exception.IsNotFoundError(err) {
 			c.log.Debugf("user %s last login session not found", tk.Account)
@@ -138,14 +140,14 @@ func (c *checker) OtherPlaceLoggedInChecK(tk *token.Token) error {
 	}
 
 	// city为0 表示内网IP, 不错异地登录校验
-	if us.CityID == 0 {
+	if us.IpInfo.CityId == 0 {
 		c.log.Warnf("city id is 0, 内网IP skip OtherPlaceLoggedInChecK")
 		return nil
 	}
 
 	if us != nil {
-		c.log.Debugf("user last login city: %s (%d)", us.City, us.CityID)
-		if login.CityID != us.CityID {
+		c.log.Debugf("user last login city: %s (%d)", us.IpInfo.City, us.IpInfo.CityId)
+		if login.CityID != us.IpInfo.CityId {
 			return fmt.Errorf("异地登录, 请输入验证码后再次提交")
 		}
 	}
@@ -163,7 +165,8 @@ func (c *checker) NotLoginDaysChecK(tk *token.Token) error {
 
 	// 查询出用户上次登陆的地域
 	queryReq := session.NewQueryUserLastSessionRequest(tk.Account)
-	us, err := c.session.QueryUserLastSession(queryReq)
+	ctx := pkg.WithTokenContext(context.Background(), tk)
+	us, err := c.session.QueryUserLastSession(ctx, queryReq)
 	if err != nil {
 		if exception.IsNotFoundError(err) {
 			c.log.Debugf("user %s last login session not found", tk.Account)
@@ -174,7 +177,7 @@ func (c *checker) NotLoginDaysChecK(tk *token.Token) error {
 	}
 
 	if us != nil {
-		days := uint(time.Now().Sub(us.LoginAt.T()).Hours() / 24)
+		days := uint(time.Now().Sub(time.Unix(us.LoginAt/1000, 0)).Hours() / 24)
 		c.log.Debugf("user %d days not login", days)
 		maxDays := ss.LoginSecurity.ExceptionLockConfig.NotLoginDays
 		if days > maxDays {

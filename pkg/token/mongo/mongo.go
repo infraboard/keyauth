@@ -42,7 +42,7 @@ type service struct {
 	domain   domain.Service
 	issuer   issuer.Issuer
 	endpoint endpoint.Service
-	session  session.Service
+	session  session.UserServiceServer
 	checker  security.Checker
 	code     verifycode.Service
 }
@@ -68,10 +68,10 @@ func (s *service) Config() error {
 	}
 	s.endpoint = pkg.Endpoint
 
-	if pkg.Session == nil {
+	if pkg.SessionUser == nil {
 		return errors.New("denpence session service is nil")
 	}
-	s.session = pkg.Session
+	s.session = pkg.SessionUser
 
 	if pkg.VerifyCode == nil {
 		return errors.New("denpence verify code service is nil")

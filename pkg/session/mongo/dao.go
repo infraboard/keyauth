@@ -10,9 +10,9 @@ import (
 )
 
 func (s *service) updateSession(sess *session.Session) error {
-	_, err := s.col.UpdateOne(context.TODO(), bson.M{"_id": sess.ID}, bson.M{"$set": sess})
+	_, err := s.col.UpdateOne(context.TODO(), bson.M{"_id": sess.Id}, bson.M{"$set": sess})
 	if err != nil {
-		return exception.NewInternalServerError("update session(%s) error, %s", sess.ID, err)
+		return exception.NewInternalServerError("update session(%s) error, %s", sess.Id, err)
 	}
 
 	return nil

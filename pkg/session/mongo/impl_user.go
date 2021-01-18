@@ -9,13 +9,19 @@ import (
 	"github.com/infraboard/mcube/types/ftime"
 	"go.mongodb.org/mongo-driver/mongo"
 
+	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/session"
 	"github.com/infraboard/keyauth/pkg/token"
 )
 
-func (s *service) Login(tk *token.Token) (*session.Session, error) {
+type userimpl struct {
+	*service
+	session.UnimplementedUserServiceServer
+}
+
+func (s *userimpl) Login(ctx context.Context, tk *token.Token) (*session.Session, error) {
 	if tk.IsRefresh() {
-		sess, err := s.DescribeSession(session.NewDescribeSessionRequestWithID(tk.SessionId))
+		sess, err := s.DescribeSession(ctx, session.NewDescribeSessionRequestWithID(tk.SessionId))
 		if err != nil {
 			return nil, err
 		}
@@ -28,18 +34,43 @@ func (s *service) Login(tk *token.Token) (*session.Session, error) {
 	}
 
 	// 关闭之前的session
-	s.closeOldSession(tk)
+	s.closeOldSession(ctx, tk)
 
 	sess, err := session.NewSession(s.ip, tk)
 	if err != nil {
 		return nil, err
 	}
 
+	// 填充session IP信息
+	sess.IpInfo, err = s.parseRemoteIPInfo(tk.GetRemoteIp())
+	if err != nil {
+		s.log.Errorf("parse remote ip error, %s", err)
+	}
+
 	if err := s.saveSession(sess); err != nil {
 		return nil, err
 	}
-	s.log.Infof("user(%s) session: %s login at: %s", sess.Account, sess.ID, sess.LoginAt.T())
+	s.log.Infof("user(%s) session: %s login at: %s", sess.Account, sess.Id, sess.LoginAt)
 	return sess, nil
+}
+
+func (s *userimpl) parseRemoteIPInfo(ip string) (*session.IPInfo, error) {
+	if ip == "" {
+		return nil, nil
+	}
+
+	info, err := s.ip.LookupIP(ip)
+	if err != nil {
+		s.log.Errorf("parse ipinfo error, %s", err)
+	}
+	return &session.IPInfo{
+		CityId:   info.CityID,
+		Country:  info.Country,
+		Region:   info.Region,
+		Province: info.Province,
+		City:     info.City,
+		Isp:      info.ISP,
+	}, nil
 }
 
 // 判断用户之前的会话是否正常退出
@@ -47,9 +78,9 @@ func (s *service) Login(tk *token.Token) (*session.Session, error) {
 // 如果该会话的刷新token已经过期, 则已刷新结束时间为登出时间 结束该会话
 // 如果token正常, 则已当前时间为登出时间 结束该会话
 // 结束会话后, 禁用该token
-func (s *service) closeOldSession(tk *token.Token) {
+func (s *userimpl) closeOldSession(ctx context.Context, tk *token.Token) {
 	descReq := session.NewDescribeSessionRequestWithToken(tk)
-	sess, err := s.DescribeSession(descReq)
+	sess, err := s.DescribeSession(ctx, descReq)
 	if err != nil {
 		s.log.Errorf("query session error, %s", err)
 		return
@@ -61,30 +92,30 @@ func (s *service) closeOldSession(tk *token.Token) {
 		s.log.Errorf("block previous token error, %s", err)
 		return
 	}
-	sess.LogoutAt = ftime.Time(time.Unix(preTK.EndAt()/1000, 0))
+	sess.LogoutAt = ftime.Time(time.Unix(preTK.EndAt()/1000, 0)).Timestamp()
 
 	if err := s.updateSession(sess); err != nil {
 		s.log.Errorf("block session error, %s", err)
 	}
-	s.log.Infof("user(%s) session: %s logout at: %s", sess.Account, sess.ID, sess.LogoutAt.T())
+	s.log.Infof("user(%s) session: %s logout at: %s", sess.Account, sess.Id, sess.LogoutAt)
 }
 
-func (s *service) Logout(req *session.LogoutRequest) error {
-	descReq := session.NewDescribeSessionRequestWithID(req.SessionID)
-	sess, err := s.DescribeSession(descReq)
+func (s *userimpl) Logout(ctx context.Context, req *session.LogoutRequest) (*session.Session, error) {
+	descReq := session.NewDescribeSessionRequestWithID(req.SessionId)
+	sess, err := s.DescribeSession(ctx, descReq)
 	if err != nil {
-		return fmt.Errorf("query session error, %s", err)
+		return nil, fmt.Errorf("query session error, %s", err)
 	}
 
-	sess.LogoutAt = ftime.Now()
+	sess.LogoutAt = ftime.Now().Timestamp()
 	if err := s.updateSession(sess); err != nil {
 		s.log.Errorf("update session error, %s", err)
 	}
-	s.log.Infof("user(%s) session: %s logout at: %s", sess.Account, sess.ID, sess.LogoutAt.T())
-	return nil
+	s.log.Infof("user(%s) session: %s logout at: %s", sess.Account, sess.Id, sess.LogoutAt)
+	return sess, nil
 }
 
-func (s *service) DescribeSession(req *session.DescribeSessionRequest) (*session.Session, error) {
+func (s *userimpl) DescribeSession(ctx context.Context, req *session.DescribeSessionRequest) (*session.Session, error) {
 	r, err := newDescribeSession(req)
 	if err != nil {
 		return nil, err
@@ -96,13 +127,14 @@ func (s *service) DescribeSession(req *session.DescribeSessionRequest) (*session
 			return nil, exception.NewNotFound("session %s not found", req)
 		}
 
-		return nil, exception.NewInternalServerError("find session %s error, %s", req.SessionID, err)
+		return nil, exception.NewInternalServerError("find session %s error, %s", req.SessionId, err)
 	}
 	return ins, nil
 }
 
-func (s *service) QuerySession(req *session.QuerySessionRequest) (*session.Set, error) {
-	r, err := newQueryLoginLogRequest(req)
+func (s *userimpl) QuerySession(ctx context.Context, req *session.QuerySessionRequest) (*session.Set, error) {
+	tk := pkg.GetTokenFromContext(ctx)
+	r, err := newQueryLoginLogRequest(tk, req)
 	if err != nil {
 		return nil, exception.NewBadRequest("validate query session request error, %s", err)
 	}
@@ -113,7 +145,7 @@ func (s *service) QuerySession(req *session.QuerySessionRequest) (*session.Set, 
 		return nil, exception.NewInternalServerError("find session error, %s", err)
 	}
 
-	set := session.NewSessionSet(req.PageRequest)
+	set := session.NewSessionSet()
 	// 循环
 	for resp.Next(context.TODO()) {
 		ins := session.NewDefaultSession()
