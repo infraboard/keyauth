@@ -99,7 +99,7 @@ func (i *issuer) getUser(name string) (*user.User, error) {
 
 func (i *issuer) getDomain(u *user.User) (*domain.Domain, error) {
 	req := domain.NewDescribeDomainRequestWithName(u.Domain)
-	return i.domain.DescriptionDomain(pkg.GetInternalAdminTokenCtx(u.Account), req)
+	return i.domain.DescribeDomain(pkg.GetInternalAdminTokenCtx(u.Account), req)
 }
 
 func (i *issuer) setTokenDomain(tk *token.Token) error {

@@ -19,7 +19,7 @@ const _ = grpc.SupportPackageIsVersion7
 type DomainServiceClient interface {
 	CreateDomain(ctx context.Context, in *CreateDomainRequest, opts ...grpc.CallOption) (*Domain, error)
 	UpdateDomain(ctx context.Context, in *UpdateDomainInfoRequest, opts ...grpc.CallOption) (*Domain, error)
-	DescriptionDomain(ctx context.Context, in *DescribeDomainRequest, opts ...grpc.CallOption) (*Domain, error)
+	DescribeDomain(ctx context.Context, in *DescribeDomainRequest, opts ...grpc.CallOption) (*Domain, error)
 	QueryDomain(ctx context.Context, in *QueryDomainRequest, opts ...grpc.CallOption) (*Set, error)
 	DeleteDomain(ctx context.Context, in *DeleteDomainRequest, opts ...grpc.CallOption) (*Domain, error)
 	UpdateDomainSecurity(ctx context.Context, in *UpdateDomainSecurityRequest, opts ...grpc.CallOption) (*SecuritySetting, error)
@@ -51,9 +51,9 @@ func (c *domainServiceClient) UpdateDomain(ctx context.Context, in *UpdateDomain
 	return out, nil
 }
 
-func (c *domainServiceClient) DescriptionDomain(ctx context.Context, in *DescribeDomainRequest, opts ...grpc.CallOption) (*Domain, error) {
+func (c *domainServiceClient) DescribeDomain(ctx context.Context, in *DescribeDomainRequest, opts ...grpc.CallOption) (*Domain, error) {
 	out := new(Domain)
-	err := c.cc.Invoke(ctx, "/keyauth.domain.DomainService/DescriptionDomain", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/keyauth.domain.DomainService/DescribeDomain", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -93,7 +93,7 @@ func (c *domainServiceClient) UpdateDomainSecurity(ctx context.Context, in *Upda
 type DomainServiceServer interface {
 	CreateDomain(context.Context, *CreateDomainRequest) (*Domain, error)
 	UpdateDomain(context.Context, *UpdateDomainInfoRequest) (*Domain, error)
-	DescriptionDomain(context.Context, *DescribeDomainRequest) (*Domain, error)
+	DescribeDomain(context.Context, *DescribeDomainRequest) (*Domain, error)
 	QueryDomain(context.Context, *QueryDomainRequest) (*Set, error)
 	DeleteDomain(context.Context, *DeleteDomainRequest) (*Domain, error)
 	UpdateDomainSecurity(context.Context, *UpdateDomainSecurityRequest) (*SecuritySetting, error)
@@ -110,8 +110,8 @@ func (UnimplementedDomainServiceServer) CreateDomain(context.Context, *CreateDom
 func (UnimplementedDomainServiceServer) UpdateDomain(context.Context, *UpdateDomainInfoRequest) (*Domain, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateDomain not implemented")
 }
-func (UnimplementedDomainServiceServer) DescriptionDomain(context.Context, *DescribeDomainRequest) (*Domain, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DescriptionDomain not implemented")
+func (UnimplementedDomainServiceServer) DescribeDomain(context.Context, *DescribeDomainRequest) (*Domain, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeDomain not implemented")
 }
 func (UnimplementedDomainServiceServer) QueryDomain(context.Context, *QueryDomainRequest) (*Set, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryDomain not implemented")
@@ -171,20 +171,20 @@ func _DomainService_UpdateDomain_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DomainService_DescriptionDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _DomainService_DescribeDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DescribeDomainRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DomainServiceServer).DescriptionDomain(ctx, in)
+		return srv.(DomainServiceServer).DescribeDomain(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.domain.DomainService/DescriptionDomain",
+		FullMethod: "/keyauth.domain.DomainService/DescribeDomain",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DomainServiceServer).DescriptionDomain(ctx, req.(*DescribeDomainRequest))
+		return srv.(DomainServiceServer).DescribeDomain(ctx, req.(*DescribeDomainRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -256,8 +256,8 @@ var _DomainService_serviceDesc = grpc.ServiceDesc{
 			Handler:    _DomainService_UpdateDomain_Handler,
 		},
 		{
-			MethodName: "DescriptionDomain",
-			Handler:    _DomainService_DescriptionDomain_Handler,
+			MethodName: "DescribeDomain",
+			Handler:    _DomainService_DescribeDomain_Handler,
 		},
 		{
 			MethodName: "QueryDomain",

@@ -97,7 +97,7 @@ func (h *handler) QueryDomain(w http.ResponseWriter, r *http.Request) {
 	req := domain.NewDescribeDomainRequest()
 	req.Name = tk.Domain
 
-	ins, err := h.domain.DescriptionDomain(ctx, req)
+	ins, err := h.domain.DescribeDomain(ctx, req)
 	if err != nil {
 		response.Failed(w, err)
 		return

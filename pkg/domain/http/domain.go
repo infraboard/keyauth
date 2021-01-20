@@ -41,7 +41,7 @@ func (h *handler) GetDomain(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	d, err := h.service.DescriptionDomain(ctx, req)
+	d, err := h.service.DescribeDomain(ctx, req)
 	if err != nil {
 		response.Failed(w, err)
 		return

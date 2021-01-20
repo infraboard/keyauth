@@ -26,7 +26,7 @@ func (s *service) CreateDomain(ctx context.Context, req *domain.CreateDomainRequ
 	return d, nil
 }
 
-func (s *service) DescriptionDomain(ctx context.Context, req *domain.DescribeDomainRequest) (*domain.Domain, error) {
+func (s *service) DescribeDomain(ctx context.Context, req *domain.DescribeDomainRequest) (*domain.Domain, error) {
 	r, err := newDescDomainRequest(req)
 	if err != nil {
 		return nil, exception.NewBadRequest(err.Error())
@@ -79,7 +79,7 @@ func (s *service) UpdateDomain(ctx context.Context, req *domain.UpdateDomainInfo
 		return nil, exception.NewBadRequest(err.Error())
 	}
 
-	d, err := s.DescriptionDomain(ctx, domain.NewDescribeDomainRequestWithName(req.Data.Name))
+	d, err := s.DescribeDomain(ctx, domain.NewDescribeDomainRequestWithName(req.Data.Name))
 	if err != nil {
 		return nil, err
 	}
@@ -107,7 +107,7 @@ func (s *service) UpdateDomainSecurity(ctx context.Context, req *domain.UpdateDo
 		return nil, exception.NewBadRequest(err.Error())
 	}
 
-	d, err := s.DescriptionDomain(ctx, domain.NewDescribeDomainRequestWithName(req.Name))
+	d, err := s.DescribeDomain(ctx, domain.NewDescribeDomainRequestWithName(req.Name))
 	if err != nil {
 		return nil, err
 	}

@@ -10,7 +10,7 @@ import "pkg/domain/pb/domain.proto";
 service DomainService {
 	rpc CreateDomain(CreateDomainRequest) returns(Domain);
 	rpc UpdateDomain(UpdateDomainInfoRequest) returns(Domain);
-	rpc DescriptionDomain(DescribeDomainRequest) returns(Domain);
+	rpc DescribeDomain(DescribeDomainRequest) returns(Domain);
 	rpc QueryDomain(QueryDomainRequest) returns(Set);
 	rpc DeleteDomain(DeleteDomainRequest) returns(Domain);
 
