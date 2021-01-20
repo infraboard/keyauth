@@ -104,6 +104,10 @@ message Token {
 }
 
 message Set {
-    int64 total = 1;
-    repeated Token items = 2;
+    int64 total = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"total" json:"total"'}
+        ];
+    repeated Token items = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"items" json:"items"'}
+        ];
 }

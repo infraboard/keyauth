@@ -26,7 +26,7 @@ import (
 
 var (
 	// Domain 服务
-	Domain domain.Service
+	Domain domain.DomainServiceServer
 	// User 用户服务
 	User user.Service
 	// ApplicationUser 应用
@@ -92,7 +92,7 @@ type Service interface {
 // RegistryService 服务实例注册
 func RegistryService(name string, svr Service) {
 	switch value := svr.(type) {
-	case domain.Service:
+	case domain.DomainServiceServer:
 		if Domain != nil {
 			registryError(name)
 		}

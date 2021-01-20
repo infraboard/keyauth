@@ -218,9 +218,9 @@ func (s *service) UpdateDepartment(req *department.UpdateDepartmentRequest) (*de
 		return nil, err
 	}
 	switch req.UpdateMode {
-	case common.PutUpdateMode:
+	case common.UpdateMode_PUT:
 		*dp.CreateDepartmentRequest = *req.CreateDepartmentRequest
-	case common.PatchUpdateMode:
+	case common.UpdateMode_PATCH:
 		dp.CreateDepartmentRequest.Patch(req.CreateDepartmentRequest)
 	default:
 		return nil, exception.NewBadRequest("unknown update mode: %s", req.UpdateMode)

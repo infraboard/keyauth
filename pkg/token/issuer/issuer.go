@@ -58,7 +58,7 @@ type issuer struct {
 	app     application.UserServiceServer
 	token   token.TokenServiceServer
 	user    user.Service
-	domain  domain.Service
+	domain  domain.DomainServiceServer
 	ldap    provider.LDAP
 	emailRE *regexp.Regexp
 	log     logger.Logger
@@ -77,7 +77,7 @@ func (i *issuer) checkUserPass(user, pass string) (*user.User, error) {
 }
 
 func (i *issuer) checkUserPassExpired(u *user.User) error {
-	d, err := i.getDomain(u.Domain)
+	d, err := i.getDomain(u)
 	if err != nil {
 		return err
 	}
@@ -97,23 +97,22 @@ func (i *issuer) getUser(name string) (*user.User, error) {
 	return i.user.DescribeAccount(req)
 }
 
-func (i *issuer) getDomain(name string) (*domain.Domain, error) {
-	req := domain.NewDescribeDomainRequestWithName(name)
-	return i.domain.DescriptionDomain(req)
+func (i *issuer) getDomain(u *user.User) (*domain.Domain, error) {
+	req := domain.NewDescribeDomainRequestWithName(u.Domain)
+	return i.domain.DescriptionDomain(pkg.GetInternalAdminTokenCtx(u.Account), req)
 }
 
 func (i *issuer) setTokenDomain(tk *token.Token) error {
 	// 获取最近1个
 	req := domain.NewQueryDomainRequest(request.NewPageRequest(1, 1))
-	req.WithToken(tk)
 
-	domains, err := i.domain.QueryDomain(req)
+	domains, err := i.domain.QueryDomain(pkg.GetInternalAdminTokenCtx(tk.Account), req)
 	if err != nil {
 		return err
 	}
 
 	if domains.Length() > 0 {
-		tk.Domain = domains.Items[0].Name
+		tk.Domain = domains.Items[0].Data.Name
 	}
 
 	return nil

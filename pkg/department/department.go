@@ -188,7 +188,7 @@ func (s *Set) Add(item *Department) {
 func NewPutUpdateDepartmentRequest(id string) *UpdateDepartmentRequest {
 	return &UpdateDepartmentRequest{
 		ID:                      id,
-		UpdateMode:              types.PutUpdateMode,
+		UpdateMode:              types.UpdateMode_PUT,
 		CreateDepartmentRequest: NewCreateDepartmentRequest(),
 	}
 }
@@ -197,7 +197,7 @@ func NewPutUpdateDepartmentRequest(id string) *UpdateDepartmentRequest {
 func NewPatchUpdateDepartmentRequest(id string) *UpdateDepartmentRequest {
 	return &UpdateDepartmentRequest{
 		ID:                      id,
-		UpdateMode:              types.PatchUpdateMode,
+		UpdateMode:              types.UpdateMode_PATCH,
 		CreateDepartmentRequest: NewCreateDepartmentRequest(),
 	}
 }

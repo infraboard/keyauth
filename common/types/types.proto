@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package keyauth.common.types;
+option go_package = "github.com/infraboard/keyauth/common/types";
+
+enum UpdateMode {
+    PUT = 0;
+    PATCH = 1;
+}

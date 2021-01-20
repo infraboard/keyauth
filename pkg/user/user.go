@@ -287,7 +287,7 @@ func (s *Set) Add(u *User) {
 func NewPutAccountRequest() *UpdateAccountRequest {
 	return &UpdateAccountRequest{
 		Session:    session.NewSession(),
-		UpdateMode: common.PutUpdateMode,
+		UpdateMode: common.UpdateMode_PUT,
 		Profile:    NewProfile(),
 	}
 }
@@ -296,7 +296,7 @@ func NewPutAccountRequest() *UpdateAccountRequest {
 func NewPatchAccountRequest() *UpdateAccountRequest {
 	return &UpdateAccountRequest{
 		Session:    session.NewSession(),
-		UpdateMode: common.PatchUpdateMode,
+		UpdateMode: common.UpdateMode_PATCH,
 		Profile:    NewProfile(),
 	}
 }

@@ -17,7 +17,7 @@ var (
 
 type handler struct {
 	service user.Service
-	domain  domain.Service
+	domain  domain.DomainServiceServer
 }
 
 // Registry 注册HTTP服务路由

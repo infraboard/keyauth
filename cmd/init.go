@@ -222,11 +222,11 @@ func (i *Initialer) initUser() (*user.User, error) {
 	return pkg.User.CreateAccount(types.UserType_SUPPER, req)
 }
 
-func (i *Initialer) initDomain(ownerID string) (*domain.Domain, error) {
+func (i *Initialer) initDomain(account string) (*domain.Domain, error) {
 	req := domain.NewCreateDomainRequest()
 	req.Name = domain.AdminDomainName
 	req.Description = strings.TrimSpace(i.domainDesc)
-	return pkg.Domain.CreateDomain(ownerID, req)
+	return pkg.Domain.CreateDomain(pkg.GetInternalAdminTokenCtx(account), req)
 }
 
 func (i *Initialer) initApp(ownerID string) ([]*application.Application, error) {

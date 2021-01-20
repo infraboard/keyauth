@@ -1,6 +1,7 @@
 package http
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/infraboard/keyauth/pkg"
@@ -91,11 +92,12 @@ func (h *handler) QueryDomain(w http.ResponseWriter, r *http.Request) {
 		response.Failed(w, err)
 		return
 	}
+	ctx := pkg.WithTokenContext(context.Background(), tk)
 
 	req := domain.NewDescribeDomainRequest()
 	req.Name = tk.Domain
 
-	ins, err := h.domain.DescriptionDomain(req)
+	ins, err := h.domain.DescriptionDomain(ctx, req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -111,18 +113,19 @@ func (h *handler) UpdateDomainInfo(w http.ResponseWriter, r *http.Request) {
 		response.Failed(w, err)
 		return
 	}
+	ctx := pkg.WithTokenContext(context.Background(), tk)
 
 	// 查找出原来的domain
 	req := domain.NewPatchDomainRequest()
-	req.Name = tk.Domain
+	req.Data.Name = tk.Domain
 
 	// 解析需要更新的数据
-	if err := request.GetDataFromRequest(r, req.CreateDomainRequest); err != nil {
+	if err := request.GetDataFromRequest(r, req.Data); err != nil {
 		response.Failed(w, err)
 		return
 	}
 
-	ins, err := h.domain.UpdateDomain(req)
+	ins, err := h.domain.UpdateDomain(ctx, req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -138,6 +141,7 @@ func (h *handler) UpdateDomainSecurity(w http.ResponseWriter, r *http.Request) {
 		response.Failed(w, err)
 		return
 	}
+	ctx := pkg.WithTokenContext(context.Background(), tk)
 
 	// 查找出原来的domain
 	req := domain.NewPutDomainSecurityRequest()
@@ -149,7 +153,7 @@ func (h *handler) UpdateDomainSecurity(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ins, err := h.domain.UpdateDomainSecurity(req)
+	ins, err := h.domain.UpdateDomainSecurity(ctx, req)
 	if err != nil {
 		response.Failed(w, err)
 		return

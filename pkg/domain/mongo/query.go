@@ -5,19 +5,24 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/infraboard/keyauth/pkg/domain"
+	"github.com/infraboard/keyauth/pkg/token"
 )
 
-func newQueryDomainRequest(req *domain.QueryDomainRequest) *request {
-	return &request{req}
+func newQueryDomainRequest(tk *token.Token, req *domain.QueryDomainRequest) *request {
+	return &request{
+		token:              tk,
+		QueryDomainRequest: req,
+	}
 }
 
 type request struct {
+	token *token.Token
 	*domain.QueryDomainRequest
 }
 
 func (r *request) FindOptions() *options.FindOptions {
-	pageSize := int64(r.PageSize)
-	skip := int64(r.PageSize) * int64(r.PageNumber-1)
+	pageSize := int64(r.Page.PageSize)
+	skip := int64(r.Page.PageSize) * int64(r.Page.PageNumber-1)
 
 	opt := &options.FindOptions{
 		Sort:  bson.D{{Key: "create_at", Value: -1}},
@@ -31,8 +36,7 @@ func (r *request) FindOptions() *options.FindOptions {
 func (r *request) FindFilter() bson.M {
 	filter := bson.M{}
 
-	tk := r.GetToken()
-	filter["owner"] = tk.Account
+	filter["owner"] = r.token.Account
 
 	return filter
 }

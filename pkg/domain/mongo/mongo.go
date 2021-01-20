@@ -21,6 +21,7 @@ type service struct {
 	col           *mongo.Collection
 	enableCache   bool
 	notifyCachPre string
+	domain.UnimplementedDomainServiceServer
 }
 
 func (s *service) Config() error {
@@ -52,6 +53,6 @@ func (s *service) Config() error {
 }
 
 func init() {
-	var _ domain.Service = Service
+	var _ domain.DomainServiceServer = Service
 	pkg.RegistryService("domain", Service)
 }

@@ -12,12 +12,22 @@ import (
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/router"
 
+	"github.com/infraboard/keyauth/pkg/domain"
 	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/permission"
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user/types"
 	"github.com/infraboard/keyauth/version"
 )
+
+// GetInternalAdminTokenCtx 内部调用时的模拟token
+func GetInternalAdminTokenCtx(account string) context.Context {
+	return WithTokenContext(context.Background(), &token.Token{
+		Account:  account,
+		Domain:   domain.AdminDomainName,
+		UserType: types.UserType_INTERNAL,
+	})
+}
 
 // NewInternalAuther 内部使用的auther
 func NewInternalAuther() router.Auther {
@@ -109,6 +119,16 @@ func GetTokenFromHTTPRequest(r *http.Request) (*token.Token, error) {
 	tk.WithRemoteIP(request.GetRemoteIP(r))
 	tk.WithUerAgent(r.UserAgent())
 	return tk, nil
+}
+
+// GetTokenCtxFromHTTPRequest todo
+func GetTokenCtxFromHTTPRequest(r *http.Request) (context.Context, error) {
+	tk, err := GetTokenFromHTTPRequest(r)
+	if err != nil {
+		return nil, err
+	}
+
+	return WithTokenContext(context.Background(), tk), nil
 }
 
 // ContextKeyType key类型

@@ -9,11 +9,13 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/infraboard/keyauth/common/types"
+	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/domain"
 )
 
-func (s *service) CreateDomain(ownerID string, req *domain.CreateDomainRequest) (*domain.Domain, error) {
-	d, err := domain.New(ownerID, req)
+func (s *service) CreateDomain(ctx context.Context, req *domain.CreateDomainRequest) (*domain.Domain, error) {
+	tk := pkg.GetTokenFromContext(ctx)
+	d, err := domain.New(tk.Account, req)
 	if err != nil {
 		return nil, exception.NewBadRequest(err.Error())
 	}
@@ -24,7 +26,7 @@ func (s *service) CreateDomain(ownerID string, req *domain.CreateDomainRequest) 
 	return d, nil
 }
 
-func (s *service) DescriptionDomain(req *domain.DescribeDomainRequest) (*domain.Domain, error) {
+func (s *service) DescriptionDomain(ctx context.Context, req *domain.DescribeDomainRequest) (*domain.Domain, error) {
 	r, err := newDescDomainRequest(req)
 	if err != nil {
 		return nil, exception.NewBadRequest(err.Error())
@@ -42,15 +44,16 @@ func (s *service) DescriptionDomain(req *domain.DescribeDomainRequest) (*domain.
 	return d, nil
 }
 
-func (s *service) QueryDomain(req *domain.QueryDomainRequest) (*domain.Set, error) {
-	r := newQueryDomainRequest(req)
+func (s *service) QueryDomain(ctx context.Context, req *domain.QueryDomainRequest) (*domain.Set, error) {
+	tk := pkg.GetTokenFromContext(ctx)
+	r := newQueryDomainRequest(tk, req)
 	resp, err := s.col.Find(context.TODO(), r.FindFilter(), r.FindOptions())
 
 	if err != nil {
 		return nil, exception.NewInternalServerError("find domain error, error is %s", err)
 	}
 
-	domainSet := domain.NewDomainSet(req.PageRequest)
+	domainSet := domain.NewDomainSet()
 	// 循环
 	for resp.Next(context.TODO()) {
 		d := new(domain.Domain)
@@ -71,71 +74,71 @@ func (s *service) QueryDomain(req *domain.QueryDomainRequest) (*domain.Set, erro
 	return domainSet, nil
 }
 
-func (s *service) UpdateDomain(req *domain.UpdateDomainInfoRequest) (*domain.Domain, error) {
+func (s *service) UpdateDomain(ctx context.Context, req *domain.UpdateDomainInfoRequest) (*domain.Domain, error) {
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest(err.Error())
 	}
 
-	d, err := s.DescriptionDomain(domain.NewDescribeDomainRequestWithName(req.Name))
+	d, err := s.DescriptionDomain(ctx, domain.NewDescribeDomainRequestWithName(req.Data.Name))
 	if err != nil {
 		return nil, err
 	}
 
 	switch req.UpdateMode {
-	case types.PutUpdateMode:
-		*d.CreateDomainRequest = *req.CreateDomainRequest
-	case types.PatchUpdateMode:
-		d.CreateDomainRequest.Patch(req.CreateDomainRequest)
+	case types.UpdateMode_PUT:
+		*d.Data = *req.Data
+	case types.UpdateMode_PATCH:
+		d.Data.Patch(req.Data)
 	default:
 		return nil, exception.NewBadRequest("unknown update mode: %s", req.UpdateMode)
 	}
 
-	d.UpdateAt = ftime.Now()
-	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": d.Name}, bson.M{"$set": d})
+	d.UpdateAt = ftime.Now().Timestamp()
+	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": d.Data.Name}, bson.M{"$set": d})
 	if err != nil {
-		return nil, exception.NewInternalServerError("update domain(%s) error, %s", d.Name, err)
+		return nil, exception.NewInternalServerError("update domain(%s) error, %s", d.Data.Name, err)
 	}
 
 	return d, nil
 }
 
-func (s *service) UpdateDomainSecurity(req *domain.UpdateDomainSecurityRequest) (*domain.SecuritySetting, error) {
+func (s *service) UpdateDomainSecurity(ctx context.Context, req *domain.UpdateDomainSecurityRequest) (*domain.SecuritySetting, error) {
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest(err.Error())
 	}
 
-	d, err := s.DescriptionDomain(domain.NewDescribeDomainRequestWithName(req.Name))
+	d, err := s.DescriptionDomain(ctx, domain.NewDescribeDomainRequestWithName(req.Name))
 	if err != nil {
 		return nil, err
 	}
 
 	switch req.UpdateMode {
-	case types.PutUpdateMode:
+	case types.UpdateMode_PUT:
 		*d.SecuritySetting = *req.SecuritySetting
-	case types.PatchUpdateMode:
+	case types.UpdateMode_PATCH:
 		d.SecuritySetting.Patch(req.SecuritySetting)
 	default:
 		return nil, exception.NewBadRequest("unknown update mode: %s", req.UpdateMode)
 	}
 
-	d.UpdateAt = ftime.Now()
-	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": d.Name}, bson.M{"$set": d})
+	d.UpdateAt = ftime.Now().Timestamp()
+	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": d.Data.Name}, bson.M{"$set": d})
 	if err != nil {
-		return nil, exception.NewInternalServerError("update domain(%s) error, %s", d.Name, err)
+		return nil, exception.NewInternalServerError("update domain(%s) error, %s", d.Data.Name, err)
 	}
 
 	return d.SecuritySetting, nil
 }
 
-func (s *service) DeleteDomain(id string) error {
-	result, err := s.col.DeleteOne(context.TODO(), bson.M{"_id": id})
+func (s *service) DeleteDomain(ctx context.Context, req *domain.DeleteDomainRequest) (*domain.Domain, error) {
+	result, err := s.col.DeleteOne(context.TODO(), bson.M{"_id": req.Name})
 	if err != nil {
-		return exception.NewInternalServerError("delete domain(%s) error, %s", id, err)
+		return nil, exception.NewInternalServerError("delete domain(%s) error, %s", req.Name, err)
 	}
 
 	if result.DeletedCount == 0 {
-		return exception.NewNotFound("domain %s not found", id)
+		return nil, exception.NewNotFound("domain %s not found", req.Name)
 	}
 
-	return nil
+	return nil, nil
 }

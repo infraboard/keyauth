@@ -21,7 +21,7 @@ type suit struct {
 	t     *testing.T
 	shoud *assert.Assertions
 
-	service   domain.Service
+	service   domain.DomainServiceServer
 	createReq *domain.CreateDomainRequest
 }
 
@@ -48,7 +48,7 @@ func (s *suit) TearDown() {
 
 func (s *suit) CreateDomain() func(t *testing.T) {
 	return func(t *testing.T) {
-		_, err := s.service.CreateDomain("xxx", s.createReq)
+		_, err := s.service.CreateDomain(nil, s.createReq)
 		s.shoud.NoError(err)
 	}
 }

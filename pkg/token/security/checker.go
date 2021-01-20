@@ -48,7 +48,7 @@ func NewChecker() (Checker, error) {
 }
 
 type checker struct {
-	domain   domain.Service
+	domain   domain.DomainServiceServer
 	user     user.Service
 	session  session.AdminServiceServer
 	cache    cache.Cache
@@ -64,7 +64,7 @@ func (c *checker) MaxFailedRetryCheck(req *token.IssueTokenRequest) error {
 	}
 	c.log.Debugf("max failed retry lock check enabled, checking ...")
 
-	var count uint
+	var count uint32
 	err := c.cache.Get(req.AbnormalUserCheckKey(), count)
 	if err != nil {
 		c.log.Errorf("get key %s from cache error, %s", req.AbnormalUserCheckKey(), err)
@@ -107,7 +107,7 @@ func (c *checker) UpdateFailedRetry(req *token.IssueTokenRequest) error {
 }
 
 func (c *checker) OtherPlaceLoggedInChecK(tk *token.Token) error {
-	ss := c.getOrDefaultSecuritySettingWithDomain(tk.Domain)
+	ss := c.getOrDefaultSecuritySettingWithDomain(tk.Account, tk.Domain)
 	if !ss.LoginSecurity.ExceptionLock {
 		c.log.Debugf("exception check disabled, don't check")
 		return nil
@@ -177,7 +177,7 @@ func (c *checker) NotLoginDaysChecK(tk *token.Token) error {
 	}
 
 	if us != nil {
-		days := uint(time.Now().Sub(time.Unix(us.LoginAt/1000, 0)).Hours() / 24)
+		days := uint32(time.Now().Sub(time.Unix(us.LoginAt/1000, 0)).Hours() / 24)
 		c.log.Debugf("user %d days not login", days)
 		maxDays := ss.LoginSecurity.ExceptionLockConfig.NotLoginDays
 		if days > maxDays {
@@ -191,7 +191,7 @@ func (c *checker) NotLoginDaysChecK(tk *token.Token) error {
 
 func (c *checker) IPProtectCheck(req *token.IssueTokenRequest) error {
 	ss := c.getOrDefaultSecuritySettingWithUser(req.Username)
-	if !ss.LoginSecurity.IPLimite {
+	if !ss.LoginSecurity.IpLimite {
 		c.log.Debugf("ip limite check disabled, don't check")
 		return nil
 	}
@@ -209,12 +209,12 @@ func (c *checker) getOrDefaultSecuritySettingWithUser(account string) *domain.Se
 		return ss
 	}
 
-	return c.getOrDefaultSecuritySettingWithDomain(u.Domain)
+	return c.getOrDefaultSecuritySettingWithDomain(u.Account, u.Domain)
 }
 
-func (c *checker) getOrDefaultSecuritySettingWithDomain(dom string) *domain.SecuritySetting {
+func (c *checker) getOrDefaultSecuritySettingWithDomain(account, domainName string) *domain.SecuritySetting {
 	ss := domain.NewDefaultSecuritySetting()
-	d, err := c.domain.DescriptionDomain(domain.NewDescribeDomainRequestWithName(dom))
+	d, err := c.domain.DescriptionDomain(pkg.GetInternalAdminTokenCtx(account), domain.NewDescribeDomainRequestWithName(domainName))
 	if err != nil {
 		c.log.Errorf("get domain error, %s, use default setting to check", err)
 		return ss

@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package keyauth.domain;
+option go_package = "github.com/infraboard/keyauth/pkg/domain";
+
+import "pkg/domain/pb/request.proto";
+import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
+
+message Domain  {
+    // 创建时间
+    int64 create_at = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"create_at" json:"create_at"'}
+        ];
+    // 更新时间
+    int64 update_at = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"update_at" json:"update_at"'}
+        ];
+    // 域拥有者
+    string owner = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"owner" json:"owner"'}
+        ];
+    // CreateDomainRequest 具体属性
+    CreateDomainRequest data = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"data" json:"data"'}
+        ];
+    // SecuritySetting 域安全设置
+    SecuritySetting security_setting = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"security_setting" json:"security_setting"'}
+        ];
+}
+
+message Set {
+    int64 total = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"total" json:"total"'}
+        ];
+    repeated Domain items = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"items" json:"items"'}
+        ];
+}

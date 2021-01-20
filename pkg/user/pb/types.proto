@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package user;
+package keyauth.user;
 option go_package = "github.com/infraboard/keyauth/pkg/user/types";
 
 enum UserType {
@@ -8,4 +8,5 @@ enum UserType {
     PRIMARY = 1;
     SERVICE = 2;
     SUPPER = 3;
+    INTERNAL = 4;
 }

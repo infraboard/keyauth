@@ -10,6 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 
 	common "github.com/infraboard/keyauth/common/types"
+	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/domain"
 	"github.com/infraboard/keyauth/pkg/policy"
 	"github.com/infraboard/keyauth/pkg/user"
@@ -53,9 +54,9 @@ func (s *service) UpdateAccountProfile(req *user.UpdateAccountRequest) (*user.Us
 	}
 
 	switch req.UpdateMode {
-	case common.PutUpdateMode:
+	case common.UpdateMode_PUT:
 		*u.Profile = *req.Profile
-	case common.PatchUpdateMode:
+	case common.UpdateMode_PATCH:
 		u.Profile.Patch(req.Profile)
 	default:
 		return nil, exception.NewBadRequest("unknown update mode: %s", req.UpdateMode)
@@ -94,7 +95,7 @@ func (s *service) changePass(account, old, new string, isReset bool) (*user.Pass
 	s.log.Debugf("query domain security setting ...")
 	// 根据域设置的规则检测密码策略
 	descDom := domain.NewDescribeDomainRequestWithName(u.Domain)
-	dom, err := s.domain.DescriptionDomain(descDom)
+	dom, err := s.domain.DescriptionDomain(pkg.GetInternalAdminTokenCtx(account), descDom)
 	if err != nil {
 		return nil, err
 	}
@@ -144,7 +145,7 @@ func (s *service) DescribeAccount(req *user.DescriptAccountRequest) (*user.User,
 		return nil, exception.NewInternalServerError("find user %s error, %s", req, err)
 	}
 
-	dom, err := s.domain.DescriptionDomain(domain.NewDescribeDomainRequestWithName(ins.Domain))
+	dom, err := s.domain.DescriptionDomain(pkg.GetInternalAdminTokenCtx(ins.Account), domain.NewDescribeDomainRequestWithName(ins.Domain))
 	if err != nil {
 		return nil, err
 	}

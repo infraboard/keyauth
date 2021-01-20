@@ -1,0 +1,135 @@
+syntax = "proto3";
+
+package keyauth.domain;
+option go_package = "github.com/infraboard/keyauth/pkg/domain";
+
+import "pkg/domain/pb/setting.proto";
+import "common/types/types.proto";
+import "github.com/infraboard/mcube/pb/page/page.proto";
+import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
+
+message CreateDomainRequest  {
+    // 公司或者组织名称
+    string name = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"name" json:"name"'}
+        ];
+    // 全称
+    string display_name = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"display_name" json:"display_name"'}
+        ];
+    // 公司LOGO图片的URL
+    string logo_path = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"logo_path" json:"logo_path"'}
+        ];
+    // 描述
+    string description = 7[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"description" json:"description"'}
+        ];
+    // 域状态, 是否需要冻结该域, 冻结时, 该域下面所有用户禁止登录
+    bool enabled = 8[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"enabled" json:"enabled"'}
+        ];
+    // 电话
+    string phone = 9[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"phone" json:"phone"'}
+        ];
+    // 规模: 50人以下, 50~100, ...
+    string size = 10[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"size" json:"size"'}
+        ];
+    // 位置: 指城市, 比如 中国,四川,成都
+    string location = 11[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"location" json:"location"'}
+        ];
+    // 地址: 比如环球中心 10F 1034
+    string address = 12[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"address" json:"address"'}
+        ];
+    // 所属行业: 比如, 互联网
+    string industry = 13[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"industry" json:"industry"'}
+        ];
+    // 传真
+    string fax = 14[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"fax" json:"fax"'}
+        ];
+    // 联系人
+    Contact contack = 15[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"contack" json:"contack"'}
+        ];
+}
+
+message UpdateDomainInfoRequest  {
+    // 更新模式
+    common.types.UpdateMode update_mode = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"update_mode" json:"update_mode"'}
+        ];
+    // CreateDomainRequest 需要修改内容
+    CreateDomainRequest data = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"data" json:"data"'}
+        ];
+}
+
+// DescribeDomainRequest 查询domain详情请求
+message DescribeDomainRequest {
+    string name = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"name" json:"name"'}
+        ];
+}
+
+// DeleteDomainRequest 删除域
+message DeleteDomainRequest {
+    string name = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"name" json:"name"'}
+        ];
+}
+
+// QueryDomainRequest 请求
+message QueryDomainRequest {
+    page.PageRequest page = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"page" json:"page"'}
+        ];
+    string name = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"name" json:"name"'}
+        ];
+}
+
+// UpdateDomainSecurityRequest todo
+message UpdateDomainSecurityRequest {
+    // 更新模式
+    common.types.UpdateMode update_mode = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"update_mode" json:"update_mode"'}
+        ];
+    // 名称
+    string name = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"name" json:"name"'}
+        ];
+    // SecuritySetting 域安全设置
+    SecuritySetting security_setting = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"security_setting" json:"security_setting"'}
+        ];    
+}
+
+// SecuritySetting 安全策略
+message SecuritySetting {
+    // 密码安全
+    PasswordSecurity password_security = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"password_security" json:"password_security"'}
+        ];
+    // 登录安全
+    LoginSecurity login_security = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"login_security" json:"login_security"'}
+        ];      
+}
+
+// 联系人
+message Contact {
+    // 姓名
+    string name = 1;
+    // 职位
+    string title = 2;
+    // 电话
+    string phone = 3;
+    // 邮箱
+    string email = 4;
+}

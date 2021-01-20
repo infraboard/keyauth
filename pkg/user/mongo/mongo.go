@@ -29,7 +29,7 @@ type service struct {
 	notifyCachPre string
 	policy        policy.Service
 	depart        department.Service
-	domain        domain.Service
+	domain        domain.DomainServiceServer
 }
 
 func (s *service) Config() error {

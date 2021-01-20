@@ -39,7 +39,7 @@ type service struct {
 
 	app      application.UserServiceServer
 	user     user.Service
-	domain   domain.Service
+	domain   domain.DomainServiceServer
 	issuer   issuer.Issuer
 	endpoint endpoint.Service
 	session  session.UserServiceServer

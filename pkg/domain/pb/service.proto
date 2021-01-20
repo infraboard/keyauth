@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package keyauth.domain;
+option go_package = "github.com/infraboard/keyauth/pkg/domain";
+
+import "pkg/domain/pb/request.proto";
+import "pkg/domain/pb/domain.proto";
+
+// DomainService is an domain service
+service DomainService {
+	rpc CreateDomain(CreateDomainRequest) returns(Domain);
+	rpc UpdateDomain(UpdateDomainInfoRequest) returns(Domain);
+	rpc DescriptionDomain(DescribeDomainRequest) returns(Domain);
+	rpc QueryDomain(QueryDomainRequest) returns(Set);
+	rpc DeleteDomain(DeleteDomainRequest) returns(Domain);
+
+	rpc UpdateDomainSecurity(UpdateDomainSecurityRequest) returns(SecuritySetting);
+}
