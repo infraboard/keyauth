@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package keyauth.policy;
+option go_package = "github.com/infraboard/keyauth/pkg/policy";
+
+enum PolicyType {
+    NULL = 0;
+    // CustomPolicy (custom) 用户自己定义的策略
+    CUSTOM = 1;
+    // BuildInPolicy (build_in) 系统内部逻辑, 不允许用户看到并修改
+    BUILD_IN = 2;
+}

@@ -1,0 +1,155 @@
+package policy
+
+import (
+	"context"
+	"fmt"
+	"hash/fnv"
+
+	"github.com/infraboard/mcube/exception"
+	"github.com/infraboard/mcube/types/ftime"
+
+	"github.com/infraboard/keyauth/pkg/namespace"
+	"github.com/infraboard/keyauth/pkg/role"
+	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/user"
+)
+
+// New 新实例
+func New(tk *token.Token, req *CreatePolicyRequest) (*Policy, error) {
+	if err := req.Validate(); err != nil {
+		return nil, err
+	}
+
+	if tk == nil {
+		return nil, exception.NewUnauthorized("token required")
+	}
+
+	p := &Policy{
+		CreateAt: ftime.Now().Timestamp(),
+		UpdateAt: ftime.Now().Timestamp(),
+		Creater:  tk.Account,
+		Domain:   tk.Domain,
+		Data:     req,
+	}
+	p.genID()
+
+	return p, nil
+}
+
+// NewDefaultPolicy todo
+func NewDefaultPolicy() *Policy {
+	return &Policy{
+		Data: NewCreatePolicyRequest(),
+	}
+}
+
+func (p *Policy) genID() {
+	h := fnv.New32a()
+	hashedStr := fmt.Sprintf("%s-%s-%s-%s",
+		p.Domain, p.Data.NamespaceId, p.Data.Account, p.Data.RoleId)
+
+	h.Write([]byte(hashedStr))
+	p.Id = fmt.Sprintf("%x", h.Sum32())
+}
+
+// CheckDependence todo
+func (req *CreatePolicyRequest) CheckDependence(ctx context.Context, u user.UserServiceServer, r role.RoleServiceServer, ns namespace.NamespaceServiceServer) (*user.User, error) {
+	account, err := u.DescribeAccount(ctx, user.NewDescriptAccountRequestWithAccount(req.Account))
+	if err != nil {
+		return nil, fmt.Errorf("check user error, %s", err)
+	}
+
+	_, err = r.DescribeRole(ctx, role.NewDescribeRoleRequestWithID(req.RoleId))
+	if err != nil {
+		return nil, fmt.Errorf("check role error, %s", err)
+	}
+
+	if !req.IsAllNamespace() {
+		_, err = ns.DescribeNamespace(ctx, namespace.NewNewDescriptNamespaceRequestWithID(req.NamespaceId))
+		if err != nil {
+			return nil, fmt.Errorf("check namespace error, %s", err)
+		}
+	}
+
+	return account, nil
+}
+
+// NewCreatePolicyRequest 请求实例
+func NewCreatePolicyRequest() *CreatePolicyRequest {
+	return &CreatePolicyRequest{}
+}
+
+// Validate 校验请求合法
+func (req *CreatePolicyRequest) Validate() error {
+	return validate.Struct(req)
+}
+
+// IsAllNamespace 是否是对账所有namespace的测试
+func (req *CreatePolicyRequest) IsAllNamespace() bool {
+	return req.NamespaceId == "*"
+}
+
+// NewPolicySet todo
+func NewPolicySet() *Set {
+	return &Set{
+		Items: []*Policy{},
+	}
+}
+
+// Users 策略包含的所有用户ID, 已去重
+func (s *Set) Users() []string {
+	users := map[string]struct{}{}
+	for i := range s.Items {
+		users[s.Items[i].Data.Account] = struct{}{}
+	}
+
+	set := make([]string, 0, len(users))
+	for k := range users {
+		set = append(set, k)
+	}
+
+	return set
+}
+
+// Add 添加
+func (s *Set) Add(e *Policy) {
+	s.Items = append(s.Items, e)
+}
+
+// Length todo
+func (s *Set) Length() int {
+	return len(s.Items)
+}
+
+// GetRoles todo
+func (s *Set) GetRoles(ctx context.Context, r role.RoleServiceServer) (*role.Set, error) {
+	set := role.NewRoleSet()
+	for i := range s.Items {
+		req := role.NewDescribeRoleRequestWithID(s.Items[i].Data.RoleId)
+		req.WithPermissions = true
+
+		ins, err := r.DescribeRole(ctx, req)
+		if err != nil {
+			return nil, err
+		}
+		set.Add(ins)
+	}
+	return set, nil
+}
+
+// UserRoles 获取用户的角色
+func (s *Set) UserRoles(account string) []string {
+	rns := []string{}
+	for i := range s.Items {
+		item := s.Items[i]
+		if item.Data.Account == account {
+			rns = append(rns, item.Data.RoleId)
+		}
+	}
+
+	if len(rns) == 0 {
+		rns = append(rns, "vistor")
+	}
+
+	return rns
+}

@@ -28,7 +28,7 @@ var (
 	// Domain 服务
 	Domain domain.DomainServiceServer
 	// User 用户服务
-	User user.Service
+	User user.UserServiceServer
 	// ApplicationUser 应用
 	ApplicationUser application.UserServiceServer
 	// ApplicationAdmin 应用
@@ -36,17 +36,17 @@ var (
 	// Token 令牌服务
 	Token token.TokenServiceServer
 	// Micro todo
-	Micro micro.Service
+	Micro micro.MicroServiceServer
 	// Role 角色服务
-	Role role.Service
+	Role role.RoleServiceServer
 	// Endpoint 端点服务
 	Endpoint endpoint.Service
 	// Policy 厕所里
-	Policy policy.Service
+	Policy policy.PolicyServiceServer
 	// Department 部分服务
-	Department department.Service
+	Department department.DepartmentServiceServer
 	// Namespace todo
-	Namespace namespace.Service
+	Namespace namespace.NamespaceServiceServer
 	// Permission 权限服务
 	Permission permission.Service
 	// Counter 自增ID服务
@@ -66,7 +66,7 @@ var (
 	// System 系统服务
 	System system.Service
 	// VerifyCode 校验码服务
-	VerifyCode verifycode.Service
+	VerifyCode verifycode.VerifyCodeServiceServer
 )
 
 var (
@@ -98,7 +98,7 @@ func RegistryService(name string, svr Service) {
 		}
 		Domain = value
 		addService(name, svr)
-	case user.Service:
+	case user.UserServiceServer:
 		if User != nil {
 			registryError(name)
 		}
@@ -122,13 +122,13 @@ func RegistryService(name string, svr Service) {
 		}
 		Token = value
 		addService(name, svr)
-	case micro.Service:
+	case micro.MicroServiceServer:
 		if Micro != nil {
 			registryError(name)
 		}
 		Micro = value
 		addService(name, svr)
-	case role.Service:
+	case role.RoleServiceServer:
 		if Role != nil {
 			registryError(name)
 		}
@@ -140,19 +140,19 @@ func RegistryService(name string, svr Service) {
 		}
 		Endpoint = value
 		addService(name, svr)
-	case policy.Service:
+	case policy.PolicyServiceServer:
 		if Policy != nil {
 			registryError(name)
 		}
 		Policy = value
 		addService(name, svr)
-	case department.Service:
+	case department.DepartmentServiceServer:
 		if Department != nil {
 			registryError(name)
 		}
 		Department = value
 		addService(name, svr)
-	case namespace.Service:
+	case namespace.NamespaceServiceServer:
 		if Namespace != nil {
 			registryError(name)
 		}
@@ -212,7 +212,7 @@ func RegistryService(name string, svr Service) {
 		}
 		System = value
 		addService(name, svr)
-	case verifycode.Service:
+	case verifycode.VerifyCodeServiceServer:
 		if VerifyCode != nil {
 			registryError(name)
 		}

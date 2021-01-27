@@ -2,3 +2,169 @@ syntax = "proto3";
 
 package keyauth.user;
 option go_package = "github.com/infraboard/keyauth/pkg/user";
+
+import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
+import "github.com/infraboard/mcube/pb/page/page.proto";
+import "pkg/user/pb/enum.proto";
+import "pkg/user/pb/types.proto";
+import "common/types/types.proto";
+
+// CreateAccountRequest 创建用户请求
+message CreateAccountRequest {
+    // 数据
+    Profile profile = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"profile" json:"profile"'}
+        ];
+    // 创建方式
+    CreateType create_type = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"create_type" json:"create_type"'}
+        ];
+    // 用户类型
+    UserType user_type = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"create_type" json:"user_type"'}
+        ];
+    // 密码相关信息
+    string password = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"password" validate:"required,lte=80"'}
+        ];
+}
+
+// Profile todo
+message Profile {
+    // 用户所属部门
+    string department_id = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"department_id" json:"department_id" validate:"lte=200"'}
+        ];
+    // 用户账号名称
+    string account = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"_id" json:"account" validate:"required,lte=60"'}
+        ];
+    // 手机号码, 用户可以通过手机进行注册和密码找回, 还可以通过手机号进行登录
+    string phone = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"phone" json:"phone" validate:"lte=30"'}
+        ];
+    // 邮箱, 用户可以通过邮箱进行注册和照明密码
+    string email = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"email" json:"email" validate:"lte=30"'}
+        ];
+    // 用户住址
+    string address = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"address" json:"address" validate:"lte=120"'}
+        ];
+    // 用户真实姓名
+    string real_name = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"real_name" json:"real_name" validate:"lte=10"'}
+        ];
+    // 用户昵称, 用于在界面进行展示
+    string nick_name = 7[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"nick_name" json:"nick_name" validate:"lte=30"'}
+        ];
+    // 性别
+    Gender gender = 8[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"gender" json:"gender" validate:"lte=10"'}
+        ];
+    // 头像
+    string avatar = 9[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"avatar" json:"avatar" validate:"lte=300"'}
+        ];
+    // 用户使用的语言
+    string language = 10[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"language" json:"language" validate:"lte=40"'}
+        ];
+    // 用户所在的城市
+    string city = 11[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"city" json:"city" validate:"lte=40"'}
+        ];
+    // 用户所在的省
+    string province = 12[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"province" json:"province" validate:"lte=40"'}
+        ];
+    // 用户多久未登录时(天), 冻结改用户, 防止僵尸用户的账号被利用'
+    int32 expires_days = 13[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"expires_days" json:"expires_days"'}
+        ];
+    // 用户是否初始化
+    bool is_initialized = 14[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"is_initialized" json:"is_initialized"'}
+        ];                 
+}
+
+// DescribeAccountRequest 查询用户详情请求
+message DescribeAccountRequest {
+    // 用户账号名称
+    string account = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"account" validate:"required,lte=60"'}
+        ];
+}
+
+// QueryAccountRequest 获取子账号列表
+message QueryAccountRequest {
+    page.PageRequest page = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"page"'}
+        ];
+    repeated string accounts = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"accounts"'}
+        ];
+    UserType user_type = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"user_type"'}
+        ];
+    string namespace_id = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"namespace_id"'}
+        ];
+    bool with_department = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"with_department"'}
+        ];
+    string department_id = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"department_id"'}
+        ];
+    bool with_all_sub = 7[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"with_all_sub"'}
+        ];
+    bool skip_items = 8[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"skip_items"'}
+        ];
+    string keywords = 9[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"keywords"'}
+        ];
+}
+
+// UpdateAccountRequest todo
+message UpdateAccountRequest {
+    // 更新模式
+    common.types.UpdateMode update_mode = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"update_mode" json:"update_mode"'}
+        ];
+	Profile profile = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"profile" json:"profile"'}
+        ];
+}
+
+// UpdatePasswordRequest todo
+message UpdatePasswordRequest {
+    string account = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"account"'}
+        ];
+    string old_pass = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"old_pass"'}
+        ];
+    string new_pass = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"new_pass"'}
+        ];
+}
+
+// BlockAccountRequest 冻结用户
+message BlockAccountRequest {
+    string account = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"account"'}
+        ];
+    string reason = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"reason"'}
+        ];
+}
+
+// DeleteAccountRequest 删除账户
+message DeleteAccountRequest {
+    string account = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"account"'}
+        ];
+}

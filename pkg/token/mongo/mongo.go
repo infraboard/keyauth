@@ -38,13 +38,13 @@ type service struct {
 	notifyCachPre string
 
 	app      application.UserServiceServer
-	user     user.Service
+	user     user.UserServiceServer
 	domain   domain.DomainServiceServer
 	issuer   issuer.Issuer
 	endpoint endpoint.Service
 	session  session.UserServiceServer
 	checker  security.Checker
-	code     verifycode.Service
+	code     verifycode.VerifyCodeServiceServer
 }
 
 func (s *service) Config() error {

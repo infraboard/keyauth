@@ -27,10 +27,12 @@ type service struct {
 	col           *mongo.Collection
 	enableCache   bool
 	notifyCachPre string
-	depart        department.Service
-	policy        policy.Service
-	role          role.Service
+	depart        department.DepartmentServiceServer
+	policy        policy.PolicyServiceServer
+	role          role.RoleServiceServer
 	log           logger.Logger
+
+	namespace.UnimplementedNamespaceServiceServer
 }
 
 func (s *service) Config() error {
@@ -76,6 +78,6 @@ func (s *service) Config() error {
 }
 
 func init() {
-	var _ namespace.Service = Service
+	var _ namespace.NamespaceServiceServer = Service
 	pkg.RegistryService("namespace", Service)
 }

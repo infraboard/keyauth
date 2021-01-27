@@ -60,7 +60,7 @@ func (s *service) QueryEndpoints(req *endpoint.QueryEndpointRequest) (
 	return set, nil
 }
 
-func (s *service) Registry(req *endpoint.RegistryRequest) error {
+func (s *service) Registry(ctx context.Context, req *endpoint.RegistryRequest) error {
 	if err := req.Validate(); err != nil {
 		return exception.NewBadRequest(err.Error())
 	}
@@ -68,13 +68,13 @@ func (s *service) Registry(req *endpoint.RegistryRequest) error {
 	tk := req.GetToken()
 
 	// 查询该服务
-	svr, err := s.micro.DescribeService(micro.NewDescribeServiceRequestWithAccount(tk.Account))
+	svr, err := s.micro.DescribeService(ctx, micro.NewDescribeServiceRequestWithAccount(tk.Account))
 	if err != nil {
 		return err
 	}
 
 	// 生产该服务的Endpoint
-	endpoints := req.Endpoints(svr.ID)
+	endpoints := req.Endpoints(svr.Id)
 
 	// 更新已有的记录
 	news := make([]interface{}, 0, len(endpoints))

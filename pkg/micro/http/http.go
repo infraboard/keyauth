@@ -16,7 +16,7 @@ var (
 )
 
 type handler struct {
-	service micro.Service
+	service micro.MicroServiceServer
 	token   token.TokenServiceServer
 }
 

@@ -7,13 +7,13 @@ import (
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 
-	"github.com/infraboard/keyauth/pkg"
+	"github.com/infraboard/keyauth/common/session"
 	"github.com/infraboard/keyauth/pkg/provider"
 	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
 func (h *handler) List(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromHTTPRequest(r)
+	tk, err := session.GetTokenFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -35,7 +35,7 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 
 // CreateApplication 创建主账号
 func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromHTTPRequest(r)
+	tk, err := session.GetTokenFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -65,7 +65,7 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromHTTPRequest(r)
+	tk, err := session.GetTokenFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -84,7 +84,7 @@ func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) Check(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromHTTPRequest(r)
+	tk, err := session.GetTokenFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return

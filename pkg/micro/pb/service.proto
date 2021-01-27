@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package keyauth.micro;
+option go_package = "github.com/infraboard/keyauth/pkg/micro";
+
+import "pkg/token/pb/token.proto";
+import "pkg/micro/pb/request.proto";
+import "pkg/micro/pb/micro.proto";
+
+// MicroService 服务
+service MicroService {
+	rpc CreateService(CreateMicroRequest) returns(Micro);
+	rpc QueryService(QueryMicroRequest) returns(Set);
+	rpc DescribeService(DescribeMicroRequest) returns(Micro);
+	rpc DeleteService(DeleteMicroRequest) returns(Micro);
+	rpc RefreshServiceToken(DescribeMicroRequest) returns(token.Token);
+}

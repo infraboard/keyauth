@@ -7,14 +7,14 @@ import (
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 
-	"github.com/infraboard/keyauth/pkg"
+	"github.com/infraboard/keyauth/common/session"
 	"github.com/infraboard/keyauth/pkg/domain"
 )
 
 func (h *handler) ListDomains(w http.ResponseWriter, r *http.Request) {
 	page := request.NewPageRequestFromHTTP(r)
 	req := domain.NewQueryDomainRequest(page)
-	ctx, err := pkg.GetTokenCtxFromHTTPRequest(r)
+	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -35,7 +35,7 @@ func (h *handler) GetDomain(w http.ResponseWriter, r *http.Request) {
 	req := domain.NewDescribeDomainRequest()
 	req.Name = rctx.PS.ByName("name")
 
-	ctx, err := pkg.GetTokenCtxFromHTTPRequest(r)
+	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -58,7 +58,7 @@ func (h *handler) CreateDomain(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx, err := pkg.GetTokenCtxFromHTTPRequest(r)
+	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -75,7 +75,7 @@ func (h *handler) CreateDomain(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) PutDomain(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetTokenCtxFromHTTPRequest(r)
+	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -104,7 +104,7 @@ func (h *handler) PutDomain(w http.ResponseWriter, r *http.Request) {
 
 func (h *handler) PatchDomain(w http.ResponseWriter, r *http.Request) {
 	rctx := httpcontext.GetContext(r)
-	ctx, err := pkg.GetTokenCtxFromHTTPRequest(r)
+	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -132,7 +132,7 @@ func (h *handler) PatchDomain(w http.ResponseWriter, r *http.Request) {
 
 func (h *handler) DeleteDomain(w http.ResponseWriter, r *http.Request) {
 	rctx := httpcontext.GetContext(r)
-	ctx, err := pkg.GetTokenCtxFromHTTPRequest(r)
+	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -150,7 +150,7 @@ func (h *handler) DeleteDomain(w http.ResponseWriter, r *http.Request) {
 
 func (h *handler) UpdateDomainSecurity(w http.ResponseWriter, r *http.Request) {
 	rctx := httpcontext.GetContext(r)
-	ctx, err := pkg.GetTokenCtxFromHTTPRequest(r)
+	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return

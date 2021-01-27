@@ -8,7 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"github.com/infraboard/keyauth/pkg"
+	"github.com/infraboard/keyauth/common/session"
 	"github.com/infraboard/keyauth/pkg/application"
 )
 
@@ -20,7 +20,7 @@ type userimpl struct {
 func (s *userimpl) CreateUserApplication(ctx context.Context, req *application.CreateApplicatonRequest) (
 	*application.Application, error) {
 
-	account := pkg.GetTokenFromContext(ctx).Account
+	account := session.GetTokenFromContext(ctx).Account
 	app, err := application.NewUserApplicartion(account, req)
 	if err != nil {
 		return nil, err

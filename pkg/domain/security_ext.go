@@ -57,7 +57,7 @@ func (p *PasswordSecurity) IsPasswordExpired(pass *user.Password) error {
 		return nil
 	}
 
-	delta := p.expiredDelta(pass.UpdateAt.T())
+	delta := p.expiredDelta(time.Unix(pass.UpdateAt/1000, 0))
 	if delta > 0 {
 		return exception.NewPasswordExired("password expired %d days", delta)
 	}
@@ -73,7 +73,7 @@ func (p *PasswordSecurity) SetPasswordNeedReset(pass *user.Password) {
 	}
 
 	// 计算密码是否过期
-	delta := p.expiredDelta(pass.UpdateAt.T())
+	delta := p.expiredDelta(time.Unix(pass.UpdateAt/1000, 0))
 	if delta > 0 {
 		pass.SetExpired()
 		return

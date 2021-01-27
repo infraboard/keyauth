@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+package keyauth.namespace;
+option go_package = "github.com/infraboard/keyauth/pkg/namespace";
+
+import "pkg/department/pb/department.proto";
+import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
+import "github.com/infraboard/mcube/pb/page/page.proto";
+                               
+// CreateNamespaceRequest 创建项目请求
+message CreateNamespaceRequest {
+    // 所属部门
+    string department_id = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"department_id" json:"department_id" validate:"required,lte=80"'}
+        ];
+    // 项目名称
+    string name = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"name" json:"name" validate:"required,lte=80"'}
+        ];
+    // 项目描述图片
+    string picture =3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"picture" json:"picture,omitempty"'}
+        ];
+    // 禁用项目, 该项目所有人暂时都无法访问
+    bool enabled = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"enabled" json:"enabled,omitempty"'}
+        ];
+    // 项目所有者, PMO
+    string owner = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"owner" json:"owner,omitempty"'}
+        ];
+    // 项目描述
+    string description = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"description" json:"description,omitempty"'}
+        ];
+    // 补充的部门
+    department.Department department = 7[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"department,omitempty"'}
+        ];
+}
+
+// QueryNamespaceRequest 查询应用列表
+message QueryNamespaceRequest {
+    page.PageRequest page = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"page"'}
+        ];
+    string department_id = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"department_id"'}
+        ];
+    bool with_sub_department = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"with_sub_department"'}
+        ];
+    bool with_department = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"with_department"'}
+        ];
+}
+
+// DescriptNamespaceRequest 查询应用详情
+message DescriptNamespaceRequest {
+    string id = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"id"'}
+        ];
+    bool with_department = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"with_department"'}
+        ];
+}
+
+
+// DeleteNamespaceRequest todo
+message DeleteNamespaceRequest {
+    string id = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"id"'}
+        ];
+}

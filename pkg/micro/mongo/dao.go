@@ -11,10 +11,10 @@ import (
 )
 
 func (s *service) update(ins *micro.Micro) error {
-	ins.UpdateAt = ftime.Now()
-	_, err := s.scol.UpdateOne(context.TODO(), bson.M{"_id": ins.ID}, bson.M{"$set": ins})
+	ins.UpdateAt = ftime.Now().Timestamp()
+	_, err := s.scol.UpdateOne(context.TODO(), bson.M{"_id": ins.Id}, bson.M{"$set": ins})
 	if err != nil {
-		return exception.NewInternalServerError("update service(%s) error, %s", ins.Name, err)
+		return exception.NewInternalServerError("update service(%s) error, %s", ins.Data.Name, err)
 	}
 
 	return nil

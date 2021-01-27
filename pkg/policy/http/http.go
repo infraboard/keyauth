@@ -15,7 +15,7 @@ var (
 )
 
 type handler struct {
-	service policy.Service
+	service policy.PolicyServiceServer
 }
 
 // Registry 注册HTTP服务路由

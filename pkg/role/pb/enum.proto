@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package keyauth.role;
+option go_package = "github.com/infraboard/keyauth/pkg/role";
+
+// RoleType 角色
+enum RoleType {
+    NULL = 0;
+    // 内建角色, 系统初始时创建
+    BUILDIN = 1;
+    // 管理员创建的一些角色, 全局可用
+    GLOBAL = 2;
+    // 用户自定义的角色, 仅域内可见
+    CUSTOM = 3;
+}
+
+// EffectType 授权效力包括两种：允许（Allow）和拒绝（Deny）
+enum EffectType {
+    // 允许访问
+    ALLOW = 0;
+    // 拒绝访问
+    DENY = 1;
+}

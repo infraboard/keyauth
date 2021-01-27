@@ -29,9 +29,11 @@ type service struct {
 	enableCache   bool
 	notifyCachPre string
 	counter       counter.Service
-	user          user.Service
-	role          role.Service
+	user          user.UserServiceServer
+	role          role.RoleServiceServer
 	log           logger.Logger
+
+	department.UnimplementedDepartmentServiceServer
 }
 
 func (s *service) Config() error {
@@ -87,6 +89,6 @@ func (s *service) Config() error {
 }
 
 func init() {
-	var _ department.Service = Service
+	var _ department.DepartmentServiceServer = Service
 	pkg.RegistryService("department", Service)
 }

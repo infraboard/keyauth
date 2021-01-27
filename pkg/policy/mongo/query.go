@@ -3,11 +3,12 @@ package mongo
 import (
 	"fmt"
 
+	"github.com/infraboard/mcube/exception"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/infraboard/keyauth/pkg/policy"
-	"github.com/infraboard/mcube/exception"
+	"github.com/infraboard/keyauth/pkg/token"
 )
 
 func newDescribePolicyRequest(req *policy.DescribePolicyRequest) (*describePolicyRequest, error) {
@@ -22,33 +23,37 @@ type describePolicyRequest struct {
 }
 
 func (req *describePolicyRequest) String() string {
-	return fmt.Sprintf("policy: %s", req.ID)
+	return fmt.Sprintf("policy: %s", req.Id)
 }
 
 func (req *describePolicyRequest) FindFilter() bson.M {
 	filter := bson.M{}
-	if req.ID != "" {
-		filter["id"] = req.ID
+	if req.Id != "" {
+		filter["id"] = req.Id
 	}
 
 	return filter
 }
 
-func newQueryPolicyRequest(req *policy.QueryPolicyRequest) (*queryPolicyRequest, error) {
+func newQueryPolicyRequest(tk *token.Token, req *policy.QueryPolicyRequest) (*queryPolicyRequest, error) {
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest(err.Error())
 	}
 
-	return &queryPolicyRequest{req}, nil
+	return &queryPolicyRequest{
+		tk:                 tk,
+		QueryPolicyRequest: req,
+	}, nil
 }
 
 type queryPolicyRequest struct {
+	tk *token.Token
 	*policy.QueryPolicyRequest
 }
 
 func (r *queryPolicyRequest) FindOptions() *options.FindOptions {
-	pageSize := int64(r.PageSize)
-	skip := int64(r.PageSize) * int64(r.PageNumber-1)
+	pageSize := int64(r.Page.PageSize)
+	skip := int64(r.Page.PageSize) * int64(r.Page.PageNumber-1)
 
 	opt := &options.FindOptions{
 		Sort:  bson.D{{Key: "create_at", Value: -1}},
@@ -60,56 +65,58 @@ func (r *queryPolicyRequest) FindOptions() *options.FindOptions {
 }
 
 func (r *queryPolicyRequest) FindFilter() bson.M {
-	tk := r.GetToken()
+	tk := r.tk
 
 	filter := bson.M{}
 	filter["domain"] = tk.Domain
 
-	if r.NamespaceID != "" {
-		filter["namespace_id"] = r.NamespaceID
+	if r.NamespaceId != "" {
+		filter["namespace_id"] = r.NamespaceId
 	}
-	if r.RoleID != "" {
-		filter["role_id"] = r.RoleID
+	if r.RoleId != "" {
+		filter["role_id"] = r.RoleId
 	}
 	if r.Account != "" {
 		filter["account"] = r.Account
 	}
-	if r.Type != nil {
+	if r.Type != policy.PolicyType_NULL {
 		filter["type"] = r.Type
 	}
 
 	return filter
 }
 
-func newDeletePolicyRequest(req *policy.DeletePolicyRequest) (*deletePolicyRequest, error) {
+func newDeletePolicyRequest(tk *token.Token, req *policy.DeletePolicyRequest) (*deletePolicyRequest, error) {
 	return &deletePolicyRequest{
+		tk:                  tk,
 		DeletePolicyRequest: req,
 	}, nil
 }
 
 type deletePolicyRequest struct {
+	tk *token.Token
 	*policy.DeletePolicyRequest
 }
 
 func (r *deletePolicyRequest) FindFilter() bson.M {
-	tk := r.GetToken()
+	tk := r.tk
 
 	filter := bson.M{}
 	filter["domain"] = tk.Domain
 
-	if r.ID != "" {
-		filter["_id"] = r.ID
+	if r.Id != "" {
+		filter["_id"] = r.Id
 	}
 	if r.Account != "" {
 		filter["account"] = r.Account
 	}
-	if r.RoleID != "" {
-		filter["role_id"] = r.RoleID
+	if r.RoleId != "" {
+		filter["role_id"] = r.RoleId
 	}
-	if r.NamespaceID != "" {
-		filter["namespace_id"] = r.NamespaceID
+	if r.NamespaceId != "" {
+		filter["namespace_id"] = r.NamespaceId
 	}
-	if r.Type != nil {
+	if r.Type != policy.PolicyType_NULL {
 		filter["type"] = r.Type
 	}
 

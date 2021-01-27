@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package keyauth.role;
+option go_package = "github.com/infraboard/keyauth/pkg/role";
+
+import "pkg/role/pb/request.proto";
+import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
+
+// Role is rbac's role
+message Role {
+    // 角色ID
+    string id = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"_id" json:"id"'}
+        ];
+    // 创建时间`
+    int64 create_at = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"create_at" json:"create_at,omitempty"'}
+        ];
+    // 更新时间
+    int64 update_at = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"update_at" json:"update_at,omitempty"'}
+        ];
+    // 角色所属域
+    string domain = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"domain" json:"domain,omitempty"'}
+        ];
+    // 创建人
+    string creater = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"creater" json:"creater"'}
+        ];
+    CreateRoleRequest data = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"data" json:"data"'}
+        ];
+}
+
+message Set {
+    int64 total = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"total" json:"total"'}
+        ];
+    repeated Role items = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"items" json:"items"'}
+        ];
+}

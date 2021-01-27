@@ -7,21 +7,19 @@ import (
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 
-	"github.com/infraboard/keyauth/pkg"
+	"github.com/infraboard/keyauth/common/session"
 	"github.com/infraboard/keyauth/pkg/namespace"
 )
 
 func (h *handler) List(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromHTTPRequest(r)
+	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
 
 	req := namespace.NewQueryNamespaceRequestFromHTTP(r)
-	req.WithToken(tk)
-
-	apps, err := h.service.QueryNamespace(req)
+	apps, err := h.service.QueryNamespace(ctx, req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -32,16 +30,14 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) ListSelfNamespace(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromHTTPRequest(r)
+	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
 
 	req := namespace.NewQueryNamespaceRequestFromHTTP(r)
-	req.WithToken(tk)
-
-	apps, err := h.service.QueryNamespace(req)
+	apps, err := h.service.QueryNamespace(ctx, req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -53,7 +49,7 @@ func (h *handler) ListSelfNamespace(w http.ResponseWriter, r *http.Request) {
 
 // CreateApplication 创建主账号
 func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromHTTPRequest(r)
+	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -64,9 +60,8 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 		response.Failed(w, err)
 		return
 	}
-	req.WithToken(tk)
 
-	d, err := h.service.CreateNamespace(req)
+	d, err := h.service.CreateNamespace(ctx, req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -77,13 +72,19 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
+	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
 	rctx := context.GetContext(r)
 
 	qs := r.URL.Query()
 	req := namespace.NewDescriptNamespaceRequest()
-	req.ID = rctx.PS.ByName("id")
+	req.Id = rctx.PS.ByName("id")
 	req.WithDepartment = qs.Get("with_department") == "true"
-	d, err := h.service.DescribeNamespace(req)
+	d, err := h.service.DescribeNamespace(ctx, req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -94,7 +95,7 @@ func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) Delete(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromHTTPRequest(r)
+	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -103,8 +104,7 @@ func (h *handler) Delete(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
 
 	req := namespace.NewDeleteNamespaceRequestWithID(rctx.PS.ByName("id"))
-	req.WithToken(tk)
-	if err := h.service.DeleteNamespace(req); err != nil {
+	if _, err := h.service.DeleteNamespace(ctx, req); err != nil {
 		response.Failed(w, err)
 		return
 	}

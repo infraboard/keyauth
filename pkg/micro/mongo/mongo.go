@@ -33,12 +33,14 @@ type service struct {
 	notifyCachPre string
 
 	token    token.TokenServiceServer
-	user     user.Service
+	user     user.UserServiceServer
 	app      application.AdminServiceServer
-	policy   policy.Service
-	role     role.Service
+	policy   policy.PolicyServiceServer
+	role     role.RoleServiceServer
 	endpoint endpoint.Service
 	log      logger.Logger
+
+	micro.UnimplementedMicroServiceServer
 }
 
 func (s *service) Config() error {
@@ -104,6 +106,6 @@ func (s *service) configService() error {
 }
 
 func init() {
-	var _ micro.Service = Service
+	var _ micro.MicroServiceServer = Service
 	pkg.RegistryService("micro", Service)
 }

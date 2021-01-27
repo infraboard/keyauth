@@ -7,12 +7,12 @@ import (
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/response"
 
-	"github.com/infraboard/keyauth/pkg"
+	tool "github.com/infraboard/keyauth/common/session"
 	"github.com/infraboard/keyauth/pkg/session"
 )
 
 func (h *handler) QueryLoginLog(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromHTTPRequest(r)
+	tk, err := tool.GetTokenFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -24,7 +24,7 @@ func (h *handler) QueryLoginLog(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx := pkg.WithTokenContext(context.Background(), tk)
+	ctx := tool.WithTokenContext(context.Background(), tk)
 	set, err := h.service.QuerySession(ctx, req)
 	if err != nil {
 		response.Failed(w, err)

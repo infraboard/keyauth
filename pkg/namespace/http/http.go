@@ -15,7 +15,7 @@ var (
 )
 
 type handler struct {
-	service namespace.Service
+	service namespace.NamespaceServiceServer
 }
 
 // Registry 注册HTTP服务路由

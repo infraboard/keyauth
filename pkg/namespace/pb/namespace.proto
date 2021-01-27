@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package keyauth.namespace;
+option go_package = "github.com/infraboard/keyauth/pkg/namespace";
+
+import "pkg/namespace/pb/request.proto";
+import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
+
+// Namespace tenant resource container
+message Namespace {
+    // 项目唯一ID
+    string id = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"_id" json:"id"'}
+        ];
+    // 所属域ID
+    string domain = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"domain" json:"domain"'}
+        ];
+    // 创建人
+    string creater = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"creater" json:"creater"'}
+        ];
+    // 创建时间
+    int64 create_at = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"create_at" json:"create_at"'}
+        ];
+    // 项目修改时间
+    int64 update_at = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"update_at" json:"update_at"'}
+        ];
+    CreateNamespaceRequest data = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"data" json:"data"'}
+        ];
+}
+
+
+message Set {
+    int64 total = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"total" json:"total"'}
+        ];
+    repeated Namespace items = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"items" json:"items"'}
+        ];
+}

@@ -8,6 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
+	"github.com/infraboard/keyauth/common/session"
 	"github.com/infraboard/keyauth/pkg/application"
 	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/micro"
@@ -18,25 +19,25 @@ import (
 	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
-func (s *service) CreateService(req *micro.CreateMicroRequest) (
+func (s *service) CreateService(ctx context.Context, req *micro.CreateMicroRequest) (
 	*micro.Micro, error) {
 	ins, err := micro.New(req)
 	if err != nil {
 		return nil, err
 	}
 
-	tk := req.GetToken()
+	tk := session.GetTokenFromContext(ctx)
 	if tk == nil {
 		return nil, exception.NewPermissionDeny("token required")
 	}
 
-	user, pass := ins.Name, xid.New().String()
+	user, pass := ins.Data.Name, xid.New().String()
 	// 创建服务用户
-	account, err := s.createServiceAccount(tk, user, pass)
+	account, err := s.createServiceAccount(ctx, user, pass)
 	if err != nil {
 		return nil, exception.NewInternalServerError("create service account error, %s", err)
 	}
-	ins.Account = account.Account
+	ins.Account = account.Data.Profile.Account
 
 	// 使用用户创建服务访问Token
 	svrTK, err := s.createServiceToken(tk.GetUserAgent(), tk.GetRemoteIP(), user, pass)
@@ -49,9 +50,9 @@ func (s *service) CreateService(req *micro.CreateMicroRequest) (
 	ins.Domain = svrTK.Domain
 
 	// 为服务用户添加策略
-	_, err = s.createPolicy(tk, ins.Account, req.RoleID)
+	_, err = s.createPolicy(ctx, ins.Account, req.RoleId)
 	if err != nil {
-		s.log.Errorf("create service: %s policy error, %s", ins.Name, err)
+		s.log.Errorf("create service: %s policy error, %s", ins.Data.Name, err)
 	}
 
 	if _, err := s.scol.InsertOne(context.TODO(), ins); err != nil {
@@ -60,12 +61,12 @@ func (s *service) CreateService(req *micro.CreateMicroRequest) (
 	return ins, nil
 }
 
-func (s *service) createServiceAccount(tk *token.Token, name, pass string) (*user.User, error) {
+func (s *service) createServiceAccount(ctx context.Context, name, pass string) (*user.User, error) {
 	req := user.NewCreateUserRequest()
-	req.WithToken(tk)
-	req.Account = name
+	req.Profile.Account = name
 	req.Password = pass
-	return s.user.CreateAccount(types.UserType_SERVICE, req)
+	req.UserType = types.UserType_SERVICE
+	return s.user.CreateAccount(ctx, req)
 }
 
 func (s *service) createServiceToken(userAgent, remoteIP, user, pass string) (*token.Token, error) {
@@ -95,24 +96,22 @@ func (s *service) revolkServiceToken(accessToken string) error {
 	return err
 }
 
-func (s *service) createPolicy(tk *token.Token, account, roleID string) (*policy.Policy, error) {
+func (s *service) createPolicy(ctx context.Context, account, roleID string) (*policy.Policy, error) {
 	if roleID == "" {
 		descR := role.NewDescribeRoleRequestWithName(role.VisitorRoleName)
-		descR.WithToken(tk)
-		adminR, err := s.role.DescribeRole(descR)
+		adminR, err := s.role.DescribeRole(ctx, descR)
 		if err != nil {
 			return nil, err
 		}
-		roleID = adminR.ID
+		roleID = adminR.Id
 	}
 
 	req := policy.NewCreatePolicyRequest()
-	req.WithToken(tk)
 	req.Account = account
-	req.NamespaceID = "*"
-	req.RoleID = roleID
-	req.Type = policy.BuildInPolicy
-	return s.policy.CreatePolicy(req)
+	req.NamespaceId = "*"
+	req.RoleId = roleID
+	req.Type = policy.PolicyType_BUILD_IN
+	return s.policy.CreatePolicy(ctx, req)
 }
 
 func (s *service) refreshServiceToken(at, rt string) (*token.Token, error) {
@@ -129,7 +128,7 @@ func (s *service) refreshServiceToken(at, rt string) (*token.Token, error) {
 	return s.token.IssueToken(nil, req)
 }
 
-func (s *service) QueryService(req *micro.QueryMicroRequest) (*micro.Set, error) {
+func (s *service) QueryService(ctx context.Context, req *micro.QueryMicroRequest) (*micro.Set, error) {
 	r := newPaggingQuery(req)
 	resp, err := s.scol.Find(context.TODO(), r.FindFilter(), r.FindOptions())
 
@@ -137,7 +136,7 @@ func (s *service) QueryService(req *micro.QueryMicroRequest) (*micro.Set, error)
 		return nil, exception.NewInternalServerError("find service error, error is %s", err)
 	}
 
-	set := micro.NewMicroSet(req.PageRequest)
+	set := micro.NewMicroSet()
 	// 循环
 	for resp.Next(context.TODO()) {
 		ins := new(micro.Micro)
@@ -158,7 +157,7 @@ func (s *service) QueryService(req *micro.QueryMicroRequest) (*micro.Set, error)
 	return set, nil
 }
 
-func (s *service) DescribeService(req *micro.DescribeMicroRequest) (
+func (s *service) DescribeService(ctx context.Context, req *micro.DescribeMicroRequest) (
 	*micro.Micro, error) {
 	r, err := newDescribeQuery(req)
 	if err != nil {
@@ -176,9 +175,9 @@ func (s *service) DescribeService(req *micro.DescribeMicroRequest) (
 	return ins, nil
 }
 
-func (s *service) RefreshServiceToken(req *micro.DescribeMicroRequest) (
+func (s *service) RefreshServiceToken(ctx context.Context, req *micro.DescribeMicroRequest) (
 	*token.Token, error) {
-	ins, err := s.DescribeService(req)
+	ins, err := s.DescribeService(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -199,38 +198,37 @@ func (s *service) RefreshServiceToken(req *micro.DescribeMicroRequest) (
 	return tk, nil
 }
 
-func (s *service) DeleteService(req *micro.DeleteMicroRequest) error {
+func (s *service) DeleteService(ctx context.Context, req *micro.DeleteMicroRequest) (*micro.Micro, error) {
 	if err := req.Validate(); err != nil {
-		return exception.NewBadRequest("validate delete service error, %s", err)
+		return nil, exception.NewBadRequest("validate delete service error, %s", err)
 	}
 
 	describeReq := micro.NewDescribeServiceRequest()
-	describeReq.ID = req.ID
-	svr, err := s.DescribeService(describeReq)
+	describeReq.Id = req.Id
+	svr, err := s.DescribeService(ctx, describeReq)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	if micro.IsSystemMicro(svr.Name) {
-		return exception.NewBadRequest("service %s is system service, your can't delete", svr.Name)
+	if micro.Type.IsIn(micro.Type_BUILD_IN) {
+		return nil, exception.NewBadRequest("service %s is system service, your can't delete", svr.Data.Name)
 	}
 
 	// 清除服务实体
-	_, err = s.scol.DeleteOne(context.TODO(), bson.M{"_id": req.ID})
+	_, err = s.scol.DeleteOne(context.TODO(), bson.M{"_id": req.Id})
 	if err != nil {
-		return exception.NewInternalServerError("delete service(%s) error, %s", req.ID, err)
+		return nil, exception.NewInternalServerError("delete service(%s) error, %s", req.Id, err)
 	}
 
 	// 删除服务默认策略
 	dpReq := policy.NewDeletePolicyRequestWithAccount(svr.Account)
-	dpReq.WithTokenGetter(req)
-	err = s.policy.DeletePolicy(dpReq)
+	_, err = s.policy.DeletePolicy(ctx, dpReq)
 	if err != nil {
 		s.log.Errorf("delete service policy error, %s", err)
 	}
 
 	// 删除服务注册的Endpoint
-	deReq := endpoint.NewDeleteEndpointRequestWithServiceID(svr.ID)
+	deReq := endpoint.NewDeleteEndpointRequestWithServiceID(svr.Id)
 	err = s.endpoint.DeleteEndpoint(deReq)
 	if err != nil {
 		s.log.Errorf("delete service endpoint error, %s", err)
@@ -242,5 +240,5 @@ func (s *service) DeleteService(req *micro.DeleteMicroRequest) error {
 		s.log.Errorf("revolk service token error, %s", err)
 	}
 
-	return nil
+	return svr, nil
 }

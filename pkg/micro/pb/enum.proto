@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package keyauth.micro;
+option go_package = "github.com/infraboard/keyauth/pkg/micro";
+
+enum Type {
+    NULL = 0;
+	// Custom  自定义的服务
+	CUSTOM = 1;
+	// BuildIn  系统内建的服务
+	BUILD_IN = 2;
+}

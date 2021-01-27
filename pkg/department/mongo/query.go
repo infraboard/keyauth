@@ -6,19 +6,24 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/infraboard/keyauth/pkg/department"
+	"github.com/infraboard/keyauth/pkg/token"
 )
 
-func newQueryDepartmentRequest(req *department.QueryDepartmentRequest) *queryDepartmentRequest {
-	return &queryDepartmentRequest{req}
+func newQueryDepartmentRequest(tk *token.Token, req *department.QueryDepartmentRequest) *queryDepartmentRequest {
+	return &queryDepartmentRequest{
+		tk:                     tk,
+		QueryDepartmentRequest: req,
+	}
 }
 
 type queryDepartmentRequest struct {
+	tk *token.Token
 	*department.QueryDepartmentRequest
 }
 
 func (r *queryDepartmentRequest) FindOptions() *options.FindOptions {
-	pageSize := int64(r.PageSize)
-	skip := int64(r.PageSize) * int64(r.PageNumber-1)
+	pageSize := int64(r.Page.PageSize)
+	skip := int64(r.Page.PageSize) * int64(r.Page.PageNumber-1)
 
 	opt := &options.FindOptions{
 		Sort:  bson.D{{Key: "create_at", Value: -1}},
@@ -32,10 +37,10 @@ func (r *queryDepartmentRequest) FindOptions() *options.FindOptions {
 func (r *queryDepartmentRequest) FindFilter() bson.M {
 	filter := bson.M{}
 
-	tk := r.GetToken()
+	tk := r.tk
 	filter["domain"] = tk.Domain
-	if r.ParentID != nil {
-		filter["parent_id"] = r.ParentID
+	if r.ParentId != "" {
+		filter["parent_id"] = r.ParentId
 	}
 	if r.Keywords != "" {
 		filter["$or"] = bson.A{
@@ -61,8 +66,8 @@ type describeDepartmentRequest struct {
 func (r *describeDepartmentRequest) FindFilter() bson.M {
 	filter := bson.M{}
 
-	if r.ID != "" {
-		filter["_id"] = r.ID
+	if r.Id != "" {
+		filter["_id"] = r.Id
 	}
 	if r.Name != "" {
 		filter["name"] = r.Name
@@ -71,17 +76,21 @@ func (r *describeDepartmentRequest) FindFilter() bson.M {
 	return filter
 }
 
-func newQueryApplicationFormRequest(req *department.QueryApplicationFormRequet) *queryApplicationFormRequest {
-	return &queryApplicationFormRequest{req}
+func newQueryApplicationFormRequest(tk *token.Token, req *department.QueryApplicationFormRequet) *queryApplicationFormRequest {
+	return &queryApplicationFormRequest{
+		tk:                         tk,
+		QueryApplicationFormRequet: req,
+	}
 }
 
 type queryApplicationFormRequest struct {
+	tk *token.Token
 	*department.QueryApplicationFormRequet
 }
 
 func (r *queryApplicationFormRequest) FindOptions() *options.FindOptions {
-	pageSize := int64(r.PageSize)
-	skip := int64(r.PageSize) * int64(r.PageNumber-1)
+	pageSize := int64(r.Page.PageSize)
+	skip := int64(r.Page.PageSize) * int64(r.Page.PageNumber-1)
 
 	opt := &options.FindOptions{
 		Sort:  bson.D{{Key: "create_at", Value: -1}},
@@ -93,7 +102,7 @@ func (r *queryApplicationFormRequest) FindOptions() *options.FindOptions {
 }
 
 func (r *queryApplicationFormRequest) FindFilter() bson.M {
-	tk := r.GetToken()
+	tk := r.tk
 
 	filter := bson.M{}
 	filter["domain"] = tk.Domain
@@ -101,34 +110,36 @@ func (r *queryApplicationFormRequest) FindFilter() bson.M {
 	if r.Account != "" {
 		filter["account"] = r.Account
 	}
-	if r.DepartmentID != "" {
-		filter["department_id"] = r.DepartmentID
+	if r.DepartmentId != "" {
+		filter["department_id"] = r.DepartmentId
 	}
-	if r.Status != nil {
+	if r.Status != department.ApplicationFormStatus_NULL {
 		filter["status"] = r.Status
 	}
 
 	return filter
 }
 
-func newDescribeApplicationForm(req *department.DescribeApplicationFormRequet) *describeApplicationForm {
+func newDescribeApplicationForm(tk *token.Token, req *department.DescribeApplicationFormRequet) *describeApplicationForm {
 	return &describeApplicationForm{
+		tk:                            tk,
 		DescribeApplicationFormRequet: req,
 	}
 }
 
 type describeApplicationForm struct {
+	tk *token.Token
 	*department.DescribeApplicationFormRequet
 }
 
 func (r *describeApplicationForm) FindFilter() bson.M {
-	tk := r.GetToken()
+	tk := r.tk
 
 	filter := bson.M{}
 	filter["domain"] = tk.Domain
 
-	if r.ID != "" {
-		filter["_id"] = r.ID
+	if r.Id != "" {
+		filter["_id"] = r.Id
 	}
 
 	return filter

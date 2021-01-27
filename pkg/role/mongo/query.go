@@ -7,6 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/infraboard/keyauth/pkg/role"
+	"github.com/infraboard/keyauth/pkg/token"
 )
 
 func newDescribeRoleRequest(req *role.DescribeRoleRequest) (*describeRoleRequest, error) {
@@ -27,8 +28,8 @@ func (req *describeRoleRequest) String() string {
 func (req *describeRoleRequest) FindFilter() bson.M {
 	filter := bson.M{}
 
-	if req.ID != "" {
-		filter["_id"] = req.ID
+	if req.Id != "" {
+		filter["_id"] = req.Id
 	}
 
 	if req.Name != "" {
@@ -49,20 +50,23 @@ func (req *describeRoleRequest) FindOptions() *options.FindOneOptions {
 	return opt
 }
 
-func newQueryRoleRequest(req *role.QueryRoleRequest) (*queryRoleRequest, error) {
+func newQueryRoleRequest(tk *token.Token, req *role.QueryRoleRequest) (*queryRoleRequest, error) {
 	if err := req.Validate(); err != nil {
 		return nil, err
 	}
-	return &queryRoleRequest{req}, nil
+	return &queryRoleRequest{
+		tk:               tk,
+		QueryRoleRequest: req}, nil
 }
 
 type queryRoleRequest struct {
+	tk *token.Token
 	*role.QueryRoleRequest
 }
 
 func (r *queryRoleRequest) FindOptions() *options.FindOptions {
-	pageSize := int64(r.PageSize)
-	skip := int64(r.PageSize) * int64(r.PageNumber-1)
+	pageSize := int64(r.Page.PageSize)
+	skip := int64(r.Page.PageSize) * int64(r.Page.PageNumber-1)
 
 	opt := &options.FindOptions{
 		Sort:  bson.D{{Key: "create_at", Value: -1}},
@@ -80,14 +84,14 @@ func (r *queryRoleRequest) FindOptions() *options.FindOptions {
 func (r *queryRoleRequest) FindFilter() bson.M {
 	filter := bson.M{}
 
-	if r.Type != nil {
-		filter["type"] = r.Type.String()
+	if r.Type != role.RoleType_NULL {
+		filter["type"] = r.Type
 	} else {
 		// 获取内建和全局的角色以及域内自己创建的角色
 		filter["$or"] = bson.A{
-			bson.M{"type": role.BuildInType},
-			bson.M{"type": role.GlobalType},
-			bson.M{"type": role.CustomType, "domain": r.GetToken().Domain},
+			bson.M{"type": role.RoleType_BUILDIN},
+			bson.M{"type": role.RoleType_GLOBAL},
+			bson.M{"type": role.RoleType_CUSTOM, "domain": r.tk.Domain},
 		}
 	}
 

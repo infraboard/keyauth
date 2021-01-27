@@ -16,7 +16,7 @@ var (
 )
 
 type handler struct {
-	service user.Service
+	service user.UserServiceServer
 	domain  domain.DomainServiceServer
 }
 

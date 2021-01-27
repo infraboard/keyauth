@@ -21,7 +21,7 @@ func (s *service) QueryPermission(req *permission.QueryPermissionRequest) (
 	// 获取用户的策略列表
 	preq := policy.NewQueryPolicyRequest(request.NewPageRequest(100, 1))
 	preq.Account = tk.Account
-	preq.NamespaceID = req.NamespaceID
+	preq.NamespaceId = req.NamespaceID
 
 	policySet, err := s.policy.QueryPolicy(preq)
 	if err != nil {
@@ -48,7 +48,7 @@ func (s *service) QueryRoles(req *permission.QueryPermissionRequest) (
 	// 获取用户的策略列表
 	preq := policy.NewQueryPolicyRequest(request.NewPageRequest(100, 1))
 	preq.Account = tk.Account
-	preq.NamespaceID = req.NamespaceID
+	preq.NamespaceId = req.NamespaceID
 
 	policySet, err := s.policy.QueryPolicy(preq)
 	if err != nil {

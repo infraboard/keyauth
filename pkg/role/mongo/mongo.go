@@ -26,8 +26,9 @@ type service struct {
 	enableCache   bool
 	notifyCachPre string
 
-	policy policy.Service
+	policy policy.PolicyServiceServer
 	log    logger.Logger
+	role.UnimplementedRoleServiceServer
 }
 
 func (s *service) Config() error {
@@ -63,6 +64,6 @@ func (s *service) Config() error {
 }
 
 func init() {
-	var _ role.Service = Service
+	var _ role.RoleServiceServer = Service
 	pkg.RegistryService("role", Service)
 }

@@ -16,8 +16,8 @@ var (
 )
 
 type service struct {
-	policy   policy.Service
-	role     role.Service
+	policy   policy.PolicyServiceServer
+	role     role.RoleServiceServer
 	endpoint endpoint.Service
 }
 

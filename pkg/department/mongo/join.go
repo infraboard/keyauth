@@ -8,21 +8,23 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
+	"github.com/infraboard/keyauth/common/session"
 	"github.com/infraboard/keyauth/pkg/department"
 	"github.com/infraboard/keyauth/pkg/user"
 )
 
 var (
-	pending = department.Pending
+	pending = department.ApplicationFormStatus_PENDDING
 )
 
-func (s *service) JoinDepartment(req *department.JoinDepartmentRequest) (*department.ApplicationForm, error) {
+func (s *service) JoinDepartment(ctx context.Context, req *department.JoinDepartmentRequest) (*department.ApplicationForm, error) {
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest(err.Error())
 	}
 
+	tk := session.GetTokenFromContext(ctx)
 	// 检测部署是否存在
-	_, err := s.DescribeDepartment(department.NewDescribeDepartmentRequestWithID(req.DepartmentID))
+	_, err := s.DescribeDepartment(ctx, department.NewDescribeDepartmentRequestWithID(req.DepartmentId))
 	if err != nil {
 		return nil, err
 	}
@@ -30,10 +32,10 @@ func (s *service) JoinDepartment(req *department.JoinDepartmentRequest) (*depart
 	// 一个用户只能申请加入一个部门
 	query := department.NewQueryApplicationFormRequet()
 	query.SkipItems = true
-	query.Account = req.Account
-	query.Status = &pending
-	query.WithTokenGetter(req)
-	as, err := s.QueryApplicationForm(query)
+	query.Account = tk.Account
+	query.Status = pending
+
+	as, err := s.QueryApplicationForm(ctx, query)
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +43,7 @@ func (s *service) JoinDepartment(req *department.JoinDepartmentRequest) (*depart
 		return nil, exception.NewBadRequest("your has an join_apply pendding")
 	}
 
-	ins, err := department.NewApplicationForm(req)
+	ins, err := department.NewApplicationForm(tk, req)
 	if err != nil {
 		return nil, err
 	}
@@ -54,36 +56,35 @@ func (s *service) JoinDepartment(req *department.JoinDepartmentRequest) (*depart
 	return ins, nil
 }
 
-func (s *service) DealApplicationForm(req *department.DealApplicationFormRequest) (*department.ApplicationForm, error) {
+func (s *service) DealApplicationForm(ctx context.Context, req *department.DealApplicationFormRequest) (*department.ApplicationForm, error) {
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest("validate deal application form request error, %s", err)
 	}
 
-	descReq := department.NewDescribeApplicationFormRequetWithID(req.ID)
-	descReq.WithTokenGetter(req)
-
-	af, err := s.DescribeApplicationForm(descReq)
+	tk := session.GetTokenFromContext(ctx)
+	descReq := department.NewDescribeApplicationFormRequetWithID(req.Id)
+	af, err := s.DescribeApplicationForm(ctx, descReq)
 	if err != nil {
 		return nil, err
 	}
 
-	if !af.Status.Is(department.Pending) {
+	if !af.Status.Equal(department.ApplicationFormStatus_PENDDING) {
 		return nil, exception.NewBadRequest("application form has deal")
 	}
 
 	// 判断用户申请的部门是否还存在
-	dp, err := s.DescribeDepartment(department.NewDescribeDepartmentRequestWithID(af.DepartmentID))
+	dp, err := s.DescribeDepartment(ctx, department.NewDescribeDepartmentRequestWithID(af.Data.DepartmentId))
 	if err != nil {
 		return nil, err
 	}
 
 	// 只有部门管理员才能出来成员加入申请
-	if dp.Manager != req.GetAccount() {
+	if dp.Data.Manager != tk.Account {
 		return nil, exception.NewPermissionDeny("only department manger can deal join apply")
 	}
 
 	// 修改用户的归属部门
-	u, err := s.user.DescribeAccount(user.NewDescriptAccountRequestWithAccount(af.Account))
+	u, err := s.user.DescribeAccount(ctx, user.NewDescriptAccountRequestWithAccount(af.Data.Account))
 	if err != nil {
 		return nil, err
 	}
@@ -92,35 +93,35 @@ func (s *service) DealApplicationForm(req *department.DealApplicationFormRequest
 		return nil, exception.NewBadRequest("user has deparment can't join other")
 	}
 
-	u.DepartmentID = af.DepartmentID
+	u.Data.Profile.DepartmentId = af.Data.DepartmentId
 	patchReq := user.NewPutAccountRequest()
-	patchReq.Profile = u.Profile
-	patchReq.WithTokenGetter(req)
+	patchReq.Profile = u.Data.Profile
 
-	_, err = s.user.UpdateAccountProfile(patchReq)
+	_, err = s.user.UpdateAccountProfile(ctx, patchReq)
 	if err != nil {
 		return nil, err
 	}
 
 	// 持久化数据
-	af.UpdateAt = ftime.Now()
+	af.UpdateAt = ftime.Now().Timestamp()
 	af.Status = req.Status
-	af.Message = req.Message
-	_, err = s.ac.UpdateOne(context.TODO(), bson.M{"_id": af.ID}, bson.M{"$set": af})
+	af.Data.Message = req.Message
+	_, err = s.ac.UpdateOne(context.TODO(), bson.M{"_id": af.Id}, bson.M{"$set": af})
 	if err != nil {
-		return nil, exception.NewInternalServerError("update id(%s) application form  error, %s", af.Account, err)
+		return nil, exception.NewInternalServerError("update id(%s) application form  error, %s", af.Data.Account, err)
 	}
 
 	return af, nil
 }
 
-func (s *service) QueryApplicationForm(req *department.QueryApplicationFormRequet) (*department.ApplicationFormSet, error) {
+func (s *service) QueryApplicationForm(ctx context.Context, req *department.QueryApplicationFormRequet) (*department.ApplicationFormSet, error) {
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest("validate query application form error, %s", err)
 	}
+	tk := session.GetTokenFromContext(ctx)
 
-	query := newQueryApplicationFormRequest(req)
-	set := department.NewDApplicationFormSet(req.PageRequest)
+	query := newQueryApplicationFormRequest(tk, req)
+	set := department.NewDApplicationFormSet()
 
 	if !req.SkipItems {
 		resp, err := s.ac.Find(context.TODO(), query.FindFilter(), query.FindOptions())
@@ -149,9 +150,10 @@ func (s *service) QueryApplicationForm(req *department.QueryApplicationFormReque
 	return set, nil
 }
 
-func (s *service) DescribeApplicationForm(req *department.DescribeApplicationFormRequet) (
+func (s *service) DescribeApplicationForm(ctx context.Context, req *department.DescribeApplicationFormRequet) (
 	*department.ApplicationForm, error) {
-	r := newDescribeApplicationForm(req)
+	tk := session.GetTokenFromContext(ctx)
+	r := newDescribeApplicationForm(tk, req)
 
 	ins := department.NewDeafultApplicationForm()
 	if err := s.ac.FindOne(context.TODO(), r.FindFilter()).Decode(ins); err != nil {
@@ -159,7 +161,7 @@ func (s *service) DescribeApplicationForm(req *department.DescribeApplicationFor
 			return nil, exception.NewNotFound("application form %s not found", req)
 		}
 
-		return nil, exception.NewInternalServerError("find application form %s error, %s", req.ID, err)
+		return nil, exception.NewInternalServerError("find application form %s error, %s", req.Id, err)
 	}
 
 	return ins, nil

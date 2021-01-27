@@ -1,0 +1,111 @@
+syntax = "proto3";
+
+package keyauth.department;
+option go_package = "github.com/infraboard/keyauth/pkg/department";
+
+import "pkg/department/pb/enum.proto";
+import "pkg/department/pb/request.proto";
+import "pkg/role/pb/role.proto";
+import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
+
+// Department user's department
+message Department {
+    // 部门ID
+    string id = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"_id" json:"id"'}
+        ];
+    // 路径
+    string parent_path = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"parent_path" json:"parent_path"'}
+        ];
+    // 部门编号
+    uint64 number = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"number" json:"number,omitempty"'}
+        ];
+    // 部门创建时间
+    int64 create_at = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"create_at" json:"create_at,omitempty"'}
+        ];
+    // 更新时间
+    int64 update_at = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"update_at" json:"update_at,omitempty"'}
+        ];
+    // 创建人
+    string creater = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"creater" json:"creater,omitempty"'}
+        ];
+    // 部门所属域
+    string domain = 7[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"domain" json:"domain,omitempty"'}
+        ];
+    // 第几级部门, 由层数决定
+    int32 grade = 8[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"grade" json:"grade,omitempty"'}
+        ];
+    // 子部门数量
+    int64 sub_count = 9[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"sub_count,omitempty"'}
+        ];
+    // 部门所有用户数量
+    int64 user_count = 10[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"user_count,omitempty"'}
+        ];
+    // 具体数据
+    CreateDepartmentRequest data = 11[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"data" json:"data"'}
+        ];
+    // 默认角色
+    role.Role default_role = 12[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"default_role,omitempty"'}
+        ]; 
+}
+
+message Set {
+    int64 total = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"total" json:"total"'}
+        ];
+    repeated Department items = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"items" json:"items"'}
+        ];
+}
+
+// ApplicationForm todo
+message ApplicationForm {
+    // 申请单ID
+    string id = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"_id" json:"id"'}
+        ];
+    // 域
+    string domain = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"domain" json:"domain"'}
+        ];
+    // 申请人
+    string creater = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"creater" json:"creater"'}
+        ];
+    // 创建时间
+    int64 create_at =4[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"create_at" json:"create_at"'}
+        ];
+    // 更新时间
+    int64 update_at = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"update_at" json:"update_at"'}
+        ];
+    // 状态
+    ApplicationFormStatus status = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"status" json:"status"'}
+        ];
+    // 数据
+    JoinDepartmentRequest data = 7[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"data" json:"data"'}
+        ];
+}
+
+message ApplicationFormSet {
+    int64 total = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"total" json:"total"'}
+        ];
+    repeated ApplicationForm items = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"items" json:"items"'}
+        ];
+}

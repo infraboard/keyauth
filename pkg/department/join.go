@@ -1,23 +1,22 @@
 package department
 
 import (
-	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/types/ftime"
 	"github.com/rs/xid"
+
+	"github.com/infraboard/keyauth/pkg/token"
 )
 
 // NewApplicationForm todo
-func NewApplicationForm(req *JoinDepartmentRequest) (*ApplicationForm, error) {
-	tk := req.GetToken()
-
+func NewApplicationForm(tk *token.Token, req *JoinDepartmentRequest) (*ApplicationForm, error) {
 	ins := &ApplicationForm{
-		ID:                    xid.New().String(),
-		Domain:                tk.Domain,
-		CreateAt:              ftime.Now(),
-		UpdateAt:              ftime.Now(),
-		Creater:               tk.Account,
-		JoinDepartmentRequest: req,
-		Status:                Pending,
+		Id:       xid.New().String(),
+		Domain:   tk.Domain,
+		CreateAt: ftime.Now().Timestamp(),
+		UpdateAt: ftime.Now().Timestamp(),
+		Creater:  tk.Account,
+		Data:     req,
+		Status:   ApplicationFormStatus_PENDDING,
 	}
 
 	return ins, nil
@@ -26,35 +25,15 @@ func NewApplicationForm(req *JoinDepartmentRequest) (*ApplicationForm, error) {
 // NewDeafultApplicationForm todo
 func NewDeafultApplicationForm() *ApplicationForm {
 	return &ApplicationForm{
-		JoinDepartmentRequest: NewJoinDepartmentRequest(),
+		Data: NewJoinDepartmentRequest(),
 	}
-}
-
-// ApplicationForm todo
-type ApplicationForm struct {
-	ID                     string                `bson:"_id" json:"id"`              // 申请单ID
-	Domain                 string                `bson:"domain" json:"domain"`       // 域
-	Creater                string                `bson:"creater" json:"creater"`     // 申请人
-	CreateAt               ftime.Time            `bson:"create_at" json:"create_at"` // 创建时间
-	UpdateAt               ftime.Time            `bson:"update_at" json:"update_at"` // 更新时间
-	Status                 ApplicationFormStatus `bson:"status" json:"status"`       // 状态
-	*JoinDepartmentRequest `bson:",inline"`
 }
 
 // NewDApplicationFormSet 实例化
-func NewDApplicationFormSet(req *request.PageRequest) *ApplicationFormSet {
+func NewDApplicationFormSet() *ApplicationFormSet {
 	return &ApplicationFormSet{
-		PageRequest: req,
-		Items:       []*ApplicationForm{},
+		Items: []*ApplicationForm{},
 	}
-}
-
-// ApplicationFormSet todo
-type ApplicationFormSet struct {
-	*request.PageRequest
-
-	Total int64              `json:"total"`
-	Items []*ApplicationForm `json:"items"`
 }
 
 // Length 个数

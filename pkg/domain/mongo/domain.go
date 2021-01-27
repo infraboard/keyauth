@@ -8,13 +8,13 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
+	"github.com/infraboard/keyauth/common/session"
 	"github.com/infraboard/keyauth/common/types"
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/domain"
 )
 
 func (s *service) CreateDomain(ctx context.Context, req *domain.CreateDomainRequest) (*domain.Domain, error) {
-	tk := pkg.GetTokenFromContext(ctx)
+	tk := session.GetTokenFromContext(ctx)
 	d, err := domain.New(tk.Account, req)
 	if err != nil {
 		return nil, exception.NewBadRequest(err.Error())
@@ -45,7 +45,7 @@ func (s *service) DescribeDomain(ctx context.Context, req *domain.DescribeDomain
 }
 
 func (s *service) QueryDomain(ctx context.Context, req *domain.QueryDomainRequest) (*domain.Set, error) {
-	tk := pkg.GetTokenFromContext(ctx)
+	tk := session.GetTokenFromContext(ctx)
 	r := newQueryDomainRequest(tk, req)
 	resp, err := s.col.Find(context.TODO(), r.FindFilter(), r.FindOptions())
 

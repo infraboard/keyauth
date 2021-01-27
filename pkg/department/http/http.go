@@ -16,8 +16,8 @@ var (
 )
 
 type handler struct {
-	service department.Service
-	user    user.Service
+	service department.DepartmentServiceServer
+	user    user.UserServiceServer
 }
 
 // Registry 注册HTTP服务路由

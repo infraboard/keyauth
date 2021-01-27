@@ -1,16 +1,17 @@
 package http
 
 import (
+	"context"
 	"net/http"
 
-	"github.com/infraboard/keyauth/pkg"
+	"github.com/infraboard/keyauth/common/session"
 	"github.com/infraboard/keyauth/pkg/user"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 )
 
 func (h *handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromHTTPRequest(r)
+	tk, err := session.GetTokenFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -18,14 +19,14 @@ func (h *handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 
 	// 解析需要更新的数据
 	req := user.NewUpdatePasswordRequest()
-	req.WithToken(tk)
 	if err := request.GetDataFromRequest(r, req); err != nil {
 		response.Failed(w, err)
 		return
 	}
 	req.Account = tk.Account
 
-	pass, err := h.service.UpdateAccountPassword(req)
+	ctx := session.WithTokenContext(context.Background(), tk)
+	pass, err := h.service.UpdateAccountPassword(ctx, req)
 	if err != nil {
 		response.Failed(w, err)
 		return

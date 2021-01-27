@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package keyauth.department;
+option go_package = "github.com/infraboard/keyauth/pkg/department";
+
+enum ApplicationFormStatus {
+    NULL = 0;
+    // Pending todo
+    PENDDING = 1;
+    // Passed todo
+    PASSED = 2;
+    // Deny todo
+    DENY = 3;
+}

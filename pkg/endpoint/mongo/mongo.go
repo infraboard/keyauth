@@ -25,7 +25,7 @@ type service struct {
 	enableCache   bool
 	notifyCachPre string
 
-	micro micro.Service
+	micro micro.MicroServiceServer
 	log   logger.Logger
 }
 

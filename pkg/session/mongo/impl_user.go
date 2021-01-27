@@ -9,7 +9,7 @@ import (
 	"github.com/infraboard/mcube/types/ftime"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"github.com/infraboard/keyauth/pkg"
+	tool "github.com/infraboard/keyauth/common/session"
 	"github.com/infraboard/keyauth/pkg/session"
 	"github.com/infraboard/keyauth/pkg/token"
 )
@@ -133,7 +133,7 @@ func (s *userimpl) DescribeSession(ctx context.Context, req *session.DescribeSes
 }
 
 func (s *userimpl) QuerySession(ctx context.Context, req *session.QuerySessionRequest) (*session.Set, error) {
-	tk := pkg.GetTokenFromContext(ctx)
+	tk := tool.GetTokenFromContext(ctx)
 	r, err := newQueryLoginLogRequest(tk, req)
 	if err != nil {
 		return nil, exception.NewBadRequest("validate query session request error, %s", err)

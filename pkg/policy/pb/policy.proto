@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package keyauth.policy;
+option go_package = "github.com/infraboard/keyauth/pkg/policy";
+
+import "pkg/user/pb/types.proto";
+import "pkg/policy/pb/request.proto";
+import "pkg/role/pb/role.proto";
+import "pkg/namespace/pb/namespace.proto";
+import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
+
+// Policy 权限策略
+message Policy {
+    // 策略ID
+    string id = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"_id" json:"id"'}
+        ];
+    // 创建时间
+    int64 create_at = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"create_at" json:"create_at"'}
+        ];
+    // 更新时间
+    int64 update_at = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"update_at" json:"update_at"'}
+        ];
+    // 策略所属域
+    string domain = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"domain" json:"domain"'}
+        ];
+    // 创建者ID
+    string creater = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"creater" json:"creater"'}
+        ];
+    // 用户类型
+    user.UserType user_type = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"user_type" json:"user_type"'}
+        ];
+    // 详情信息
+    CreatePolicyRequest data = 7[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"data" json:"data"'}
+        ];
+    // 关联的角色对象    
+    role.Role role = 8[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"role,omitempty"'}
+        ];
+    // 关联的空间信息
+    namespace.Namespace namespace = 9[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"namespace,omitempty"'}
+        ];
+}
+
+message Set {
+    int64 total = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"total" json:"total"'}
+        ];
+    repeated Policy items = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"items" json:"items"'}
+        ];
+}

@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package keyauth.policy;
+option go_package = "github.com/infraboard/keyauth/pkg/policy";
+
+import "pkg/policy/pb/request.proto";
+import "pkg/policy/pb/policy.proto";
+
+// PolicyService 策略服务
+service PolicyService {
+	rpc CreatePolicy(CreatePolicyRequest) returns(Policy);
+	rpc QueryPolicy(QueryPolicyRequest) returns(Set);
+	rpc DescribePolicy(DescribePolicyRequest) returns(Policy);
+	rpc DeletePolicy(DeletePolicyRequest) returns(Policy);
+}

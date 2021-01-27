@@ -1,6 +1,7 @@
 package issuer
 
 import (
+	"context"
 	"fmt"
 	"regexp"
 	"strings"
@@ -13,6 +14,7 @@ import (
 	"github.com/rs/xid"
 
 	"github.com/infraboard/keyauth/common/password"
+	"github.com/infraboard/keyauth/common/session"
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/application"
 	"github.com/infraboard/keyauth/pkg/domain"
@@ -57,15 +59,15 @@ func NewTokenIssuer() (Issuer, error) {
 type issuer struct {
 	app     application.UserServiceServer
 	token   token.TokenServiceServer
-	user    user.Service
+	user    user.UserServiceServer
 	domain  domain.DomainServiceServer
 	ldap    provider.LDAP
 	emailRE *regexp.Regexp
 	log     logger.Logger
 }
 
-func (i *issuer) checkUserPass(user, pass string) (*user.User, error) {
-	u, err := i.getUser(user)
+func (i *issuer) checkUserPass(ctx context.Context, user, pass string) (*user.User, error) {
+	u, err := i.getUser(ctx, user)
 	if err != nil {
 		return nil, err
 	}
@@ -91,15 +93,15 @@ func (i *issuer) checkUserPassExpired(u *user.User) error {
 	return nil
 }
 
-func (i *issuer) getUser(name string) (*user.User, error) {
+func (i *issuer) getUser(ctx context.Context, name string) (*user.User, error) {
 	req := user.NewDescriptAccountRequest()
 	req.Account = name
-	return i.user.DescribeAccount(req)
+	return i.user.DescribeAccount(ctx, req)
 }
 
 func (i *issuer) getDomain(u *user.User) (*domain.Domain, error) {
 	req := domain.NewDescribeDomainRequestWithName(u.Domain)
-	return i.domain.DescribeDomain(pkg.GetInternalAdminTokenCtx(u.Account), req)
+	return i.domain.DescribeDomain(pkg.GetInternalAdminTokenCtx(u.Data.Profile.Account), req)
 }
 
 func (i *issuer) setTokenDomain(tk *token.Token) error {
@@ -119,7 +121,7 @@ func (i *issuer) setTokenDomain(tk *token.Token) error {
 }
 
 // IssueToken 颁发token
-func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) {
+func (i *issuer) IssueToken(ctx context.Context, req *token.IssueTokenRequest) (*token.Token, error) {
 	if err := req.Validate(); err != nil {
 		return nil, err
 	}
@@ -131,7 +133,7 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 
 	switch req.GrantType {
 	case token.GrantType_PASSWORD:
-		u, checkErr := i.checkUserPass(req.Username, req.Password)
+		u, checkErr := i.checkUserPass(ctx, req.Username, req.Password)
 		if checkErr != nil {
 			i.log.Debugf("issue password token error, %s", checkErr)
 			return nil, exception.NewUnauthorized("user or password not connrect")
@@ -140,7 +142,7 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 		if err := i.checkUserPassExpired(u); err != nil {
 			i.log.Debugf("issue password token error, %s", err)
 			if v, ok := err.(exception.APIException); ok {
-				v.WithData(u.Account)
+				v.WithData(u.Data.Profile.Account)
 			}
 			return nil, err
 		}
@@ -168,7 +170,7 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 			return nil, exception.NewPermissionDeny("refresh_token's access_tken not connrect")
 		}
 
-		u, err := i.getUser(tk.Account)
+		u, err := i.getUser(ctx, tk.Account)
 		if err != nil {
 			return nil, err
 		}
@@ -191,7 +193,7 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 		if err != nil {
 			return nil, exception.NewUnauthorized(err.Error())
 		}
-		u, err := i.getUser(tk.Account)
+		u, err := i.getUser(ctx, tk.Account)
 		if err != nil {
 			return nil, err
 		}
@@ -218,7 +220,8 @@ func (i *issuer) IssueToken(req *token.IssueTokenRequest) (*token.Token, error) 
 			return nil, exception.NewUnauthorized("用户名或者密码不对")
 		}
 		mockPrimary := i.mockBuildInToken(app, userName, ldapConf.Domain)
-		u, err := i.syncLDAPUser(mockPrimary, req.Username)
+		ctx := session.WithTokenContext(context.Background(), mockPrimary)
+		u, err := i.syncLDAPUser(ctx, req.Username)
 		if err != nil {
 			return nil, err
 		}
@@ -253,9 +256,9 @@ func (i *issuer) genBaseDN(username string) (string, string, error) {
 	return sub[1], strings.Join(dns, ","), nil
 }
 
-func (i *issuer) syncLDAPUser(tk *token.Token, userName string) (*user.User, error) {
+func (i *issuer) syncLDAPUser(ctx context.Context, userName string) (*user.User, error) {
 	descUser := user.NewDescriptAccountRequestWithAccount(userName)
-	u, err := i.user.DescribeAccount(descUser)
+	u, err := i.user.DescribeAccount(ctx, descUser)
 
 	if u != nil && u.Type.IsIn(types.UserType_PRIMARY, types.UserType_SUPPER) {
 		return nil, exception.NewBadRequest("用户名和主账号用户名冲突, 请修改")
@@ -263,8 +266,9 @@ func (i *issuer) syncLDAPUser(tk *token.Token, userName string) (*user.User, err
 
 	if err != nil {
 		if exception.IsNotFoundError(err) {
-			req := user.NewCreateUserRequestWithLDAPSync(userName, i.randomPass(), tk)
-			u, err = i.user.CreateAccount(types.UserType_SUB, req)
+			req := user.NewCreateUserRequestWithLDAPSync(userName, i.randomPass())
+			req.UserType = types.UserType_SUB
+			u, err = i.user.CreateAccount(ctx, req)
 			if err != nil {
 				return nil, err
 			}
@@ -297,7 +301,7 @@ func (i *issuer) mockBuildInToken(app *application.Application, userName, domain
 
 func (i *issuer) issueUserToken(app *application.Application, u *user.User, gt token.GrantType) *token.Token {
 	tk := i.newBearToken(app, gt)
-	tk.Account = u.Account
+	tk.Account = u.Data.Profile.Account
 	tk.UserType = u.Type
 	return tk
 }

@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package keyauth.verifycode;
+option go_package = "github.com/infraboard/keyauth/pkg/verifycode";
+
+enum NotifyType {
+    MAIL = 0;
+    SMS = 2;
+}
+
+enum IssueType {
+    PASS = 0;
+    TOKEN = 1;
+}

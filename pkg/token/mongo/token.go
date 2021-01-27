@@ -15,21 +15,21 @@ import (
 
 func (s *service) IssueToken(ctx context.Context, req *token.IssueTokenRequest) (*token.Token, error) {
 	// 连续登录失败检测
-	if err := s.loginBeforeCheck(req); err != nil {
+	if err := s.loginBeforeCheck(ctx, req); err != nil {
 		return nil, exception.NewBadRequest("安全检测失败, %s", err)
 	}
 
 	// 颁发Token
-	tk, err := s.issuer.IssueToken(req)
+	tk, err := s.issuer.IssueToken(ctx, req)
 	if err != nil {
-		s.checker.UpdateFailedRetry(req)
+		s.checker.UpdateFailedRetry(ctx, req)
 		return nil, err
 	}
 	tk.WithRemoteIP(req.GetRemoteIp())
 	tk.WithUerAgent(req.GetUserAgent())
 
 	// 安全登录检测
-	if err := s.securityCheck(req.VerifyCode, tk); err != nil {
+	if err := s.securityCheck(ctx, req.VerifyCode, tk); err != nil {
 		return nil, err
 	}
 
@@ -48,14 +48,14 @@ func (s *service) IssueToken(ctx context.Context, req *token.IssueTokenRequest) 
 	return tk, nil
 }
 
-func (s *service) loginBeforeCheck(req *token.IssueTokenRequest) error {
+func (s *service) loginBeforeCheck(ctx context.Context, req *token.IssueTokenRequest) error {
 	// 连续登录失败检测
-	if err := s.checker.MaxFailedRetryCheck(req); err != nil {
+	if err := s.checker.MaxFailedRetryCheck(ctx, req); err != nil {
 		return exception.NewBadRequest("max retry error, %s", err)
 	}
 
 	// IP保护检测
-	err := s.checker.IPProtectCheck(req)
+	err := s.checker.IPProtectCheck(ctx, req)
 	if err != nil {
 		return err
 	}
@@ -63,11 +63,11 @@ func (s *service) loginBeforeCheck(req *token.IssueTokenRequest) error {
 	return nil
 }
 
-func (s *service) securityCheck(code string, tk *token.Token) error {
+func (s *service) securityCheck(ctx context.Context, code string, tk *token.Token) error {
 	// 如果有校验码, 则直接通过校验码检测用户身份安全
 	if code != "" {
 		s.log.Debugf("verify code provided, check code ...")
-		err := s.code.CheckCode(verifycode.NewCheckCodeRequest(tk.Account, code))
+		_, err := s.code.CheckCode(ctx, verifycode.NewCheckCodeRequest(tk.Account, code))
 		if err != nil {
 			return exception.NewPermissionDeny("verify code invalidate, error, %s", err)
 		}
@@ -76,13 +76,13 @@ func (s *service) securityCheck(code string, tk *token.Token) error {
 	}
 
 	// 异地登录检测
-	err := s.checker.OtherPlaceLoggedInChecK(tk)
+	err := s.checker.OtherPlaceLoggedInChecK(ctx, tk)
 	if err != nil {
 		return exception.NewVerifyCodeRequiredError("异常检测: %s", err)
 	}
 
 	// 长时间未登录检测
-	err = s.checker.NotLoginDaysChecK(tk)
+	err = s.checker.NotLoginDaysChecK(ctx, tk)
 	if err != nil {
 		return exception.NewVerifyCodeRequiredError("异常检测: %s", err)
 	}

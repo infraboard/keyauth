@@ -7,13 +7,13 @@ import (
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 
-	"github.com/infraboard/keyauth/pkg"
+	"github.com/infraboard/keyauth/common/session"
 	"github.com/infraboard/keyauth/pkg/endpoint"
 )
 
 // CreateApplication 创建自定义角色
 func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromHTTPRequest(r)
+	tk, err := session.GetTokenFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return

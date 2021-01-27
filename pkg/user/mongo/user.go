@@ -9,6 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
+	"github.com/infraboard/keyauth/common/session"
 	common "github.com/infraboard/keyauth/common/types"
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/domain"
@@ -17,28 +18,31 @@ import (
 	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
-func (s *service) QueryAccount(t types.UserType, req *user.QueryAccountRequest) (*user.Set, error) {
-	r, err := newQueryUserRequest(req)
+func (s *service) QueryAccount(ctx context.Context, req *user.QueryAccountRequest) (*user.Set, error) {
+	tk := session.GetTokenFromContext(ctx)
+	r, err := newQueryUserRequest(tk, req)
 	if err != nil {
 		return nil, err
 	}
-
-	r.userType = t
-	return s.queryAccount(r)
+	return s.queryAccount(ctx, r)
 }
 
-func (s *service) CreateAccount(t types.UserType, req *user.CreateAccountRequest) (*user.User, error) {
+func (s *service) CreateAccount(ctx context.Context, req *user.CreateAccountRequest) (*user.User, error) {
 	u, err := user.New(req)
 	if err != nil {
 		return nil, err
 	}
 
-	tk := req.GetToken()
+	tk := session.GetTokenFromContext(ctx)
 	if tk != nil {
 		u.Domain = tk.Domain
 	}
 
-	u.Type = t
+	// 非管理员, 主账号 可以创建子账号
+	if !tk.UserType.IsIn(types.UserType_SUPPER, types.UserType_PRIMARY) {
+		return nil, fmt.Errorf("%s user can't create sub account", tk.UserType)
+	}
+
 	if err := s.saveAccount(u); err != nil {
 		return nil, err
 	}
@@ -47,17 +51,17 @@ func (s *service) CreateAccount(t types.UserType, req *user.CreateAccountRequest
 	return u, nil
 }
 
-func (s *service) UpdateAccountProfile(req *user.UpdateAccountRequest) (*user.User, error) {
-	u, err := s.DescribeAccount(user.NewDescriptAccountRequestWithAccount(req.Account))
+func (s *service) UpdateAccountProfile(ctx context.Context, req *user.UpdateAccountRequest) (*user.User, error) {
+	u, err := s.DescribeAccount(ctx, user.NewDescriptAccountRequestWithAccount(req.Profile.Account))
 	if err != nil {
 		return nil, err
 	}
 
 	switch req.UpdateMode {
 	case common.UpdateMode_PUT:
-		*u.Profile = *req.Profile
+		*u.Data.Profile = *req.Profile
 	case common.UpdateMode_PATCH:
-		u.Profile.Patch(req.Profile)
+		u.Data.Profile.Patch(req.Profile)
 	default:
 		return nil, exception.NewBadRequest("unknown update mode: %s", req.UpdateMode)
 	}
@@ -66,28 +70,28 @@ func (s *service) UpdateAccountProfile(req *user.UpdateAccountRequest) (*user.Us
 		return nil, exception.NewBadRequest("validate update department error, %s", err)
 	}
 
-	u.UpdateAt = ftime.Now()
+	u.UpdateAt = ftime.Now().Timestamp()
 
-	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": u.Account}, bson.M{"$set": u})
+	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": u.Data.Profile.Account}, bson.M{"$set": u})
 	if err != nil {
-		return nil, exception.NewInternalServerError("update user(%s) error, %s", u.Account, err)
+		return nil, exception.NewInternalServerError("update user(%s) error, %s", u.Data.Profile.Account, err)
 	}
 
 	return u, nil
 }
 
-func (s *service) UpdateAccountPassword(req *user.UpdatePasswordRequest) (*user.Password, error) {
+func (s *service) UpdateAccountPassword(ctx context.Context, req *user.UpdatePasswordRequest) (*user.Password, error) {
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest("check update pass request error, %s", err)
 	}
-	return s.changePass(req.Account, req.OldPass, req.NewPass, req.IsReset())
+	return s.changePass(ctx, req.Account, req.OldPass, req.NewPass, req.IsReset())
 }
 
-func (s *service) changePass(account, old, new string, isReset bool) (*user.Password, error) {
+func (s *service) changePass(ctx context.Context, account, old, new string, isReset bool) (*user.Password, error) {
 	descReq := user.NewDescriptAccountRequest()
 	descReq.Account = account
 	s.log.Debugf("query user account ...")
-	u, err := s.DescribeAccount(descReq)
+	u, err := s.DescribeAccount(ctx, descReq)
 	if err != nil {
 		return nil, err
 	}
@@ -118,19 +122,19 @@ func (s *service) changePass(account, old, new string, isReset bool) (*user.Pass
 	}
 
 	s.log.Debugf("save password to db ...")
-	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": u.Account}, bson.M{"$set": bson.M{
+	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": u.Data.Profile.Account}, bson.M{"$set": bson.M{
 		"password": u.HashedPassword,
 	}})
 
 	if err != nil {
-		return nil, exception.NewInternalServerError("update user(%s) password error, %s", u.Account, err)
+		return nil, exception.NewInternalServerError("update user(%s) password error, %s", u.Data.Profile.Account, err)
 	}
 
 	u.Desensitize()
 	return u.HashedPassword, nil
 }
 
-func (s *service) DescribeAccount(req *user.DescriptAccountRequest) (*user.User, error) {
+func (s *service) DescribeAccount(ctx context.Context, req *user.DescribeAccountRequest) (*user.User, error) {
 	r, err := newDescribeRequest(req)
 	if err != nil {
 		return nil, err
@@ -145,7 +149,7 @@ func (s *service) DescribeAccount(req *user.DescriptAccountRequest) (*user.User,
 		return nil, exception.NewInternalServerError("find user %s error, %s", req, err)
 	}
 
-	dom, err := s.domain.DescribeDomain(pkg.GetInternalAdminTokenCtx(ins.Account), domain.NewDescribeDomainRequestWithName(ins.Domain))
+	dom, err := s.domain.DescribeDomain(pkg.GetInternalAdminTokenCtx(ins.Data.Profile.Account), domain.NewDescribeDomainRequestWithName(ins.Domain))
 	if err != nil {
 		return nil, err
 	}
@@ -154,27 +158,27 @@ func (s *service) DescribeAccount(req *user.DescriptAccountRequest) (*user.User,
 	return ins, nil
 }
 
-func (s *service) BlockAccount(account, reason string) error {
-	desc := user.NewDescriptAccountRequestWithAccount(account)
-	user, err := s.DescribeAccount(desc)
+func (s *service) BlockAccount(ctx context.Context, req *user.BlockAccountRequest) (*user.User, error) {
+	desc := user.NewDescriptAccountRequestWithAccount(req.Account)
+	user, err := s.DescribeAccount(ctx, desc)
 	if err != nil {
-		return fmt.Errorf("describe user error, %s", err)
+		return nil, fmt.Errorf("describe user error, %s", err)
 	}
 
-	user.Block(reason)
-	return s.saveAccount(user)
+	user.Block(req.Reason)
+	return nil, s.saveAccount(user)
 }
 
-func (s *service) DeleteAccount(account string) error {
-	_, err := s.col.DeleteOne(context.TODO(), bson.M{"_id": account})
+func (s *service) DeleteAccount(ctx context.Context, req *user.DeleteAccountRequest) (*user.User, error) {
+	_, err := s.col.DeleteOne(context.TODO(), bson.M{"_id": req.Account})
 	if err != nil {
-		return exception.NewInternalServerError("delete user(%s) error, %s", account, err)
+		return nil, exception.NewInternalServerError("delete user(%s) error, %s", req.Account, err)
 	}
 
 	// 清除账号的关联的所有策略
-	if err := s.policy.DeletePolicy(policy.NewDeletePolicyRequestWithAccount(account)); err != nil {
+	if _, err := s.policy.DeletePolicy(ctx, policy.NewDeletePolicyRequestWithAccount(req.Account)); err != nil {
 		s.log.Errorf("delete account policy error, %s", err)
 	}
 
-	return nil
+	return nil, nil
 }

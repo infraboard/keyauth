@@ -7,12 +7,12 @@ import (
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 
-	"github.com/infraboard/keyauth/pkg"
+	"github.com/infraboard/keyauth/common/session"
 	"github.com/infraboard/keyauth/pkg/permission"
 )
 
 func (h *handler) List(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromHTTPRequest(r)
+	tk, err := session.GetTokenFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -35,7 +35,7 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromHTTPRequest(r)
+	tk, err := session.GetTokenFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return

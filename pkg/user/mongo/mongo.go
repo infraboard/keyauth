@@ -27,9 +27,11 @@ type service struct {
 	col           *mongo.Collection
 	enableCache   bool
 	notifyCachPre string
-	policy        policy.Service
-	depart        department.Service
+	policy        policy.PolicyServiceServer
+	depart        department.DepartmentServiceServer
 	domain        domain.DomainServiceServer
+
+	user.UnimplementedUserServiceServer
 }
 
 func (s *service) Config() error {
@@ -71,6 +73,6 @@ func (s *service) Config() error {
 }
 
 func init() {
-	var _ user.Service = Service
+	var _ user.UserServiceServer = Service
 	pkg.RegistryService("user", Service)
 }

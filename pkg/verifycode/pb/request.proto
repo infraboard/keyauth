@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package keyauth.verifycode;
+option go_package = "github.com/infraboard/keyauth/pkg/verifycode";
+
+import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
+import "pkg/verifycode/pb/enum.proto";
+
+// IssueCodeRequest 验证码申请请求
+message IssueCodeRequest {
+    IssueType issue_type = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"issue_type"'}
+        ];
+    IssueByPassRequest issue_by_pass = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"issue_by_pass"'}
+        ];
+    IssueByTokenRequest issue_by_token = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"issue_by_token"'}
+        ];
+}
+
+// IssueByPassRequest todo
+message IssueByPassRequest {
+    string username = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"username" validate:"required"'}
+        ];
+    string password = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"password" validate:"required"'}
+        ];
+    string client_id = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"client_id" validate:"required"'}
+        ];
+    string client_secret = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"client_secret" validate:"required"'}
+        ];
+}
+
+// IssueByTokenRequest todo
+message IssueByTokenRequest {
+    string token = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"token"'}
+        ];
+}
+
+// CheckCodeRequest 验证码校验请求
+message CheckCodeRequest {
+    string username = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"username" validate:"required"'}
+        ];
+    string number = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"number" validate:"required"'}
+        ];
+}

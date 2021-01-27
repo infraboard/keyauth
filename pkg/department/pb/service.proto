@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package keyauth.department;
+option go_package = "github.com/infraboard/keyauth/pkg/department";
+
+import "pkg/department/pb/request.proto";
+import "pkg/department/pb/department.proto";
+
+// Service 服务
+service DepartmentService {
+	rpc QueryDepartment(QueryDepartmentRequest) returns(Set);
+	rpc DescribeDepartment(DescribeDeparmentRequest) returns(Department);
+	rpc CreateDepartment(CreateDepartmentRequest) returns(Department);
+	rpc UpdateDepartment(UpdateDepartmentRequest) returns(Department);
+	rpc DeleteDepartment(DeleteDepartmentRequest) returns(Department);
+
+	rpc QueryApplicationForm(QueryApplicationFormRequet) returns(ApplicationFormSet);
+	rpc DescribeApplicationForm(DescribeApplicationFormRequet) returns(ApplicationForm);
+	rpc JoinDepartment(JoinDepartmentRequest) returns(ApplicationForm);
+	rpc DealApplicationForm(DealApplicationFormRequest) returns(ApplicationForm);
+}

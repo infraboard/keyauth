@@ -327,7 +327,7 @@ func (i *Initialer) initService(r *role.Role) (*micro.Micro, error) {
 	req.Name = version.ServiceName
 	req.Description = version.Description
 	req.Type = micro.BuildIn
-	req.RoleID = r.ID
+	req.RoleID = r.Id
 	return pkg.Micro.CreateService(req)
 }
 

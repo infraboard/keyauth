@@ -7,21 +7,20 @@ import (
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 
-	"github.com/infraboard/keyauth/pkg"
+	"github.com/infraboard/keyauth/common/session"
 	"github.com/infraboard/keyauth/pkg/policy"
 )
 
 func (h *handler) List(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromHTTPRequest(r)
+	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
 
 	req := policy.NewQueryPolicyRequestFromHTTP(r)
-	req.WithToken(tk)
 
-	apps, err := h.service.QueryPolicy(req)
+	apps, err := h.service.QueryPolicy(ctx, req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -33,7 +32,7 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 
 // CreateApplication 创建主账号
 func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromHTTPRequest(r)
+	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -45,10 +44,9 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 		response.Failed(w, err)
 		return
 	}
-	req.Type = policy.CustomPolicy
-	req.WithToken(tk)
+	req.Type = policy.PolicyType_CUSTOM
 
-	d, err := h.service.CreatePolicy(req)
+	d, err := h.service.CreatePolicy(ctx, req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -59,11 +57,16 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
+	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
 	rctx := context.GetContext(r)
 
 	req := policy.NewDescriptPolicyRequest()
-	req.ID = rctx.PS.ByName("id")
-	d, err := h.service.DescribePolicy(req)
+	req.Id = rctx.PS.ByName("id")
+	d, err := h.service.DescribePolicy(ctx, req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -74,7 +77,7 @@ func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) Delete(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromHTTPRequest(r)
+	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -83,8 +86,7 @@ func (h *handler) Delete(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
 
 	req := policy.NewDeletePolicyRequestWithID(rctx.PS.ByName("id"))
-	req.WithToken(tk)
-	if err := h.service.DeletePolicy(req); err != nil {
+	if _, err := h.service.DeletePolicy(ctx, req); err != nil {
 		response.Failed(w, err)
 		return
 	}

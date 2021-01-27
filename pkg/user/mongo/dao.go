@@ -8,28 +8,27 @@ import (
 
 	"github.com/infraboard/keyauth/pkg/department"
 	"github.com/infraboard/keyauth/pkg/policy"
-	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
 )
 
 func (s *service) saveAccount(u *user.User) error {
 	if _, err := s.col.InsertOne(context.TODO(), u); err != nil {
 		return exception.NewInternalServerError("inserted user(%s) document error, %s",
-			u.Account, err)
+			u.Data.Profile.Account, err)
 	}
 
 	return nil
 }
 
-func (s *service) queryAccount(req *queryUserRequest) (*user.Set, error) {
-	userSet := user.NewUserSet(req.PageRequest)
+func (s *service) queryAccount(ctx context.Context, req *queryUserRequest) (*user.Set, error) {
+	userSet := user.NewUserSet()
 
 	if !req.SkipItems {
 		resp, err := s.col.Find(context.TODO(), req.FindFilter(), req.FindOptions())
 
 		// 查询出该空间下的用户列表
-		if req.NamespaceID != "" {
-			ps, err := s.queryNamespacePolicy(req.GetToken(), req.NamespaceID)
+		if req.NamespaceId != "" {
+			ps, err := s.queryNamespacePolicy(ctx, req.NamespaceId)
 			if err != nil {
 				return nil, err
 			}
@@ -48,8 +47,8 @@ func (s *service) queryAccount(req *queryUserRequest) (*user.Set, error) {
 			}
 
 			// 补充用户的部门信息
-			if req.WithDepartment && u.DepartmentID != "" {
-				depart, err := s.depart.DescribeDepartment(department.NewDescribeDepartmentRequestWithID(u.DepartmentID))
+			if req.WithDepartment && u.Data.Profile.DepartmentId != "" {
+				depart, err := s.depart.DescribeDepartment(ctx, department.NewDescribeDepartmentRequestWithID(u.Data.Profile.DepartmentId))
 				if err != nil {
 					s.log.Errorf("get user department error, %s", err)
 				} else {
@@ -72,9 +71,8 @@ func (s *service) queryAccount(req *queryUserRequest) (*user.Set, error) {
 	return userSet, nil
 }
 
-func (s *service) queryNamespacePolicy(tk *token.Token, namespaceID string) (*policy.Set, error) {
+func (s *service) queryNamespacePolicy(ctx context.Context, namespaceID string) (*policy.Set, error) {
 	pReq := policy.NewQueryPolicyRequest(request.NewPageRequest(20, 1))
-	pReq.NamespaceID = namespaceID
-	pReq.WithToken(tk)
-	return s.policy.QueryPolicy(pReq)
+	pReq.NamespaceId = namespaceID
+	return s.policy.QueryPolicy(ctx, pReq)
 }

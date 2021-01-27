@@ -2,3 +2,108 @@ syntax = "proto3";
 
 package keyauth.user;
 option go_package = "github.com/infraboard/keyauth/pkg/user";
+
+import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
+import "pkg/department/pb/department.proto";
+import "pkg/user/pb/types.proto";
+import "pkg/user/pb/request.proto";
+
+message Password {
+    // hash过后的密码
+    string password = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"password" json:"password,omitempty"'}
+        ];
+    // 密码创建时间
+    int64 create_at = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"create_at" json:"create_at,omitempty"'}
+        ];
+    // 密码更新时间
+    int64 update_at = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"update_at" json:"update_at,omitempty"'}
+        ];
+    // 密码需要被重置
+    bool need_reset = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"need_reset" json:"need_reset"'}
+        ];
+    // 需要重置的原因
+    string reset_reason = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"reset_reason" json:"reset_reason"'}
+        ];
+    // 历史密码
+    repeated string history = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"history" json:"history,omitempty"'}
+        ];
+    // 是否过期
+    bool is_expired = 7[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"is_expired"'}
+        ];
+}
+
+// Status 用户状态
+message Status {
+    // 是否冻结
+    bool locked = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"locked" json:"locked"'}
+        ];
+    // 冻结时间
+    int64 locked_time = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"locked_time" json:"locked_time,omitempty"'}
+        ];
+    // 冻结原因
+    string locked_reson = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"locked_reson" json:"locked_reson,omitempty"'}
+        ];
+    // 解冻时间
+    int64 unlock_time = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"unlock_time" json:"unlock_time,omitempty"'}
+        ];  
+}
+
+// User info
+message User {
+    // 用户创建的时间
+    int64 create_at = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"create_at" json:"create_at,omitempty"'}
+        ];
+    // 修改时间
+    int64 update_at = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"update_at" json:"update_at,omitempty"'}
+        ];
+    // 如果是子账号和服务账号 都需要继承主用户Domain
+    string domain = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"domain" json:"domain,omitempty"'}
+        ];
+    // 是否是主账号
+    UserType type = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"type"  json:"type"'}
+        ];
+    // 用户的角色(当携带Namesapce查询时会有)
+    repeated string roles = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"roles,omitempty"'}
+        ];
+    // 数据
+    CreateAccountRequest data = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"data" json:"data"'}
+        ];
+    // 密码相关信息
+    Password hashed_password = 7[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"password" json:"password,omitempty"'}
+        ];
+    // 用户状态
+    Status status = 8[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"status" json:"status,omitempty"'}
+        ];
+    // 部门
+    department.Department department = 9[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"department,omitempty"'}
+        ];    
+}
+
+message Set {
+    int64 total = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"total" json:"total"'}
+        ];
+    repeated User items = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"items" json:"items"'}
+        ];
+}

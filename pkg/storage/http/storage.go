@@ -6,13 +6,13 @@ import (
 	"github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/response"
 
-	"github.com/infraboard/keyauth/pkg"
+	"github.com/infraboard/keyauth/common/session"
 	"github.com/infraboard/keyauth/pkg/storage"
 )
 
 func (h *handler) UploadGEOIPDBFile(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
-	tk, err := pkg.GetTokenFromHTTPRequest(r)
+	tk, err := session.GetTokenFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return

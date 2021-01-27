@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/infraboard/keyauth/pkg"
+	"github.com/infraboard/keyauth/common/session"
 	"github.com/infraboard/keyauth/pkg/domain"
 	"github.com/infraboard/keyauth/pkg/user"
 	"github.com/infraboard/mcube/http/request"
@@ -12,16 +12,15 @@ import (
 )
 
 func (h *handler) QueryProfile(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromHTTPRequest(r)
+	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
 
 	req := user.NewDescriptAccountRequest()
-	req.Account = tk.Account
 
-	ins, err := h.service.DescribeAccount(req)
+	ins, err := h.service.DescribeAccount(ctx, req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -33,22 +32,22 @@ func (h *handler) QueryProfile(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) PutProfile(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromHTTPRequest(r)
+	tk, err := session.GetTokenFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
 
 	req := user.NewPutAccountRequest()
-	req.Account = tk.Account
-	req.WithToken(tk)
+	req.Profile.Account = tk.Account
 
 	if err := request.GetDataFromRequest(r, req.Profile); err != nil {
 		response.Failed(w, err)
 		return
 	}
 
-	ins, err := h.service.UpdateAccountProfile(req)
+	ctx := session.WithTokenContext(context.Background(), tk)
+	ins, err := h.service.UpdateAccountProfile(ctx, req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -60,22 +59,22 @@ func (h *handler) PutProfile(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) PatchProfile(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromHTTPRequest(r)
+	tk, err := session.GetTokenFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
 
 	req := user.NewPatchAccountRequest()
-	req.Account = tk.Account
-	req.WithToken(tk)
+	req.Profile.Account = tk.Account
 
 	if err := request.GetDataFromRequest(r, req.Profile); err != nil {
 		response.Failed(w, err)
 		return
 	}
 
-	ins, err := h.service.UpdateAccountProfile(req)
+	ctx := session.WithTokenContext(context.Background(), tk)
+	ins, err := h.service.UpdateAccountProfile(ctx, req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -87,12 +86,12 @@ func (h *handler) PatchProfile(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) QueryDomain(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromHTTPRequest(r)
+	tk, err := session.GetTokenFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
-	ctx := pkg.WithTokenContext(context.Background(), tk)
+	ctx := session.WithTokenContext(context.Background(), tk)
 
 	req := domain.NewDescribeDomainRequest()
 	req.Name = tk.Domain
@@ -108,12 +107,12 @@ func (h *handler) QueryDomain(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) UpdateDomainInfo(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromHTTPRequest(r)
+	tk, err := session.GetTokenFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
-	ctx := pkg.WithTokenContext(context.Background(), tk)
+	ctx := session.WithTokenContext(context.Background(), tk)
 
 	// 查找出原来的domain
 	req := domain.NewPatchDomainRequest()
@@ -136,12 +135,12 @@ func (h *handler) UpdateDomainInfo(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) UpdateDomainSecurity(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromHTTPRequest(r)
+	tk, err := session.GetTokenFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
-	ctx := pkg.WithTokenContext(context.Background(), tk)
+	ctx := session.WithTokenContext(context.Background(), tk)
 
 	// 查找出原来的domain
 	req := domain.NewPutDomainSecurityRequest()

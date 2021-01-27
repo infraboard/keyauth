@@ -7,13 +7,13 @@ import (
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 
-	"github.com/infraboard/keyauth/pkg"
+	"github.com/infraboard/keyauth/common/session"
 	"github.com/infraboard/keyauth/pkg/department"
 )
 
 // 创建部门加入申请
 func (h *handler) CreateJoinApply(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromHTTPRequest(r)
+	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -24,10 +24,8 @@ func (h *handler) CreateJoinApply(w http.ResponseWriter, r *http.Request) {
 		response.Failed(w, err)
 		return
 	}
-	req.WithToken(tk)
-	req.Account = tk.Account
 
-	ins, err := h.service.JoinDepartment(req)
+	ins, err := h.service.JoinDepartment(ctx, req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -39,7 +37,7 @@ func (h *handler) CreateJoinApply(w http.ResponseWriter, r *http.Request) {
 
 // 查询部门加入申请
 func (h *handler) QueryJoinApply(w http.ResponseWriter, r *http.Request) {
-	tk, err := pkg.GetTokenFromHTTPRequest(r)
+	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -50,9 +48,8 @@ func (h *handler) QueryJoinApply(w http.ResponseWriter, r *http.Request) {
 		response.Failed(w, err)
 		return
 	}
-	req.WithToken(tk)
 
-	ins, err := h.service.QueryApplicationForm(req)
+	ins, err := h.service.QueryApplicationForm(ctx, req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -64,16 +61,14 @@ func (h *handler) QueryJoinApply(w http.ResponseWriter, r *http.Request) {
 // Create 创建主账号
 func (h *handler) GetJoinApply(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
-	tk, err := pkg.GetTokenFromHTTPRequest(r)
+	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
 
 	req := department.NewDescribeApplicationFormRequetWithID(rctx.PS.ByName("id"))
-	req.WithToken(tk)
-
-	ins, err := h.service.DescribeApplicationForm(req)
+	ins, err := h.service.DescribeApplicationForm(ctx, req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -86,7 +81,7 @@ func (h *handler) GetJoinApply(w http.ResponseWriter, r *http.Request) {
 // Create 创建主账号
 func (h *handler) DealJoinApply(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
-	tk, err := pkg.GetTokenFromHTTPRequest(r)
+	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -97,10 +92,9 @@ func (h *handler) DealJoinApply(w http.ResponseWriter, r *http.Request) {
 		response.Failed(w, err)
 		return
 	}
-	req.WithToken(tk)
-	req.ID = rctx.PS.ByName("id")
+	req.Id = rctx.PS.ByName("id")
 
-	ins, err := h.service.DealApplicationForm(req)
+	ins, err := h.service.DealApplicationForm(ctx, req)
 	if err != nil {
 		response.Failed(w, err)
 		return

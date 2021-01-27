@@ -1,0 +1,89 @@
+syntax = "proto3";
+
+package keyauth.role;
+option go_package = "github.com/infraboard/keyauth/pkg/role";
+
+import "pkg/role/pb/enum.proto";
+import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
+import "github.com/infraboard/mcube/pb/page/page.proto";
+
+// CreateRoleRequest 创建应用请求
+message CreateRoleRequest {
+    // 角色类型
+    RoleType type = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"type" json:"type"'}
+        ];
+    // 应用名称
+    string name = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"name" json:"name,omitempty" validate:"required,lte=30"'}
+        ];
+    // 应用简单的描述
+    string description =3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"description" json:"description,omitempty" validate:"lte=400"'}
+        ];
+    // 读权限
+    repeated Permission permissions = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"permissions" json:"permissions,omitempty"'}
+        ];                   
+}
+
+
+// Permission 权限
+message Permission {
+     // 效力
+    EffectType effect = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"effect" json:"effect,omitempty"'}
+        ];
+    // 资源列表
+    string resource_name = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"resource_name" json:"resource_name,omitempty"'}
+        ];
+    // 维度
+    string label_key = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"label_key" json:"label_key,omitempty"'}
+        ];
+    // 适配所有值
+    bool match_all = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"match_all" json:"match_all"'}
+        ];
+    // 标识值
+    repeated string label_values = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"label_values" json:"label_values,omitempty"'}
+        ]; 
+}
+
+// QueryRoleRequest 列表查询
+message QueryRoleRequest {
+    page.PageRequest page = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"page" json:"page"'}
+        ];
+    RoleType type = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"type" json:"type"'}
+        ];
+    bool with_permissions = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"with_permissions" json:"with_permissions"'}
+        ];
+}
+
+// DescribeRoleRequest role详情
+message DescribeRoleRequest {
+    string id = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"id"'}
+        ];
+    string name = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"name,omitempty" validate:"required,lte=64"'}
+        ];
+    bool with_permissions = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"with_permissions" json:"with_permissions"'}
+        ];
+    RoleType type = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"type" json:"type"'}
+        ];
+}
+
+// DeleteRoleRequest role删除
+message DeleteRoleRequest {
+    string id = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"id,omitempty" validate:"required,lte=64"'}
+        ];
+}

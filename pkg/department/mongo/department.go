@@ -8,22 +8,23 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
+	"github.com/infraboard/keyauth/common/session"
 	common "github.com/infraboard/keyauth/common/types"
 	"github.com/infraboard/keyauth/pkg/department"
 	"github.com/infraboard/keyauth/pkg/role"
-	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
 	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
-func (s *service) QueryDepartment(req *department.QueryDepartmentRequest) (
+func (s *service) QueryDepartment(ctx context.Context, req *department.QueryDepartmentRequest) (
 	*department.Set, error) {
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest("validate query department error, %s", err)
 	}
+	tk := session.GetTokenFromContext(ctx)
 
-	query := newQueryDepartmentRequest(req)
-	set := department.NewDepartmentSet(req.PageRequest)
+	query := newQueryDepartmentRequest(tk, req)
+	set := department.NewDepartmentSet()
 
 	if !req.SkipItems {
 		resp, err := s.dc.Find(context.TODO(), query.FindFilter(), query.FindOptions())
@@ -40,24 +41,24 @@ func (s *service) QueryDepartment(req *department.QueryDepartmentRequest) (
 			}
 
 			if req.WithSubCount {
-				sc, err := s.querySubCount(ins.ID, req.GetToken())
+				sc, err := s.querySubCount(ctx, ins.Id)
 				if err != nil {
 					return nil, err
 				}
-				ins.SubCount = &sc
+				ins.SubCount = sc
 			}
 
 			// 补充用户数量
 			if req.WithUserCount {
-				uc, err := s.queryUserCount(ins.ID, req.GetToken())
+				uc, err := s.queryUserCount(ctx, ins.Id)
 				if err != nil {
 					return nil, err
 				}
-				ins.UserCount = &uc
+				ins.UserCount = uc
 			}
 
-			if req.WithRole && ins.DefaultRoleID != "" {
-				rIns, err := s.role.DescribeRole(role.NewDescribeRoleRequestWithID(ins.DefaultRoleID))
+			if req.WithRole && ins.Data.DefaultRoleId != "" {
+				rIns, err := s.role.DescribeRole(ctx, role.NewDescribeRoleRequestWithID(ins.Data.DefaultRoleId))
 				if err != nil {
 					return nil, err
 				}
@@ -78,7 +79,7 @@ func (s *service) QueryDepartment(req *department.QueryDepartmentRequest) (
 	return set, nil
 }
 
-func (s *service) DescribeDepartment(req *department.DescribeDeparmentRequest) (
+func (s *service) DescribeDepartment(ctx context.Context, req *department.DescribeDeparmentRequest) (
 	*department.Department, error) {
 	r, err := newDescribeDepartment(req)
 	if err != nil {
@@ -91,28 +92,28 @@ func (s *service) DescribeDepartment(req *department.DescribeDeparmentRequest) (
 			return nil, exception.NewNotFound("department %s not found", req)
 		}
 
-		return nil, exception.NewInternalServerError("find department %s error, %s", req.ID, err)
+		return nil, exception.NewInternalServerError("find department %s error, %s", req.Id, err)
 	}
 
 	if req.WithSubCount {
-		sc, err := s.querySubCount(ins.ID, req.GetToken())
+		sc, err := s.querySubCount(ctx, ins.Id)
 		if err != nil {
 			return nil, err
 		}
-		ins.SubCount = &sc
+		ins.SubCount = sc
 	}
 
 	// 补充用户数量
 	if req.WithUserCount {
-		uc, err := s.queryUserCount(ins.ID, req.GetToken())
+		uc, err := s.queryUserCount(ctx, ins.Id)
 		if err != nil {
 			return nil, err
 		}
-		ins.UserCount = &uc
+		ins.UserCount = uc
 	}
 
-	if req.WithRole && ins.DefaultRoleID != "" {
-		rIns, err := s.role.DescribeRole(role.NewDescribeRoleRequestWithID(ins.DefaultRoleID))
+	if req.WithRole && ins.Data.DefaultRoleId != "" {
+		rIns, err := s.role.DescribeRole(ctx, role.NewDescribeRoleRequestWithID(ins.Data.DefaultRoleId))
 		if err != nil {
 			return nil, err
 		}
@@ -122,26 +123,25 @@ func (s *service) DescribeDepartment(req *department.DescribeDeparmentRequest) (
 	return ins, nil
 }
 
-func (s *service) querySubCount(departmentID string, tk *token.Token) (int64, error) {
+func (s *service) querySubCount(ctx context.Context, departmentID string) (int64, error) {
 	query := department.NewQueryDepartmentRequest()
-	query.WithToken(tk)
-	query.ParentID = &departmentID
+	query.ParentId = departmentID
 	query.SkipItems = true
 	query.WithSubCount = true
-	sc, err := s.QueryDepartment(query)
+	sc, err := s.QueryDepartment(ctx, query)
 	if err != nil {
 		return 0, exception.NewInternalServerError("query sub department count error, error is %s", err)
 	}
 	return sc.Total, nil
 }
 
-func (s *service) queryUserCount(departmentID string, tk *token.Token) (int64, error) {
+func (s *service) queryUserCount(ctx context.Context, departmentID string) (int64, error) {
 	queryU := user.NewQueryAccountRequest()
-	queryU.DepartmentID = departmentID
+	queryU.DepartmentId = departmentID
 	queryU.SkipItems = true
-	queryU.WithALLSub = true
-	queryU.WithToken(tk)
-	us, err := s.user.QueryAccount(types.UserType_SUB, queryU)
+	queryU.WithAllSub = true
+	queryU.UserType = types.UserType_SUB
+	us, err := s.user.QueryAccount(ctx, queryU)
 	if err != nil {
 		return 0, exception.NewInternalServerError("query department user count error, error is %s", err)
 	}
@@ -149,87 +149,86 @@ func (s *service) queryUserCount(departmentID string, tk *token.Token) (int64, e
 	return us.Total, nil
 }
 
-func (s *service) CreateDepartment(req *department.CreateDepartmentRequest) (
+func (s *service) CreateDepartment(ctx context.Context, req *department.CreateDepartmentRequest) (
 	*department.Department, error) {
-	ins, err := department.NewDepartment(req, s, s.role, s.counter)
+	ins, err := department.NewDepartment(ctx, req, s, s.role, s.counter)
 	if err != nil {
 		return nil, err
 	}
 
 	if _, err := s.dc.InsertOne(context.TODO(), ins); err != nil {
 		return nil, exception.NewInternalServerError("inserted department(%s) document error, %s",
-			ins.Name, err)
+			ins.Data.Name, err)
 	}
 
 	return ins, nil
 }
 
-func (s *service) DeleteDepartment(req *department.DeleteDepartmentRequest) error {
+func (s *service) DeleteDepartment(ctx context.Context, req *department.DeleteDepartmentRequest) (*department.Department, error) {
 	if err := req.Validate(); err != nil {
-		return exception.NewBadRequest("validate delete department request error, %s", err)
+		return nil, exception.NewBadRequest("validate delete department request error, %s", err)
 	}
 
 	// 判断部门是否还有子部门
 	desc := department.NewDescribeDepartmentRequest()
-	desc.ID = req.ID
+	desc.Id = req.Id
 	desc.WithSubCount = true
-	desc.WithTokenGetter(req)
-	dep, err := s.DescribeDepartment(desc)
+	dep, err := s.DescribeDepartment(ctx, desc)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if dep.HasSubDepartment() {
-		return exception.NewBadRequest("当前部门下还有%d个子部门, 请先删除", *dep.SubCount)
+		return nil, exception.NewBadRequest("当前部门下还有%d个子部门, 请先删除", dep.SubCount)
 	}
 
 	// 判断部门下是否还有用户
 	userReq := user.NewQueryAccountRequest()
 	userReq.SkipItems = true
-	userReq.DepartmentID = req.ID
-	userReq.WithTokenGetter(req)
-	userSet, err := s.user.QueryAccount(types.UserType_SUB, userReq)
+	userReq.DepartmentId = req.Id
+	userReq.UserType = types.UserType_SUB
+	userSet, err := s.user.QueryAccount(ctx, userReq)
 
 	if err != nil {
-		return exception.NewBadRequest("quer department user error, %s", err)
+		return nil, exception.NewBadRequest("quer department user error, %s", err)
 	}
 	if userSet.Total > 0 {
-		return exception.NewBadRequest("当前部门下还有%d个用户, 请先迁移用户", userSet.Total)
+		return nil, exception.NewBadRequest("当前部门下还有%d个用户, 请先迁移用户", userSet.Total)
 	}
 
-	result, err := s.dc.DeleteOne(context.TODO(), bson.M{"_id": req.ID})
+	result, err := s.dc.DeleteOne(context.TODO(), bson.M{"_id": req.Id})
 	if err != nil {
-		return exception.NewInternalServerError("delete department(%s) error, %s", req.ID, err)
+		return nil, exception.NewInternalServerError("delete department(%s) error, %s", req.Id, err)
 	}
 
 	if result.DeletedCount == 0 {
-		return exception.NewNotFound("department %s not found", req.ID)
+		return nil, exception.NewNotFound("department %s not found", req.Id)
 	}
 
-	return nil
+	return dep, nil
 }
 
-func (s *service) UpdateDepartment(req *department.UpdateDepartmentRequest) (*department.Department, error) {
+func (s *service) UpdateDepartment(ctx context.Context, req *department.UpdateDepartmentRequest) (*department.Department, error) {
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest("validate update department error, %s", err)
 	}
 
-	dp, err := s.DescribeDepartment(department.NewDescribeDepartmentRequestWithID(req.ID))
+	dp, err := s.DescribeDepartment(ctx, department.NewDescribeDepartmentRequestWithID(req.Id))
 	if err != nil {
 		return nil, err
 	}
 	switch req.UpdateMode {
 	case common.UpdateMode_PUT:
-		*dp.CreateDepartmentRequest = *req.CreateDepartmentRequest
+		*dp.Data = *req.Data
 	case common.UpdateMode_PATCH:
-		dp.CreateDepartmentRequest.Patch(req.CreateDepartmentRequest)
+		dp.Data.Patch(req.Data)
 	default:
 		return nil, exception.NewBadRequest("unknown update mode: %s", req.UpdateMode)
 	}
 
-	dp.UpdateAt = ftime.Now()
-	_, err = s.dc.UpdateOne(context.TODO(), bson.M{"_id": dp.ID}, bson.M{"$set": dp})
+	dp.UpdateAt = ftime.Now().Timestamp()
+	_, err = s.dc.UpdateOne(context.TODO(), bson.M{"_id": dp.Id}, bson.M{"$set": dp})
 	if err != nil {
-		return nil, exception.NewInternalServerError("update domain(%s) error, %s", dp.Name, err)
+		return nil, exception.NewInternalServerError("update domain(%s) error, %s", dp.Data.Name, err)
 	}
 
 	return dp, nil

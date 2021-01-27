@@ -7,19 +7,21 @@ import (
 	"github.com/infraboard/mcube/exception"
 	"go.mongodb.org/mongo-driver/mongo"
 
+	"github.com/infraboard/keyauth/common/session"
 	"github.com/infraboard/keyauth/pkg/namespace"
 	"github.com/infraboard/keyauth/pkg/policy"
 	"github.com/infraboard/keyauth/pkg/role"
 )
 
-func (s *service) CreatePolicy(req *policy.CreatePolicyRequest) (
+func (s *service) CreatePolicy(ctx context.Context, req *policy.CreatePolicyRequest) (
 	*policy.Policy, error) {
-	ins, err := policy.New(req)
+	tk := session.GetTokenFromContext(ctx)
+	ins, err := policy.New(tk, req)
 	if err != nil {
 		return nil, exception.NewBadRequest(err.Error())
 	}
 
-	u, err := ins.CheckDependence(s.user, s.role, s.namespace)
+	u, err := ins.Data.CheckDependence(ctx, s.user, s.role, s.namespace)
 	if err != nil {
 		return nil, err
 	}
@@ -27,15 +29,16 @@ func (s *service) CreatePolicy(req *policy.CreatePolicyRequest) (
 
 	if _, err := s.col.InsertOne(context.TODO(), ins); err != nil {
 		return nil, exception.NewInternalServerError("inserted policy(%s) document error, %s",
-			ins.ID, err)
+			ins.Id, err)
 	}
 
 	return ins, nil
 }
 
-func (s *service) QueryPolicy(req *policy.QueryPolicyRequest) (
+func (s *service) QueryPolicy(ctx context.Context, req *policy.QueryPolicyRequest) (
 	*policy.Set, error) {
-	r, err := newQueryPolicyRequest(req)
+	tk := session.GetTokenFromContext(ctx)
+	r, err := newQueryPolicyRequest(tk, req)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +48,7 @@ func (s *service) QueryPolicy(req *policy.QueryPolicyRequest) (
 		return nil, exception.NewInternalServerError("find policy error, error is %s", err)
 	}
 
-	set := policy.NewPolicySet(req.PageRequest)
+	set := policy.NewPolicySet()
 	// 循环
 	for resp.Next(context.TODO()) {
 		ins := policy.NewDefaultPolicy()
@@ -55,17 +58,17 @@ func (s *service) QueryPolicy(req *policy.QueryPolicyRequest) (
 
 		// 补充关联的角色信息
 		if req.WithRole {
-			descRole := role.NewDescribeRoleRequestWithID(ins.RoleID)
-			ins.Role, err = s.role.DescribeRole(descRole)
+			descRole := role.NewDescribeRoleRequestWithID(ins.Data.RoleId)
+			ins.Role, err = s.role.DescribeRole(ctx, descRole)
 			if err != nil {
 				return nil, err
 			}
 		}
 
 		// 关联空间信息
-		if req.WithNamespace && ins.NamespaceID != "*" {
-			descNS := namespace.NewNewDescriptNamespaceRequestWithID(ins.NamespaceID)
-			ins.Namespace, err = s.namespace.DescribeNamespace(descNS)
+		if req.WithNamespace && ins.Data.NamespaceId != "*" {
+			descNS := namespace.NewNewDescriptNamespaceRequestWithID(ins.Data.NamespaceId)
+			ins.Namespace, err = s.namespace.DescribeNamespace(ctx, descNS)
 			if err != nil {
 				return nil, err
 			}
@@ -84,7 +87,7 @@ func (s *service) QueryPolicy(req *policy.QueryPolicyRequest) (
 	return set, nil
 }
 
-func (s *service) DescribePolicy(req *policy.DescribePolicyRequest) (
+func (s *service) DescribePolicy(ctx context.Context, req *policy.DescribePolicyRequest) (
 	*policy.Policy, error) {
 	r, err := newDescribePolicyRequest(req)
 	if err != nil {
@@ -97,26 +100,27 @@ func (s *service) DescribePolicy(req *policy.DescribePolicyRequest) (
 			return nil, exception.NewNotFound("policy %s not found", req)
 		}
 
-		return nil, exception.NewInternalServerError("find policy %s error, %s", req.ID, err)
+		return nil, exception.NewInternalServerError("find policy %s error, %s", req.Id, err)
 	}
 
 	return ins, nil
 }
 
-func (s *service) DeletePolicy(req *policy.DeletePolicyRequest) error {
-	r, err := newDeletePolicyRequest(req)
+func (s *service) DeletePolicy(ctx context.Context, req *policy.DeletePolicyRequest) (*policy.Policy, error) {
+	tk := session.GetTokenFromContext(ctx)
+	r, err := newDeletePolicyRequest(tk, req)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	result, err := s.col.DeleteOne(context.TODO(), r.FindFilter())
 	if err != nil {
-		return exception.NewInternalServerError("delete policy(%s) error, %s", req.ID, err)
+		return nil, exception.NewInternalServerError("delete policy(%s) error, %s", req.Id, err)
 	}
 
 	if result.DeletedCount == 0 {
-		return fmt.Errorf("policy %s not found", req.ID)
+		return nil, fmt.Errorf("policy %s not found", req.Id)
 	}
 
-	return nil
+	return nil, nil
 }

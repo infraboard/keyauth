@@ -1,11 +1,12 @@
 package mongo
 
 import (
+	"github.com/infraboard/mcube/exception"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/infraboard/keyauth/pkg/namespace"
-	"github.com/infraboard/mcube/exception"
+	"github.com/infraboard/keyauth/pkg/token"
 )
 
 func newPaggingQuery(req *namespace.QueryNamespaceRequest) *queryNamespaceRequest {
@@ -17,8 +18,8 @@ type queryNamespaceRequest struct {
 }
 
 func (r *queryNamespaceRequest) FindOptions() *options.FindOptions {
-	pageSize := int64(r.PageSize)
-	skip := int64(r.PageSize) * int64(r.PageNumber-1)
+	pageSize := int64(r.Page.PageSize)
+	skip := int64(r.Page.PageSize) * int64(r.Page.PageNumber-1)
 
 	opt := &options.FindOptions{
 		Sort:  bson.D{{Key: "create_at", Value: -1}},
@@ -32,11 +33,11 @@ func (r *queryNamespaceRequest) FindOptions() *options.FindOptions {
 func (r *queryNamespaceRequest) FindFilter() bson.M {
 	filter := bson.M{}
 
-	if r.DepartmentID != "" {
+	if r.DepartmentId != "" {
 		if r.WithSubDepartment {
-			filter["department_id"] = bson.M{"$regex": r.DepartmentID, "$options": "im"}
+			filter["department_id"] = bson.M{"$regex": r.DepartmentId, "$options": "im"}
 		} else {
-			filter["department_id"] = r.DepartmentID
+			filter["department_id"] = r.DepartmentId
 		}
 	}
 
@@ -58,31 +59,33 @@ type describeNamespaceRequest struct {
 func (r *describeNamespaceRequest) FindFilter() bson.M {
 	filter := bson.M{}
 
-	if r.ID != "" {
-		filter["_id"] = r.ID
+	if r.Id != "" {
+		filter["_id"] = r.Id
 	}
 
 	return filter
 }
 
-func newDeleteRequest(req *namespace.DeleteNamespaceRequest) (*deleteNamespaceRequest, error) {
+func newDeleteRequest(tk *token.Token, req *namespace.DeleteNamespaceRequest) (*deleteNamespaceRequest, error) {
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest(err.Error())
 	}
 
-	return &deleteNamespaceRequest{req}, nil
+	return &deleteNamespaceRequest{
+		tk:                     tk,
+		DeleteNamespaceRequest: req,
+	}, nil
 }
 
 type deleteNamespaceRequest struct {
+	tk *token.Token
 	*namespace.DeleteNamespaceRequest
 }
 
 func (r *deleteNamespaceRequest) FindFilter() bson.M {
-	tk := r.GetToken()
-
 	filter := bson.M{
-		"domain": tk.Domain,
-		"_id":    r.ID,
+		"domain": r.tk.Domain,
+		"_id":    r.Id,
 	}
 
 	return filter

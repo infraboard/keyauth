@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+package keyauth.micro;
+option go_package = "github.com/infraboard/keyauth/pkg/micro";
+
+import "pkg/micro/pb/enum.proto";
+import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
+import "github.com/infraboard/mcube/pb/page/page.proto";
+
+// CreateMicroRequest 服务创建请求
+message CreateMicroRequest {
+    // 服务类型
+    Type type = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"type" json:"type"'}
+        ];
+    // 名称
+    string name = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"name" json:"name" validate:"required,lte=200"'}
+        ];
+    // 服务标签
+    map<string, string> label = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"label" json:"label" validate:"lte=80"'}
+        ];
+    // 描述信息
+    string description = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"description" json:"description,omitempty"'}
+        ];
+    // 是否启用该服务
+    bool enabled = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"enabled" json:"enabled"'}
+        ];
+    // 凭证申请的token的过期时间
+    int64 token_expire_time = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"token_expire_time" json:"token_expire_time,omitempty"'}
+        ];
+    // 服务角色
+    string role_id = 7[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"role_id" json:"role_id,omitempty"'}
+        ];                    
+}
+
+// QueryMicroRequest 查询应用列表
+message QueryMicroRequest {
+    page.PageRequest page = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"page"'}
+        ];
+}
+
+// DescribeMicroRequest 查询应用详情
+message DescribeMicroRequest {
+    string account = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"account"'}
+        ];
+    string name = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"name"'}
+        ];
+    string id = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"id"'}
+        ];
+}
+
+// DeleteMicroRequest todo
+message DeleteMicroRequest {
+    string id = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"id"'}
+        ];
+}

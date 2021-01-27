@@ -9,7 +9,7 @@ import (
 	"github.com/rs/xid"
 
 	"github.com/infraboard/keyauth/pkg/endpoint"
-	"github.com/infraboard/keyauth/pkg/token/session"
+	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
@@ -19,14 +19,9 @@ const (
 )
 
 // New 新创建一个Role
-func New(req *CreateRoleRequest) (*Role, error) {
+func New(tk *token.Token, req *CreateRoleRequest) (*Role, error) {
 	if err := req.Validate(); err != nil {
 		return nil, err
-	}
-
-	tk := req.GetToken()
-	if tk == nil {
-		return nil, fmt.Errorf("token required")
 	}
 
 	if !tk.UserType.IsIn(types.UserType_SUPPER) && !req.IsCumstomType() {
@@ -34,30 +29,20 @@ func New(req *CreateRoleRequest) (*Role, error) {
 	}
 
 	return &Role{
-		ID:                xid.New().String(),
-		CreateAt:          ftime.Now(),
-		UpdateAt:          ftime.Now(),
-		Domain:            tk.Domain,
-		Creater:           tk.Account,
-		CreateRoleRequest: req,
+		Id:       xid.New().String(),
+		CreateAt: ftime.Now().Timestamp(),
+		UpdateAt: ftime.Now().Timestamp(),
+		Domain:   tk.Domain,
+		Creater:  tk.Account,
+		Data:     req,
 	}, nil
 }
 
 // NewDefaultRole 默认实例
 func NewDefaultRole() *Role {
 	return &Role{
-		CreateRoleRequest: NewCreateRoleRequest(),
+		Data: NewCreateRoleRequest(),
 	}
-}
-
-// Role is rbac's role
-type Role struct {
-	ID                 string     `bson:"_id" json:"id"`                        // 角色ID
-	CreateAt           ftime.Time `bson:"create_at" json:"create_at,omitempty"` // 创建时间`
-	UpdateAt           ftime.Time `bson:"update_at" json:"update_at,omitempty"` // 更新时间
-	Domain             string     `bson:"domain" json:"domain,omitempty"`       // 角色所属域
-	Creater            string     `bson:"creater" json:"creater"`               // 创建人
-	*CreateRoleRequest `bson:",inline"`
 }
 
 // HasPermission 权限判断
@@ -65,11 +50,11 @@ func (r *Role) HasPermission(ep *endpoint.Endpoint) (*Permission, bool, error) {
 	var (
 		rok, lok bool
 	)
-	for i := range r.Permissions {
-		rok = r.Permissions[i].MatchResource(ep.Resource)
-		lok = r.Permissions[i].MatchLabel(ep.Labels)
+	for i := range r.Data.Permissions {
+		rok = r.Data.Permissions[i].MatchResource(ep.Resource)
+		lok = r.Data.Permissions[i].MatchLabel(ep.Labels)
 		if rok && lok {
-			return r.Permissions[i], true, nil
+			return r.Data.Permissions[i], true, nil
 		}
 	}
 	return nil, false, nil
@@ -78,33 +63,18 @@ func (r *Role) HasPermission(ep *endpoint.Endpoint) (*Permission, bool, error) {
 // NewCreateRoleRequest 实例化请求
 func NewCreateRoleRequest() *CreateRoleRequest {
 	return &CreateRoleRequest{
-		Session:     session.NewSession(),
 		Permissions: []*Permission{},
-		Type:        CustomType,
+		Type:        RoleType_CUSTOM,
 	}
-}
-
-// CreateRoleRequest 创建应用请求
-type CreateRoleRequest struct {
-	*session.Session `bson:"-" json:"-"`
-	Type             Type          `bson:"type" json:"type"`                                            // 角色类型
-	Name             string        `bson:"name" json:"name,omitempty" validate:"required,lte=30"`       // 应用名称
-	Description      string        `bson:"description" json:"description,omitempty" validate:"lte=400"` // 应用简单的描述
-	Permissions      []*Permission `bson:"permissions" json:"permissions,omitempty"`                    // 读权限
 }
 
 // IsCumstomType todo
 func (req *CreateRoleRequest) IsCumstomType() bool {
-	return req.Type.Is(CustomType)
+	return req.Type.Equal(RoleType_CUSTOM)
 }
 
 // Validate 请求校验
 func (req *CreateRoleRequest) Validate() error {
-	tk := req.GetToken()
-	if tk == nil {
-		return fmt.Errorf("token required")
-	}
-
 	pc := len(req.Permissions)
 	if pc > MaxPermissionCount {
 		return fmt.Errorf("role permission overed max count: %d",
@@ -131,19 +101,10 @@ func (r *Role) CheckPermission() error {
 }
 
 // NewRoleSet 实例化make
-func NewRoleSet(req *request.PageRequest) *Set {
+func NewRoleSet() *Set {
 	return &Set{
-		PageRequest: req,
-		Items:       []*Role{},
+		Items: []*Role{},
 	}
-}
-
-// Set 角色集合
-type Set struct {
-	*request.PageRequest
-
-	Total int64   `json:"total"`
-	Items []*Role `json:"items"`
 }
 
 // Permissions todo
@@ -151,7 +112,7 @@ func (s *Set) Permissions() *PermissionSet {
 	ps := NewPermissionSet(nil)
 
 	for i := range s.Items {
-		ps.Add(s.Items[i].Permissions...)
+		ps.Add(s.Items[i].Data.Permissions...)
 	}
 
 	return ps
@@ -180,17 +141,8 @@ func (s *Set) HasPermission(ep *endpoint.Endpoint) (*Permission, bool, error) {
 // NewDefaultPermission todo
 func NewDefaultPermission() *Permission {
 	return &Permission{
-		Effect: Allow,
+		Effect: EffectType_ALLOW,
 	}
-}
-
-// Permission 权限
-type Permission struct {
-	Effect       EffectType `bson:"effect" json:"effect,omitempty"`               // 效力
-	ResourceName string     `bson:"resource_name" json:"resource_name,omitempty"` // 资源列表
-	LabelKey     string     `bson:"label_key" json:"label_key,omitempty"`         // 维度
-	MatchAll     bool       `bson:"match_all" json:"match_all"`                   // 适配所有值
-	LabelValues  []string   `bson:"label_values" json:"label_values,omitempty"`   // 标识值
 }
 
 // Validate todo

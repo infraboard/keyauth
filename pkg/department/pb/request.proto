@@ -1,0 +1,156 @@
+syntax = "proto3";
+
+package keyauth.department;
+option go_package = "github.com/infraboard/keyauth/pkg/department";
+
+import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
+import "github.com/infraboard/mcube/pb/page/page.proto";
+import "pkg/department/pb/enum.proto";
+import "common/types/types.proto";
+
+// CreateDepartmentRequest 创建部门请求
+message CreateDepartmentRequest {
+    // 部门名称
+    string name = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"name" json:"name" validate:"required,lte=60"'}
+        ];
+    // 显示名称
+    string display_name = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"display_name" json:"display_name"'}
+        ];
+    // 上级部门ID
+    string parent_id = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"parent_id" json:"parent_id" validate:"lte=200"'}
+        ];
+    // 部门管理者account
+    string manager = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"manager" json:"manager" validate:"required,lte=200"'}
+        ];
+    // 部门成员默认角色
+    string default_role_id = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"default_role_id" json:"default_role_id" validate:"lte=200"'}
+        ];
+}
+
+// QueryDepartmentRequest todo
+message QueryDepartmentRequest {
+    page.PageRequest page = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"page"'}
+        ];
+    string parent_id = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"parent_id"'}
+        ];
+    string keywords = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"keywords"'}
+        ];
+    bool skip_items = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"skip_items"'}
+        ];
+    bool with_sub_count = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"with_sub_count"'}
+        ];
+    bool with_user_count = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"with_user_count"'}
+        ];
+    bool with_role = 7[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"with_role"'}
+        ];
+}
+
+// DescribeDeparmentRequest 详情查询
+message DescribeDeparmentRequest {
+    string id = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"id"'}
+        ];
+	string name = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"name"'}
+        ];
+	bool with_sub_count = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"with_sub_count"'}
+        ];
+	bool with_user_count = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"with_user_count"'}
+        ];
+    bool with_role = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"with_role"'}
+        ];
+}
+
+// UpdateDepartmentRequest todo
+message UpdateDepartmentRequest {
+    // 更新模式
+    common.types.UpdateMode update_mode = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"update_mode"'}
+        ];
+    string id = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"id"'}
+        ];
+    CreateDepartmentRequest data = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"data"'}
+        ];
+}
+
+// DeleteDepartmentRequest todo
+message DeleteDepartmentRequest {
+	string id = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"id"'}
+        ];
+}
+
+// JoinDepartmentRequest todo
+message JoinDepartmentRequest {
+    // 申请人
+    string account = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"account" json:"account" validate:"required"'}
+        ];
+    // 申请加入的部门
+    string department_id = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"department_id" json:"department_id" validate:"required"'}
+        ];
+    // 留言
+    string message = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"message" json:"message"'}
+        ];                                
+}
+
+// QueryApplicationFormRequet todo
+message QueryApplicationFormRequet {
+    page.PageRequest page = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"page"'}
+        ];
+    string account = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"account"'}
+        ];
+    string department_id = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"department_id"'}
+        ];
+    ApplicationFormStatus status =4[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"status"'}
+        ];
+    bool skip_items = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"skip_items"'}
+        ];
+}
+
+// DescribeApplicationFormRequet todo
+message DescribeApplicationFormRequet {
+	string id = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"id"'}
+        ];
+}
+
+// DealApplicationFormRequest todo
+message DealApplicationFormRequest {
+    // 用户
+	string id = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"id"'}
+        ];
+    // 状态
+    ApplicationFormStatus status =2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"status"'}
+        ];
+    // 备注
+    string message = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"message"'}
+        ];
+}

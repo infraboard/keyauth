@@ -15,7 +15,7 @@ var (
 )
 
 type handler struct {
-	service role.Service
+	service role.RoleServiceServer
 }
 
 // Registry 注册HTTP服务路由

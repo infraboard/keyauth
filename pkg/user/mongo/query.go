@@ -5,28 +5,29 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
+	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
-	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
-func newQueryUserRequest(req *user.QueryAccountRequest) (*queryUserRequest, error) {
+func newQueryUserRequest(tk *token.Token, req *user.QueryAccountRequest) (*queryUserRequest, error) {
 	if err := req.Validate(); err != nil {
 		return nil, err
 	}
 
 	return &queryUserRequest{
+		tk:                  tk,
 		QueryAccountRequest: req,
 	}, nil
 }
 
 type queryUserRequest struct {
-	userType types.UserType
+	tk *token.Token
 	*user.QueryAccountRequest
 }
 
 func (r *queryUserRequest) FindOptions() *options.FindOptions {
-	pageSize := int64(r.PageSize)
-	skip := int64(r.PageSize) * int64(r.PageNumber-1)
+	pageSize := int64(r.Page.PageSize)
+	skip := int64(r.Page.PageSize) * int64(r.Page.PageNumber-1)
 
 	opt := &options.FindOptions{
 		Sort:  bson.D{{Key: "create_at", Value: -1}},
@@ -38,22 +39,22 @@ func (r *queryUserRequest) FindOptions() *options.FindOptions {
 }
 
 func (r *queryUserRequest) FindFilter() bson.M {
-	tk := r.GetToken()
+	tk := r.tk
 	filter := bson.M{
-		"type":   r.userType,
+		"type":   r.UserType,
 		"domain": tk.Domain,
 	}
 
 	if len(r.Accounts) > 0 {
 		filter["_id"] = bson.M{"$in": r.Accounts}
 	}
-	if r.DepartmentID != "" {
-		if r.WithALLSub {
+	if r.DepartmentId != "" {
+		if r.WithAllSub {
 			filter["$or"] = bson.A{
-				bson.M{"department_id": bson.M{"$regex": r.DepartmentID, "$options": "im"}},
+				bson.M{"department_id": bson.M{"$regex": r.DepartmentId, "$options": "im"}},
 			}
 		} else {
-			filter["department_id"] = r.DepartmentID
+			filter["department_id"] = r.DepartmentId
 		}
 	}
 
@@ -68,7 +69,7 @@ func (r *queryUserRequest) FindFilter() bson.M {
 	return filter
 }
 
-func newDescribeRequest(req *user.DescriptAccountRequest) (*describeUserRequest, error) {
+func newDescribeRequest(req *user.DescribeAccountRequest) (*describeUserRequest, error) {
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest(err.Error())
 	}
@@ -77,7 +78,7 @@ func newDescribeRequest(req *user.DescriptAccountRequest) (*describeUserRequest,
 }
 
 type describeUserRequest struct {
-	*user.DescriptAccountRequest
+	*user.DescribeAccountRequest
 }
 
 func (r *describeUserRequest) FindFilter() bson.M {
