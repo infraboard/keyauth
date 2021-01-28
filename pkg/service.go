@@ -40,7 +40,7 @@ var (
 	// Role 角色服务
 	Role role.RoleServiceServer
 	// Endpoint 端点服务
-	Endpoint endpoint.Service
+	Endpoint endpoint.EndpointServiceServer
 	// Policy 厕所里
 	Policy policy.PolicyServiceServer
 	// Department 部分服务
@@ -48,7 +48,7 @@ var (
 	// Namespace todo
 	Namespace namespace.NamespaceServiceServer
 	// Permission 权限服务
-	Permission permission.Service
+	Permission permission.PermissionServiceServer
 	// Counter 自增ID服务
 	Counter counter.Service
 	// LDAP ldap服务
@@ -134,7 +134,7 @@ func RegistryService(name string, svr Service) {
 		}
 		Role = value
 		addService(name, svr)
-	case endpoint.Service:
+	case endpoint.EndpointServiceServer:
 		if Endpoint != nil {
 			registryError(name)
 		}
@@ -158,7 +158,7 @@ func RegistryService(name string, svr Service) {
 		}
 		Namespace = value
 		addService(name, svr)
-	case permission.Service:
+	case permission.PermissionServiceServer:
 		if Permission != nil {
 			registryError(name)
 		}

@@ -19,6 +19,13 @@ message IssueCodeRequest {
         ];
 }
 
+// IssueCodeResponse todo
+message IssueCodeResponse {
+    string message = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"message"'}
+        ];
+}
+
 // IssueByPassRequest todo
 message IssueByPassRequest {
     string username = 1[
@@ -49,5 +56,12 @@ message CheckCodeRequest {
         ];
     string number = 2[
         (google.protobuf.field_tag) = {struct_tag: 'json:"number" validate:"required"'}
+        ];
+}
+
+// CheckCodeResponse todo
+message CheckCodeResponse {
+    string message = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"message"'}
         ];
 }

@@ -5,7 +5,6 @@ import (
 	"hash/fnv"
 	"strings"
 
-	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/router"
 	"github.com/infraboard/mcube/types/ftime"
 )
@@ -18,12 +17,12 @@ func NewDefaultEndpoint() *Endpoint {
 // NewEndpoint todo
 func NewEndpoint(serviceID, version string, entry router.Entry) *Endpoint {
 	return &Endpoint{
-		ID:        GenHashID(serviceID, entry.Path, entry.Method),
-		CreateAt:  ftime.Now(),
-		UpdateAt:  ftime.Now(),
-		ServiceID: serviceID,
+		Id:        GenHashID(serviceID, entry.Path, entry.Method),
+		CreateAt:  ftime.Now().Timestamp(),
+		UpdateAt:  ftime.Now().Timestamp(),
+		ServiceId: serviceID,
 		Version:   version,
-		Entry:     entry,
+		Entry:     &entry,
 	}
 }
 
@@ -35,21 +34,10 @@ func GenHashID(service, path, method string) string {
 	return fmt.Sprintf("%x", h.Sum32())
 }
 
-// Endpoint Service's features
-type Endpoint struct {
-	ID        string     `bson:"_id" json:"id" validate:"required,lte=64"`                          // 端点名称
-	CreateAt  ftime.Time `bson:"create_at" json:"create_at,omitempty"`                              // 创建时间
-	UpdateAt  ftime.Time `bson:"update_at" json:"update_at,omitempty"`                              // 更新时间
-	ServiceID string     `bson:"service_id" json:"service_id,omitempty" validate:"required,lte=64"` // 该功能属于那个服务
-	Version   string     `bson:"version" json:"version,omitempty" validate:"required,lte=64"`       // 服务那个版本的功能
-
-	router.Entry `bson:",inline"`
-}
-
 // LabelsToStr 扁平化标签  action:get;action:list;action-list-echo
 func (e *Endpoint) LabelsToStr() string {
-	labels := make([]string, 0, len(e.Labels))
-	for k, v := range e.Labels {
+	labels := make([]string, 0, len(e.Entry.Labels))
+	for k, v := range e.Entry.Labels {
 		labels = append(labels, fmt.Sprintf("%s:%s;", k, v))
 	}
 	return strings.Join(labels, "")
@@ -63,25 +51,16 @@ func (e *Endpoint) ParseLabels(labels string) error {
 		if len(kvItem) != 2 {
 			return fmt.Errorf("labels format error, format: k:v;k:v;")
 		}
-		e.Labels[kvItem[0]] = kvItem[1]
+		e.Entry.Labels[kvItem[0]] = kvItem[1]
 	}
 	return nil
 }
 
 // NewEndpointSet 实例化
-func NewEndpointSet(req *request.PageRequest) *Set {
+func NewEndpointSet() *Set {
 	return &Set{
-		PageRequest: req,
-		Items:       []*Endpoint{},
+		Items: []*Endpoint{},
 	}
-}
-
-// Set 列表
-type Set struct {
-	*request.PageRequest
-
-	Total int64       `json:"total"`
-	Items []*Endpoint `json:"items"`
 }
 
 // Add 添加

@@ -27,7 +27,9 @@ type service struct {
 	issuer issuer.Issuer
 	system system.Service
 	log    logger.Logger
-	user   user.Service
+	user   user.UserServiceServer
+
+	verifycode.UnimplementedVerifyCodeServiceServer
 }
 
 func (s *service) Config() error {
@@ -66,6 +68,6 @@ func (s *service) Config() error {
 }
 
 func init() {
-	var _ verifycode.Service = Service
+	var _ verifycode.VerifyCodeServiceServer = Service
 	pkg.RegistryService("verify_code", Service)
 }

@@ -44,7 +44,7 @@ type CreateDepartmentRequest struct {
 	// 上级部门ID
 	ParentId string `protobuf:"bytes,3,opt,name=parent_id,json=parentId,proto3" json:"parent_id" bson:"parent_id" validate:"lte=200"`
 	// 部门管理者account
-	Manager string `protobuf:"bytes,4,opt,name=manager,proto3" json:"manager" bson:"manager" validate:"required,lte=200"`
+	Manager string `protobuf:"bytes,4,opt,name=manager,proto3" json:"manager" validate:"required,lte=200" bson:"manager"`
 	// 部门成员默认角色
 	DefaultRoleId string `protobuf:"bytes,5,opt,name=default_role_id,json=defaultRoleId,proto3" json:"default_role_id" validate:"lte=200" bson:"default_role_id"`
 }
@@ -412,7 +412,7 @@ type JoinDepartmentRequest struct {
 	unknownFields protoimpl.UnknownFields
 
 	// 申请人
-	Account string `protobuf:"bytes,1,opt,name=account,proto3" json:"account" bson:"account" validate:"required"`
+	Account string `protobuf:"bytes,1,opt,name=account,proto3" json:"account" validate:"required" bson:"account"`
 	// 申请加入的部门
 	DepartmentId string `protobuf:"bytes,2,opt,name=department_id,json=departmentId,proto3" json:"department_id" bson:"department_id" validate:"required"`
 	// 留言

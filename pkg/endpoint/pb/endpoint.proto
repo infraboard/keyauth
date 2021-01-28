@@ -2,3 +2,43 @@ syntax = "proto3";
 
 package keyauth.endpoint;
 option go_package = "github.com/infraboard/keyauth/pkg/endpoint";
+
+import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
+import "github.com/infraboard/mcube/pb/router/entry.proto";
+
+// Endpoint Service's features
+message Endpoint {
+    // 端点名称
+    string id = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"_id" json:"id" validate:"required,lte=64"'}
+        ];
+    // 创建时间
+    int64 create_at = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"create_at" json:"create_at,omitempty"'}
+        ];
+    // 更新时间
+    int64 update_at = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"update_at" json:"update_at,omitempty"'}
+        ];
+    // 该功能属于那个服务
+    string service_id= 4[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"service_id" json:"service_id,omitempty" validate:"required,lte=64"'}
+        ];
+    // 服务那个版本的功能
+    string version = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"version" json:"version,omitempty" validate:"required,lte=64"'}
+        ];
+    // 路由条目信息
+    mcube.router.Entry entry = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"entry" json:"entry" validate:"required"'}
+        ];
+}
+
+message Set {
+    int64 total = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"total" json:"total"'}
+        ];
+    repeated Endpoint items = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"items" json:"items"'}
+        ];
+}

@@ -37,7 +37,7 @@ type service struct {
 	app      application.AdminServiceServer
 	policy   policy.PolicyServiceServer
 	role     role.RoleServiceServer
-	endpoint endpoint.Service
+	endpoint endpoint.EndpointServiceServer
 	log      logger.Logger
 
 	micro.UnimplementedMicroServiceServer

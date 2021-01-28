@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package keyauth.permission;
+option go_package = "github.com/infraboard/keyauth/pkg/permission";
+
+import "pkg/role/pb/role.proto";
+import "pkg/role/pb/request.proto";
+import "pkg/permission/pb/request.proto";
+
+// Service 权限查询API
+service PermissionService {
+	rpc QueryPermission(QueryPermissionRequest) returns(role.PermissionSet);
+	rpc QueryRoles(QueryRoleRequest) returns(role.Set);
+	rpc CheckPermission(CheckPermissionrequest) returns(role.Permission);
+}

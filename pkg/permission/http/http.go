@@ -15,7 +15,7 @@ var (
 )
 
 type handler struct {
-	service permission.Service
+	service permission.PermissionServiceServer
 }
 
 // Registry 注册HTTP服务路由

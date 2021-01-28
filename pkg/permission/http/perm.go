@@ -12,7 +12,7 @@ import (
 )
 
 func (h *handler) List(w http.ResponseWriter, r *http.Request) {
-	tk, err := session.GetTokenFromHTTPRequest(r)
+	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -21,10 +21,9 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
 
 	req := permission.NewQueryPermissionRequest(request.NewPageRequestFromHTTP(r))
-	req.NamespaceID = rctx.PS.ByName("id")
-	req.WithToken(tk)
+	req.NamespaceId = rctx.PS.ByName("id")
 
-	set, err := h.service.QueryPermission(req)
+	set, err := h.service.QueryPermission(ctx, req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -35,7 +34,7 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
-	tk, err := session.GetTokenFromHTTPRequest(r)
+	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -44,11 +43,10 @@ func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
 
 	req := permission.NewCheckPermissionrequest()
-	req.NamespaceID = rctx.PS.ByName("id")
-	req.EnpointID = rctx.PS.ByName("eid")
-	req.WithToken(tk)
+	req.NamespaceId = rctx.PS.ByName("id")
+	req.EndpointId = rctx.PS.ByName("eid")
 
-	d, err := h.service.CheckPermission(req)
+	d, err := h.service.CheckPermission(ctx, req)
 	if err != nil {
 		response.Failed(w, err)
 		return

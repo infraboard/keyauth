@@ -18,7 +18,9 @@ var (
 type service struct {
 	policy   policy.PolicyServiceServer
 	role     role.RoleServiceServer
-	endpoint endpoint.Service
+	endpoint endpoint.EndpointServiceServer
+
+	permission.UnimplementedPermissionServiceServer
 }
 
 func (s *service) Config() error {
@@ -41,6 +43,6 @@ func (s *service) Config() error {
 }
 
 func init() {
-	var _ permission.Service = Service
+	var _ permission.PermissionServiceServer = Service
 	pkg.RegistryService("permission", Service)
 }

@@ -24,9 +24,10 @@ type service struct {
 	col           *mongo.Collection
 	enableCache   bool
 	notifyCachPre string
+	micro         micro.MicroServiceServer
+	log           logger.Logger
 
-	micro micro.MicroServiceServer
-	log   logger.Logger
+	endpoint.UnimplementedEndpointServiceServer
 }
 
 func (s *service) Config() error {
@@ -55,6 +56,6 @@ func (s *service) Config() error {
 }
 
 func init() {
-	var _ endpoint.Service = Service
+	var _ endpoint.EndpointServiceServer = Service
 	pkg.RegistryService("endpoint", Service)
 }

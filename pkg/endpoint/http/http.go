@@ -15,7 +15,7 @@ var (
 )
 
 type handler struct {
-	endpoint endpoint.Service
+	endpoint endpoint.EndpointServiceServer
 }
 
 // Registry 注册HTTP服务路由

@@ -14,6 +14,7 @@ import (
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
 
+	"github.com/infraboard/keyauth/common/session"
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/endpoint"
@@ -106,7 +107,7 @@ func (s *HTTPService) RegistryEndpoints() error {
 
 	desc := micro.NewDescribeServiceRequest()
 	desc.Name = version.ServiceName
-	svr, err := pkg.Micro.DescribeService(desc)
+	svr, err := pkg.Micro.DescribeService(pkg.GetInternalAdminTokenCtx("internal"), desc)
 	if err != nil {
 		return err
 	}
@@ -115,12 +116,15 @@ func (s *HTTPService) RegistryEndpoints() error {
 		return fmt.Errorf("dependence endpoint service is nil")
 	}
 
+	fmt.Println(svr)
+
 	tk := token.NewDefaultToken()
 	tk.AccessToken = svr.AccessToken
 	tk.RefreshToken = svr.RefreshToken
 	tk.UserType = types.UserType_SERVICE
-	tk.Account = svr.Name
+	tk.Account = svr.Data.Name
 	req := endpoint.NewRegistryRequest(version.Short(), s.r.GetEndpoints().Items)
-	req.WithToken(tk)
-	return pkg.Endpoint.Registry(req)
+	ctx := session.WithTokenContext(context.Background(), tk)
+	_, err = pkg.Endpoint.Registry(ctx, req)
+	return err
 }

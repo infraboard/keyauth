@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package keyauth.permission;
+option go_package = "github.com/infraboard/keyauth/pkg/permission";
+
+import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
+import "github.com/infraboard/mcube/pb/page/page.proto";
+
+// QueryPermissionRequest 查询用户权限
+message QueryPermissionRequest {
+    page.PageRequest page = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"page"'}
+        ];
+    string namespace_id = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"namespace_id"'}
+        ];
+}
+
+// QueryRoleRequest 查询用户权限
+message QueryRoleRequest {
+    page.PageRequest page = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"page"'}
+        ];
+    string namespace_id = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"namespace_id"'}
+        ];
+}
+
+// CheckPermissionrequest todo
+message CheckPermissionrequest {
+    page.PageRequest page = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"page"'}
+        ];
+    string namespace_id = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"namespace_id"'}
+        ];
+    string endpoint_id = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"endpoint_id"'}
+        ];
+}

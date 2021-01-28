@@ -14,7 +14,7 @@ var (
 )
 
 type handler struct {
-	service verifycode.Service
+	service verifycode.VerifyCodeServiceServer
 }
 
 // Registry 注册HTTP服务路由

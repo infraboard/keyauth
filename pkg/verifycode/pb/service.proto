@@ -8,6 +8,6 @@ import "pkg/verifycode/pb/verifycode.proto";
 
 // VerifyCodeService 验证码服务
 service VerifyCodeService {
-	rpc IssueCode(IssueCodeRequest) returns(Code);
+	rpc IssueCode(IssueCodeRequest) returns(IssueCodeResponse);
 	rpc CheckCode(CheckCodeRequest) returns(Code);
 }

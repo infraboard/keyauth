@@ -7,11 +7,12 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
+	"github.com/infraboard/keyauth/common/session"
 	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/micro"
 )
 
-func (s *service) DescribeEndpoint(req *endpoint.DescribeEndpointRequest) (
+func (s *service) DescribeEndpoint(ctx context.Context, req *endpoint.DescribeEndpointRequest) (
 	*endpoint.Endpoint, error) {
 	r, err := newDescribeEndpointRequest(req)
 	if err != nil {
@@ -24,13 +25,13 @@ func (s *service) DescribeEndpoint(req *endpoint.DescribeEndpointRequest) (
 			return nil, exception.NewNotFound("endpoint %s not found", req)
 		}
 
-		return nil, exception.NewInternalServerError("find endpoint %s error, %s", req.ID, err)
+		return nil, exception.NewInternalServerError("find endpoint %s error, %s", req.Id, err)
 	}
 
 	return ins, nil
 }
 
-func (s *service) QueryEndpoints(req *endpoint.QueryEndpointRequest) (
+func (s *service) QueryEndpoints(ctx context.Context, req *endpoint.QueryEndpointRequest) (
 	*endpoint.Set, error) {
 	r := newQueryEndpointRequest(req)
 	resp, err := s.col.Find(context.TODO(), r.FindFilter(), r.FindOptions())
@@ -39,7 +40,7 @@ func (s *service) QueryEndpoints(req *endpoint.QueryEndpointRequest) (
 		return nil, exception.NewInternalServerError("find endpoint error, error is %s", err)
 	}
 
-	set := endpoint.NewEndpointSet(req.PageRequest)
+	set := endpoint.NewEndpointSet()
 	// 循环
 	for resp.Next(context.TODO()) {
 		app := endpoint.NewDefaultEndpoint()
@@ -60,17 +61,17 @@ func (s *service) QueryEndpoints(req *endpoint.QueryEndpointRequest) (
 	return set, nil
 }
 
-func (s *service) Registry(ctx context.Context, req *endpoint.RegistryRequest) error {
+func (s *service) Registry(ctx context.Context, req *endpoint.RegistryRequest) (*endpoint.RegistryResponse, error) {
 	if err := req.Validate(); err != nil {
-		return exception.NewBadRequest(err.Error())
+		return nil, exception.NewBadRequest(err.Error())
 	}
 
-	tk := req.GetToken()
+	tk := session.GetTokenFromContext(ctx)
 
 	// 查询该服务
 	svr, err := s.micro.DescribeService(ctx, micro.NewDescribeServiceRequestWithAccount(tk.Account))
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// 生产该服务的Endpoint
@@ -79,11 +80,11 @@ func (s *service) Registry(ctx context.Context, req *endpoint.RegistryRequest) e
 	// 更新已有的记录
 	news := make([]interface{}, 0, len(endpoints))
 	for i := range endpoints {
-		if err := s.col.FindOneAndReplace(context.TODO(), bson.M{"_id": endpoints[i].ID}, endpoints[i]).Err(); err != nil {
+		if err := s.col.FindOneAndReplace(context.TODO(), bson.M{"_id": endpoints[i].Id}, endpoints[i]).Err(); err != nil {
 			if err == mongo.ErrNoDocuments {
 				news = append(news, endpoints[i])
 			} else {
-				return err
+				return nil, err
 			}
 		}
 	}
@@ -91,19 +92,19 @@ func (s *service) Registry(ctx context.Context, req *endpoint.RegistryRequest) e
 	// 插入新增记录
 	if len(news) > 0 {
 		if _, err := s.col.InsertMany(context.TODO(), news); err != nil {
-			return exception.NewInternalServerError("inserted a service document error, %s", err)
+			return nil, exception.NewInternalServerError("inserted a service document error, %s", err)
 		}
 	}
 
-	return nil
+	return endpoint.NewRegistryResponse("ok"), nil
 }
 
-func (s *service) DeleteEndpoint(req *endpoint.DeleteEndpointRequest) error {
-	result, err := s.col.DeleteOne(context.TODO(), bson.M{"service_id": req.ServiceID})
+func (s *service) DeleteEndpoint(ctx context.Context, req *endpoint.DeleteEndpointRequest) (*endpoint.Endpoint, error) {
+	result, err := s.col.DeleteOne(context.TODO(), bson.M{"service_id": req.ServiceId})
 	if err != nil {
-		return exception.NewInternalServerError("delete service(%s) endpoint error, %s", req.ServiceID, err)
+		return nil, exception.NewInternalServerError("delete service(%s) endpoint error, %s", req.ServiceId, err)
 	}
 
-	s.log.Infof("delete service %s endpoint success, total count: %d", req.ServiceID, result.DeletedCount)
-	return nil
+	s.log.Infof("delete service %s endpoint success, total count: %d", req.ServiceId, result.DeletedCount)
+	return nil, nil
 }

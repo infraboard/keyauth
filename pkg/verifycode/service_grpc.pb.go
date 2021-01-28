@@ -17,7 +17,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type VerifyCodeServiceClient interface {
-	IssueCode(ctx context.Context, in *IssueCodeRequest, opts ...grpc.CallOption) (*Code, error)
+	IssueCode(ctx context.Context, in *IssueCodeRequest, opts ...grpc.CallOption) (*IssueCodeResponse, error)
 	CheckCode(ctx context.Context, in *CheckCodeRequest, opts ...grpc.CallOption) (*Code, error)
 }
 
@@ -29,8 +29,8 @@ func NewVerifyCodeServiceClient(cc grpc.ClientConnInterface) VerifyCodeServiceCl
 	return &verifyCodeServiceClient{cc}
 }
 
-func (c *verifyCodeServiceClient) IssueCode(ctx context.Context, in *IssueCodeRequest, opts ...grpc.CallOption) (*Code, error) {
-	out := new(Code)
+func (c *verifyCodeServiceClient) IssueCode(ctx context.Context, in *IssueCodeRequest, opts ...grpc.CallOption) (*IssueCodeResponse, error) {
+	out := new(IssueCodeResponse)
 	err := c.cc.Invoke(ctx, "/keyauth.verifycode.VerifyCodeService/IssueCode", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -51,7 +51,7 @@ func (c *verifyCodeServiceClient) CheckCode(ctx context.Context, in *CheckCodeRe
 // All implementations must embed UnimplementedVerifyCodeServiceServer
 // for forward compatibility
 type VerifyCodeServiceServer interface {
-	IssueCode(context.Context, *IssueCodeRequest) (*Code, error)
+	IssueCode(context.Context, *IssueCodeRequest) (*IssueCodeResponse, error)
 	CheckCode(context.Context, *CheckCodeRequest) (*Code, error)
 	mustEmbedUnimplementedVerifyCodeServiceServer()
 }
@@ -60,7 +60,7 @@ type VerifyCodeServiceServer interface {
 type UnimplementedVerifyCodeServiceServer struct {
 }
 
-func (UnimplementedVerifyCodeServiceServer) IssueCode(context.Context, *IssueCodeRequest) (*Code, error) {
+func (UnimplementedVerifyCodeServiceServer) IssueCode(context.Context, *IssueCodeRequest) (*IssueCodeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method IssueCode not implemented")
 }
 func (UnimplementedVerifyCodeServiceServer) CheckCode(context.Context, *CheckCodeRequest) (*Code, error) {

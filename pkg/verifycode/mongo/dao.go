@@ -11,7 +11,8 @@ import (
 )
 
 func (s *service) delete(ins *verifycode.Code) error {
-	result, err := s.col.DeleteOne(context.TODO(), bson.M{"_id": ins.HashID()})
+	ck := verifycode.NewCheckCodeRequest(ins.Username, ins.Number)
+	result, err := s.col.DeleteOne(context.TODO(), bson.M{"_id": ck.HashID()})
 	if err != nil {
 		return exception.NewInternalServerError("delete verify code(%s) error, %s", ins.Number, err)
 	}

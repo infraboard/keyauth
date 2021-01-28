@@ -10,6 +10,7 @@ import (
 	"github.com/infraboard/mcube/http/label"
 	"github.com/spf13/cobra"
 
+	"github.com/infraboard/keyauth/common/session"
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/application"
 	"github.com/infraboard/keyauth/pkg/department"
@@ -141,6 +142,14 @@ type Initialer struct {
 	mockTK     *token.Token
 }
 
+func (i *Initialer) mockContext() context.Context {
+	return session.WithTokenContext(context.Background(), i.mockTK)
+}
+
+func (i *Initialer) userContext() context.Context {
+	return session.WithTokenContext(context.Background(), i.tk)
+}
+
 // Run 执行初始化
 func (i *Initialer) Run() error {
 	fmt.Println()
@@ -152,13 +161,13 @@ func (i *Initialer) Run() error {
 	}
 	fmt.Printf("初始化用户: %s [成功]\n", i.username)
 
-	_, err = i.initDomain(u.Account)
+	_, err = i.initDomain(u.Data.Profile.Account)
 	if err != nil {
 		return err
 	}
 	fmt.Printf("初始化域: %s   [成功]\n", i.domainDesc)
 
-	apps, err := i.initApp(u.Account)
+	apps, err := i.initApp(u.Data.Profile.Account)
 	if err != nil {
 		return err
 	}
@@ -179,8 +188,8 @@ func (i *Initialer) Run() error {
 	}
 	for index := range roles {
 		r := roles[index]
-		fmt.Printf("初始化角色: %s [成功]\n", r.Name)
-		if r.Name == role.AdminRoleName {
+		fmt.Printf("初始化角色: %s [成功]\n", r.Data.Name)
+		if r.Data.Name == role.AdminRoleName {
 			adminRole = r
 		}
 	}
@@ -189,21 +198,22 @@ func (i *Initialer) Run() error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("初始化服务: %s   [成功]\n", svr.Name)
+	fmt.Printf("初始化服务: %s   [成功]\n", svr.Data.Name)
 
 	dep, err := i.initDepartment()
 	if err != nil {
 		return err
 	}
-	fmt.Printf("初始化部门: %s   [成功]\n", dep.DisplayName)
+	fmt.Printf("初始化部门: %s   [成功]\n", dep.Data.DisplayName)
 
 	return nil
 }
 
 func (i *Initialer) checkIsInit() error {
 	req := user.NewQueryAccountRequest()
-	req.WithToken(i.mockTK)
-	userSet, err := pkg.User.QueryAccount(types.UserType_SUPPER, req)
+	req.UserType = types.UserType_SUPPER
+	ctx := session.WithTokenContext(context.Background(), i.mockTK)
+	userSet, err := pkg.User.QueryAccount(ctx, req)
 	if err != nil {
 		return err
 	}
@@ -216,10 +226,10 @@ func (i *Initialer) checkIsInit() error {
 
 func (i *Initialer) initUser() (*user.User, error) {
 	req := user.NewCreateUserRequest()
-	req.WithToken(i.mockTK)
-	req.Account = strings.TrimSpace(i.username)
+	req.UserType = types.UserType_SUPPER
+	req.Profile.Account = strings.TrimSpace(i.username)
 	req.Password = strings.TrimSpace(i.password)
-	return pkg.User.CreateAccount(types.UserType_SUPPER, req)
+	return pkg.User.CreateAccount(i.mockContext(), req)
 }
 
 func (i *Initialer) initDomain(account string) (*domain.Domain, error) {
@@ -237,7 +247,7 @@ func (i *Initialer) initApp(ownerID string) ([]*application.Application, error) 
 	req.ClientType = application.ClientType_PUBLIC
 	req.Description = "Admin Web管理端"
 
-	ctx := pkg.WithTokenContext(context.Background(), tk)
+	ctx := session.WithTokenContext(context.Background(), tk)
 	web, err := pkg.ApplicationAdmin.CreateBuildInApplication(ctx, req)
 	if err != nil {
 		return nil, fmt.Errorf("create admin web applicaton error, %s", err)
@@ -263,7 +273,7 @@ func (i *Initialer) getAdminToken(app *application.Application, u *user.User) er
 		return fmt.Errorf("get admin token need app and admin user")
 	}
 
-	req := token.NewIssueTokenByPassword(app.ClientId, app.ClientSecret, u.Account, u.Password)
+	req := token.NewIssueTokenByPassword(app.ClientId, app.ClientSecret, u.Data.Profile.Account, u.Data.Password)
 	tk, err := pkg.Token.IssueToken(nil, req)
 	if err != nil {
 		return err
@@ -279,12 +289,11 @@ func (i *Initialer) initRole() ([]*role.Role, error) {
 	admin.LabelValues = []string{"*"}
 
 	req := role.NewCreateRoleRequest()
-	req.WithToken(i.tk)
 	req.Name = role.AdminRoleName
 	req.Description = "系统管理员, 有系统所有功能的访问权限"
 	req.Permissions = []*role.Permission{admin}
-	req.Type = role.BuildInType
-	adminRole, err := pkg.Role.CreateRole(req)
+	req.Type = role.RoleType_BUILDIN
+	adminRole, err := pkg.Role.CreateRole(i.userContext(), req)
 	if err != nil {
 		return nil, err
 	}
@@ -295,12 +304,11 @@ func (i *Initialer) initRole() ([]*role.Role, error) {
 	vistor.LabelValues = []string{label.Get.Value(), label.List.Value()}
 
 	req = role.NewCreateRoleRequest()
-	req.WithToken(i.tk)
 	req.Name = role.VisitorRoleName
 	req.Description = "访客, 登录系统后, 默认的权限"
 	req.Permissions = []*role.Permission{vistor}
-	req.Type = role.BuildInType
-	vistorRole, err := pkg.Role.CreateRole(req)
+	req.Type = role.RoleType_BUILDIN
+	vistorRole, err := pkg.Role.CreateRole(i.userContext(), req)
 	if err != nil {
 		return nil, err
 	}
@@ -317,18 +325,16 @@ func (i *Initialer) initDepartment() (*department.Department, error) {
 	req.Name = department.DefaultDepartmentName
 	req.DisplayName = "默认部门"
 	req.Manager = strings.TrimSpace(i.username)
-	req.WithToken(i.tk)
-	return pkg.Department.CreateDepartment(req)
+	return pkg.Department.CreateDepartment(i.userContext(), req)
 }
 
 func (i *Initialer) initService(r *role.Role) (*micro.Micro, error) {
 	req := micro.NewCreateMicroRequest()
-	req.WithToken(i.tk)
 	req.Name = version.ServiceName
 	req.Description = version.Description
-	req.Type = micro.BuildIn
-	req.RoleID = r.Id
-	return pkg.Micro.CreateService(req)
+	req.Type = micro.Type_BUILD_IN
+	req.RoleId = r.Id
+	return pkg.Micro.CreateService(i.userContext(), req)
 }
 
 func init() {

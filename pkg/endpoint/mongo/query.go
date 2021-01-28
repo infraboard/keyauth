@@ -23,13 +23,13 @@ type describeEndpointRequest struct {
 }
 
 func (req *describeEndpointRequest) String() string {
-	return fmt.Sprintf("endpoint: %s", req.ID)
+	return fmt.Sprintf("endpoint: %s", req.Id)
 }
 
 func (req *describeEndpointRequest) FindFilter() bson.M {
 	filter := bson.M{}
-	if req.ID != "" {
-		filter["_id"] = req.ID
+	if req.Id != "" {
+		filter["_id"] = req.Id
 	}
 
 	return filter
@@ -44,8 +44,8 @@ type queryEndpointRequest struct {
 }
 
 func (r *queryEndpointRequest) FindOptions() *options.FindOptions {
-	pageSize := int64(r.PageSize)
-	skip := int64(r.PageSize) * int64(r.PageNumber-1)
+	pageSize := int64(r.Page.PageSize)
+	skip := int64(r.Page.PageSize) * int64(r.Page.PageNumber-1)
 
 	opt := &options.FindOptions{
 		Sort:  bson.D{{Key: "create_at", Value: -1}},
@@ -59,8 +59,8 @@ func (r *queryEndpointRequest) FindOptions() *options.FindOptions {
 func (r *queryEndpointRequest) FindFilter() bson.M {
 	filter := bson.M{}
 
-	if r.ServiceID != "" {
-		filter["service_id"] = r.ServiceID
+	if r.ServiceId != "" {
+		filter["service_id"] = r.ServiceId
 	}
 	if r.Method != "" {
 		filter["method"] = r.Method

@@ -80,3 +80,8 @@ func (req *CheckCodeRequest) HashID() string {
 	hash.Write([]byte(req.Number))
 	return fmt.Sprintf("%x", hash.Sum32())
 }
+
+// NewIssueCodeResponse todo
+func NewIssueCodeResponse(message string) *IssueCodeResponse {
+	return &IssueCodeResponse{Message: message}
+}

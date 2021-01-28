@@ -229,7 +229,7 @@ func (s *service) DeleteService(ctx context.Context, req *micro.DeleteMicroReque
 
 	// 删除服务注册的Endpoint
 	deReq := endpoint.NewDeleteEndpointRequestWithServiceID(svr.Id)
-	err = s.endpoint.DeleteEndpoint(deReq)
+	_, err = s.endpoint.DeleteEndpoint(ctx, deReq)
 	if err != nil {
 		s.log.Errorf("delete service endpoint error, %s", err)
 	}

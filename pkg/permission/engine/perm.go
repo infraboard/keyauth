@@ -1,35 +1,38 @@
 package engine
 
 import (
+	"context"
+
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/request"
 
+	"github.com/infraboard/keyauth/common/session"
 	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/permission"
 	"github.com/infraboard/keyauth/pkg/policy"
 	"github.com/infraboard/keyauth/pkg/role"
 )
 
-func (s *service) QueryPermission(req *permission.QueryPermissionRequest) (
+func (s *service) QueryPermission(ctx context.Context, req *permission.QueryPermissionRequest) (
 	*role.PermissionSet, error) {
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest("validate param error, %s", err)
 	}
 
-	tk := req.GetToken()
+	tk := session.GetTokenFromContext(ctx)
 
 	// 获取用户的策略列表
 	preq := policy.NewQueryPolicyRequest(request.NewPageRequest(100, 1))
 	preq.Account = tk.Account
-	preq.NamespaceId = req.NamespaceID
+	preq.NamespaceId = req.NamespaceId
 
-	policySet, err := s.policy.QueryPolicy(preq)
+	policySet, err := s.policy.QueryPolicy(ctx, preq)
 	if err != nil {
 		return nil, err
 	}
 
 	// 获取用户的角色列表
-	rset, err := policySet.GetRoles(s.role)
+	rset, err := policySet.GetRoles(ctx, s.role)
 	if err != nil {
 		return nil, err
 	}
@@ -37,38 +40,38 @@ func (s *service) QueryPermission(req *permission.QueryPermissionRequest) (
 	return rset.Permissions(), nil
 }
 
-func (s *service) QueryRoles(req *permission.QueryPermissionRequest) (
+func (s *service) QueryRoles(ctx context.Context, req *permission.QueryRoleRequest) (
 	*role.Set, error) {
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest("validate param error, %s", err)
 	}
 
-	tk := req.GetToken()
+	tk := session.GetTokenFromContext(ctx)
 
 	// 获取用户的策略列表
 	preq := policy.NewQueryPolicyRequest(request.NewPageRequest(100, 1))
 	preq.Account = tk.Account
-	preq.NamespaceId = req.NamespaceID
+	preq.NamespaceId = req.NamespaceId
 
-	policySet, err := s.policy.QueryPolicy(preq)
+	policySet, err := s.policy.QueryPolicy(ctx, preq)
 	if err != nil {
 		return nil, err
 	}
 
-	return policySet.GetRoles(s.role)
+	return policySet.GetRoles(ctx, s.role)
 }
 
-func (s *service) CheckPermission(req *permission.CheckPermissionrequest) (*role.Permission, error) {
+func (s *service) CheckPermission(ctx context.Context, req *permission.CheckPermissionrequest) (*role.Permission, error) {
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest("validate param error, %s", err)
 	}
 
-	rset, err := s.QueryRoles(req.QueryPermissionRequest)
+	rset, err := s.QueryRoles(ctx, permission.NewQueryRoleRequest(req.NamespaceId))
 	if err != nil {
 		return nil, err
 	}
 
-	ep, err := s.endpoint.DescribeEndpoint(endpoint.NewDescribeEndpointRequestWithID(req.EnpointID))
+	ep, err := s.endpoint.DescribeEndpoint(ctx, endpoint.NewDescribeEndpointRequestWithID(req.EndpointId))
 	if err != nil {
 		return nil, err
 	}

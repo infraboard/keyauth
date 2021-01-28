@@ -68,8 +68,9 @@ func (i *internal) Auth(r *http.Request, entry router.Entry) (
 		}
 
 		req := permission.NewCheckPermissionrequest()
-		req.EnpointID = i.endpointHashID(entry)
-		_, err = Permission.CheckPermission(req)
+		req.EndpointId = i.endpointHashID(entry)
+		ctx := session.WithTokenContext(context.Background(), tk)
+		_, err = Permission.CheckPermission(ctx, req)
 		if err != nil {
 			return nil, exception.NewPermissionDeny("no permission")
 		}

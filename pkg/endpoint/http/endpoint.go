@@ -13,7 +13,7 @@ import (
 
 // CreateApplication 创建自定义角色
 func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
-	tk, err := session.GetTokenFromHTTPRequest(r)
+	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -24,9 +24,8 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 		response.Failed(w, err)
 		return
 	}
-	req.WithToken(tk)
 
-	err = h.endpoint.Registry(req)
+	_, err = h.endpoint.Registry(ctx, req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -37,8 +36,14 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) List(w http.ResponseWriter, r *http.Request) {
+	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
 	req := endpoint.NewQueryEndpointRequestFromHTTP(r)
-	set, err := h.endpoint.QueryEndpoints(req)
+	set, err := h.endpoint.QueryEndpoints(ctx, req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -49,11 +54,16 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
+	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
 	rctx := context.GetContext(r)
 
 	id := rctx.PS.ByName("id")
 	req := endpoint.NewDescribeEndpointRequestWithID(id)
-	d, err := h.endpoint.DescribeEndpoint(req)
+	d, err := h.endpoint.DescribeEndpoint(ctx, req)
 	if err != nil {
 		response.Failed(w, err)
 		return

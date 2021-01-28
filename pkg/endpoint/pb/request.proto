@@ -2,3 +2,63 @@ syntax = "proto3";
 
 package keyauth.endpoint;
 option go_package = "github.com/infraboard/keyauth/pkg/endpoint";
+
+import "github.com/infraboard/mcube/pb/page/page.proto";
+import "github.com/infraboard/mcube/pb/router/entry.proto";
+import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
+
+// RegistryRequest 服务注册请求
+message RegistryRequest {
+	string version = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"version" validate:"required,lte=32"'}
+        ];
+	repeated mcube.router.Entry entries = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"entries"'}
+        ];
+}
+
+// RegistryReponse todo
+message RegistryResponse {
+	string message = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"message"'}
+        ];
+}
+
+// DescribeEndpointRequest todo
+message DescribeEndpointRequest {
+	string id = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"id"'}
+        ];
+}
+
+// QueryEndpointRequest 查询应用列表
+message QueryEndpointRequest {
+    page.PageRequest page = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"page"'}
+        ];
+	string service_id = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"service_id"'}
+        ];
+	string path = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"path"'}
+        ];
+	string method = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"method"'}
+        ];
+	string function_name = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"function_name"'}
+        ];
+    string resource = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"resource"'}
+        ];
+    map<string, string> labels = 7[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"labels"'}
+        ];  
+}
+
+// DeleteEndpointRequest todo
+message DeleteEndpointRequest {
+	string service_id = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"service_id"'}
+        ];
+}

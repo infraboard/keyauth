@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/types/ftime"
 	"github.com/rs/xid"
 
@@ -51,8 +50,8 @@ func (r *Role) HasPermission(ep *endpoint.Endpoint) (*Permission, bool, error) {
 		rok, lok bool
 	)
 	for i := range r.Data.Permissions {
-		rok = r.Data.Permissions[i].MatchResource(ep.Resource)
-		lok = r.Data.Permissions[i].MatchLabel(ep.Labels)
+		rok = r.Data.Permissions[i].MatchResource(ep.Entry.Resource)
+		lok = r.Data.Permissions[i].MatchLabel(ep.Entry.Labels)
 		if rok && lok {
 			return r.Data.Permissions[i], true, nil
 		}
@@ -109,7 +108,7 @@ func NewRoleSet() *Set {
 
 // Permissions todo
 func (s *Set) Permissions() *PermissionSet {
-	ps := NewPermissionSet(nil)
+	ps := NewPermissionSet()
 
 	for i := range s.Items {
 		ps.Add(s.Items[i].Data.Permissions...)
@@ -190,19 +189,10 @@ func (p *Permission) MatchLabel(label map[string]string) bool {
 }
 
 // NewPermissionSet todo
-func NewPermissionSet(req *request.PageRequest) *PermissionSet {
+func NewPermissionSet() *PermissionSet {
 	return &PermissionSet{
-		PageRequest: req,
-		Items:       []*Permission{},
+		Items: []*Permission{},
 	}
-}
-
-// PermissionSet 用户列表
-type PermissionSet struct {
-	*request.PageRequest
-
-	Total int64         `json:"total"`
-	Items []*Permission `json:"items"`
 }
 
 // Add todo

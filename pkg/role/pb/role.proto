@@ -41,3 +41,13 @@ message Set {
         (google.protobuf.field_tag) = {struct_tag: 'bson:"items" json:"items"'}
         ];
 }
+
+// PermissionSet 用户列表
+message PermissionSet {
+    int64 total = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"total" json:"total"'}
+        ];
+    repeated Permission items = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"items" json:"items"'}
+        ];
+}

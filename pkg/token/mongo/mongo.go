@@ -41,7 +41,7 @@ type service struct {
 	user     user.UserServiceServer
 	domain   domain.DomainServiceServer
 	issuer   issuer.Issuer
-	endpoint endpoint.Service
+	endpoint endpoint.EndpointServiceServer
 	session  session.UserServiceServer
 	checker  security.Checker
 	code     verifycode.VerifyCodeServiceServer

@@ -21,7 +21,7 @@ message CreateAccountRequest {
         ];
     // 用户类型
     UserType user_type = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"create_type" json:"user_type"'}
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"user_type" json:"user_type"'}
         ];
     // 密码相关信息
     string password = 4[
