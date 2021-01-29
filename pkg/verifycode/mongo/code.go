@@ -77,13 +77,13 @@ func (s *service) sendCode(ctx context.Context, code *verifycode.Code) (string, 
 			return "", fmt.Errorf("new sms sender error, %s", err)
 		}
 		req := notify.NewSendMailRequest()
-		req.To = u.Data.Profile.Email
+		req.To = u.Profile.Email
 		req.Subject = "验证码"
 		req.Content = vc.RenderMailTemplate(code.Number, code.ExpiredMiniteString())
 		if err := sender.Send(req); err != nil {
 			return "", fmt.Errorf("send verify code by mail error, %s", err)
 		}
-		message = fmt.Sprintf("验证码已通过邮件发送到你的邮箱: %s, 请及时查收", u.Data.Profile.Email)
+		message = fmt.Sprintf("验证码已通过邮件发送到你的邮箱: %s, 请及时查收", u.Profile.Email)
 		s.log.Debugf("send verify code to user: %s by mail ok", code.Username)
 	case verifycode.NotifyType_SMS:
 		sender, err := sms.NewSender(system.SMS)
@@ -91,13 +91,13 @@ func (s *service) sendCode(ctx context.Context, code *verifycode.Code) (string, 
 			return "", fmt.Errorf("new sms sender error, %s", err)
 		}
 		req := notify.NewSendSMSRequest()
-		req.AddPhone(u.Data.Profile.Phone)
+		req.AddPhone(u.Profile.Phone)
 		req.TemplateID = vc.SmsTemplateID
 		req.AddParams(code.Number, code.ExpiredMiniteString())
 		if err := sender.Send(req); err != nil {
 			return "", fmt.Errorf("send verify code by sms error, %s", err)
 		}
-		message = fmt.Sprintf("验证码已通过短信发送到你的手机: %s, 请及时查收", u.Data.Profile.Phone)
+		message = fmt.Sprintf("验证码已通过短信发送到你的手机: %s, 请及时查收", u.Profile.Phone)
 		s.log.Debugf("send verify code to user: %s by sms ok", code.Username)
 	default:
 		return "", fmt.Errorf("unknown notify type %s", vc.NotifyType)

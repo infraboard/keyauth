@@ -84,7 +84,7 @@ func (h *handler) PatchSubAccount(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
 
 	req := user.NewPatchAccountRequest()
-	req.Profile.Account = rctx.PS.ByName("account")
+	req.Account = rctx.PS.ByName("account")
 
 	if err := request.GetDataFromRequest(r, req.Profile); err != nil {
 		response.Failed(w, err)

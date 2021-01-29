@@ -31,7 +31,11 @@ func New(req *CreateAccountRequest) (*User, error) {
 	return &User{
 		CreateAt:       ftime.Now().Timestamp(),
 		UpdateAt:       ftime.Now().Timestamp(),
-		Data:           req,
+		Profile:        req.Profile,
+		DepartmentId:   req.DepartmentId,
+		Account:        req.Account,
+		CreateType:     req.CreateType,
+		Type:           req.UserType,
 		HashedPassword: pass,
 		Status: &Status{
 			Locked: false,
@@ -42,7 +46,7 @@ func New(req *CreateAccountRequest) (*User, error) {
 // NewDefaultUser 实例
 func NewDefaultUser() *User {
 	return &User{
-		Data: NewCreateUserRequest(),
+		Profile: NewProfile(),
 		Status: &Status{
 			Locked: false,
 		},
@@ -83,7 +87,7 @@ func (u *User) ChangePassword(old, new string, maxHistory uint, needReset bool) 
 
 // HasDepartment todo
 func (u *User) HasDepartment() bool {
-	return u.Data.Profile.DepartmentId != ""
+	return u.DepartmentId != ""
 }
 
 // NewProfile todo
@@ -98,11 +102,6 @@ func (req *Profile) ValidateInitialized() error {
 	}
 
 	return fmt.Errorf("email and phone required when initial")
-}
-
-// HasDepartment todo
-func (req *Profile) HasDepartment() bool {
-	return req.DepartmentId != ""
 }
 
 // Patch todo

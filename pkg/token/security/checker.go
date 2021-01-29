@@ -207,7 +207,7 @@ func (c *checker) getOrDefaultSecuritySettingWithUser(ctx context.Context, accou
 		return ss
 	}
 
-	return c.getOrDefaultSecuritySettingWithDomain(u.Data.Profile.Account, u.Domain)
+	return c.getOrDefaultSecuritySettingWithDomain(u.Account, u.Domain)
 }
 
 func (c *checker) getOrDefaultSecuritySettingWithDomain(account, domainName string) *domain.SecuritySetting {

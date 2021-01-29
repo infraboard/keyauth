@@ -74,7 +74,7 @@ func (req *QueryAccountRequest) Validate() error {
 func NewCreateUserRequestWithLDAPSync(username, password string) *CreateAccountRequest {
 	req := NewCreateUserRequest()
 	req.CreateType = CreateType_LDAP_SYNC
-	req.Profile.Account = username
+	req.Account = username
 	req.Password = password
 	return req
 }

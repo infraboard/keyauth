@@ -52,16 +52,18 @@ func (s *service) CreateAccount(ctx context.Context, req *user.CreateAccountRequ
 }
 
 func (s *service) UpdateAccountProfile(ctx context.Context, req *user.UpdateAccountRequest) (*user.User, error) {
-	u, err := s.DescribeAccount(ctx, user.NewDescriptAccountRequestWithAccount(req.Profile.Account))
+	tk := session.GetTokenFromContext(ctx)
+
+	u, err := s.DescribeAccount(ctx, user.NewDescriptAccountRequestWithAccount(tk.Account))
 	if err != nil {
 		return nil, err
 	}
 
 	switch req.UpdateMode {
 	case common.UpdateMode_PUT:
-		*u.Data.Profile = *req.Profile
+		*u.Profile = *req.Profile
 	case common.UpdateMode_PATCH:
-		u.Data.Profile.Patch(req.Profile)
+		u.Profile.Patch(req.Profile)
 	default:
 		return nil, exception.NewBadRequest("unknown update mode: %s", req.UpdateMode)
 	}
@@ -72,9 +74,9 @@ func (s *service) UpdateAccountProfile(ctx context.Context, req *user.UpdateAcco
 
 	u.UpdateAt = ftime.Now().Timestamp()
 
-	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": u.Data.Profile.Account}, bson.M{"$set": u})
+	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": u.Account}, bson.M{"$set": u})
 	if err != nil {
-		return nil, exception.NewInternalServerError("update user(%s) error, %s", u.Data.Profile.Account, err)
+		return nil, exception.NewInternalServerError("update user(%s) error, %s", u.Account, err)
 	}
 
 	return u, nil
@@ -122,12 +124,12 @@ func (s *service) changePass(ctx context.Context, account, old, new string, isRe
 	}
 
 	s.log.Debugf("save password to db ...")
-	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": u.Data.Profile.Account}, bson.M{"$set": bson.M{
+	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": u.Account}, bson.M{"$set": bson.M{
 		"password": u.HashedPassword,
 	}})
 
 	if err != nil {
-		return nil, exception.NewInternalServerError("update user(%s) password error, %s", u.Data.Profile.Account, err)
+		return nil, exception.NewInternalServerError("update user(%s) password error, %s", u.Account, err)
 	}
 
 	u.Desensitize()
@@ -149,7 +151,7 @@ func (s *service) DescribeAccount(ctx context.Context, req *user.DescribeAccount
 		return nil, exception.NewInternalServerError("find user %s error, %s", req, err)
 	}
 
-	dom, err := s.domain.DescribeDomain(pkg.GetInternalAdminTokenCtx(ins.Data.Profile.Account), domain.NewDescribeDomainRequestWithName(ins.Domain))
+	dom, err := s.domain.DescribeDomain(pkg.GetInternalAdminTokenCtx(ins.Account), domain.NewDescribeDomainRequestWithName(ins.Domain))
 	if err != nil {
 		return nil, err
 	}

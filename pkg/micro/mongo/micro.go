@@ -37,7 +37,7 @@ func (s *service) CreateService(ctx context.Context, req *micro.CreateMicroReque
 	if err != nil {
 		return nil, exception.NewInternalServerError("create service account error, %s", err)
 	}
-	ins.Account = account.Data.Profile.Account
+	ins.Account = account.Account
 
 	// 使用用户创建服务访问Token
 	svrTK, err := s.createServiceToken(tk.GetUserAgent(), tk.GetRemoteIP(), user, pass)
@@ -63,7 +63,7 @@ func (s *service) CreateService(ctx context.Context, req *micro.CreateMicroReque
 
 func (s *service) createServiceAccount(ctx context.Context, name, pass string) (*user.User, error) {
 	req := user.NewCreateUserRequest()
-	req.Profile.Account = name
+	req.Account = name
 	req.Password = pass
 	req.UserType = types.UserType_SERVICE
 	return s.user.CreateAccount(ctx, req)

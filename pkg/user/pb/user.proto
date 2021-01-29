@@ -7,6 +7,7 @@ import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
 import "pkg/department/pb/department.proto";
 import "pkg/user/pb/types.proto";
 import "pkg/user/pb/request.proto";
+import "pkg/user/pb/enum.proto";
 
 message Password {
     // hash过后的密码
@@ -61,40 +62,60 @@ message Status {
 
 // User info
 message User {
+    // 用户所属部门
+    string department_id = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"department_id" json:"department_id" validate:"lte=200"'}
+        ];
+    // 用户账号名称
+    string account = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"_id" json:"account" validate:"required,lte=60"'}
+        ];
+    // 创建方式
+    CreateType create_type = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"create_type" json:"create_type"'}
+        ];
     // 用户创建的时间
-    int64 create_at = 1[
+    int64 create_at = 4[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"create_at" json:"create_at,omitempty"'}
         ];
     // 修改时间
-    int64 update_at = 2[
+    int64 update_at = 5[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"update_at" json:"update_at,omitempty"'}
         ];
     // 如果是子账号和服务账号 都需要继承主用户Domain
-    string domain = 3[
+    string domain = 6[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"domain" json:"domain,omitempty"'}
         ];
     // 是否是主账号
-    UserType type = 4[
+    UserType type = 7[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"type"  json:"type"'}
         ];
+    // 数据
+    Profile profile = 8[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"profile" json:"profile"'}
+        ];
     // 用户的角色(当携带Namesapce查询时会有)
-    repeated string roles = 5[
+    repeated string roles = 9[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"roles,omitempty"'}
         ];
-    // 数据
-    CreateAccountRequest data = 6[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"data" json:"data"'}
+    // 用户多久未登录时(天), 冻结改用户, 防止僵尸用户的账号被利用'
+    int32 expires_days = 10[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"expires_days" json:"expires_days"'}
         ];
+    // 用户是否初始化
+    bool is_initialized = 11[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"is_initialized" json:"is_initialized"'}
+        ]; 
     // 密码相关信息
-    Password hashed_password = 7[
+    Password hashed_password = 12[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"password" json:"password,omitempty"'}
         ];
     // 用户状态
-    Status status = 8[
+    Status status = 13[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"status" json:"status,omitempty"'}
         ];
     // 部门
-    department.Department department = 9[
+    department.Department department = 14[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"department,omitempty"'}
         ];    
 }

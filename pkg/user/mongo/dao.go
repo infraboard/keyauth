@@ -14,7 +14,7 @@ import (
 func (s *service) saveAccount(u *user.User) error {
 	if _, err := s.col.InsertOne(context.TODO(), u); err != nil {
 		return exception.NewInternalServerError("inserted user(%s) document error, %s",
-			u.Data.Profile.Account, err)
+			u.Account, err)
 	}
 
 	return nil
@@ -47,8 +47,8 @@ func (s *service) queryAccount(ctx context.Context, req *queryUserRequest) (*use
 			}
 
 			// 补充用户的部门信息
-			if req.WithDepartment && u.Data.Profile.DepartmentId != "" {
-				depart, err := s.depart.DescribeDepartment(ctx, department.NewDescribeDepartmentRequestWithID(u.Data.Profile.DepartmentId))
+			if req.WithDepartment && u.DepartmentId != "" {
+				depart, err := s.depart.DescribeDepartment(ctx, department.NewDescribeDepartmentRequestWithID(u.DepartmentId))
 				if err != nil {
 					s.log.Errorf("get user department error, %s", err)
 				} else {

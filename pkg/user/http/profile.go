@@ -39,7 +39,7 @@ func (h *handler) PutProfile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	req := user.NewPutAccountRequest()
-	req.Profile.Account = tk.Account
+	req.Account = tk.Account
 
 	if err := request.GetDataFromRequest(r, req.Profile); err != nil {
 		response.Failed(w, err)
@@ -66,7 +66,7 @@ func (h *handler) PatchProfile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	req := user.NewPatchAccountRequest()
-	req.Profile.Account = tk.Account
+	req.Account = tk.Account
 
 	if err := request.GetDataFromRequest(r, req.Profile); err != nil {
 		response.Failed(w, err)

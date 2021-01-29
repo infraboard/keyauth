@@ -93,9 +93,9 @@ func (s *service) DealApplicationForm(ctx context.Context, req *department.DealA
 		return nil, exception.NewBadRequest("user has deparment can't join other")
 	}
 
-	u.Data.Profile.DepartmentId = af.Data.DepartmentId
+	u.DepartmentId = af.Data.DepartmentId
 	patchReq := user.NewPutAccountRequest()
-	patchReq.Profile = u.Data.Profile
+	patchReq.Profile = u.Profile
 
 	_, err = s.user.UpdateAccountProfile(ctx, patchReq)
 	if err != nil {

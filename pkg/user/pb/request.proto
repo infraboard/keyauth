@@ -11,33 +11,41 @@ import "common/types/types.proto";
 
 // CreateAccountRequest 创建用户请求
 message CreateAccountRequest {
-    // 数据
-    Profile profile = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"profile" json:"profile"'}
-        ];
     // 创建方式
-    CreateType create_type = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"create_type" json:"create_type"'}
+    CreateType create_type = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"create_type"'}
         ];
     // 用户类型
-    UserType user_type = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"user_type" json:"user_type"'}
+    UserType user_type = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"user_type"'}
+        ];
+    // 用户所属部门
+    string department_id = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"department_id" validate:"lte=200"'}
+        ];
+    // 用户账号名称
+    string account = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"account" validate:"required,lte=60"'}
+        ];
+    // 数据
+    Profile profile = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"profile"'}
         ];
     // 密码相关信息
-    string password = 4[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"password" validate:"required,lte=80"'}
+    string password = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"password" validate:"required,lte=80"'}
         ];
 }
 
 // Profile todo
 message Profile {
-    // 用户所属部门
-    string department_id = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"department_id" json:"department_id" validate:"lte=200"'}
+    // 用户真实姓名
+    string real_name = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"real_name" json:"real_name" validate:"lte=10"'}
         ];
-    // 用户账号名称
-    string account = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"_id" json:"account" validate:"required,lte=60"'}
+    // 用户昵称, 用于在界面进行展示
+    string nick_name = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"nick_name" json:"nick_name" validate:"lte=30"'}
         ];
     // 手机号码, 用户可以通过手机进行注册和密码找回, 还可以通过手机号进行登录
     string phone = 3[
@@ -51,42 +59,26 @@ message Profile {
     string address = 5[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"address" json:"address" validate:"lte=120"'}
         ];
-    // 用户真实姓名
-    string real_name = 6[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"real_name" json:"real_name" validate:"lte=10"'}
-        ];
-    // 用户昵称, 用于在界面进行展示
-    string nick_name = 7[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"nick_name" json:"nick_name" validate:"lte=30"'}
-        ];
     // 性别
-    Gender gender = 8[
+    Gender gender = 6[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"gender" json:"gender" validate:"lte=10"'}
         ];
     // 头像
-    string avatar = 9[
+    string avatar = 7[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"avatar" json:"avatar" validate:"lte=300"'}
         ];
     // 用户使用的语言
-    string language = 10[
+    string language = 8[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"language" json:"language" validate:"lte=40"'}
         ];
     // 用户所在的城市
-    string city = 11[
+    string city = 9[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"city" json:"city" validate:"lte=40"'}
         ];
     // 用户所在的省
-    string province = 12[
+    string province = 10[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"province" json:"province" validate:"lte=40"'}
-        ];
-    // 用户多久未登录时(天), 冻结改用户, 防止僵尸用户的账号被利用'
-    int32 expires_days = 13[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"expires_days" json:"expires_days"'}
-        ];
-    // 用户是否初始化
-    bool is_initialized = 14[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"is_initialized" json:"is_initialized"'}
-        ];                 
+        ];                
 }
 
 // DescribeAccountRequest 查询用户详情请求
@@ -134,7 +126,12 @@ message UpdateAccountRequest {
     common.types.UpdateMode update_mode = 1[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"update_mode" json:"update_mode"'}
         ];
-	Profile profile = 2[
+    // 用户账号名称
+    string account = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"_id" json:"account" validate:"required,lte=60"'}
+        ];
+    // profile 账号profile
+	Profile profile = 3[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"profile" json:"profile"'}
         ];
 }

@@ -161,13 +161,13 @@ func (i *Initialer) Run() error {
 	}
 	fmt.Printf("初始化用户: %s [成功]\n", i.username)
 
-	_, err = i.initDomain(u.Data.Profile.Account)
+	_, err = i.initDomain(u.Account)
 	if err != nil {
 		return err
 	}
 	fmt.Printf("初始化域: %s   [成功]\n", i.domainDesc)
 
-	apps, err := i.initApp(u.Data.Profile.Account)
+	apps, err := i.initApp(u.Account)
 	if err != nil {
 		return err
 	}
@@ -177,7 +177,7 @@ func (i *Initialer) Run() error {
 		fmt.Printf("应用客户端凭证: %s\n", apps[index].ClientSecret)
 	}
 
-	if err := i.getAdminToken(apps[0], u); err != nil {
+	if err := i.getAdminToken(apps[0]); err != nil {
 		return err
 	}
 
@@ -227,7 +227,7 @@ func (i *Initialer) checkIsInit() error {
 func (i *Initialer) initUser() (*user.User, error) {
 	req := user.NewCreateUserRequest()
 	req.UserType = types.UserType_SUPPER
-	req.Profile.Account = strings.TrimSpace(i.username)
+	req.Account = strings.TrimSpace(i.username)
 	req.Password = strings.TrimSpace(i.password)
 	return pkg.User.CreateAccount(i.mockContext(), req)
 }
@@ -268,12 +268,12 @@ func (i *Initialer) initApp(ownerID string) ([]*application.Application, error) 
 	return apps, nil
 }
 
-func (i *Initialer) getAdminToken(app *application.Application, u *user.User) error {
-	if app == nil || u == nil {
-		return fmt.Errorf("get admin token need app and admin user")
+func (i *Initialer) getAdminToken(app *application.Application) error {
+	if app == nil {
+		return fmt.Errorf("get admin token need app")
 	}
 
-	req := token.NewIssueTokenByPassword(app.ClientId, app.ClientSecret, u.Data.Profile.Account, u.Data.Password)
+	req := token.NewIssueTokenByPassword(app.ClientId, app.ClientSecret, i.username, i.password)
 	tk, err := pkg.Token.IssueToken(nil, req)
 	if err != nil {
 		return err

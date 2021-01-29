@@ -101,7 +101,7 @@ func (i *issuer) getUser(ctx context.Context, name string) (*user.User, error) {
 
 func (i *issuer) getDomain(u *user.User) (*domain.Domain, error) {
 	req := domain.NewDescribeDomainRequestWithName(u.Domain)
-	return i.domain.DescribeDomain(pkg.GetInternalAdminTokenCtx(u.Data.Profile.Account), req)
+	return i.domain.DescribeDomain(pkg.GetInternalAdminTokenCtx(u.Account), req)
 }
 
 func (i *issuer) setTokenDomain(tk *token.Token) error {
@@ -142,7 +142,7 @@ func (i *issuer) IssueToken(ctx context.Context, req *token.IssueTokenRequest) (
 		if err := i.checkUserPassExpired(u); err != nil {
 			i.log.Debugf("issue password token error, %s", err)
 			if v, ok := err.(exception.APIException); ok {
-				v.WithData(u.Data.Profile.Account)
+				v.WithData(u.Account)
 			}
 			return nil, err
 		}
@@ -301,7 +301,7 @@ func (i *issuer) mockBuildInToken(app *application.Application, userName, domain
 
 func (i *issuer) issueUserToken(app *application.Application, u *user.User, gt token.GrantType) *token.Token {
 	tk := i.newBearToken(app, gt)
-	tk.Account = u.Data.Profile.Account
+	tk.Account = u.Account
 	tk.UserType = u.Type
 	return tk
 }
