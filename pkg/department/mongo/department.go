@@ -57,8 +57,8 @@ func (s *service) QueryDepartment(ctx context.Context, req *department.QueryDepa
 				ins.UserCount = uc
 			}
 
-			if req.WithRole && ins.Data.DefaultRoleId != "" {
-				rIns, err := s.role.DescribeRole(ctx, role.NewDescribeRoleRequestWithID(ins.Data.DefaultRoleId))
+			if req.WithRole && ins.DefaultRoleId != "" {
+				rIns, err := s.role.DescribeRole(ctx, role.NewDescribeRoleRequestWithID(ins.DefaultRoleId))
 				if err != nil {
 					return nil, err
 				}
@@ -112,8 +112,8 @@ func (s *service) DescribeDepartment(ctx context.Context, req *department.Descri
 		ins.UserCount = uc
 	}
 
-	if req.WithRole && ins.Data.DefaultRoleId != "" {
-		rIns, err := s.role.DescribeRole(ctx, role.NewDescribeRoleRequestWithID(ins.Data.DefaultRoleId))
+	if req.WithRole && ins.DefaultRoleId != "" {
+		rIns, err := s.role.DescribeRole(ctx, role.NewDescribeRoleRequestWithID(ins.DefaultRoleId))
 		if err != nil {
 			return nil, err
 		}
@@ -158,7 +158,7 @@ func (s *service) CreateDepartment(ctx context.Context, req *department.CreateDe
 
 	if _, err := s.dc.InsertOne(context.TODO(), ins); err != nil {
 		return nil, exception.NewInternalServerError("inserted department(%s) document error, %s",
-			ins.Data.Name, err)
+			ins.Name, err)
 	}
 
 	return ins, nil
@@ -216,6 +216,7 @@ func (s *service) UpdateDepartment(ctx context.Context, req *department.UpdateDe
 	if err != nil {
 		return nil, err
 	}
+
 	switch req.UpdateMode {
 	case common.UpdateMode_PUT:
 		*dp.Data = *req.Data
@@ -228,7 +229,7 @@ func (s *service) UpdateDepartment(ctx context.Context, req *department.UpdateDe
 	dp.UpdateAt = ftime.Now().Timestamp()
 	_, err = s.dc.UpdateOne(context.TODO(), bson.M{"_id": dp.Id}, bson.M{"$set": dp})
 	if err != nil {
-		return nil, exception.NewInternalServerError("update domain(%s) error, %s", dp.Data.Name, err)
+		return nil, exception.NewInternalServerError("update domain(%s) error, %s", dp.Name, err)
 	}
 
 	return dp, nil

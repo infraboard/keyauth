@@ -204,7 +204,7 @@ func (i *Initialer) Run() error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("初始化部门: %s   [成功]\n", dep.Data.DisplayName)
+	fmt.Printf("初始化部门: %s   [成功]\n", dep.DisplayName)
 
 	return nil
 }

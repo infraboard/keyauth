@@ -40,7 +40,7 @@ func NewNamespace(ctx context.Context, req *CreateNamespaceRequest, depart depar
 		return nil, err
 	}
 	// 部门负责人就是空间负责人
-	ins.Data.Owner = d.Data.Manager
+	ins.Data.Owner = d.Manager
 
 	return ins, nil
 }

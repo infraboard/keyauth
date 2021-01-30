@@ -29,12 +29,16 @@ func NewDepartment(ctx context.Context, req *CreateDepartmentRequest, d Departme
 
 	tk := session.GetTokenFromContext(ctx)
 	ins := &Department{
-		CreateAt: ftime.Now().Timestamp(),
-		UpdateAt: ftime.Now().Timestamp(),
-		Creater:  tk.Account,
-		Domain:   tk.Domain,
-		Grade:    1,
-		Data:     req,
+		CreateAt:      ftime.Now().Timestamp(),
+		UpdateAt:      ftime.Now().Timestamp(),
+		Creater:       tk.Account,
+		Domain:        tk.Domain,
+		Grade:         1,
+		Name:          req.Name,
+		DisplayName:   req.DisplayName,
+		ParentId:      req.ParentId,
+		Manager:       req.Manager,
+		DefaultRoleId: req.DefaultRoleId,
 	}
 
 	if req.ParentId != "" {
@@ -47,7 +51,7 @@ func NewDepartment(ctx context.Context, req *CreateDepartmentRequest, d Departme
 	}
 
 	if req.Manager == "" {
-		req.Manager = tk.Account
+		ins.Manager = tk.Account
 	}
 
 	var err error
@@ -63,7 +67,7 @@ func NewDepartment(ctx context.Context, req *CreateDepartmentRequest, d Departme
 		if err != nil {
 			return nil, err
 		}
-		ins.Data.DefaultRoleId = ins.DefaultRole.Id
+		ins.DefaultRoleId = ins.DefaultRole.Id
 	}
 
 	// 计算ID
@@ -79,9 +83,22 @@ func NewDepartment(ctx context.Context, req *CreateDepartmentRequest, d Departme
 
 // NewDefaultDepartment todo
 func NewDefaultDepartment() *Department {
-	return &Department{
-		Data: NewCreateDepartmentRequest(),
-	}
+	return &Department{}
+}
+
+// Update todo
+func (d *Department) Update(req *CreateDepartmentRequest) {
+	d.Name = req.Name
+	d.DisplayName = req.DisplayName
+	d.ParentId = req.ParentId
+	d.Manager = req.Manager
+	d.DefaultRoleId = req.DefaultRoleId
+}
+
+// Patch todo
+func (d *Department) Patch(req *CreateDepartmentRequest) {
+	patchData, _ := json.Marshal(req)
+	json.Unmarshal(patchData, d)
 }
 
 // HasSubDepartment todo

@@ -79,7 +79,7 @@ func (s *service) DealApplicationForm(ctx context.Context, req *department.DealA
 	}
 
 	// 只有部门管理员才能出来成员加入申请
-	if dp.Data.Manager != tk.Account {
+	if dp.Manager != tk.Account {
 		return nil, exception.NewPermissionDeny("only department manger can deal join apply")
 	}
 

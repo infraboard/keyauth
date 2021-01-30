@@ -45,9 +45,9 @@ type Endpoint struct {
 	// 该功能属于那个服务
 	ServiceId string `protobuf:"bytes,4,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty" bson:"service_id" validate:"required,lte=64"`
 	// 服务那个版本的功能
-	Version string `protobuf:"bytes,5,opt,name=version,proto3" json:"version,omitempty" validate:"required,lte=64" bson:"version"`
+	Version string `protobuf:"bytes,5,opt,name=version,proto3" json:"version,omitempty" bson:"version" validate:"required,lte=64"`
 	// 路由条目信息
-	Entry *router.Entry `protobuf:"bytes,6,opt,name=entry,proto3" json:"entry" bson:"entry" validate:"required"`
+	Entry *router.Entry `protobuf:"bytes,6,opt,name=entry,proto3" json:"entry" validate:"required" bson:"entry"`
 }
 
 func (x *Endpoint) Reset() {

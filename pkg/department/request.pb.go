@@ -42,9 +42,9 @@ type CreateDepartmentRequest struct {
 	// 显示名称
 	DisplayName string `protobuf:"bytes,2,opt,name=display_name,json=displayName,proto3" json:"display_name" bson:"display_name"`
 	// 上级部门ID
-	ParentId string `protobuf:"bytes,3,opt,name=parent_id,json=parentId,proto3" json:"parent_id" validate:"lte=200" bson:"parent_id"`
+	ParentId string `protobuf:"bytes,3,opt,name=parent_id,json=parentId,proto3" json:"parent_id" bson:"parent_id" validate:"lte=200"`
 	// 部门管理者account
-	Manager string `protobuf:"bytes,4,opt,name=manager,proto3" json:"manager" bson:"manager" validate:"required,lte=200"`
+	Manager string `protobuf:"bytes,4,opt,name=manager,proto3" json:"manager" validate:"required,lte=200" bson:"manager"`
 	// 部门成员默认角色
 	DefaultRoleId string `protobuf:"bytes,5,opt,name=default_role_id,json=defaultRoleId,proto3" json:"default_role_id" bson:"default_role_id" validate:"lte=200"`
 }
