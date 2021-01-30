@@ -188,8 +188,8 @@ func (i *Initialer) Run() error {
 	}
 	for index := range roles {
 		r := roles[index]
-		fmt.Printf("初始化角色: %s [成功]\n", r.Data.Name)
-		if r.Data.Name == role.AdminRoleName {
+		fmt.Printf("初始化角色: %s [成功]\n", r.Name)
+		if r.Name == role.AdminRoleName {
 			adminRole = r
 		}
 	}

@@ -40,7 +40,7 @@ type CreateNamespaceRequest struct {
 	// 所属部门
 	DepartmentId string `protobuf:"bytes,1,opt,name=department_id,json=departmentId,proto3" json:"department_id" bson:"department_id" validate:"required,lte=80"`
 	// 项目名称
-	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name" bson:"name" validate:"required,lte=80"`
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name" validate:"required,lte=80" bson:"name"`
 	// 项目描述图片
 	Picture string `protobuf:"bytes,3,opt,name=picture,proto3" json:"picture,omitempty" bson:"picture"`
 	// 禁用项目, 该项目所有人暂时都无法访问

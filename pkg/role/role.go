@@ -28,19 +28,23 @@ func New(tk *token.Token, req *CreateRoleRequest) (*Role, error) {
 	}
 
 	return &Role{
-		Id:       xid.New().String(),
-		CreateAt: ftime.Now().Timestamp(),
-		UpdateAt: ftime.Now().Timestamp(),
-		Domain:   tk.Domain,
-		Creater:  tk.Account,
-		Data:     req,
+		Id:          xid.New().String(),
+		CreateAt:    ftime.Now().Timestamp(),
+		UpdateAt:    ftime.Now().Timestamp(),
+		Domain:      tk.Domain,
+		Creater:     tk.Account,
+		Type:        req.Type,
+		Name:        req.Name,
+		Description: req.Description,
+		Permissions: req.Permissions,
 	}, nil
 }
 
 // NewDefaultRole 默认实例
 func NewDefaultRole() *Role {
 	return &Role{
-		Data: NewCreateRoleRequest(),
+		Permissions: []*Permission{},
+		Type:        RoleType_CUSTOM,
 	}
 }
 
@@ -49,11 +53,11 @@ func (r *Role) HasPermission(ep *endpoint.Endpoint) (*Permission, bool, error) {
 	var (
 		rok, lok bool
 	)
-	for i := range r.Data.Permissions {
-		rok = r.Data.Permissions[i].MatchResource(ep.Entry.Resource)
-		lok = r.Data.Permissions[i].MatchLabel(ep.Entry.Labels)
+	for i := range r.Permissions {
+		rok = r.Permissions[i].MatchResource(ep.Entry.Resource)
+		lok = r.Permissions[i].MatchLabel(ep.Entry.Labels)
 		if rok && lok {
-			return r.Data.Permissions[i], true, nil
+			return r.Permissions[i], true, nil
 		}
 	}
 	return nil, false, nil
@@ -111,7 +115,7 @@ func (s *Set) Permissions() *PermissionSet {
 	ps := NewPermissionSet()
 
 	for i := range s.Items {
-		ps.Add(s.Items[i].Data.Permissions...)
+		ps.Add(s.Items[i].Permissions...)
 	}
 
 	return ps

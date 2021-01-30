@@ -57,10 +57,8 @@ func NewDepartment(ctx context.Context, req *CreateDepartmentRequest, d Departme
 		if err != nil {
 			return nil, err
 		}
-	}
-
-	// 默认补充访客角色
-	if req.DefaultRoleId == "" {
+	} else {
+		// 默认补充访客角色
 		ins.DefaultRole, err = r.DescribeRole(ctx, role.NewDescribeRoleRequestWithName(role.VisitorRoleName))
 		if err != nil {
 			return nil, err
