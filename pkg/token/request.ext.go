@@ -163,6 +163,7 @@ func NewIssueTokenByPassword(clientID, clientSecret, user, pass string) *IssueTo
 		Username:     user,
 		Password:     pass,
 		GrantType:    GrantType_PASSWORD,
+		RemoteIp:     "127.0.0.1",
 	}
 }
 

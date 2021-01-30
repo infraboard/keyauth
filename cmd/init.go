@@ -235,7 +235,7 @@ func (i *Initialer) initUser() (*user.User, error) {
 func (i *Initialer) initDomain(account string) (*domain.Domain, error) {
 	req := domain.NewCreateDomainRequest()
 	req.Name = domain.AdminDomainName
-	req.Description = strings.TrimSpace(i.domainDesc)
+	req.Profile.Description = strings.TrimSpace(i.domainDesc)
 	return pkg.Domain.CreateDomain(pkg.GetInternalAdminTokenCtx(account), req)
 }
 

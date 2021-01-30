@@ -412,7 +412,7 @@ type JoinDepartmentRequest struct {
 	unknownFields protoimpl.UnknownFields
 
 	// 申请人
-	Account string `protobuf:"bytes,1,opt,name=account,proto3" json:"account" bson:"account" validate:"required"`
+	Account string `protobuf:"bytes,1,opt,name=account,proto3" json:"account" validate:"required" bson:"account"`
 	// 申请加入的部门
 	DepartmentId string `protobuf:"bytes,2,opt,name=department_id,json=departmentId,proto3" json:"department_id" bson:"department_id" validate:"required"`
 	// 留言

@@ -84,10 +84,10 @@ func (h *handler) PutDomain(w http.ResponseWriter, r *http.Request) {
 
 	// 查找出原来的domain
 	req := domain.NewPutDomainRequest()
-	req.Data.Name = rctx.PS.ByName("name")
+	req.Name = rctx.PS.ByName("name")
 
 	// 解析需要更新的数据
-	if err := request.GetDataFromRequest(r, req.Data); err != nil {
+	if err := request.GetDataFromRequest(r, req.Profile); err != nil {
 		response.Failed(w, err)
 		return
 	}
@@ -112,10 +112,10 @@ func (h *handler) PatchDomain(w http.ResponseWriter, r *http.Request) {
 
 	// 查找出原来的domain
 	req := domain.NewPatchDomainRequest()
-	req.Data.Name = rctx.PS.ByName("name")
+	req.Name = rctx.PS.ByName("name")
 
 	// 解析需要更新的数据
-	if err := request.GetDataFromRequest(r, req.Data); err != nil {
+	if err := request.GetDataFromRequest(r, req.Profile); err != nil {
 		response.Failed(w, err)
 		return
 	}

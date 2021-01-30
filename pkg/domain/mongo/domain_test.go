@@ -37,8 +37,10 @@ func (s *suit) SetUp() {
 	s.service = svr
 
 	s.createReq = &domain.CreateDomainRequest{
-		Name:        "test domain01",
-		DisplayName: "仅仅测试",
+		Name: "test domain01",
+		Profile: &domain.Profile{
+			DisplayName: "仅仅测试",
+		},
 	}
 }
 

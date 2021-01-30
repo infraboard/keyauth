@@ -133,25 +133,25 @@ type Profile struct {
 	unknownFields protoimpl.UnknownFields
 
 	// 用户真实姓名
-	RealName string `protobuf:"bytes,1,opt,name=real_name,json=realName,proto3" json:"real_name" bson:"real_name" validate:"lte=10"`
+	RealName string `protobuf:"bytes,1,opt,name=real_name,json=realName,proto3" json:"real_name,omitempty"`
 	// 用户昵称, 用于在界面进行展示
-	NickName string `protobuf:"bytes,2,opt,name=nick_name,json=nickName,proto3" json:"nick_name" bson:"nick_name" validate:"lte=30"`
+	NickName string `protobuf:"bytes,2,opt,name=nick_name,json=nickName,proto3" json:"nick_name,omitempty"`
 	// 手机号码, 用户可以通过手机进行注册和密码找回, 还可以通过手机号进行登录
-	Phone string `protobuf:"bytes,3,opt,name=phone,proto3" json:"phone" validate:"lte=30" bson:"phone"`
+	Phone string `protobuf:"bytes,3,opt,name=phone,proto3" json:"phone" bson:"phone"`
 	// 邮箱, 用户可以通过邮箱进行注册和照明密码
-	Email string `protobuf:"bytes,4,opt,name=email,proto3" json:"email" bson:"email" validate:"lte=30"`
+	Email string `protobuf:"bytes,4,opt,name=email,proto3" json:"email,omitempty"`
 	// 用户住址
-	Address string `protobuf:"bytes,5,opt,name=address,proto3" json:"address" bson:"address" validate:"lte=120"`
+	Address string `protobuf:"bytes,5,opt,name=address,proto3" json:"address" bson:"address"`
 	// 性别
-	Gender Gender `protobuf:"varint,6,opt,name=gender,proto3,enum=keyauth.user.Gender" json:"gender" validate:"lte=10" bson:"gender"`
+	Gender Gender `protobuf:"varint,6,opt,name=gender,proto3,enum=keyauth.user.Gender" json:"gender,omitempty"`
 	// 头像
-	Avatar string `protobuf:"bytes,7,opt,name=avatar,proto3" json:"avatar" bson:"avatar" validate:"lte=300"`
+	Avatar string `protobuf:"bytes,7,opt,name=avatar,proto3" json:"avatar,omitempty"`
 	// 用户使用的语言
-	Language string `protobuf:"bytes,8,opt,name=language,proto3" json:"language" validate:"lte=40" bson:"language"`
+	Language string `protobuf:"bytes,8,opt,name=language,proto3" json:"language,omitempty"`
 	// 用户所在的城市
-	City string `protobuf:"bytes,9,opt,name=city,proto3" json:"city" bson:"city" validate:"lte=40"`
+	City string `protobuf:"bytes,9,opt,name=city,proto3" json:"city,omitempty"`
 	// 用户所在的省
-	Province string `protobuf:"bytes,10,opt,name=province,proto3" json:"province" bson:"province" validate:"lte=40"`
+	Province string `protobuf:"bytes,10,opt,name=province,proto3" json:"province,omitempty"`
 }
 
 func (x *Profile) Reset() {

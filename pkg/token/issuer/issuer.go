@@ -114,7 +114,7 @@ func (i *issuer) setTokenDomain(tk *token.Token) error {
 	}
 
 	if domains.Length() > 0 {
-		tk.Domain = domains.Items[0].Data.Name
+		tk.Domain = domains.Items[0].Name
 	}
 
 	return nil

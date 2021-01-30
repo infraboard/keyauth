@@ -92,9 +92,13 @@ func getLong(b []byte, offset int64) int64 {
 }
 
 func ip2long(IPStr string) (int64, error) {
+	if IPStr == "" {
+		return 0, fmt.Errorf("ip ins \"\"")
+	}
+
 	bits := strings.Split(IPStr, ".")
 	if len(bits) != 4 {
-		return 0, errors.New("ip format error")
+		return 0, fmt.Errorf("ip [%s] format error", IPStr)
 	}
 
 	var sum int64

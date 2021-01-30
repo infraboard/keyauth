@@ -7,6 +7,10 @@ import "pkg/domain/pb/request.proto";
 import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
 
 message Domain  {
+    // 公司或者组织名称
+    string name = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"_id" json:"name"'}
+        ];
     // 创建时间
     int64 create_at = 2[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"create_at" json:"create_at"'}
@@ -19,12 +23,16 @@ message Domain  {
     string owner = 4[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"owner" json:"owner"'}
         ];
+    // 域状态, 是否需要冻结该域, 冻结时, 该域下面所有用户禁止登录
+    bool enabled = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"enabled" json:"enabled"'}
+        ];
     // CreateDomainRequest 具体属性
-    CreateDomainRequest data = 5[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"data" json:"data"'}
+    Profile profile = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"profile" json:"profile"'}
         ];
     // SecuritySetting 域安全设置
-    SecuritySetting security_setting = 6[
+    SecuritySetting security_setting = 7[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"security_setting" json:"security_setting"'}
         ];
 }

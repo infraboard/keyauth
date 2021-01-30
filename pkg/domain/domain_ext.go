@@ -26,7 +26,9 @@ func New(owner string, req *CreateDomainRequest) (*Domain, error) {
 		CreateAt:        ftime.Now().Timestamp(),
 		UpdateAt:        ftime.Now().Timestamp(),
 		Owner:           owner,
-		Data:            req,
+		Name:            req.Name,
+		Profile:         req.Profile,
+		Enabled:         true,
 		SecuritySetting: NewDefaultSecuritySetting(),
 	}
 
@@ -36,7 +38,7 @@ func New(owner string, req *CreateDomainRequest) (*Domain, error) {
 // NewDefault todo
 func NewDefault() *Domain {
 	return &Domain{
-		Data:            NewCreateDomainRequest(),
+		Profile:         &Profile{},
 		SecuritySetting: NewDefaultSecuritySetting(),
 	}
 }

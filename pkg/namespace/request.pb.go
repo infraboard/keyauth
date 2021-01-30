@@ -38,7 +38,7 @@ type CreateNamespaceRequest struct {
 	unknownFields protoimpl.UnknownFields
 
 	// 所属部门
-	DepartmentId string `protobuf:"bytes,1,opt,name=department_id,json=departmentId,proto3" json:"department_id" validate:"required,lte=80" bson:"department_id"`
+	DepartmentId string `protobuf:"bytes,1,opt,name=department_id,json=departmentId,proto3" json:"department_id" bson:"department_id" validate:"required,lte=80"`
 	// 项目名称
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name" bson:"name" validate:"required,lte=80"`
 	// 项目描述图片

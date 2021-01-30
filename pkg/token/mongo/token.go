@@ -78,13 +78,13 @@ func (s *service) securityCheck(ctx context.Context, code string, tk *token.Toke
 	// 异地登录检测
 	err := s.checker.OtherPlaceLoggedInChecK(ctx, tk)
 	if err != nil {
-		return exception.NewVerifyCodeRequiredError("异常检测: %s", err)
+		return exception.NewVerifyCodeRequiredError("异地登录检测失败: %s", err)
 	}
 
 	// 长时间未登录检测
 	err = s.checker.NotLoginDaysChecK(ctx, tk)
 	if err != nil {
-		return exception.NewVerifyCodeRequiredError("异常检测: %s", err)
+		return exception.NewVerifyCodeRequiredError("长时间未登录检测失败: %s", err)
 	}
 
 	return nil

@@ -13,6 +13,13 @@ message CreateDomainRequest  {
     string name = 1[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"name" json:"name"'}
         ];
+    // Profile 需要修改内容
+    Profile profile = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"profile" json:"profile"'}
+        ];
+}
+
+message Profile {
     // 全称
     string display_name = 5[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"display_name" json:"display_name"'}
@@ -24,10 +31,6 @@ message CreateDomainRequest  {
     // 描述
     string description = 7[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"description" json:"description"'}
-        ];
-    // 域状态, 是否需要冻结该域, 冻结时, 该域下面所有用户禁止登录
-    bool enabled = 8[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"enabled" json:"enabled"'}
         ];
     // 电话
     string phone = 9[
@@ -56,7 +59,7 @@ message CreateDomainRequest  {
     // 联系人
     Contact contack = 15[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"contack" json:"contack"'}
-        ];
+        ];    
 }
 
 message UpdateDomainInfoRequest  {
@@ -64,9 +67,13 @@ message UpdateDomainInfoRequest  {
     common.types.UpdateMode update_mode = 1[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"update_mode" json:"update_mode"'}
         ];
+    // 公司或者组织名称
+    string name = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"name" json:"name"'}
+        ];
     // CreateDomainRequest 需要修改内容
-    CreateDomainRequest data = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"data" json:"data"'}
+    Profile profile = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"profile" json:"profile"'}
         ];
 }
 
@@ -125,11 +132,19 @@ message SecuritySetting {
 // 联系人
 message Contact {
     // 姓名
-    string name = 1;
+    string name = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"name" json:"name"'}
+        ];
     // 职位
-    string title = 2;
+    string title = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"title" json:"title"'}
+        ];
     // 电话
-    string phone = 3;
+    string phone = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"phone" json:"phone"'}
+        ];
     // 邮箱
-    string email = 4;
+    string email = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"email" json:"email"'}
+        ];
 }

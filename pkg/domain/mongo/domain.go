@@ -79,24 +79,24 @@ func (s *service) UpdateDomain(ctx context.Context, req *domain.UpdateDomainInfo
 		return nil, exception.NewBadRequest(err.Error())
 	}
 
-	d, err := s.DescribeDomain(ctx, domain.NewDescribeDomainRequestWithName(req.Data.Name))
+	d, err := s.DescribeDomain(ctx, domain.NewDescribeDomainRequestWithName(req.Name))
 	if err != nil {
 		return nil, err
 	}
 
 	switch req.UpdateMode {
 	case types.UpdateMode_PUT:
-		*d.Data = *req.Data
+		*d.Profile = *req.Profile
 	case types.UpdateMode_PATCH:
-		d.Data.Patch(req.Data)
+		d.Profile.Patch(req.Profile)
 	default:
 		return nil, exception.NewBadRequest("unknown update mode: %s", req.UpdateMode)
 	}
 
 	d.UpdateAt = ftime.Now().Timestamp()
-	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": d.Data.Name}, bson.M{"$set": d})
+	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": d.Name}, bson.M{"$set": d})
 	if err != nil {
-		return nil, exception.NewInternalServerError("update domain(%s) error, %s", d.Data.Name, err)
+		return nil, exception.NewInternalServerError("update domain(%s) error, %s", d.Name, err)
 	}
 
 	return d, nil
@@ -122,9 +122,9 @@ func (s *service) UpdateDomainSecurity(ctx context.Context, req *domain.UpdateDo
 	}
 
 	d.UpdateAt = ftime.Now().Timestamp()
-	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": d.Data.Name}, bson.M{"$set": d})
+	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": d.Name}, bson.M{"$set": d})
 	if err != nil {
-		return nil, exception.NewInternalServerError("update domain(%s) error, %s", d.Data.Name, err)
+		return nil, exception.NewInternalServerError("update domain(%s) error, %s", d.Name, err)
 	}
 
 	return d.SecuritySetting, nil

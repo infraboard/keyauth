@@ -37,7 +37,7 @@ type Endpoint struct {
 	unknownFields protoimpl.UnknownFields
 
 	// 端点名称
-	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id" bson:"_id" validate:"required,lte=64"`
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id" validate:"required,lte=64" bson:"_id"`
 	// 创建时间
 	CreateAt int64 `protobuf:"varint,2,opt,name=create_at,json=createAt,proto3" json:"create_at,omitempty" bson:"create_at"`
 	// 更新时间
