@@ -37,7 +37,7 @@ type Endpoint struct {
 	unknownFields protoimpl.UnknownFields
 
 	// 端点名称
-	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id" bson:"_id" validate:"required,lte=64"`
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id" validate:"required,lte=64" bson:"_id"`
 	// 创建时间
 	CreateAt int64 `protobuf:"varint,2,opt,name=create_at,json=createAt,proto3" json:"create_at,omitempty" bson:"create_at"`
 	// 更新时间
@@ -45,9 +45,9 @@ type Endpoint struct {
 	// 该功能属于那个服务
 	ServiceId string `protobuf:"bytes,4,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty" bson:"service_id" validate:"required,lte=64"`
 	// 服务那个版本的功能
-	Version string `protobuf:"bytes,5,opt,name=version,proto3" json:"version,omitempty" bson:"version" validate:"required,lte=64"`
+	Version string `protobuf:"bytes,5,opt,name=version,proto3" json:"version,omitempty" validate:"required,lte=64" bson:"version"`
 	// 路由条目信息
-	Entry *router.Entry `protobuf:"bytes,6,opt,name=entry,proto3" json:"entry" validate:"required" bson:"entry"`
+	Entry *router.Entry `protobuf:"bytes,6,opt,name=entry,proto3" json:"entry" bson:"entry" validate:"required"`
 }
 
 func (x *Endpoint) Reset() {

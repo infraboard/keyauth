@@ -21,7 +21,7 @@ func (s *service) CreatePolicy(ctx context.Context, req *policy.CreatePolicyRequ
 		return nil, exception.NewBadRequest(err.Error())
 	}
 
-	u, err := ins.Data.CheckDependence(ctx, s.user, s.role, s.namespace)
+	u, err := ins.CheckDependence(ctx, s.user, s.role, s.namespace)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ func (s *service) QueryPolicy(ctx context.Context, req *policy.QueryPolicyReques
 
 		// 补充关联的角色信息
 		if req.WithRole {
-			descRole := role.NewDescribeRoleRequestWithID(ins.Data.RoleId)
+			descRole := role.NewDescribeRoleRequestWithID(ins.RoleId)
 			ins.Role, err = s.role.DescribeRole(ctx, descRole)
 			if err != nil {
 				return nil, err
@@ -66,8 +66,8 @@ func (s *service) QueryPolicy(ctx context.Context, req *policy.QueryPolicyReques
 		}
 
 		// 关联空间信息
-		if req.WithNamespace && ins.Data.NamespaceId != "*" {
-			descNS := namespace.NewNewDescriptNamespaceRequestWithID(ins.Data.NamespaceId)
+		if req.WithNamespace && ins.NamespaceId != "*" {
+			descNS := namespace.NewNewDescriptNamespaceRequestWithID(ins.NamespaceId)
 			ins.Namespace, err = s.namespace.DescribeNamespace(ctx, descNS)
 			if err != nil {
 				return nil, err

@@ -25,12 +25,16 @@ func NewNamespace(ctx context.Context, req *CreateNamespaceRequest, depart depar
 
 	tk := session.GetTokenFromContext(ctx)
 	ins := &Namespace{
-		Id:       xid.New().String(),
-		Domain:   tk.Domain,
-		Creater:  tk.Account,
-		CreateAt: ftime.Now().Timestamp(),
-		UpdateAt: ftime.Now().Timestamp(),
-		Data:     req,
+		Id:           xid.New().String(),
+		Domain:       tk.Domain,
+		Creater:      tk.Account,
+		CreateAt:     ftime.Now().Timestamp(),
+		UpdateAt:     ftime.Now().Timestamp(),
+		DepartmentId: req.DepartmentId,
+		Name:         req.Name,
+		Picture:      req.Picture,
+		Owner:        req.Owner,
+		Description:  req.Description,
 	}
 
 	descD := department.NewDescribeDepartmentRequest()
@@ -40,7 +44,7 @@ func NewNamespace(ctx context.Context, req *CreateNamespaceRequest, depart depar
 		return nil, err
 	}
 	// 部门负责人就是空间负责人
-	ins.Data.Owner = d.Manager
+	ins.Owner = d.Manager
 
 	return ins, nil
 }
@@ -48,15 +52,13 @@ func NewNamespace(ctx context.Context, req *CreateNamespaceRequest, depart depar
 // NewDefaultNamespace todo
 func NewDefaultNamespace() *Namespace {
 	return &Namespace{
-		Data: NewCreateNamespaceRequest(),
+		Enabled: true,
 	}
 }
 
 // NewCreateNamespaceRequest todo
 func NewCreateNamespaceRequest() *CreateNamespaceRequest {
-	return &CreateNamespaceRequest{
-		Enabled: true,
-	}
+	return &CreateNamespaceRequest{}
 }
 
 // Validate todo

@@ -23,7 +23,7 @@ func (s *service) CreateNamespace(ctx context.Context, req *namespace.CreateName
 
 	if _, err := s.col.InsertOne(context.TODO(), ins); err != nil {
 		return nil, exception.NewInternalServerError("inserted namespace(%s) document error, %s",
-			ins.Data.Name, err)
+			ins.Name, err)
 	}
 
 	if err := s.updateNamespacePolicy(ctx, ins); err != nil {
@@ -42,7 +42,7 @@ func (s *service) updateNamespacePolicy(ctx context.Context, ns *namespace.Names
 	pReq := policy.NewCreatePolicyRequest()
 	pReq.NamespaceId = ns.Id
 	pReq.RoleId = r.Id
-	pReq.Account = ns.Data.Owner
+	pReq.Account = ns.Owner
 	pReq.Type = policy.PolicyType_BUILD_IN
 	_, err = s.policy.CreatePolicy(ctx, pReq)
 	if err != nil {
@@ -69,12 +69,12 @@ func (s *service) QueryNamespace(ctx context.Context, req *namespace.QueryNamesp
 		}
 
 		// 补充用户的部门信息
-		if req.WithDepartment && ins.Data.DepartmentId != "" {
-			depart, err := s.depart.DescribeDepartment(ctx, department.NewDescribeDepartmentRequestWithID(ins.Data.DepartmentId))
+		if req.WithDepartment && ins.DepartmentId != "" {
+			depart, err := s.depart.DescribeDepartment(ctx, department.NewDescribeDepartmentRequestWithID(ins.DepartmentId))
 			if err != nil {
 				s.log.Errorf("get user department error, %s", err)
 			} else {
-				ins.Data.Department = depart
+				ins.Department = depart
 			}
 		}
 
@@ -108,12 +108,12 @@ func (s *service) DescribeNamespace(ctx context.Context, req *namespace.Descript
 	}
 
 	// 补充用户的部门信息
-	if req.WithDepartment && ins.Data.DepartmentId != "" {
-		depart, err := s.depart.DescribeDepartment(ctx, department.NewDescribeDepartmentRequestWithID(ins.Data.DepartmentId))
+	if req.WithDepartment && ins.DepartmentId != "" {
+		depart, err := s.depart.DescribeDepartment(ctx, department.NewDescribeDepartmentRequestWithID(ins.DepartmentId))
 		if err != nil {
 			s.log.Errorf("get user department error, %s", err)
 		} else {
-			ins.Data.Department = depart
+			ins.Department = depart
 		}
 	}
 

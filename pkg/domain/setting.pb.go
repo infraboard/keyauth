@@ -36,7 +36,7 @@ type PasswordSecurity struct {
 	unknownFields protoimpl.UnknownFields
 
 	// 密码长度
-	Length int32 `protobuf:"varint,1,opt,name=length,proto3" json:"length" bson:"length" validate:"required,min=8,max=64"`
+	Length int32 `protobuf:"varint,1,opt,name=length,proto3" json:"length" validate:"required,min=8,max=64" bson:"length"`
 	// 包含数字
 	IncludeNumber bool `protobuf:"varint,2,opt,name=include_number,json=includeNumber,proto3" json:"include_number" bson:"include_number"`
 	// 包含小写字母
@@ -46,7 +46,7 @@ type PasswordSecurity struct {
 	// 包含特殊字符
 	IncludeSymbols bool `protobuf:"varint,5,opt,name=include_symbols,json=includeSymbols,proto3" json:"include_symbols" bson:"include_symbols"`
 	// 重复限制
-	RepeateLimite uint32 `protobuf:"varint,6,opt,name=repeate_limite,json=repeateLimite,proto3" json:"repeate_limite" bson:"repeate_limite" validate:"required,min=1,max=24"`
+	RepeateLimite uint32 `protobuf:"varint,6,opt,name=repeate_limite,json=repeateLimite,proto3" json:"repeate_limite" validate:"required,min=1,max=24" bson:"repeate_limite"`
 	// 密码过期时间, 密码过期后要求用户重置密码
 	PasswordExpiredDays uint32 `protobuf:"varint,7,opt,name=password_expired_days,json=passwordExpiredDays,proto3" json:"password_expired_days" validate:"required,min=0,max=365" bson:"password_expired_days"`
 	// 密码过期前多少天开始提醒

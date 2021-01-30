@@ -3,8 +3,8 @@ syntax = "proto3";
 package keyauth.namespace;
 option go_package = "github.com/infraboard/keyauth/pkg/namespace";
 
-import "pkg/namespace/pb/request.proto";
 import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
+import "pkg/department/pb/department.proto";
 
 // Namespace tenant resource container
 message Namespace {
@@ -28,8 +28,33 @@ message Namespace {
     int64 update_at = 5[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"update_at" json:"update_at"'}
         ];
-    CreateNamespaceRequest data = 6[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"data" json:"data"'}
+    // 禁用项目, 该项目所有人暂时都无法访问
+    bool enabled = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"enabled" json:"enabled"'}
+        ];
+    // 所属部门
+    string department_id = 7[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"department_id" json:"department_id"'}
+        ];
+    // 项目名称
+    string name = 8[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"name" json:"name"'}
+        ];
+    // 项目描述图片
+    string picture =9[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"picture" json:"picture"'}
+        ];
+    // 项目所有者, PMO
+    string owner = 10[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"owner" json:"owner"'}
+        ];
+    // 项目描述
+    string description = 11[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"description" json:"description"'}
+        ];
+    // 补充的部门
+    department.Department department = 12[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"department,omitempty"'}
         ];
 }
 

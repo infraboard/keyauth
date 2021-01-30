@@ -219,9 +219,9 @@ func (s *service) UpdateDepartment(ctx context.Context, req *department.UpdateDe
 
 	switch req.UpdateMode {
 	case common.UpdateMode_PUT:
-		*dp.Data = *req.Data
+		dp.Update(req.Data)
 	case common.UpdateMode_PATCH:
-		dp.Data.Patch(req.Data)
+		dp.Patch(req.Data)
 	default:
 		return nil, exception.NewBadRequest("unknown update mode: %s", req.UpdateMode)
 	}

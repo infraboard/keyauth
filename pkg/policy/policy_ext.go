@@ -25,11 +25,16 @@ func New(tk *token.Token, req *CreatePolicyRequest) (*Policy, error) {
 	}
 
 	p := &Policy{
-		CreateAt: ftime.Now().Timestamp(),
-		UpdateAt: ftime.Now().Timestamp(),
-		Creater:  tk.Account,
-		Domain:   tk.Domain,
-		Data:     req,
+		CreateAt:    ftime.Now().Timestamp(),
+		UpdateAt:    ftime.Now().Timestamp(),
+		Creater:     tk.Account,
+		Domain:      tk.Domain,
+		NamespaceId: req.NamespaceId,
+		Account:     req.Account,
+		RoleId:      req.RoleId,
+		Scope:       req.Scope,
+		ExpiredTime: req.ExpiredTime,
+		Type:        req.Type,
 	}
 	p.genID()
 
@@ -38,40 +43,43 @@ func New(tk *token.Token, req *CreatePolicyRequest) (*Policy, error) {
 
 // NewDefaultPolicy todo
 func NewDefaultPolicy() *Policy {
-	return &Policy{
-		Data: NewCreatePolicyRequest(),
-	}
+	return &Policy{}
 }
 
 func (p *Policy) genID() {
 	h := fnv.New32a()
 	hashedStr := fmt.Sprintf("%s-%s-%s-%s",
-		p.Domain, p.Data.NamespaceId, p.Data.Account, p.Data.RoleId)
+		p.Domain, p.NamespaceId, p.Account, p.RoleId)
 
 	h.Write([]byte(hashedStr))
 	p.Id = fmt.Sprintf("%x", h.Sum32())
 }
 
 // CheckDependence todo
-func (req *CreatePolicyRequest) CheckDependence(ctx context.Context, u user.UserServiceServer, r role.RoleServiceServer, ns namespace.NamespaceServiceServer) (*user.User, error) {
-	account, err := u.DescribeAccount(ctx, user.NewDescriptAccountRequestWithAccount(req.Account))
+func (p *Policy) CheckDependence(ctx context.Context, u user.UserServiceServer, r role.RoleServiceServer, ns namespace.NamespaceServiceServer) (*user.User, error) {
+	account, err := u.DescribeAccount(ctx, user.NewDescriptAccountRequestWithAccount(p.Account))
 	if err != nil {
 		return nil, fmt.Errorf("check user error, %s", err)
 	}
 
-	_, err = r.DescribeRole(ctx, role.NewDescribeRoleRequestWithID(req.RoleId))
+	_, err = r.DescribeRole(ctx, role.NewDescribeRoleRequestWithID(p.RoleId))
 	if err != nil {
 		return nil, fmt.Errorf("check role error, %s", err)
 	}
 
-	if !req.IsAllNamespace() {
-		_, err = ns.DescribeNamespace(ctx, namespace.NewNewDescriptNamespaceRequestWithID(req.NamespaceId))
+	if !p.IsAllNamespace() {
+		_, err = ns.DescribeNamespace(ctx, namespace.NewNewDescriptNamespaceRequestWithID(p.NamespaceId))
 		if err != nil {
 			return nil, fmt.Errorf("check namespace error, %s", err)
 		}
 	}
 
 	return account, nil
+}
+
+// IsAllNamespace 是否是对账所有namespace的测试
+func (p *Policy) IsAllNamespace() bool {
+	return p.NamespaceId == "*"
 }
 
 // NewCreatePolicyRequest 请求实例
@@ -82,11 +90,6 @@ func NewCreatePolicyRequest() *CreatePolicyRequest {
 // Validate 校验请求合法
 func (req *CreatePolicyRequest) Validate() error {
 	return validate.Struct(req)
-}
-
-// IsAllNamespace 是否是对账所有namespace的测试
-func (req *CreatePolicyRequest) IsAllNamespace() bool {
-	return req.NamespaceId == "*"
 }
 
 // NewPolicySet todo
@@ -100,7 +103,7 @@ func NewPolicySet() *Set {
 func (s *Set) Users() []string {
 	users := map[string]struct{}{}
 	for i := range s.Items {
-		users[s.Items[i].Data.Account] = struct{}{}
+		users[s.Items[i].Account] = struct{}{}
 	}
 
 	set := make([]string, 0, len(users))
@@ -125,7 +128,7 @@ func (s *Set) Length() int {
 func (s *Set) GetRoles(ctx context.Context, r role.RoleServiceServer) (*role.Set, error) {
 	set := role.NewRoleSet()
 	for i := range s.Items {
-		req := role.NewDescribeRoleRequestWithID(s.Items[i].Data.RoleId)
+		req := role.NewDescribeRoleRequestWithID(s.Items[i].RoleId)
 		req.WithPermissions = true
 
 		ins, err := r.DescribeRole(ctx, req)
@@ -142,8 +145,8 @@ func (s *Set) UserRoles(account string) []string {
 	rns := []string{}
 	for i := range s.Items {
 		item := s.Items[i]
-		if item.Data.Account == account {
-			rns = append(rns, item.Data.RoleId)
+		if item.Account == account {
+			rns = append(rns, item.RoleId)
 		}
 	}
 

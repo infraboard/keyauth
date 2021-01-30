@@ -3,7 +3,6 @@ syntax = "proto3";
 package keyauth.namespace;
 option go_package = "github.com/infraboard/keyauth/pkg/namespace";
 
-import "pkg/department/pb/department.proto";
 import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
 import "github.com/infraboard/mcube/pb/page/page.proto";
                                
@@ -21,10 +20,6 @@ message CreateNamespaceRequest {
     string picture =3[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"picture" json:"picture,omitempty"'}
         ];
-    // 禁用项目, 该项目所有人暂时都无法访问
-    bool enabled = 4[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"enabled" json:"enabled,omitempty"'}
-        ];
     // 项目所有者, PMO
     string owner = 5[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"owner" json:"owner,omitempty"'}
@@ -32,10 +27,6 @@ message CreateNamespaceRequest {
     // 项目描述
     string description = 6[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"description" json:"description,omitempty"'}
-        ];
-    // 补充的部门
-    department.Department department = 7[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"department,omitempty"'}
         ];
 }
 
