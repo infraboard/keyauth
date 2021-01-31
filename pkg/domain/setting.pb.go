@@ -36,7 +36,7 @@ type PasswordSecurity struct {
 	unknownFields protoimpl.UnknownFields
 
 	// 密码长度
-	Length int32 `protobuf:"varint,1,opt,name=length,proto3" json:"length" validate:"required,min=8,max=64" bson:"length"`
+	Length int32 `protobuf:"varint,1,opt,name=length,proto3" json:"length" bson:"length" validate:"required,min=8,max=64"`
 	// 包含数字
 	IncludeNumber bool `protobuf:"varint,2,opt,name=include_number,json=includeNumber,proto3" json:"include_number" bson:"include_number"`
 	// 包含小写字母

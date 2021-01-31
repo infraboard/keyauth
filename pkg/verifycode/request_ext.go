@@ -8,16 +8,14 @@ import (
 // NewIssueCodeRequestByPass todo
 func NewIssueCodeRequestByPass() *IssueCodeRequest {
 	return &IssueCodeRequest{
-		IssueType:   IssueType_PASS,
-		IssueByPass: &IssueByPassRequest{},
+		IssueType: IssueType_PASS,
 	}
 }
 
 // NewIssueCodeRequestByToken todo
 func NewIssueCodeRequestByToken() *IssueCodeRequest {
 	return &IssueCodeRequest{
-		IssueType:    IssueType_TOKEN,
-		IssueByToken: &IssueByTokenRequest{},
+		IssueType: IssueType_TOKEN,
 	}
 }
 
@@ -25,9 +23,9 @@ func NewIssueCodeRequestByToken() *IssueCodeRequest {
 func (req *IssueCodeRequest) Validate() error {
 	switch req.IssueType {
 	case IssueType_PASS:
-		return req.IssueByPass.ValidateByPass()
+		return req.ValidateByPass()
 	case IssueType_TOKEN:
-		return req.IssueByToken.ValidateByToken()
+		return req.ValidateByToken()
 	default:
 		return fmt.Errorf("unknown issue type: %s", req.IssueType)
 	}
@@ -37,7 +35,7 @@ func (req *IssueCodeRequest) Validate() error {
 func (req *IssueCodeRequest) Account() string {
 	switch req.IssueType {
 	case IssueType_PASS:
-		return req.IssueByPass.Username
+		return req.Username
 	case IssueType_TOKEN:
 		return ""
 		// return req.IssueByToken.GetAccount()
@@ -47,16 +45,12 @@ func (req *IssueCodeRequest) Account() string {
 }
 
 // ValidateByPass todo
-func (req *IssueByPassRequest) ValidateByPass() error {
+func (req *IssueCodeRequest) ValidateByPass() error {
 	return validate.Struct(req)
 }
 
 // ValidateByToken todo
-func (req *IssueByTokenRequest) ValidateByToken() error {
-	if req.Token == "" {
-		return fmt.Errorf("token required")
-	}
-
+func (req *IssueCodeRequest) ValidateByToken() error {
 	return nil
 }
 

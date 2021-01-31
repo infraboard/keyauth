@@ -43,7 +43,7 @@ type Endpoint struct {
 	// 更新时间
 	UpdateAt int64 `protobuf:"varint,3,opt,name=update_at,json=updateAt,proto3" json:"update_at,omitempty" bson:"update_at"`
 	// 该功能属于那个服务
-	ServiceId string `protobuf:"bytes,4,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty" bson:"service_id" validate:"required,lte=64"`
+	ServiceId string `protobuf:"bytes,4,opt,name=service_id,json=serviceId,proto3" json:"service_id,omitempty" validate:"required,lte=64" bson:"service_id"`
 	// 服务那个版本的功能
 	Version string `protobuf:"bytes,5,opt,name=version,proto3" json:"version,omitempty" bson:"version" validate:"required,lte=64"`
 	// 路由条目信息

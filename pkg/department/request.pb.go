@@ -38,7 +38,7 @@ type CreateDepartmentRequest struct {
 	unknownFields protoimpl.UnknownFields
 
 	// 部门名称
-	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name" validate:"required,lte=60" bson:"name"`
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name" bson:"name" validate:"required,lte=60"`
 	// 显示名称
 	DisplayName string `protobuf:"bytes,2,opt,name=display_name,json=displayName,proto3" json:"display_name" bson:"display_name"`
 	// 上级部门ID
@@ -412,9 +412,9 @@ type JoinDepartmentRequest struct {
 	unknownFields protoimpl.UnknownFields
 
 	// 申请人
-	Account string `protobuf:"bytes,1,opt,name=account,proto3" json:"account" validate:"required" bson:"account"`
+	Account string `protobuf:"bytes,1,opt,name=account,proto3" json:"account" bson:"account" validate:"required"`
 	// 申请加入的部门
-	DepartmentId string `protobuf:"bytes,2,opt,name=department_id,json=departmentId,proto3" json:"department_id" bson:"department_id" validate:"required"`
+	DepartmentId string `protobuf:"bytes,2,opt,name=department_id,json=departmentId,proto3" json:"department_id" validate:"required" bson:"department_id"`
 	// 留言
 	Message string `protobuf:"bytes,3,opt,name=message,proto3" json:"message" bson:"message"`
 }

@@ -33,10 +33,10 @@ func (s *service) IssueCode(ctx context.Context, req *verifycode.IssueCodeReques
 	// 如果是issue by pass, 这要检测
 	if req.IssueType.Equal(verifycode.IssueType_PASS) {
 		_, err = s.issuer.IssueToken(ctx, token.NewIssueTokenByPassword(
-			req.IssueByPass.ClientId,
-			req.IssueByPass.ClientSecret,
-			req.IssueByPass.Username,
-			req.IssueByPass.Password),
+			req.ClientId,
+			req.ClientSecret,
+			req.Username,
+			req.Password),
 		)
 		if err != nil {
 			return nil, err

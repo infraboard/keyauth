@@ -11,11 +11,17 @@ message IssueCodeRequest {
     IssueType issue_type = 1[
         (google.protobuf.field_tag) = {struct_tag: 'json:"issue_type"'}
         ];
-    IssueByPassRequest issue_by_pass = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"issue_by_pass"'}
+    string username = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"username" validate:"required"'}
         ];
-    IssueByTokenRequest issue_by_token = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"issue_by_token"'}
+    string password = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"password" validate:"required"'}
+        ];
+    string client_id = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"client_id" validate:"required"'}
+        ];
+    string client_secret = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"client_secret" validate:"required"'}
         ];
 }
 
@@ -23,29 +29,6 @@ message IssueCodeRequest {
 message IssueCodeResponse {
     string message = 1[
         (google.protobuf.field_tag) = {struct_tag: 'json:"message"'}
-        ];
-}
-
-// IssueByPassRequest todo
-message IssueByPassRequest {
-    string username = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"username" validate:"required"'}
-        ];
-    string password = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"password" validate:"required"'}
-        ];
-    string client_id = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"client_id" validate:"required"'}
-        ];
-    string client_secret = 4[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"client_secret" validate:"required"'}
-        ];
-}
-
-// IssueByTokenRequest todo
-message IssueByTokenRequest {
-    string token = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"token"'}
         ];
 }
 

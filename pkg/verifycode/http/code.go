@@ -13,12 +13,13 @@ import (
 func (h *handler) IssueCodeByPass(w http.ResponseWriter, r *http.Request) {
 	req := verifycode.NewIssueCodeRequestByPass()
 	// 从Header中获取client凭证, 如果有
-	req.IssueByPass.ClientId, req.IssueByPass.ClientSecret, _ = r.BasicAuth()
+	req.ClientId, req.ClientSecret, _ = r.BasicAuth()
 	if err := request.GetDataFromRequest(r, req); err != nil {
 		response.Failed(w, err)
 		return
 	}
 
+	req.IssueType = verifycode.IssueType_PASS
 	code, err := h.service.IssueCode(nil, req)
 	if err != nil {
 		response.Failed(w, err)
