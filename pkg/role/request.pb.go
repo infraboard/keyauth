@@ -41,7 +41,7 @@ type CreateRoleRequest struct {
 	// 应用名称
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty" bson:"name" validate:"required,lte=30"`
 	// 应用简单的描述
-	Description string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty" validate:"lte=400" bson:"description"`
+	Description string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty" bson:"description" validate:"lte=400"`
 	// 读权限
 	Permissions []*Permission `protobuf:"bytes,4,rep,name=permissions,proto3" json:"permissions,omitempty" bson:"permissions"`
 }

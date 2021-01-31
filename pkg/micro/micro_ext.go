@@ -19,10 +19,16 @@ func New(req *CreateMicroRequest) (*Micro, error) {
 	}
 
 	ins := &Micro{
-		Id:       xid.New().String(),
-		CreateAt: ftime.Now().Timestamp(),
-		UpdateAt: ftime.Now().Timestamp(),
-		Data:     req,
+		Id:              xid.New().String(),
+		CreateAt:        ftime.Now().Timestamp(),
+		UpdateAt:        ftime.Now().Timestamp(),
+		Enabled:         true,
+		Type:            req.Type,
+		Name:            req.Name,
+		Label:           req.Label,
+		Description:     req.Description,
+		TokenExpireTime: req.TokenExpireTime,
+		RoleId:          req.RoleId,
 	}
 
 	return ins, nil
@@ -31,9 +37,8 @@ func New(req *CreateMicroRequest) (*Micro, error) {
 // NewCreateMicroRequest todo
 func NewCreateMicroRequest() *CreateMicroRequest {
 	return &CreateMicroRequest{
-		Enabled: true,
-		Label:   map[string]string{},
-		Type:    Type_BUILD_IN,
+		Label: map[string]string{},
+		Type:  Type_BUILD_IN,
 	}
 }
 

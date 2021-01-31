@@ -31,7 +31,7 @@ func (s *service) CreateService(ctx context.Context, req *micro.CreateMicroReque
 		return nil, exception.NewPermissionDeny("token required")
 	}
 
-	user, pass := ins.Data.Name, xid.New().String()
+	user, pass := ins.Name, xid.New().String()
 	// 创建服务用户
 	account, err := s.createServiceAccount(ctx, user, pass)
 	if err != nil {
@@ -52,7 +52,7 @@ func (s *service) CreateService(ctx context.Context, req *micro.CreateMicroReque
 	// 为服务用户添加策略
 	_, err = s.createPolicy(ctx, ins.Account, req.RoleId)
 	if err != nil {
-		s.log.Errorf("create service: %s policy error, %s", ins.Data.Name, err)
+		s.log.Errorf("create service: %s policy error, %s", ins.Name, err)
 	}
 
 	if _, err := s.scol.InsertOne(context.TODO(), ins); err != nil {
@@ -211,7 +211,7 @@ func (s *service) DeleteService(ctx context.Context, req *micro.DeleteMicroReque
 	}
 
 	if micro.Type.IsIn(micro.Type_BUILD_IN) {
-		return nil, exception.NewBadRequest("service %s is system service, your can't delete", svr.Data.Name)
+		return nil, exception.NewBadRequest("service %s is system service, your can't delete", svr.Name)
 	}
 
 	// 清除服务实体

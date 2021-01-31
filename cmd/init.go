@@ -198,7 +198,7 @@ func (i *Initialer) Run() error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("初始化服务: %s   [成功]\n", svr.Data.Name)
+	fmt.Printf("初始化服务: %s   [成功]\n", svr.Name)
 
 	dep, err := i.initDepartment()
 	if err != nil {

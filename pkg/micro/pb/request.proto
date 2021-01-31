@@ -25,10 +25,6 @@ message CreateMicroRequest {
     string description = 4[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"description" json:"description,omitempty"'}
         ];
-    // 是否启用该服务
-    bool enabled = 5[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"enabled" json:"enabled"'}
-        ];
     // 凭证申请的token的过期时间
     int64 token_expire_time = 6[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"token_expire_time" json:"token_expire_time,omitempty"'}

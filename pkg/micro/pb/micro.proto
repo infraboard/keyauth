@@ -3,8 +3,8 @@ syntax = "proto3";
 package keyauth.micro;
 option go_package = "github.com/infraboard/keyauth/pkg/micro";
 
-import "pkg/micro/pb/request.proto";
 import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
+import "pkg/micro/pb/enum.proto";
 
 // Micro is service provider
 message Micro {
@@ -40,10 +40,34 @@ message Micro {
     string refresh_token = 8[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"refresh_token" json:"-"'}
         ];
-    // 数据
-    CreateMicroRequest data = 9[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"data" json:"data"'}
+    // 是否启用该服务
+    bool enabled = 9[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"enabled" json:"enabled"'}
         ];
+    // 服务类型
+    Type type = 10[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"type" json:"type"'}
+        ];
+    // 名称
+    string name = 11[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"name" json:"name"'}
+        ];
+    // 服务标签
+    map<string, string> label = 12[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"label" json:"label"'}
+        ];
+    // 描述信息
+    string description = 13[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"description" json:"description,omitempty"'}
+        ];
+    // 凭证申请的token的过期时间
+    int64 token_expire_time = 14[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"token_expire_time" json:"token_expire_time,omitempty"'}
+        ];
+    // 服务角色
+    string role_id = 15[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"role_id" json:"role_id,omitempty"'}
+        ]; 
 }
 
 message Set {

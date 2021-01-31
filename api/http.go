@@ -122,7 +122,7 @@ func (s *HTTPService) RegistryEndpoints() error {
 	tk.AccessToken = svr.AccessToken
 	tk.RefreshToken = svr.RefreshToken
 	tk.UserType = types.UserType_SERVICE
-	tk.Account = svr.Data.Name
+	tk.Account = svr.Name
 	req := endpoint.NewRegistryRequest(version.Short(), s.r.GetEndpoints().Items)
 	ctx := session.WithTokenContext(context.Background(), tk)
 	_, err = pkg.Endpoint.Registry(ctx, req)
