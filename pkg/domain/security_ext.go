@@ -124,7 +124,7 @@ func (p *PasswordSecurity) Check(pass string) error {
 // NewDefaultLoginSecurity todo
 func NewDefaultLoginSecurity() *LoginSecurity {
 	return &LoginSecurity{
-		ExceptionLock: true,
+		ExceptionLock: false,
 		ExceptionLockConfig: &ExceptionLockConfig{
 			OtherPlaceLogin: true,
 			NotLoginDays:    30,
