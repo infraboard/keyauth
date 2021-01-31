@@ -116,8 +116,6 @@ func (s *HTTPService) RegistryEndpoints() error {
 		return fmt.Errorf("dependence endpoint service is nil")
 	}
 
-	fmt.Println(svr)
-
 	tk := token.NewDefaultToken()
 	tk.AccessToken = svr.AccessToken
 	tk.RefreshToken = svr.RefreshToken
