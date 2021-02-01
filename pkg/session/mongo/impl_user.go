@@ -61,8 +61,9 @@ func (s *userimpl) parseRemoteIPInfo(ip string) (*session.IPInfo, error) {
 
 	info, err := s.ip.LookupIP(ip)
 	if err != nil {
-		s.log.Errorf("parse ipinfo error, %s", err)
+		return nil, fmt.Errorf("parse ipinfo error, %s", err)
 	}
+
 	return &session.IPInfo{
 		CityId:   info.CityID,
 		Country:  info.Country,
