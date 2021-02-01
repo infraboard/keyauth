@@ -69,7 +69,11 @@ func (r *queryUserRequest) FindFilter() bson.M {
 	return filter
 }
 
-func newDescribeRequest(req *user.DescribeAccountRequest) (*describeUserRequest, error) {
+func newDescribeRequest(tk *token.Token, req *user.DescribeAccountRequest) (*describeUserRequest, error) {
+	if req.Account == "" {
+		req.Account = tk.Account
+	}
+
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest(err.Error())
 	}

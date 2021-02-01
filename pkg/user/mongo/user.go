@@ -137,13 +137,14 @@ func (s *service) changePass(ctx context.Context, account, old, new string, isRe
 }
 
 func (s *service) DescribeAccount(ctx context.Context, req *user.DescribeAccountRequest) (*user.User, error) {
-	r, err := newDescribeRequest(req)
+	tk := session.GetTokenFromContext(ctx)
+	r, err := newDescribeRequest(tk, req)
 	if err != nil {
 		return nil, err
 	}
 
 	ins := user.NewDefaultUser()
-	if err := s.col.FindOne(context.TODO(), r.FindFilter()).Decode(ins); err != nil {
+	if err := s.col.FindOne(ctx, r.FindFilter()).Decode(ins); err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, exception.NewNotFound("user %s not found", req)
 		}

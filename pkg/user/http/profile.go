@@ -19,7 +19,6 @@ func (h *handler) QueryProfile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	req := user.NewDescriptAccountRequest()
-
 	ins, err := h.service.DescribeAccount(ctx, req)
 	if err != nil {
 		response.Failed(w, err)
