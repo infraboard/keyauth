@@ -91,7 +91,7 @@ message User {
         (google.protobuf.field_tag) = {struct_tag: 'bson:"type"  json:"type"'}
         ];
     // 数据
-    Profile profile = 8[
+    UserProfile profile = 8[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"profile" json:"profile"'}
         ];
     // 用户的角色(当携带Namesapce查询时会有)
@@ -108,11 +108,11 @@ message User {
         ]; 
     // 密码相关信息
     Password hashed_password = 12[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"password" json:"password,omitempty"'}
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"password" json:"password"'}
         ];
     // 用户状态
     Status status = 13[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"status" json:"status,omitempty"'}
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"status" json:"status"'}
         ];
     // 部门
     department.Department department = 14[

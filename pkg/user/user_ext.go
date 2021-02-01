@@ -91,12 +91,12 @@ func (u *User) HasDepartment() bool {
 }
 
 // NewProfile todo
-func NewProfile() *Profile {
-	return &Profile{}
+func NewProfile() *UserProfile {
+	return &UserProfile{}
 }
 
 // ValidateInitialized 判断初始化数据是否准备好了
-func (req *Profile) ValidateInitialized() error {
+func (req *UserProfile) ValidateInitialized() error {
 	if req.Email != "" && req.Phone != "" {
 		return nil
 	}
@@ -105,7 +105,7 @@ func (req *Profile) ValidateInitialized() error {
 }
 
 // Patch todo
-func (req *Profile) Patch(data *Profile) {
+func (req *UserProfile) Patch(data *UserProfile) {
 	patchData, _ := json.Marshal(data)
 	json.Unmarshal(patchData, req)
 }

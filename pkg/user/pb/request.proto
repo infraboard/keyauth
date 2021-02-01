@@ -9,36 +9,8 @@ import "pkg/user/pb/enum.proto";
 import "pkg/user/pb/types.proto";
 import "common/types/types.proto";
 
-// CreateAccountRequest 创建用户请求
-message CreateAccountRequest {
-    // 创建方式
-    CreateType create_type = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"create_type"'}
-        ];
-    // 用户类型
-    UserType user_type = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"user_type"'}
-        ];
-    // 用户所属部门
-    string department_id = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"department_id" validate:"lte=200"'}
-        ];
-    // 用户账号名称
-    string account = 4[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"account" validate:"required,lte=60"'}
-        ];
-    // 数据
-    Profile profile = 5[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"profile"'}
-        ];
-    // 密码相关信息
-    string password = 6[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"password" validate:"required,lte=80"'}
-        ];
-}
-
 // Profile todo
-message Profile {
+message UserProfile {
     // 用户真实姓名
     string real_name = 1[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"real_name" json:"real_name" validate:"lte=10"'}
@@ -79,6 +51,34 @@ message Profile {
     string province = 10[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"province" json:"province" validate:"lte=40"'}
         ];                
+}
+
+// CreateAccountRequest 创建用户请求
+message CreateAccountRequest {
+    // 创建方式
+    CreateType create_type = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"create_type"'}
+        ];
+    // 用户类型
+    UserType user_type = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"user_type"'}
+        ];
+    // 用户所属部门
+    string department_id = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"department_id" validate:"lte=200"'}
+        ];
+    // 用户账号名称
+    string account = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"account" validate:"required,lte=60"'}
+        ];
+    // 数据
+    UserProfile profile = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"profile"'}
+        ];
+    // 密码相关信息
+    string password = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"password" validate:"required,lte=80"'}
+        ];
 }
 
 // DescribeAccountRequest 查询用户详情请求
@@ -131,7 +131,7 @@ message UpdateAccountRequest {
         (google.protobuf.field_tag) = {struct_tag: 'bson:"_id" json:"account" validate:"required,lte=60"'}
         ];
     // profile 账号profile
-	Profile profile = 3[
+	UserProfile profile = 3[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"profile" json:"profile"'}
         ];
 }

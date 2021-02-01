@@ -48,9 +48,9 @@ type Role struct {
 	// 角色类型
 	Type RoleType `protobuf:"varint,6,opt,name=type,proto3,enum=keyauth.role.RoleType" json:"type" bson:"type"`
 	// 应用名称
-	Name string `protobuf:"bytes,7,opt,name=name,proto3" json:"name,omitempty" bson:"name" validate:"required,lte=30"`
+	Name string `protobuf:"bytes,7,opt,name=name,proto3" json:"name,omitempty" validate:"required,lte=30" bson:"name"`
 	// 应用简单的描述
-	Description string `protobuf:"bytes,8,opt,name=description,proto3" json:"description,omitempty" validate:"lte=400" bson:"description"`
+	Description string `protobuf:"bytes,8,opt,name=description,proto3" json:"description,omitempty" bson:"description" validate:"lte=400"`
 	// 读权限
 	Permissions []*Permission `protobuf:"bytes,9,rep,name=permissions,proto3" json:"permissions,omitempty" bson:"permissions"`
 }
