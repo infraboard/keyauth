@@ -1,9 +1,10 @@
 package http
 
 import (
+	"context"
 	"net/http"
 
-	"github.com/infraboard/mcube/http/context"
+	httpCtx "github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 
@@ -29,7 +30,7 @@ func (h *handler) IssueToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	d, err := h.service.IssueToken(nil, req)
+	d, err := h.service.IssueToken(context.Background(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -75,7 +76,7 @@ func (h *handler) RevolkToken(w http.ResponseWriter, r *http.Request) {
 
 // QueryApplicationToken 获取应用访问凭证
 func (h *handler) QueryApplicationToken(w http.ResponseWriter, r *http.Request) {
-	rctx := context.GetContext(r)
+	rctx := httpCtx.GetContext(r)
 
 	page := request.NewPageRequestFromHTTP(r)
 	req := token.NewQueryTokenRequest(&page.PageRequest)
