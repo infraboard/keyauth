@@ -91,7 +91,7 @@ message User {
         (google.protobuf.field_tag) = {struct_tag: 'bson:"type"  json:"type"'}
         ];
     // 数据
-    UserProfile profile = 8[
+    Profile profile = 8[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"profile" json:"profile"'}
         ];
     // 用户的角色(当携带Namesapce查询时会有)

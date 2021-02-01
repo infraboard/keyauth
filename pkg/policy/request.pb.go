@@ -37,11 +37,11 @@ type CreatePolicyRequest struct {
 	unknownFields protoimpl.UnknownFields
 
 	// 范围
-	NamespaceId string `protobuf:"bytes,1,opt,name=namespace_id,json=namespaceId,proto3" json:"namespace_id" validate:"lte=120" bson:"namespace_id"`
+	NamespaceId string `protobuf:"bytes,1,opt,name=namespace_id,json=namespaceId,proto3" json:"namespace_id" bson:"namespace_id" validate:"lte=120"`
 	// 用户
 	Account string `protobuf:"bytes,2,opt,name=account,proto3" json:"account" bson:"account" validate:"required,lte=120"`
 	// 角色名称
-	RoleId string `protobuf:"bytes,3,opt,name=role_id,json=roleId,proto3" json:"role_id" bson:"role_id" validate:"required,lte=40"`
+	RoleId string `protobuf:"bytes,3,opt,name=role_id,json=roleId,proto3" json:"role_id" validate:"required,lte=40" bson:"role_id"`
 	// 范围控制
 	Scope string `protobuf:"bytes,4,opt,name=scope,proto3" json:"scope" bson:"scope"`
 	// 策略过期时间

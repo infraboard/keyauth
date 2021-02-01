@@ -39,9 +39,9 @@ type CreateMicroRequest struct {
 	// 服务类型
 	Type Type `protobuf:"varint,1,opt,name=type,proto3,enum=keyauth.micro.Type" json:"type" bson:"type"`
 	// 名称
-	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name" validate:"required,lte=200" bson:"name"`
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name" bson:"name" validate:"required,lte=200"`
 	// 服务标签
-	Label map[string]string `protobuf:"bytes,3,rep,name=label,proto3" json:"label" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3" bson:"label" validate:"lte=80"`
+	Label map[string]string `protobuf:"bytes,3,rep,name=label,proto3" json:"label" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3" validate:"lte=80" bson:"label"`
 	// 描述信息
 	Description string `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty" bson:"description"`
 	// 凭证申请的token的过期时间

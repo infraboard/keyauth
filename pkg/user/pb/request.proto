@@ -10,7 +10,7 @@ import "pkg/user/pb/types.proto";
 import "common/types/types.proto";
 
 // Profile todo
-message UserProfile {
+message Profile {
     // 用户真实姓名
     string real_name = 1[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"real_name" json:"real_name" validate:"lte=10"'}
@@ -72,7 +72,7 @@ message CreateAccountRequest {
         (google.protobuf.field_tag) = {struct_tag: 'json:"account" validate:"required,lte=60"'}
         ];
     // 数据
-    UserProfile profile = 5[
+    Profile profile = 5[
         (google.protobuf.field_tag) = {struct_tag: 'json:"profile"'}
         ];
     // 密码相关信息
@@ -131,7 +131,7 @@ message UpdateAccountRequest {
         (google.protobuf.field_tag) = {struct_tag: 'bson:"_id" json:"account" validate:"required,lte=60"'}
         ];
     // profile 账号profile
-	UserProfile profile = 3[
+	Profile profile = 3[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"profile" json:"profile"'}
         ];
 }
