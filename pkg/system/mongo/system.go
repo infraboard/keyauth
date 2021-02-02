@@ -18,15 +18,6 @@ func (s *service) UpdateEmail(mailConf *mail.Config) error {
 		return exception.NewBadRequest("validate mail config error, %s", err)
 	}
 
-	_, err := s.GetConfig()
-	if exception.IsNotFoundError(err) {
-		conf := system.NewDefaultConfig()
-		*conf.Email = *mailConf
-		if err := s.save(conf); err != nil {
-			return err
-		}
-	}
-
 	return s.updateEmail(mailConf)
 }
 
@@ -35,29 +26,12 @@ func (s *service) UpdateSMS(smsConf *sms.Config) error {
 		return exception.NewBadRequest("validate mail config error, %s", err)
 	}
 
-	_, err := s.GetConfig()
-	if exception.IsNotFoundError(err) {
-		conf := system.NewDefaultConfig()
-		*conf.SMS = *smsConf
-		if err := s.save(conf); err != nil {
-			return err
-		}
-	}
 	return s.updateSMS(smsConf)
 }
 
 func (s *service) UpdateVerifyCode(vfconf *verifycode.Config) error {
 	if err := vfconf.Validate(); err != nil {
 		return exception.NewBadRequest("validate verify code config error, %s", err)
-	}
-
-	_, err := s.GetConfig()
-	if exception.IsNotFoundError(err) {
-		conf := system.NewDefaultConfig()
-		*conf.VerifyCode = *vfconf
-		if err := s.save(conf); err != nil {
-			return err
-		}
 	}
 
 	return s.updateVerifyCode(vfconf)
@@ -67,11 +41,15 @@ func (s *service) GetConfig() (*system.Config, error) {
 	conf := system.NewDefaultConfig()
 	if err := s.col.FindOne(context.TODO(), bson.M{"_id": conf.Version}).Decode(conf); err != nil {
 		if err == mongo.ErrNoDocuments {
-			return nil, exception.NewNotFound("version: %s system config not found", conf.Version)
+			return nil, exception.NewNotFound("version: %s system config not found, please init first", conf.Version)
 		}
 
 		return nil, exception.NewInternalServerError("find system config %s error, %s", conf.Version, err)
 	}
 
 	return conf, nil
+}
+
+func (s *service) InitConfig(conf *system.Config) error {
+	return s.save(conf)
 }

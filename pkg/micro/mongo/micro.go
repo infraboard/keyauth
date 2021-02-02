@@ -70,7 +70,7 @@ func (s *service) createServiceAccount(ctx context.Context, name, pass string) (
 }
 
 func (s *service) createServiceToken(userAgent, remoteIP, user, pass string) (*token.Token, error) {
-	app, err := s.app.GetBuildInApplication(nil, application.NewGetBuildInAdminApplicationRequest())
+	app, err := s.app.GetBuildInApplication(context.Background(), application.NewGetBuildInAdminApplicationRequest())
 	if err != nil {
 		return nil, err
 	}
@@ -82,17 +82,17 @@ func (s *service) createServiceToken(userAgent, remoteIP, user, pass string) (*t
 	req.ClientSecret = app.ClientSecret
 	req.WithRemoteIP(remoteIP)
 	req.WithUserAgent(userAgent)
-	return s.token.IssueToken(nil, req)
+	return s.token.IssueToken(context.Background(), req)
 }
 
 func (s *service) revolkServiceToken(accessToken string) error {
-	app, err := s.app.GetBuildInApplication(nil, application.NewGetBuildInAdminApplicationRequest())
+	app, err := s.app.GetBuildInApplication(context.Background(), application.NewGetBuildInAdminApplicationRequest())
 	if err != nil {
 		return err
 	}
 	req := token.NewRevolkTokenRequest(app.ClientId, app.ClientSecret)
 	req.AccessToken = accessToken
-	_, err = s.token.RevolkToken(nil, req)
+	_, err = s.token.RevolkToken(context.Background(), req)
 	return err
 }
 
@@ -115,7 +115,7 @@ func (s *service) createPolicy(ctx context.Context, account, roleID string) (*po
 }
 
 func (s *service) refreshServiceToken(at, rt string) (*token.Token, error) {
-	app, err := s.app.GetBuildInApplication(nil, application.NewGetBuildInAdminApplicationRequest())
+	app, err := s.app.GetBuildInApplication(context.Background(), application.NewGetBuildInAdminApplicationRequest())
 	if err != nil {
 		return nil, err
 	}

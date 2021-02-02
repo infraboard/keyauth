@@ -12,4 +12,5 @@ type Service interface {
 	UpdateSMS(*sms.Config) error
 	UpdateVerifyCode(*verifycode.Config) error
 	GetConfig() (*Config, error)
+	InitConfig(*Config) error
 }

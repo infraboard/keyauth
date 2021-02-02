@@ -24,7 +24,7 @@ func (s *service) updateEmail(conf *mail.Config) error {
 		"email": conf,
 	}})
 	if err != nil {
-		return exception.NewInternalServerError("save email config document error, %s", err)
+		return exception.NewInternalServerError("update email config document error, %s", err)
 	}
 
 	return nil
@@ -35,7 +35,7 @@ func (s *service) updateSMS(conf *sms.Config) error {
 		"sms": conf,
 	}})
 	if err != nil {
-		return exception.NewInternalServerError("save sms config document error, %s", err)
+		return exception.NewInternalServerError("update sms config document error, %s", err)
 	}
 
 	return nil
@@ -46,7 +46,7 @@ func (s *service) updateVerifyCode(conf *verifycode.Config) error {
 		"verify_code": conf,
 	}})
 	if err != nil {
-		return exception.NewInternalServerError("save verify code config document error, %s", err)
+		return exception.NewInternalServerError("update verify code config document error, %s", err)
 	}
 
 	return nil

@@ -17,6 +17,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/domain"
 	"github.com/infraboard/keyauth/pkg/micro"
 	"github.com/infraboard/keyauth/pkg/role"
+	"github.com/infraboard/keyauth/pkg/system"
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
 	"github.com/infraboard/keyauth/pkg/user/types"
@@ -206,6 +207,12 @@ func (i *Initialer) Run() error {
 	}
 	fmt.Printf("初始化部门: %s   [成功]\n", dep.DisplayName)
 
+	sysconf, err := i.initSystemConfig()
+	if err != nil {
+		return err
+	}
+	fmt.Printf("初始化系统配置: %s   [成功]\n", sysconf.Version)
+
 	return nil
 }
 
@@ -274,7 +281,7 @@ func (i *Initialer) getAdminToken(app *application.Application) error {
 	}
 
 	req := token.NewIssueTokenByPassword(app.ClientId, app.ClientSecret, i.username, i.password)
-	tk, err := pkg.Token.IssueToken(nil, req)
+	tk, err := pkg.Token.IssueToken(context.Background(), req)
 	if err != nil {
 		return err
 	}
@@ -335,6 +342,14 @@ func (i *Initialer) initService(r *role.Role) (*micro.Micro, error) {
 	req.Type = micro.Type_BUILD_IN
 	req.RoleId = r.Id
 	return pkg.Micro.CreateService(i.userContext(), req)
+}
+
+func (i *Initialer) initSystemConfig() (*system.Config, error) {
+	sysConf := system.NewDefaultConfig()
+	if err := pkg.System.InitConfig(sysConf); err != nil {
+		return nil, err
+	}
+	return sysConf, nil
 }
 
 func init() {
