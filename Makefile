@@ -42,6 +42,7 @@ clean: ## Remove previous build
 codegen: # Init Service
 	@protoc -I=.  -I${GOPATH}/src --go-ext_out=. --go-ext_opt=module=${PKG} --go-grpc_out=. --go-grpc_opt=module=${PKG} pkg/*/pb/*.proto
 	@protoc -I=.  -I${GOPATH}/src --go-ext_out=. --go-ext_opt=module=${PKG} --go-grpc_out=. --go-grpc_opt=module=${PKG} common/types/*.proto
+	@go generate ./...
 
 install: # Install depence go package
 	@go install github.com/golang/protobuf/protoc-gen-go

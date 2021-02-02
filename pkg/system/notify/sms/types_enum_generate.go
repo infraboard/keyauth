@@ -10,36 +10,47 @@ import (
 )
 
 var (
-	enumProviderShowMap = map[Provider]string{
+	// Provider_name name map
+	Provider_name = map[Provider]string{
 		ProviderTenCent: "tencent",
-		ProviderALI:     "ali",
 	}
 
-	enumProviderIDMap = map[string]Provider{
+	// Provider_value value map
+	Provider_value = map[string]Provider{
 		"tencent": ProviderTenCent,
-		"ali":     ProviderALI,
 	}
 )
 
-// ParseProvider Parse Provider from string
-func ParseProvider(str string) (Provider, error) {
+// ParseProviderFromString Parse Provider from string
+func ParseProviderFromString(str string) (Provider, error) {
 	key := strings.Trim(string(str), `"`)
-	v, ok := enumProviderIDMap[key]
+	v, ok := Provider_value[strings.ToUpper(key)]
 	if !ok {
-		return 0, fmt.Errorf("unknown Status: %s", str)
+		return 0, fmt.Errorf("unknown Provider: %s", str)
 	}
 
-	return v, nil
+	return Provider(v), nil
 }
 
-// Is todo
-func (t Provider) Is(target Provider) bool {
+// Equal type compare
+func (t Provider) Equal(target Provider) bool {
 	return t == target
+}
+
+// IsIn todo
+func (t Provider) IsIn(targets ...Provider) bool {
+	for _, target := range targets {
+		if t.Equal(target) {
+			return true
+		}
+	}
+
+	return false
 }
 
 // String stringer
 func (t Provider) String() string {
-	v, ok := enumProviderShowMap[t]
+	v, ok := Provider_name[t]
 	if !ok {
 		return "unknown"
 	}
@@ -57,7 +68,7 @@ func (t Provider) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON todo
 func (t *Provider) UnmarshalJSON(b []byte) error {
-	ins, err := ParseProvider(string(b))
+	ins, err := ParseProviderFromString(string(b))
 	if err != nil {
 		return err
 	}
