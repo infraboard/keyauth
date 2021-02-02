@@ -58,7 +58,7 @@ func NewDefaultConfig() *Config {
 	return &Config{
 		NotifyType:    NotifyType_MAIL,
 		ExpireMinutes: 10,
-		MailTemplate:  "您的动态验证码为：{1}，{2}分钟内有效！，如非本人操作，请忽略本短信！",
+		MailTemplate:  "您的动态验证码为：{1}，{2}分钟内有效！，如非本人操作，请忽略本邮件！",
 	}
 }
 
