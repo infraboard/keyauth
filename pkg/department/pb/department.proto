@@ -20,35 +20,35 @@ message Department {
         ];
     // 部门编号
     uint64 number = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"number" json:"number,omitempty"'}
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"number" json:"number"'}
         ];
     // 部门创建时间
     int64 create_at = 4[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"create_at" json:"create_at,omitempty"'}
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"create_at" json:"create_at"'}
         ];
     // 更新时间
     int64 update_at = 5[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"update_at" json:"update_at,omitempty"'}
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"update_at" json:"update_at"'}
         ];
     // 创建人
     string creater = 6[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"creater" json:"creater,omitempty"'}
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"creater" json:"creater"'}
         ];
     // 部门所属域
     string domain = 7[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"domain" json:"domain,omitempty"'}
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"domain" json:"domain"'}
         ];
     // 第几级部门, 由层数决定
     int32 grade = 8[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"grade" json:"grade,omitempty"'}
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"grade" json:"grade"'}
         ];
     // 子部门数量
     int64 sub_count = 9[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"sub_count,omitempty"'}
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"sub_count"'}
         ];
     // 部门所有用户数量
     int64 user_count = 10[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"user_count,omitempty"'}
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"user_count"'}
         ];
     // 部门名称
     string name = 11[
