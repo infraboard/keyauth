@@ -50,7 +50,7 @@ type Role struct {
 	// 应用名称
 	Name string `protobuf:"bytes,7,opt,name=name,proto3" json:"name,omitempty" bson:"name" validate:"required,lte=30"`
 	// 应用简单的描述
-	Description string `protobuf:"bytes,8,opt,name=description,proto3" json:"description,omitempty" validate:"lte=400" bson:"description"`
+	Description string `protobuf:"bytes,8,opt,name=description,proto3" json:"description,omitempty" bson:"description" validate:"lte=400"`
 	// 读权限
 	Permissions []*Permission `protobuf:"bytes,9,rep,name=permissions,proto3" json:"permissions,omitempty" bson:"permissions"`
 }

@@ -426,7 +426,7 @@ type UpdateAccountRequest struct {
 	// 更新模式
 	UpdateMode types1.UpdateMode `protobuf:"varint,1,opt,name=update_mode,json=updateMode,proto3,enum=keyauth.common.types.UpdateMode" json:"update_mode" bson:"update_mode"`
 	// 用户账号名称
-	Account string `protobuf:"bytes,2,opt,name=account,proto3" json:"account" validate:"required,lte=60" bson:"_id"`
+	Account string `protobuf:"bytes,2,opt,name=account,proto3" json:"account" bson:"_id" validate:"required,lte=60"`
 	// profile 账号profile
 	Profile *Profile `protobuf:"bytes,3,opt,name=profile,proto3" json:"profile" bson:"profile"`
 }

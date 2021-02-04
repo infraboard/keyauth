@@ -50,7 +50,7 @@ type PasswordSecurity struct {
 	// 密码过期时间, 密码过期后要求用户重置密码
 	PasswordExpiredDays uint32 `protobuf:"varint,7,opt,name=password_expired_days,json=passwordExpiredDays,proto3" json:"password_expired_days" bson:"password_expired_days" validate:"required,min=0,max=365"`
 	// 密码过期前多少天开始提醒
-	BeforeExpiredRemindDays uint32 `protobuf:"varint,8,opt,name=before_expired_remind_days,json=beforeExpiredRemindDays,proto3" json:"before_expired_remind_days" validate:"required,min=0,max=365" bson:"before_expired_remind_days"`
+	BeforeExpiredRemindDays uint32 `protobuf:"varint,8,opt,name=before_expired_remind_days,json=beforeExpiredRemindDays,proto3" json:"before_expired_remind_days" bson:"before_expired_remind_days" validate:"required,min=0,max=365"`
 }
 
 func (x *PasswordSecurity) Reset() {

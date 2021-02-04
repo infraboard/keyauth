@@ -218,7 +218,7 @@ type User struct {
 	// 用户所属部门
 	DepartmentId string `protobuf:"bytes,1,opt,name=department_id,json=departmentId,proto3" json:"department_id" bson:"department_id" validate:"lte=200"`
 	// 用户账号名称
-	Account string `protobuf:"bytes,2,opt,name=account,proto3" json:"account" validate:"required,lte=60" bson:"_id"`
+	Account string `protobuf:"bytes,2,opt,name=account,proto3" json:"account" bson:"_id" validate:"required,lte=60"`
 	// 创建方式
 	CreateType CreateType `protobuf:"varint,3,opt,name=create_type,json=createType,proto3,enum=keyauth.user.CreateType" json:"create_type" bson:"create_type"`
 	// 用户创建的时间

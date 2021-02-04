@@ -425,6 +425,8 @@ github.com/infraboard/mcube v0.6.8 h1:mjYlq9rI/FDJAOHLGI2LNhoB78tpeey7lEjTfjgQQT
 github.com/infraboard/mcube v0.6.8/go.mod h1:EzWcIKx7C7YucWCcg0baYLxIwc/+6gavXgpve9mOfX0=
 github.com/infraboard/protoc-gen-go-ext v0.0.1 h1:OaqZ+D4hZjJ9cwTKO9BKldNKq6MNalNfwQ1Dn1ele34=
 github.com/infraboard/protoc-gen-go-ext v0.0.1/go.mod h1:s2bSRP9khz5nTpRXUoc4i4I89Zq+2zxCx/9Ro38yba0=
+github.com/infraboard/protoc-gen-go-ext v0.0.2 h1:ijHgiWSFS8AzZh9kZK4WKEbaeNSoPvJCQNrhAPE0H7s=
+github.com/infraboard/protoc-gen-go-ext v0.0.2/go.mod h1:HOugbyoABx9qoYfEcn6dOsHogdeRtxXvZOE1yAQWpmk=
 github.com/jcmturner/gofork v1.0.0/go.mod h1:MK8+TM0La+2rjBD4jE12Kj1pCCxK7d2LK/UM3ncEo0o=
 github.com/jehiah/go-strftime v0.0.0-20171201141054-1d33003b3869/go.mod h1:cJ6Cj7dQo+O6GJNiMx+Pa94qKj+TG8ONdKHgMNIyyag=
 github.com/jessevdk/go-flags v1.4.0/go.mod h1:4FA24M0QyGHXBuZZK/XkWh8h0e1EYbRYJSGM75WSRxI=
