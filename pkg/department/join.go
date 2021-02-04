@@ -10,13 +10,15 @@ import (
 // NewApplicationForm todo
 func NewApplicationForm(tk *token.Token, req *JoinDepartmentRequest) (*ApplicationForm, error) {
 	ins := &ApplicationForm{
-		Id:       xid.New().String(),
-		Domain:   tk.Domain,
-		CreateAt: ftime.Now().Timestamp(),
-		UpdateAt: ftime.Now().Timestamp(),
-		Creater:  tk.Account,
-		Data:     req,
-		Status:   ApplicationFormStatus_PENDDING,
+		Id:           xid.New().String(),
+		Domain:       tk.Domain,
+		CreateAt:     ftime.Now().Timestamp(),
+		UpdateAt:     ftime.Now().Timestamp(),
+		Creater:      tk.Account,
+		Account:      req.Account,
+		DepartmentId: req.DepartmentId,
+		Message:      req.Message,
+		Status:       ApplicationFormStatus_PENDDING,
 	}
 
 	return ins, nil
@@ -24,9 +26,7 @@ func NewApplicationForm(tk *token.Token, req *JoinDepartmentRequest) (*Applicati
 
 // NewDeafultApplicationForm todo
 func NewDeafultApplicationForm() *ApplicationForm {
-	return &ApplicationForm{
-		Data: NewJoinDepartmentRequest(),
-	}
+	return &ApplicationForm{}
 }
 
 // NewDApplicationFormSet 实例化

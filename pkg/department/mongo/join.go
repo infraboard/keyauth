@@ -73,7 +73,7 @@ func (s *service) DealApplicationForm(ctx context.Context, req *department.DealA
 	}
 
 	// 判断用户申请的部门是否还存在
-	dp, err := s.DescribeDepartment(ctx, department.NewDescribeDepartmentRequestWithID(af.Data.DepartmentId))
+	dp, err := s.DescribeDepartment(ctx, department.NewDescribeDepartmentRequestWithID(af.DepartmentId))
 	if err != nil {
 		return nil, err
 	}
@@ -84,7 +84,7 @@ func (s *service) DealApplicationForm(ctx context.Context, req *department.DealA
 	}
 
 	// 修改用户的归属部门
-	u, err := s.user.DescribeAccount(ctx, user.NewDescriptAccountRequestWithAccount(af.Data.Account))
+	u, err := s.user.DescribeAccount(ctx, user.NewDescriptAccountRequestWithAccount(af.Account))
 	if err != nil {
 		return nil, err
 	}
@@ -93,7 +93,7 @@ func (s *service) DealApplicationForm(ctx context.Context, req *department.DealA
 		return nil, exception.NewBadRequest("user has deparment can't join other")
 	}
 
-	u.DepartmentId = af.Data.DepartmentId
+	u.DepartmentId = af.DepartmentId
 	patchReq := user.NewPutAccountRequest()
 	patchReq.Profile = u.Profile
 
@@ -105,10 +105,10 @@ func (s *service) DealApplicationForm(ctx context.Context, req *department.DealA
 	// 持久化数据
 	af.UpdateAt = ftime.Now().Timestamp()
 	af.Status = req.Status
-	af.Data.Message = req.Message
+	af.Message = req.Message
 	_, err = s.ac.UpdateOne(context.TODO(), bson.M{"_id": af.Id}, bson.M{"$set": af})
 	if err != nil {
-		return nil, exception.NewInternalServerError("update id(%s) application form  error, %s", af.Data.Account, err)
+		return nil, exception.NewInternalServerError("update id(%s) application form  error, %s", af.Account, err)
 	}
 
 	return af, nil

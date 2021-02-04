@@ -4,7 +4,6 @@ package keyauth.department;
 option go_package = "github.com/infraboard/keyauth/pkg/department";
 
 import "pkg/department/pb/enum.proto";
-import "pkg/department/pb/request.proto";
 import "pkg/role/pb/role.proto";
 import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
 
@@ -107,13 +106,21 @@ message ApplicationForm {
     int64 update_at = 5[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"update_at" json:"update_at"'}
         ];
-    // 状态
-    ApplicationFormStatus status = 6[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"status" json:"status"'}
+    // 申请人
+    string account = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"account" json:"account"'}
         ];
-    // 数据
-    JoinDepartmentRequest data = 7[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"data" json:"data"'}
+    // 申请加入的部门
+    string department_id = 7[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"department_id" json:"department_id"'}
+        ];
+    // 留言
+    string message = 8[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"message" json:"message"'}
+        ]; 
+    // 状态
+    ApplicationFormStatus status = 9[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"status" json:"status"'}
         ];
 }
 

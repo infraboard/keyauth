@@ -39,7 +39,7 @@ type CreatePolicyRequest struct {
 	// 范围
 	NamespaceId string `protobuf:"bytes,1,opt,name=namespace_id,json=namespaceId,proto3" json:"namespace_id" bson:"namespace_id" validate:"lte=120"`
 	// 用户
-	Account string `protobuf:"bytes,2,opt,name=account,proto3" json:"account" validate:"required,lte=120" bson:"account"`
+	Account string `protobuf:"bytes,2,opt,name=account,proto3" json:"account" bson:"account" validate:"required,lte=120"`
 	// 角色名称
 	RoleId string `protobuf:"bytes,3,opt,name=role_id,json=roleId,proto3" json:"role_id" bson:"role_id" validate:"required,lte=40"`
 	// 范围控制

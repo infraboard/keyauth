@@ -101,15 +101,15 @@ message DeleteDepartmentRequest {
 message JoinDepartmentRequest {
     // 申请人
     string account = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"account" json:"account" validate:"required"'}
+        (google.protobuf.field_tag) = {struct_tag: 'json:"account" validate:"required"'}
         ];
     // 申请加入的部门
     string department_id = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"department_id" json:"department_id" validate:"required"'}
+        (google.protobuf.field_tag) = {struct_tag: 'json:"department_id" validate:"required"'}
         ];
     // 留言
     string message = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"message" json:"message"'}
+        (google.protobuf.field_tag) = {struct_tag: 'json:"message"'}
         ];                                
 }
 
