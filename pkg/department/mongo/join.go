@@ -101,8 +101,7 @@ func (s *service) DealApplicationForm(ctx context.Context, req *department.DealA
 
 	u.DepartmentId = af.DepartmentId
 	patchReq := user.NewPutAccountRequest()
-	patchReq.Profile = u.Profile
-
+	patchReq.DepartmentId = u.DepartmentId
 	_, err = s.user.UpdateAccountProfile(ctx, patchReq)
 	if err != nil {
 		return nil, err

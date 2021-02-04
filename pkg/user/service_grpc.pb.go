@@ -27,8 +27,6 @@ type UserServiceClient interface {
 	BlockAccount(ctx context.Context, in *BlockAccountRequest, opts ...grpc.CallOption) (*User, error)
 	// DeleteAccount 删除用户
 	DeleteAccount(ctx context.Context, in *DeleteAccountRequest, opts ...grpc.CallOption) (*User, error)
-	// 更新用户部门
-	UpdateAccountDepartment(ctx context.Context, in *UpdateDepartmentRequest, opts ...grpc.CallOption) (*User, error)
 	// 更新用户
 	UpdateAccountProfile(ctx context.Context, in *UpdateAccountRequest, opts ...grpc.CallOption) (*User, error)
 	// 修改用户密码
@@ -88,15 +86,6 @@ func (c *userServiceClient) DeleteAccount(ctx context.Context, in *DeleteAccount
 	return out, nil
 }
 
-func (c *userServiceClient) UpdateAccountDepartment(ctx context.Context, in *UpdateDepartmentRequest, opts ...grpc.CallOption) (*User, error) {
-	out := new(User)
-	err := c.cc.Invoke(ctx, "/keyauth.user.UserService/UpdateAccountDepartment", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *userServiceClient) UpdateAccountProfile(ctx context.Context, in *UpdateAccountRequest, opts ...grpc.CallOption) (*User, error) {
 	out := new(User)
 	err := c.cc.Invoke(ctx, "/keyauth.user.UserService/UpdateAccountProfile", in, out, opts...)
@@ -129,8 +118,6 @@ type UserServiceServer interface {
 	BlockAccount(context.Context, *BlockAccountRequest) (*User, error)
 	// DeleteAccount 删除用户
 	DeleteAccount(context.Context, *DeleteAccountRequest) (*User, error)
-	// 更新用户部门
-	UpdateAccountDepartment(context.Context, *UpdateDepartmentRequest) (*User, error)
 	// 更新用户
 	UpdateAccountProfile(context.Context, *UpdateAccountRequest) (*User, error)
 	// 修改用户密码
@@ -156,9 +143,6 @@ func (UnimplementedUserServiceServer) BlockAccount(context.Context, *BlockAccoun
 }
 func (UnimplementedUserServiceServer) DeleteAccount(context.Context, *DeleteAccountRequest) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteAccount not implemented")
-}
-func (UnimplementedUserServiceServer) UpdateAccountDepartment(context.Context, *UpdateDepartmentRequest) (*User, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateAccountDepartment not implemented")
 }
 func (UnimplementedUserServiceServer) UpdateAccountProfile(context.Context, *UpdateAccountRequest) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateAccountProfile not implemented")
@@ -269,24 +253,6 @@ func _UserService_DeleteAccount_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_UpdateAccountDepartment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateDepartmentRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServiceServer).UpdateAccountDepartment(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/keyauth.user.UserService/UpdateAccountDepartment",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).UpdateAccountDepartment(ctx, req.(*UpdateDepartmentRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _UserService_UpdateAccountProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateAccountRequest)
 	if err := dec(in); err != nil {
@@ -346,10 +312,6 @@ var _UserService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteAccount",
 			Handler:    _UserService_DeleteAccount_Handler,
-		},
-		{
-			MethodName: "UpdateAccountDepartment",
-			Handler:    _UserService_UpdateAccountDepartment_Handler,
 		},
 		{
 			MethodName: "UpdateAccountProfile",

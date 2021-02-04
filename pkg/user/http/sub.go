@@ -119,3 +119,23 @@ func (h *handler) DestroySubAccount(w http.ResponseWriter, r *http.Request) {
 	response.Success(w, "delete ok")
 	return
 }
+
+func (h *handler) UpdateSubAccountDepartment(w http.ResponseWriter, r *http.Request) {
+	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	req := user.NewNewQueryAccountRequestFromHTTP(r)
+	req.UserType = types.UserType_SUB
+
+	d, err := h.service.QueryAccount(ctx, req)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	response.Success(w, d)
+	return
+}

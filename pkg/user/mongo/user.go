@@ -53,26 +53,32 @@ func (s *service) CreateAccount(ctx context.Context, req *user.CreateAccountRequ
 
 func (s *service) UpdateAccountProfile(ctx context.Context, req *user.UpdateAccountRequest) (*user.User, error) {
 	tk := session.GetTokenFromContext(ctx)
+	if err := req.Validate(); err != nil {
+		return nil, exception.NewBadRequest("validate update department error, %s", err)
+	}
 
 	u, err := s.DescribeAccount(ctx, user.NewDescriptAccountRequestWithAccount(tk.Account))
 	if err != nil {
 		return nil, err
 	}
-
-	switch req.UpdateMode {
-	case common.UpdateMode_PUT:
-		*u.Profile = *req.Profile
-	case common.UpdateMode_PATCH:
-		u.Profile.Patch(req.Profile)
-	default:
-		return nil, exception.NewBadRequest("unknown update mode: %s", req.UpdateMode)
-	}
-
-	if err := req.Validate(); err != nil {
-		return nil, exception.NewBadRequest("validate update department error, %s", err)
-	}
-
 	u.UpdateAt = ftime.Now().Timestamp()
+
+	// 更新部门
+	if req.DepartmentId != "" {
+		u.DepartmentId = req.DepartmentId
+	}
+
+	// 更新profile
+	if req.Profile != nil {
+		switch req.UpdateMode {
+		case common.UpdateMode_PUT:
+			*u.Profile = *req.Profile
+		case common.UpdateMode_PATCH:
+			u.Profile.Patch(req.Profile)
+		default:
+			return nil, exception.NewBadRequest("unknown update mode: %s", req.UpdateMode)
+		}
+	}
 
 	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": u.Account}, bson.M{"$set": u})
 	if err != nil {

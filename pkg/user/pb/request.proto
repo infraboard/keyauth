@@ -124,15 +124,19 @@ message QueryAccountRequest {
 message UpdateAccountRequest {
     // 更新模式
     common.types.UpdateMode update_mode = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"update_mode" json:"update_mode"'}
+        (google.protobuf.field_tag) = {struct_tag: 'json:"update_mode"'}
         ];
     // 用户账号名称
     string account = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"_id" json:"account" validate:"required,lte=60"'}
+        (google.protobuf.field_tag) = {struct_tag: 'json:"account" validate:"required,lte=120"'}
+        ];
+    // 用户所属部门
+    string department_id = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"department_id"'}
         ];
     // profile 账号profile
-	Profile profile = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"profile" json:"profile"'}
+	Profile profile = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"profile"'}
         ];
 }
 
@@ -146,16 +150,6 @@ message UpdatePasswordRequest {
         ];
     string new_pass = 3[
         (google.protobuf.field_tag) = {struct_tag: 'json:"new_pass"'}
-        ];
-}
-
-message UpdateDepartmentRequest {
-    string account = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"account"'}
-        ]; 
-    // 用户所属部门
-    string department_id = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"department_id" validate:"lte=200"'}
         ];
 }
 

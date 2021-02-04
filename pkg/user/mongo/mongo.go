@@ -73,6 +73,5 @@ func (s *service) Config() error {
 }
 
 func init() {
-	var _ user.UserServiceServer = Service
 	pkg.RegistryService("user", Service)
 }
