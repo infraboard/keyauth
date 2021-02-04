@@ -18,11 +18,17 @@ var (
 )
 
 func (s *service) JoinDepartment(ctx context.Context, req *department.JoinDepartmentRequest) (*department.ApplicationForm, error) {
+	tk := session.GetTokenFromContext(ctx)
+
+	// 默认代表用户自己申请
+	if req.Account == "" {
+		req.Account = tk.Account
+	}
+
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest(err.Error())
 	}
 
-	tk := session.GetTokenFromContext(ctx)
 	// 检测部署是否存在
 	_, err := s.DescribeDepartment(ctx, department.NewDescribeDepartmentRequestWithID(req.DepartmentId))
 	if err != nil {
