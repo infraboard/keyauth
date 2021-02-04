@@ -39,7 +39,7 @@ type CreateRoleRequest struct {
 	// 角色类型
 	Type RoleType `protobuf:"varint,1,opt,name=type,proto3,enum=keyauth.role.RoleType" json:"type" bson:"type"`
 	// 应用名称
-	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty" validate:"required,lte=30" bson:"name"`
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty" bson:"name" validate:"required,lte=30"`
 	// 应用简单的描述
 	Description string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty" bson:"description" validate:"lte=400"`
 	// 读权限
