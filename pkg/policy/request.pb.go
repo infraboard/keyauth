@@ -37,7 +37,7 @@ type CreatePolicyRequest struct {
 	unknownFields protoimpl.UnknownFields
 
 	// 范围
-	NamespaceId string `protobuf:"bytes,1,opt,name=namespace_id,json=namespaceId,proto3" json:"namespace_id" bson:"namespace_id" validate:"lte=120"`
+	NamespaceId string `protobuf:"bytes,1,opt,name=namespace_id,json=namespaceId,proto3" json:"namespace_id" validate:"lte=120" bson:"namespace_id"`
 	// 用户
 	Account string `protobuf:"bytes,2,opt,name=account,proto3" json:"account" bson:"account" validate:"required,lte=120"`
 	// 角色名称

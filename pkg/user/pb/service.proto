@@ -18,6 +18,8 @@ service UserService {
 	rpc BlockAccount(BlockAccountRequest) returns(User);
 	// DeleteAccount 删除用户
 	rpc DeleteAccount(DeleteAccountRequest) returns(User);
+	// 更新用户部门
+	rpc UpdateAccountDepartment(UpdateDepartmentRequest) returns(User);
 	// 更新用户
     rpc UpdateAccountProfile(UpdateAccountRequest) returns(User);
     // 修改用户密码

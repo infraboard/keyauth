@@ -149,6 +149,16 @@ message UpdatePasswordRequest {
         ];
 }
 
+message UpdateDepartmentRequest {
+    string account = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"account"'}
+        ]; 
+    // 用户所属部门
+    string department_id = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"department_id" validate:"lte=200"'}
+        ];
+}
+
 // BlockAccountRequest 冻结用户
 message BlockAccountRequest {
     string account = 1[
