@@ -84,7 +84,7 @@ func (s *service) DealApplicationForm(ctx context.Context, req *department.DealA
 		return nil, err
 	}
 
-	// 只有部门管理员才能出来成员加入申请
+	// 只有部门管理员才能处理成员加入申请
 	if dp.Manager != tk.Account {
 		return nil, exception.NewPermissionDeny("only department manger can deal join apply")
 	}
