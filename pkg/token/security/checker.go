@@ -155,7 +155,7 @@ func (c *checker) OtherPlaceLoggedInChecK(ctx context.Context, tk *token.Token) 
 }
 
 func (c *checker) NotLoginDaysChecK(ctx context.Context, tk *token.Token) error {
-	ss := c.getOrDefaultSecuritySettingWithUser(ctx, tk.Domain)
+	ss := c.getOrDefaultSecuritySettingWithUser(ctx, tk.Account)
 	if !ss.LoginSecurity.ExceptionLock {
 		c.log.Debugf("exception check disabled, don't check")
 		return nil

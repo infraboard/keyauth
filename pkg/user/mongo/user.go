@@ -70,6 +70,7 @@ func (s *service) UpdateAccountProfile(ctx context.Context, req *user.UpdateAcco
 
 	// 更新profile
 	if req.Profile != nil {
+		u.IsInitialized = true
 		switch req.UpdateMode {
 		case common.UpdateMode_PUT:
 			*u.Profile = *req.Profile
