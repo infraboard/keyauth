@@ -61,8 +61,8 @@ func (r *queryUserRequest) FindFilter() bson.M {
 	if r.Keywords != "" {
 		filter["$or"] = bson.A{
 			bson.M{"_id": bson.M{"$regex": r.Keywords, "$options": "im"}},
-			bson.M{"mobile": bson.M{"$regex": r.Keywords, "$options": "im"}},
-			bson.M{"email": bson.M{"$regex": r.Keywords, "$options": "im"}},
+			bson.M{"profile.mobile": bson.M{"$regex": r.Keywords, "$options": "im"}},
+			bson.M{"profile.email": bson.M{"$regex": r.Keywords, "$options": "im"}},
 		}
 	}
 

@@ -28,7 +28,7 @@ func New(req *CreateAccountRequest) (*User, error) {
 		return nil, exception.NewBadRequest(err.Error())
 	}
 
-	return &User{
+	u := &User{
 		CreateAt:       ftime.Now().Timestamp(),
 		UpdateAt:       ftime.Now().Timestamp(),
 		Profile:        req.Profile,
@@ -40,7 +40,13 @@ func New(req *CreateAccountRequest) (*User, error) {
 		Status: &Status{
 			Locked: false,
 		},
-	}, nil
+	}
+
+	if req.DepartmentId != "" && req.Profile != nil {
+		u.IsInitialized = true
+	}
+
+	return u, nil
 }
 
 // NewDefaultUser 实例

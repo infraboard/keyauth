@@ -26,6 +26,7 @@ func (h *handler) CreateSubAccount(w http.ResponseWriter, r *http.Request) {
 	}
 
 	req.UserType = types.UserType_SUB
+	req.CreateType = user.CreateType_DOMAIN_ADMIN
 	d, err := h.service.CreateAccount(ctx, req)
 	if err != nil {
 		response.Failed(w, err)

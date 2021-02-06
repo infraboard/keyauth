@@ -28,19 +28,20 @@ func (s *service) QueryAccount(ctx context.Context, req *user.QueryAccountReques
 }
 
 func (s *service) CreateAccount(ctx context.Context, req *user.CreateAccountRequest) (*user.User, error) {
+	tk := session.GetTokenFromContext(ctx)
+
 	u, err := user.New(req)
 	if err != nil {
 		return nil, err
 	}
 
-	tk := session.GetTokenFromContext(ctx)
 	if tk != nil {
 		u.Domain = tk.Domain
 	}
 
 	// 非管理员, 主账号 可以创建子账号
 	if !tk.UserType.IsIn(types.UserType_SUPPER, types.UserType_PRIMARY) {
-		return nil, fmt.Errorf("%s user can't create sub account", tk.UserType)
+		return nil, exception.NewPermissionDeny("%s user can't create sub account", tk.UserType)
 	}
 
 	if err := s.saveAccount(u); err != nil {
