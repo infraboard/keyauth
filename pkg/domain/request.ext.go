@@ -45,7 +45,7 @@ func (req *DescribeDomainRequest) Validate() error {
 // NewCreateDomainRequest todo
 func NewCreateDomainRequest() *CreateDomainRequest {
 	return &CreateDomainRequest{
-		Profile: &Profile{},
+		Profile: &DomainProfile{},
 	}
 }
 
@@ -55,7 +55,7 @@ func (req *CreateDomainRequest) Validate() error {
 }
 
 // Patch todo
-func (req *Profile) Patch(data *Profile) {
+func (req *DomainProfile) Patch(data *DomainProfile) {
 	patchData, _ := json.Marshal(data)
 	json.Unmarshal(patchData, req)
 }

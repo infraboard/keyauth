@@ -38,7 +38,7 @@ func New(owner string, req *CreateDomainRequest) (*Domain, error) {
 // NewDefault todo
 func NewDefault() *Domain {
 	return &Domain{
-		Profile:         &Profile{},
+		Profile:         &DomainProfile{},
 		SecuritySetting: NewDefaultSecuritySetting(),
 	}
 }

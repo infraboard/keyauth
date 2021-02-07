@@ -14,12 +14,12 @@ message CreateDomainRequest  {
         (google.protobuf.field_tag) = {struct_tag: 'bson:"name" json:"name"'}
         ];
     // Profile 需要修改内容
-    Profile profile = 2[
+    DomainProfile profile = 2[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"profile" json:"profile"'}
         ];
 }
 
-message Profile {
+message DomainProfile {
     // 全称
     string display_name = 5[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"display_name" json:"display_name"'}
@@ -72,7 +72,7 @@ message UpdateDomainInfoRequest  {
         (google.protobuf.field_tag) = {struct_tag: 'bson:"name" json:"name"'}
         ];
     // CreateDomainRequest 需要修改内容
-    Profile profile = 3[
+    DomainProfile profile = 3[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"profile" json:"profile"'}
         ];
 }

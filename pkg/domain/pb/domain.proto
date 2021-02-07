@@ -28,7 +28,7 @@ message Domain  {
         (google.protobuf.field_tag) = {struct_tag: 'bson:"enabled" json:"enabled"'}
         ];
     // CreateDomainRequest 具体属性
-    Profile profile = 6[
+    DomainProfile profile = 6[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"profile" json:"profile"'}
         ];
     // SecuritySetting 域安全设置

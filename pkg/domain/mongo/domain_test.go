@@ -38,7 +38,7 @@ func (s *suit) SetUp() {
 
 	s.createReq = &domain.CreateDomainRequest{
 		Name: "test domain01",
-		Profile: &domain.Profile{
+		Profile: &domain.DomainProfile{
 			DisplayName: "仅仅测试",
 		},
 	}
