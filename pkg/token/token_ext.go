@@ -15,6 +15,11 @@ func (t *Token) IsRefresh() bool {
 	return t.GrantType == GrantType_REFRESH
 }
 
+// IsOwner todo
+func (t *Token) IsOwner(account string) bool {
+	return t.Account == account
+}
+
 // BlockMessage todo
 func (t *Token) BlockMessage() string {
 	if !t.IsBlock {

@@ -30,6 +30,11 @@ func (s *service) QueryAccount(ctx context.Context, req *user.QueryAccountReques
 func (s *service) CreateAccount(ctx context.Context, req *user.CreateAccountRequest) (*user.User, error) {
 	tk := session.GetTokenFromContext(ctx)
 
+	// 非管理员, 主账号 可以创建子账号
+	if !tk.UserType.IsIn(types.UserType_SUPPER, types.UserType_PRIMARY) {
+		return nil, exception.NewPermissionDeny("%s user can't create sub account", tk.UserType)
+	}
+
 	u, err := user.New(req)
 	if err != nil {
 		return nil, err
@@ -39,9 +44,9 @@ func (s *service) CreateAccount(ctx context.Context, req *user.CreateAccountRequ
 		u.Domain = tk.Domain
 	}
 
-	// 非管理员, 主账号 可以创建子账号
-	if !tk.UserType.IsIn(types.UserType_SUPPER, types.UserType_PRIMARY) {
-		return nil, exception.NewPermissionDeny("%s user can't create sub account", tk.UserType)
+	// 如果是管理员创建的账号需要用户自己重置密码
+	if u.CreateType.IsIn(user.CreateType_DOMAIN_ADMIN) {
+		u.HashedPassword.SetNeedReset("admin created user need reset when first login")
 	}
 
 	if err := s.saveAccount(u); err != nil {
@@ -94,10 +99,10 @@ func (s *service) UpdateAccountPassword(ctx context.Context, req *user.UpdatePas
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest("check update pass request error, %s", err)
 	}
-	return s.changePass(ctx, req.Account, req.OldPass, req.NewPass, req.IsReset())
+	return s.changePass(ctx, req.Account, req.OldPass, req.NewPass)
 }
 
-func (s *service) changePass(ctx context.Context, account, old, new string, isReset bool) (*user.Password, error) {
+func (s *service) changePass(ctx context.Context, account, old, new string) (*user.Password, error) {
 	descReq := user.NewDescriptAccountRequest()
 	descReq.Account = account
 	s.log.Debugf("query user account ...")
@@ -124,6 +129,13 @@ func (s *service) changePass(ctx context.Context, account, old, new string, isRe
 	// 判断是不是历史密码
 	if u.HashedPassword.IsHistory(new) {
 		return nil, exception.NewBadRequest("password not last %d used", dom.SecuritySetting.PasswordSecurity.RepeateLimite)
+	}
+
+	// 非本人重置密码, 需要用户下次登录时重置
+	var isReset bool
+	tk := session.GetTokenFromContext(ctx)
+	if !tk.IsOwner(account) {
+		isReset = true
 	}
 
 	s.log.Debugf("change password ...")
