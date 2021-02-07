@@ -82,7 +82,8 @@ func NewCreateUserRequestWithLDAPSync(username, password string) *CreateAccountR
 // NewCreateUserRequest 创建请求
 func NewCreateUserRequest() *CreateAccountRequest {
 	return &CreateAccountRequest{
-		Profile: NewProfile(),
+		Profile:     NewProfile(),
+		ExpiresDays: DefaultExiresDays,
 	}
 }
 

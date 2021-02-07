@@ -71,12 +71,20 @@ message CreateAccountRequest {
     string account = 4[
         (google.protobuf.field_tag) = {struct_tag: 'json:"account" validate:"required,lte=60"'}
         ];
+    // 用户多久未登录时(天), 冻结改用户, 防止僵尸用户的账号被利用'
+    int32 expires_days = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"expires_days"'}
+        ];
+    // 用户描述
+    int32 description = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"description"'}
+        ];
     // 数据
-    Profile profile = 5[
+    Profile profile = 7[
         (google.protobuf.field_tag) = {struct_tag: 'json:"profile"'}
         ];
     // 密码相关信息
-    string password = 6[
+    string password = 8[
         (google.protobuf.field_tag) = {struct_tag: 'json:"password" validate:"required,lte=80"'}
         ];
 }

@@ -12,6 +12,11 @@ import (
 	common "github.com/infraboard/keyauth/common/types"
 )
 
+const (
+	// DefaultExiresDays 默认多少天无登录系统就冻结该用户
+	DefaultExiresDays = 90
+)
+
 // use a single instance of Validate, it caches struct info
 var (
 	validate = validator.New()
@@ -36,6 +41,8 @@ func New(req *CreateAccountRequest) (*User, error) {
 		Account:        req.Account,
 		CreateType:     req.CreateType,
 		Type:           req.UserType,
+		ExpiresDays:    req.ExpiresDays,
+		Description:    req.Description,
 		HashedPassword: pass,
 		Status: &Status{
 			Locked: false,

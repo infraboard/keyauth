@@ -102,20 +102,24 @@ message User {
     int32 expires_days = 10[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"expires_days" json:"expires_days"'}
         ];
+    // 用户描述
+    int32 description = 11[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"description"'}
+        ];
     // 用户是否初始化
-    bool is_initialized = 11[
+    bool is_initialized = 12[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"is_initialized" json:"is_initialized"'}
         ]; 
     // 密码相关信息
-    Password hashed_password = 12[
+    Password hashed_password = 13[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"password" json:"password"'}
         ];
     // 用户状态
-    Status status = 13[
+    Status status = 14[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"status" json:"status"'}
         ];
     // 部门
-    department.Department department = 14[
+    department.Department department = 15[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"department,omitempty"'}
         ];    
 }
