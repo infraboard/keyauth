@@ -149,10 +149,10 @@ func (c *RetryLockConfig) LockedMiniteDuration() time.Duration {
 // GenRandomPasswordConfig todo
 func (p *PasswordSecurity) GenRandomPasswordConfig() password.Config {
 	return password.Config{
-		Length:                  int(p.Length),
-		IncludeSymbols:          p.IncludeSymbols,
-		IncludeNumbers:          p.IncludeNumber,
-		IncludeLowercaseLetters: p.IncludeLowerLetter,
-		IncludeUppercaseLetters: p.IncludeUpperLetter,
+		Length:                  int(p.Length) + 4,
+		IncludeSymbols:          true,
+		IncludeNumbers:          true,
+		IncludeLowercaseLetters: true,
+		IncludeUppercaseLetters: true,
 	}
 }

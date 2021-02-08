@@ -29,7 +29,6 @@ func (h *handler) Registry(router router.SubRouter) {
 	prmaryRouter.Handle("DELETE", "/", h.DestroyPrimaryAccount).AddLabel(label.Delete)
 
 	ramRouter := router.ResourceRouter("ram_account")
-	ramRouter.Handle("POST", "/", h.GeneratePassword).AddLabel(label.Create)
 	ramRouter.Permission(true)
 	ramRouter.BasePath("sub_users")
 	ramRouter.Handle("POST", "/", h.CreateSubAccount).AddLabel(label.Create)
@@ -53,6 +52,7 @@ func (h *handler) Registry(router router.SubRouter) {
 
 	passRouter := router.ResourceRouter("password")
 	passRouter.BasePath("password")
+	passRouter.Handle("POST", "/", h.GeneratePassword).AddLabel(label.Create)
 	passRouter.Handle("PUT", "/", h.UpdatePassword).AddLabel(label.Update)
 }
 
