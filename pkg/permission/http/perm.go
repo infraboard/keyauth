@@ -33,7 +33,7 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
+func (h *handler) CheckPermission(w http.ResponseWriter, r *http.Request) {
 	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)

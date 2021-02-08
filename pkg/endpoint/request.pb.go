@@ -327,6 +327,62 @@ func (x *DeleteEndpointRequest) GetServiceId() string {
 	return ""
 }
 
+// QueryResourceRequest todo
+type QueryResourceRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Page       *page.PageRequest `protobuf:"bytes,1,opt,name=page,proto3" json:"page"`
+	ServiceIds []string          `protobuf:"bytes,2,rep,name=service_ids,json=serviceIds,proto3" json:"service_ids"`
+}
+
+func (x *QueryResourceRequest) Reset() {
+	*x = QueryResourceRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_endpoint_pb_request_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *QueryResourceRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*QueryResourceRequest) ProtoMessage() {}
+
+func (x *QueryResourceRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_endpoint_pb_request_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use QueryResourceRequest.ProtoReflect.Descriptor instead.
+func (*QueryResourceRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_endpoint_pb_request_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *QueryResourceRequest) GetPage() *page.PageRequest {
+	if x != nil {
+		return x.Page
+	}
+	return nil
+}
+
+func (x *QueryResourceRequest) GetServiceIds() []string {
+	if x != nil {
+		return x.ServiceIds
+	}
+	return nil
+}
+
 var File_pkg_endpoint_pb_request_proto protoreflect.FileDescriptor
 
 var file_pkg_endpoint_pb_request_proto_rawDesc = []byte{
@@ -397,10 +453,19 @@ var file_pkg_endpoint_pb_request_proto_rawDesc = []byte{
 	0x74, 0x12, 0x36, 0x0a, 0x0a, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x5f, 0x69, 0x64, 0x18,
 	0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x17, 0xc2, 0xde, 0x1f, 0x13, 0x0a, 0x11, 0x6a, 0x73, 0x6f,
 	0x6e, 0x3a, 0x22, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x5f, 0x69, 0x64, 0x22, 0x52, 0x09,
-	0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x49, 0x64, 0x42, 0x2c, 0x5a, 0x2a, 0x67, 0x69, 0x74,
-	0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x69, 0x6e, 0x66, 0x72, 0x61, 0x62, 0x6f, 0x61,
-	0x72, 0x64, 0x2f, 0x6b, 0x65, 0x79, 0x61, 0x75, 0x74, 0x68, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x65,
-	0x6e, 0x64, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x49, 0x64, 0x22, 0x8b, 0x01, 0x0a, 0x14, 0x51, 0x75,
+	0x65, 0x72, 0x79, 0x52, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x73, 0x74, 0x12, 0x38, 0x0a, 0x04, 0x70, 0x61, 0x67, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b,
+	0x32, 0x11, 0x2e, 0x70, 0x61, 0x67, 0x65, 0x2e, 0x50, 0x61, 0x67, 0x65, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x42, 0x11, 0xc2, 0xde, 0x1f, 0x0d, 0x0a, 0x0b, 0x6a, 0x73, 0x6f, 0x6e, 0x3a,
+	0x22, 0x70, 0x61, 0x67, 0x65, 0x22, 0x52, 0x04, 0x70, 0x61, 0x67, 0x65, 0x12, 0x39, 0x0a, 0x0b,
+	0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x5f, 0x69, 0x64, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28,
+	0x09, 0x42, 0x18, 0xc2, 0xde, 0x1f, 0x14, 0x0a, 0x12, 0x6a, 0x73, 0x6f, 0x6e, 0x3a, 0x22, 0x73,
+	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x5f, 0x69, 0x64, 0x73, 0x22, 0x52, 0x0a, 0x73, 0x65, 0x72,
+	0x76, 0x69, 0x63, 0x65, 0x49, 0x64, 0x73, 0x42, 0x2c, 0x5a, 0x2a, 0x67, 0x69, 0x74, 0x68, 0x75,
+	0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x69, 0x6e, 0x66, 0x72, 0x61, 0x62, 0x6f, 0x61, 0x72, 0x64,
+	0x2f, 0x6b, 0x65, 0x79, 0x61, 0x75, 0x74, 0x68, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x65, 0x6e, 0x64,
+	0x70, 0x6f, 0x69, 0x6e, 0x74, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -415,26 +480,28 @@ func file_pkg_endpoint_pb_request_proto_rawDescGZIP() []byte {
 	return file_pkg_endpoint_pb_request_proto_rawDescData
 }
 
-var file_pkg_endpoint_pb_request_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_pkg_endpoint_pb_request_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_pkg_endpoint_pb_request_proto_goTypes = []interface{}{
 	(*RegistryRequest)(nil),         // 0: keyauth.endpoint.RegistryRequest
 	(*RegistryResponse)(nil),        // 1: keyauth.endpoint.RegistryResponse
 	(*DescribeEndpointRequest)(nil), // 2: keyauth.endpoint.DescribeEndpointRequest
 	(*QueryEndpointRequest)(nil),    // 3: keyauth.endpoint.QueryEndpointRequest
 	(*DeleteEndpointRequest)(nil),   // 4: keyauth.endpoint.DeleteEndpointRequest
-	nil,                             // 5: keyauth.endpoint.QueryEndpointRequest.LabelsEntry
-	(*router.Entry)(nil),            // 6: mcube.router.Entry
-	(*page.PageRequest)(nil),        // 7: page.PageRequest
+	(*QueryResourceRequest)(nil),    // 5: keyauth.endpoint.QueryResourceRequest
+	nil,                             // 6: keyauth.endpoint.QueryEndpointRequest.LabelsEntry
+	(*router.Entry)(nil),            // 7: mcube.router.Entry
+	(*page.PageRequest)(nil),        // 8: page.PageRequest
 }
 var file_pkg_endpoint_pb_request_proto_depIdxs = []int32{
-	6, // 0: keyauth.endpoint.RegistryRequest.entries:type_name -> mcube.router.Entry
-	7, // 1: keyauth.endpoint.QueryEndpointRequest.page:type_name -> page.PageRequest
-	5, // 2: keyauth.endpoint.QueryEndpointRequest.labels:type_name -> keyauth.endpoint.QueryEndpointRequest.LabelsEntry
-	3, // [3:3] is the sub-list for method output_type
-	3, // [3:3] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	7, // 0: keyauth.endpoint.RegistryRequest.entries:type_name -> mcube.router.Entry
+	8, // 1: keyauth.endpoint.QueryEndpointRequest.page:type_name -> page.PageRequest
+	6, // 2: keyauth.endpoint.QueryEndpointRequest.labels:type_name -> keyauth.endpoint.QueryEndpointRequest.LabelsEntry
+	8, // 3: keyauth.endpoint.QueryResourceRequest.page:type_name -> page.PageRequest
+	4, // [4:4] is the sub-list for method output_type
+	4, // [4:4] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_pkg_endpoint_pb_request_proto_init() }
@@ -503,6 +570,18 @@ func file_pkg_endpoint_pb_request_proto_init() {
 				return nil
 			}
 		}
+		file_pkg_endpoint_pb_request_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*QueryResourceRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -510,7 +589,7 @@ func file_pkg_endpoint_pb_request_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_pkg_endpoint_pb_request_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

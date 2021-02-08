@@ -25,6 +25,10 @@ func (h *handler) Registry(router router.SubRouter) {
 	r.Handle("POST", "/", h.Create).AddLabel(label.Create)
 	r.Handle("GET", "/", h.List).AddLabel(label.List)
 	r.Handle("GET", "/:id", h.Get).AddLabel(label.Get)
+
+	rr := router.ResourceRouter("resource")
+	rr.BasePath("resources")
+	r.Handle("GET", "/", h.ListResource).AddLabel(label.List)
 }
 
 func (h *handler) Config() error {

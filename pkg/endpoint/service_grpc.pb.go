@@ -21,6 +21,7 @@ type EndpointServiceClient interface {
 	QueryEndpoints(ctx context.Context, in *QueryEndpointRequest, opts ...grpc.CallOption) (*Set, error)
 	Registry(ctx context.Context, in *RegistryRequest, opts ...grpc.CallOption) (*RegistryResponse, error)
 	DeleteEndpoint(ctx context.Context, in *DeleteEndpointRequest, opts ...grpc.CallOption) (*Endpoint, error)
+	QueryResources(ctx context.Context, in *QueryResourceRequest, opts ...grpc.CallOption) (*ResourceSet, error)
 }
 
 type endpointServiceClient struct {
@@ -67,6 +68,15 @@ func (c *endpointServiceClient) DeleteEndpoint(ctx context.Context, in *DeleteEn
 	return out, nil
 }
 
+func (c *endpointServiceClient) QueryResources(ctx context.Context, in *QueryResourceRequest, opts ...grpc.CallOption) (*ResourceSet, error) {
+	out := new(ResourceSet)
+	err := c.cc.Invoke(ctx, "/keyauth.endpoint.EndpointService/QueryResources", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // EndpointServiceServer is the server API for EndpointService service.
 // All implementations must embed UnimplementedEndpointServiceServer
 // for forward compatibility
@@ -75,6 +85,7 @@ type EndpointServiceServer interface {
 	QueryEndpoints(context.Context, *QueryEndpointRequest) (*Set, error)
 	Registry(context.Context, *RegistryRequest) (*RegistryResponse, error)
 	DeleteEndpoint(context.Context, *DeleteEndpointRequest) (*Endpoint, error)
+	QueryResources(context.Context, *QueryResourceRequest) (*ResourceSet, error)
 	mustEmbedUnimplementedEndpointServiceServer()
 }
 
@@ -93,6 +104,9 @@ func (UnimplementedEndpointServiceServer) Registry(context.Context, *RegistryReq
 }
 func (UnimplementedEndpointServiceServer) DeleteEndpoint(context.Context, *DeleteEndpointRequest) (*Endpoint, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteEndpoint not implemented")
+}
+func (UnimplementedEndpointServiceServer) QueryResources(context.Context, *QueryResourceRequest) (*ResourceSet, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method QueryResources not implemented")
 }
 func (UnimplementedEndpointServiceServer) mustEmbedUnimplementedEndpointServiceServer() {}
 
@@ -179,6 +193,24 @@ func _EndpointService_DeleteEndpoint_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _EndpointService_QueryResources_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryResourceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EndpointServiceServer).QueryResources(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/keyauth.endpoint.EndpointService/QueryResources",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EndpointServiceServer).QueryResources(ctx, req.(*QueryResourceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _EndpointService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "keyauth.endpoint.EndpointService",
 	HandlerType: (*EndpointServiceServer)(nil),
@@ -198,6 +230,10 @@ var _EndpointService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteEndpoint",
 			Handler:    _EndpointService_DeleteEndpoint_Handler,
+		},
+		{
+			MethodName: "QueryResources",
+			Handler:    _EndpointService_QueryResources_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

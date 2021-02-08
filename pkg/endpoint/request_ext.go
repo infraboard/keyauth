@@ -3,6 +3,7 @@ package endpoint
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/infraboard/mcube/http/request"
@@ -109,4 +110,15 @@ func (req *DescribeEndpointRequest) Validate() error {
 // NewDeleteEndpointRequestWithServiceID todo
 func NewDeleteEndpointRequestWithServiceID(id string) *DeleteEndpointRequest {
 	return &DeleteEndpointRequest{ServiceId: id}
+}
+
+// NewQueryResourceRequestFromHTTP 列表查询请求
+func NewQueryResourceRequestFromHTTP(r *http.Request) *QueryResourceRequest {
+	page := request.NewPageRequestFromHTTP(r)
+	qs := r.URL.Query()
+
+	return &QueryResourceRequest{
+		Page:       &page.PageRequest,
+		ServiceIds: strings.Split(qs.Get("service_ids"), ","),
+	}
 }

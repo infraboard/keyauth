@@ -33,7 +33,7 @@ message DescribeEndpointRequest {
 
 // QueryEndpointRequest 查询应用列表
 message QueryEndpointRequest {
-    page.PageRequest page = 1[
+        page.PageRequest page = 1[
         (google.protobuf.field_tag) = {struct_tag: 'json:"page"'}
         ];
 	string service_id = 2[
@@ -61,4 +61,14 @@ message DeleteEndpointRequest {
 	string service_id = 1[
         (google.protobuf.field_tag) = {struct_tag: 'json:"service_id"'}
         ];
+}
+
+// QueryResourceRequest todo
+message QueryResourceRequest {
+        page.PageRequest page = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"page"'}
+        ];
+	repeated string service_ids = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"service_ids"'}
+        ];        
 }
