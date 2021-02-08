@@ -161,6 +161,20 @@ message UpdatePasswordRequest {
         ];
 }
 
+// GeneratePasswordRequest todo
+message GeneratePasswordRequest {
+    int32 length = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"length"'}
+        ];
+}
+
+// GeneratePasswordResponse todo
+message GeneratePasswordResponse {
+    string password = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"password"'}
+        ];
+}
+
 // BlockAccountRequest 冻结用户
 message BlockAccountRequest {
     string account = 1[

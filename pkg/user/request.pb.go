@@ -575,6 +575,102 @@ func (x *UpdatePasswordRequest) GetNewPass() string {
 	return ""
 }
 
+// GeneratePasswordRequest todo
+type GeneratePasswordRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Length int32 `protobuf:"varint,1,opt,name=length,proto3" json:"length"`
+}
+
+func (x *GeneratePasswordRequest) Reset() {
+	*x = GeneratePasswordRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_user_pb_request_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GeneratePasswordRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GeneratePasswordRequest) ProtoMessage() {}
+
+func (x *GeneratePasswordRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_user_pb_request_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GeneratePasswordRequest.ProtoReflect.Descriptor instead.
+func (*GeneratePasswordRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_user_pb_request_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *GeneratePasswordRequest) GetLength() int32 {
+	if x != nil {
+		return x.Length
+	}
+	return 0
+}
+
+// GeneratePasswordResponse todo
+type GeneratePasswordResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Password string `protobuf:"bytes,1,opt,name=password,proto3" json:"password"`
+}
+
+func (x *GeneratePasswordResponse) Reset() {
+	*x = GeneratePasswordResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_user_pb_request_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GeneratePasswordResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GeneratePasswordResponse) ProtoMessage() {}
+
+func (x *GeneratePasswordResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_user_pb_request_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GeneratePasswordResponse.ProtoReflect.Descriptor instead.
+func (*GeneratePasswordResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_user_pb_request_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *GeneratePasswordResponse) GetPassword() string {
+	if x != nil {
+		return x.Password
+	}
+	return ""
+}
+
 // BlockAccountRequest 冻结用户
 type BlockAccountRequest struct {
 	state         protoimpl.MessageState
@@ -588,7 +684,7 @@ type BlockAccountRequest struct {
 func (x *BlockAccountRequest) Reset() {
 	*x = BlockAccountRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_user_pb_request_proto_msgTypes[6]
+		mi := &file_pkg_user_pb_request_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -601,7 +697,7 @@ func (x *BlockAccountRequest) String() string {
 func (*BlockAccountRequest) ProtoMessage() {}
 
 func (x *BlockAccountRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_user_pb_request_proto_msgTypes[6]
+	mi := &file_pkg_user_pb_request_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -614,7 +710,7 @@ func (x *BlockAccountRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BlockAccountRequest.ProtoReflect.Descriptor instead.
 func (*BlockAccountRequest) Descriptor() ([]byte, []int) {
-	return file_pkg_user_pb_request_proto_rawDescGZIP(), []int{6}
+	return file_pkg_user_pb_request_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *BlockAccountRequest) GetAccount() string {
@@ -643,7 +739,7 @@ type DeleteAccountRequest struct {
 func (x *DeleteAccountRequest) Reset() {
 	*x = DeleteAccountRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_user_pb_request_proto_msgTypes[7]
+		mi := &file_pkg_user_pb_request_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -656,7 +752,7 @@ func (x *DeleteAccountRequest) String() string {
 func (*DeleteAccountRequest) ProtoMessage() {}
 
 func (x *DeleteAccountRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_user_pb_request_proto_msgTypes[7]
+	mi := &file_pkg_user_pb_request_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -669,7 +765,7 @@ func (x *DeleteAccountRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteAccountRequest.ProtoReflect.Descriptor instead.
 func (*DeleteAccountRequest) Descriptor() ([]byte, []int) {
-	return file_pkg_user_pb_request_proto_rawDescGZIP(), []int{7}
+	return file_pkg_user_pb_request_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *DeleteAccountRequest) GetAccount() string {
@@ -860,22 +956,31 @@ var file_pkg_user_pb_request_proto_rawDesc = []byte{
 	0x52, 0x07, 0x6f, 0x6c, 0x64, 0x50, 0x61, 0x73, 0x73, 0x12, 0x30, 0x0a, 0x08, 0x6e, 0x65, 0x77,
 	0x5f, 0x70, 0x61, 0x73, 0x73, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x42, 0x15, 0xc2, 0xde, 0x1f,
 	0x11, 0x0a, 0x0f, 0x6a, 0x73, 0x6f, 0x6e, 0x3a, 0x22, 0x6e, 0x65, 0x77, 0x5f, 0x70, 0x61, 0x73,
-	0x73, 0x22, 0x52, 0x07, 0x6e, 0x65, 0x77, 0x50, 0x61, 0x73, 0x73, 0x22, 0x72, 0x0a, 0x13, 0x42,
-	0x6c, 0x6f, 0x63, 0x6b, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x12, 0x2e, 0x0a, 0x07, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x01, 0x20,
-	0x01, 0x28, 0x09, 0x42, 0x14, 0xc2, 0xde, 0x1f, 0x10, 0x0a, 0x0e, 0x6a, 0x73, 0x6f, 0x6e, 0x3a,
-	0x22, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x22, 0x52, 0x07, 0x61, 0x63, 0x63, 0x6f, 0x75,
-	0x6e, 0x74, 0x12, 0x2b, 0x0a, 0x06, 0x72, 0x65, 0x61, 0x73, 0x6f, 0x6e, 0x18, 0x02, 0x20, 0x01,
-	0x28, 0x09, 0x42, 0x13, 0xc2, 0xde, 0x1f, 0x0f, 0x0a, 0x0d, 0x6a, 0x73, 0x6f, 0x6e, 0x3a, 0x22,
-	0x72, 0x65, 0x61, 0x73, 0x6f, 0x6e, 0x22, 0x52, 0x06, 0x72, 0x65, 0x61, 0x73, 0x6f, 0x6e, 0x22,
-	0x46, 0x0a, 0x14, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74,
-	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x2e, 0x0a, 0x07, 0x61, 0x63, 0x63, 0x6f, 0x75,
-	0x6e, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x14, 0xc2, 0xde, 0x1f, 0x10, 0x0a, 0x0e,
-	0x6a, 0x73, 0x6f, 0x6e, 0x3a, 0x22, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x22, 0x52, 0x07,
-	0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x42, 0x28, 0x5a, 0x26, 0x67, 0x69, 0x74, 0x68, 0x75,
-	0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x69, 0x6e, 0x66, 0x72, 0x61, 0x62, 0x6f, 0x61, 0x72, 0x64,
-	0x2f, 0x6b, 0x65, 0x79, 0x61, 0x75, 0x74, 0x68, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x75, 0x73, 0x65,
-	0x72, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x73, 0x22, 0x52, 0x07, 0x6e, 0x65, 0x77, 0x50, 0x61, 0x73, 0x73, 0x22, 0x46, 0x0a, 0x17, 0x47,
+	0x65, 0x6e, 0x65, 0x72, 0x61, 0x74, 0x65, 0x50, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x2b, 0x0a, 0x06, 0x6c, 0x65, 0x6e, 0x67, 0x74, 0x68,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x42, 0x13, 0xc2, 0xde, 0x1f, 0x0f, 0x0a, 0x0d, 0x6a, 0x73,
+	0x6f, 0x6e, 0x3a, 0x22, 0x6c, 0x65, 0x6e, 0x67, 0x74, 0x68, 0x22, 0x52, 0x06, 0x6c, 0x65, 0x6e,
+	0x67, 0x74, 0x68, 0x22, 0x4d, 0x0a, 0x18, 0x47, 0x65, 0x6e, 0x65, 0x72, 0x61, 0x74, 0x65, 0x50,
+	0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
+	0x31, 0x0a, 0x08, 0x70, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x09, 0x42, 0x15, 0xc2, 0xde, 0x1f, 0x11, 0x0a, 0x0f, 0x6a, 0x73, 0x6f, 0x6e, 0x3a, 0x22, 0x70,
+	0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x22, 0x52, 0x08, 0x70, 0x61, 0x73, 0x73, 0x77, 0x6f,
+	0x72, 0x64, 0x22, 0x72, 0x0a, 0x13, 0x42, 0x6c, 0x6f, 0x63, 0x6b, 0x41, 0x63, 0x63, 0x6f, 0x75,
+	0x6e, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x2e, 0x0a, 0x07, 0x61, 0x63, 0x63,
+	0x6f, 0x75, 0x6e, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x14, 0xc2, 0xde, 0x1f, 0x10,
+	0x0a, 0x0e, 0x6a, 0x73, 0x6f, 0x6e, 0x3a, 0x22, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x22,
+	0x52, 0x07, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x12, 0x2b, 0x0a, 0x06, 0x72, 0x65, 0x61,
+	0x73, 0x6f, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x42, 0x13, 0xc2, 0xde, 0x1f, 0x0f, 0x0a,
+	0x0d, 0x6a, 0x73, 0x6f, 0x6e, 0x3a, 0x22, 0x72, 0x65, 0x61, 0x73, 0x6f, 0x6e, 0x22, 0x52, 0x06,
+	0x72, 0x65, 0x61, 0x73, 0x6f, 0x6e, 0x22, 0x46, 0x0a, 0x14, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65,
+	0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x2e,
+	0x0a, 0x07, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42,
+	0x14, 0xc2, 0xde, 0x1f, 0x10, 0x0a, 0x0e, 0x6a, 0x73, 0x6f, 0x6e, 0x3a, 0x22, 0x61, 0x63, 0x63,
+	0x6f, 0x75, 0x6e, 0x74, 0x22, 0x52, 0x07, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x42, 0x28,
+	0x5a, 0x26, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x69, 0x6e, 0x66,
+	0x72, 0x61, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x2f, 0x6b, 0x65, 0x79, 0x61, 0x75, 0x74, 0x68, 0x2f,
+	0x70, 0x6b, 0x67, 0x2f, 0x75, 0x73, 0x65, 0x72, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -890,30 +995,32 @@ func file_pkg_user_pb_request_proto_rawDescGZIP() []byte {
 	return file_pkg_user_pb_request_proto_rawDescData
 }
 
-var file_pkg_user_pb_request_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_pkg_user_pb_request_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_pkg_user_pb_request_proto_goTypes = []interface{}{
-	(*Profile)(nil),                // 0: keyauth.user.Profile
-	(*CreateAccountRequest)(nil),   // 1: keyauth.user.CreateAccountRequest
-	(*DescribeAccountRequest)(nil), // 2: keyauth.user.DescribeAccountRequest
-	(*QueryAccountRequest)(nil),    // 3: keyauth.user.QueryAccountRequest
-	(*UpdateAccountRequest)(nil),   // 4: keyauth.user.UpdateAccountRequest
-	(*UpdatePasswordRequest)(nil),  // 5: keyauth.user.UpdatePasswordRequest
-	(*BlockAccountRequest)(nil),    // 6: keyauth.user.BlockAccountRequest
-	(*DeleteAccountRequest)(nil),   // 7: keyauth.user.DeleteAccountRequest
-	(Gender)(0),                    // 8: keyauth.user.Gender
-	(CreateType)(0),                // 9: keyauth.user.CreateType
-	(types.UserType)(0),            // 10: keyauth.user.UserType
-	(*page.PageRequest)(nil),       // 11: page.PageRequest
-	(types1.UpdateMode)(0),         // 12: keyauth.common.types.UpdateMode
+	(*Profile)(nil),                  // 0: keyauth.user.Profile
+	(*CreateAccountRequest)(nil),     // 1: keyauth.user.CreateAccountRequest
+	(*DescribeAccountRequest)(nil),   // 2: keyauth.user.DescribeAccountRequest
+	(*QueryAccountRequest)(nil),      // 3: keyauth.user.QueryAccountRequest
+	(*UpdateAccountRequest)(nil),     // 4: keyauth.user.UpdateAccountRequest
+	(*UpdatePasswordRequest)(nil),    // 5: keyauth.user.UpdatePasswordRequest
+	(*GeneratePasswordRequest)(nil),  // 6: keyauth.user.GeneratePasswordRequest
+	(*GeneratePasswordResponse)(nil), // 7: keyauth.user.GeneratePasswordResponse
+	(*BlockAccountRequest)(nil),      // 8: keyauth.user.BlockAccountRequest
+	(*DeleteAccountRequest)(nil),     // 9: keyauth.user.DeleteAccountRequest
+	(Gender)(0),                      // 10: keyauth.user.Gender
+	(CreateType)(0),                  // 11: keyauth.user.CreateType
+	(types.UserType)(0),              // 12: keyauth.user.UserType
+	(*page.PageRequest)(nil),         // 13: page.PageRequest
+	(types1.UpdateMode)(0),           // 14: keyauth.common.types.UpdateMode
 }
 var file_pkg_user_pb_request_proto_depIdxs = []int32{
-	8,  // 0: keyauth.user.Profile.gender:type_name -> keyauth.user.Gender
-	9,  // 1: keyauth.user.CreateAccountRequest.create_type:type_name -> keyauth.user.CreateType
-	10, // 2: keyauth.user.CreateAccountRequest.user_type:type_name -> keyauth.user.UserType
+	10, // 0: keyauth.user.Profile.gender:type_name -> keyauth.user.Gender
+	11, // 1: keyauth.user.CreateAccountRequest.create_type:type_name -> keyauth.user.CreateType
+	12, // 2: keyauth.user.CreateAccountRequest.user_type:type_name -> keyauth.user.UserType
 	0,  // 3: keyauth.user.CreateAccountRequest.profile:type_name -> keyauth.user.Profile
-	11, // 4: keyauth.user.QueryAccountRequest.page:type_name -> page.PageRequest
-	10, // 5: keyauth.user.QueryAccountRequest.user_type:type_name -> keyauth.user.UserType
-	12, // 6: keyauth.user.UpdateAccountRequest.update_mode:type_name -> keyauth.common.types.UpdateMode
+	13, // 4: keyauth.user.QueryAccountRequest.page:type_name -> page.PageRequest
+	12, // 5: keyauth.user.QueryAccountRequest.user_type:type_name -> keyauth.user.UserType
+	14, // 6: keyauth.user.UpdateAccountRequest.update_mode:type_name -> keyauth.common.types.UpdateMode
 	0,  // 7: keyauth.user.UpdateAccountRequest.profile:type_name -> keyauth.user.Profile
 	8,  // [8:8] is the sub-list for method output_type
 	8,  // [8:8] is the sub-list for method input_type
@@ -1002,7 +1109,7 @@ func file_pkg_user_pb_request_proto_init() {
 			}
 		}
 		file_pkg_user_pb_request_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*BlockAccountRequest); i {
+			switch v := v.(*GeneratePasswordRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1014,6 +1121,30 @@ func file_pkg_user_pb_request_proto_init() {
 			}
 		}
 		file_pkg_user_pb_request_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GeneratePasswordResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_user_pb_request_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*BlockAccountRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_user_pb_request_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteAccountRequest); i {
 			case 0:
 				return &v.state
@@ -1032,7 +1163,7 @@ func file_pkg_user_pb_request_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_pkg_user_pb_request_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

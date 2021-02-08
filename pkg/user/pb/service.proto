@@ -22,4 +22,6 @@ service UserService {
     rpc UpdateAccountProfile(UpdateAccountRequest) returns(User);
     // 修改用户密码
 	rpc UpdateAccountPassword(UpdatePasswordRequest) returns(Password);
+	// GeneratePassword 生成符合检测强度的随机密码
+	rpc GeneratePassword(GeneratePasswordRequest) returns(GeneratePasswordResponse);
 }

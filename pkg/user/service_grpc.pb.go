@@ -31,6 +31,8 @@ type UserServiceClient interface {
 	UpdateAccountProfile(ctx context.Context, in *UpdateAccountRequest, opts ...grpc.CallOption) (*User, error)
 	// 修改用户密码
 	UpdateAccountPassword(ctx context.Context, in *UpdatePasswordRequest, opts ...grpc.CallOption) (*Password, error)
+	// GeneratePassword 生成符合检测强度的随机密码
+	GeneratePassword(ctx context.Context, in *GeneratePasswordRequest, opts ...grpc.CallOption) (*GeneratePasswordResponse, error)
 }
 
 type userServiceClient struct {
@@ -104,6 +106,15 @@ func (c *userServiceClient) UpdateAccountPassword(ctx context.Context, in *Updat
 	return out, nil
 }
 
+func (c *userServiceClient) GeneratePassword(ctx context.Context, in *GeneratePasswordRequest, opts ...grpc.CallOption) (*GeneratePasswordResponse, error) {
+	out := new(GeneratePasswordResponse)
+	err := c.cc.Invoke(ctx, "/keyauth.user.UserService/GeneratePassword", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -122,6 +133,8 @@ type UserServiceServer interface {
 	UpdateAccountProfile(context.Context, *UpdateAccountRequest) (*User, error)
 	// 修改用户密码
 	UpdateAccountPassword(context.Context, *UpdatePasswordRequest) (*Password, error)
+	// GeneratePassword 生成符合检测强度的随机密码
+	GeneratePassword(context.Context, *GeneratePasswordRequest) (*GeneratePasswordResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -149,6 +162,9 @@ func (UnimplementedUserServiceServer) UpdateAccountProfile(context.Context, *Upd
 }
 func (UnimplementedUserServiceServer) UpdateAccountPassword(context.Context, *UpdatePasswordRequest) (*Password, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateAccountPassword not implemented")
+}
+func (UnimplementedUserServiceServer) GeneratePassword(context.Context, *GeneratePasswordRequest) (*GeneratePasswordResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GeneratePassword not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -289,6 +305,24 @@ func _UserService_UpdateAccountPassword_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_GeneratePassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GeneratePasswordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GeneratePassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/keyauth.user.UserService/GeneratePassword",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GeneratePassword(ctx, req.(*GeneratePasswordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _UserService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "keyauth.user.UserService",
 	HandlerType: (*UserServiceServer)(nil),
@@ -320,6 +354,10 @@ var _UserService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateAccountPassword",
 			Handler:    _UserService_UpdateAccountPassword_Handler,
+		},
+		{
+			MethodName: "GeneratePassword",
+			Handler:    _UserService_GeneratePassword_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -9,6 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
+	"github.com/infraboard/keyauth/common/password"
 	"github.com/infraboard/keyauth/common/session"
 	common "github.com/infraboard/keyauth/common/types"
 	"github.com/infraboard/keyauth/pkg"
@@ -204,4 +205,23 @@ func (s *service) DeleteAccount(ctx context.Context, req *user.DeleteAccountRequ
 	}
 
 	return nil, nil
+}
+
+func (s *service) GeneratePassword(ctx context.Context, req *user.GeneratePasswordRequest) (*user.GeneratePasswordResponse, error) {
+	tk := session.GetTokenFromContext(ctx)
+
+	s.log.Debugf("query domain security setting ...")
+	// 根据域设置的规则检测密码策略
+	descDom := domain.NewDescribeDomainRequestWithName(tk.Domain)
+	dom, err := s.domain.DescribeDomain(ctx, descDom)
+	if err != nil {
+		return nil, err
+	}
+
+	genConf := dom.SecuritySetting.PasswordSecurity.GenRandomPasswordConfig()
+	ranPass, err := password.New(&genConf).Generate()
+	if err != nil {
+		return nil, fmt.Errorf("generate random password error, %s", err)
+	}
+	return user.NewGeneratePasswordResponse(*ranPass), nil
 }

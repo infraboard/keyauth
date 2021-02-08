@@ -116,3 +116,15 @@ func (req *UpdatePasswordRequest) Validate() error {
 	}
 	return nil
 }
+
+// NewGeneratePasswordRequest todo
+func NewGeneratePasswordRequest() *GeneratePasswordRequest {
+	return &GeneratePasswordRequest{}
+}
+
+// NewGeneratePasswordResponse todo
+func NewGeneratePasswordResponse(password string) *GeneratePasswordResponse {
+	return &GeneratePasswordResponse{
+		Password: password,
+	}
+}

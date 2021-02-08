@@ -145,3 +145,14 @@ func NewDefaultLoginSecurity() *LoginSecurity {
 func (c *RetryLockConfig) LockedMiniteDuration() time.Duration {
 	return time.Duration(c.LockedMinite) * time.Minute
 }
+
+// GenRandomPasswordConfig todo
+func (p *PasswordSecurity) GenRandomPasswordConfig() password.Config {
+	return password.Config{
+		Length:                  int(p.Length),
+		IncludeSymbols:          p.IncludeSymbols,
+		IncludeNumbers:          p.IncludeNumber,
+		IncludeLowercaseLetters: p.IncludeLowerLetter,
+		IncludeUppercaseLetters: p.IncludeUpperLetter,
+	}
+}
