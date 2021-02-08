@@ -103,7 +103,7 @@ message User {
         (google.protobuf.field_tag) = {struct_tag: 'bson:"expires_days" json:"expires_days"'}
         ];
     // 用户描述
-    int32 description = 11[
+    string description = 11[
         (google.protobuf.field_tag) = {struct_tag: 'json:"description"'}
         ];
     // 用户是否初始化

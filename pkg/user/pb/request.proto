@@ -76,7 +76,7 @@ message CreateAccountRequest {
         (google.protobuf.field_tag) = {struct_tag: 'json:"expires_days"'}
         ];
     // 用户描述
-    int32 description = 6[
+    string description = 6[
         (google.protobuf.field_tag) = {struct_tag: 'json:"description"'}
         ];
     // 数据
