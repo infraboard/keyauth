@@ -138,12 +138,11 @@ func (s *ResourceSet) addEndpint(ep *Endpoint) {
 	if v, ok := ep.Entry.Labels["action"]; ok {
 		rs.UpdateAction(v)
 	}
-
-	s.Items = append(s.Items, rs)
 }
 
 func (s *ResourceSet) getOrCreateResource(serviceID, name string) *Resource {
 	var rs *Resource
+
 	for i := range s.Items {
 		rs = s.Items[i]
 		if rs.ServiceId == serviceID && rs.Name == name {
@@ -151,8 +150,11 @@ func (s *ResourceSet) getOrCreateResource(serviceID, name string) *Resource {
 		}
 	}
 
-	return &Resource{
+	// 添加新resource
+	rs = &Resource{
 		ServiceId: serviceID,
 		Name:      name,
 	}
+	s.Items = append(s.Items, rs)
+	return rs
 }
