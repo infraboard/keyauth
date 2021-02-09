@@ -118,9 +118,14 @@ func NewQueryResourceRequestFromHTTP(r *http.Request) *QueryResourceRequest {
 	page := request.NewPageRequestFromHTTP(r)
 	qs := r.URL.Query()
 	strIds := qs.Get("service_ids")
+	pe, err := ParseBoolQueryFromString(qs.Get("permission_enable"))
+	if err != nil {
+		pe = BoolQuery_ALL
+	}
 
 	query := &QueryResourceRequest{
-		Page: &page.PageRequest,
+		Page:             &page.PageRequest,
+		PermissionEnable: pe,
 	}
 
 	if strIds != "" {

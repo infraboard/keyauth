@@ -127,7 +127,7 @@ func (s *ResourceSet) AddEndpointSet(eps *Set) {
 }
 
 func (s *ResourceSet) addEndpint(ep *Endpoint) {
-	if ep.Entry == nil {
+	if ep.Entry == nil || ep.Entry.Resource == "" {
 		return
 	}
 

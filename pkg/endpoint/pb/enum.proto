@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package keyauth.endpoint;
+option go_package = "github.com/infraboard/keyauth/pkg/endpoint";
+
+enum BoolQuery {
+    // ALL todo
+    ALL = 0;
+    // Pending todo
+    TRUE = 1;
+    // Passed todo
+    FALSE = 2;
+}

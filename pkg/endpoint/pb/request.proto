@@ -7,6 +7,8 @@ import "github.com/infraboard/mcube/pb/page/page.proto";
 import "github.com/infraboard/mcube/pb/router/entry.proto";
 import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
 
+import "pkg/endpoint/pb/enum.proto";
+
 // RegistryRequest 服务注册请求
 message RegistryRequest {
 	string version = 1[
@@ -48,12 +50,15 @@ message QueryEndpointRequest {
 	string function_name = 5[
         (google.protobuf.field_tag) = {struct_tag: 'json:"function_name"'}
         ];
-    string resource = 6[
+        string resource = 6[
         (google.protobuf.field_tag) = {struct_tag: 'json:"resource"'}
         ];
-    map<string, string> labels = 7[
+        map<string, string> labels = 7[
         (google.protobuf.field_tag) = {struct_tag: 'json:"labels"'}
-        ];  
+        ];
+        BoolQuery permission_enable = 8[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"permission_enable"'}
+        ];
 }
 
 // DeleteEndpointRequest todo
@@ -70,5 +75,8 @@ message QueryResourceRequest {
         ];
 	repeated string service_ids = 2[
         (google.protobuf.field_tag) = {struct_tag: 'json:"service_ids"'}
-        ];        
+        ];
+        BoolQuery permission_enable = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"permission_enable"'}
+        ];     
 }

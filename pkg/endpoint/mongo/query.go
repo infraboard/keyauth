@@ -63,16 +63,22 @@ func (r *queryEndpointRequest) FindFilter() bson.M {
 		filter["service_id"] = r.ServiceId
 	}
 	if r.Method != "" {
-		filter["method"] = r.Method
+		filter["entry.method"] = r.Method
 	}
 	if r.Resource != "" {
-		filter["resource"] = r.Resource
+		filter["entry.resource"] = r.Resource
 	}
 	if r.Path != "" {
-		filter["path"] = bson.M{"$regex": r.Path, "$options": "im"}
+		filter["entry.path"] = bson.M{"$regex": r.Path, "$options": "im"}
 	}
 	if r.FunctionName != "" {
-		filter["function_name"] = r.FunctionName
+		filter["entry.function_name"] = r.FunctionName
+	}
+	switch r.PermissionEnable {
+	case endpoint.BoolQuery_TRUE:
+		filter["entry.permission_enable"] = true
+	case endpoint.BoolQuery_FALSE:
+		filter["entry.permission_enable"] = false
 	}
 
 	return filter

@@ -20,6 +20,7 @@ func (s *service) QueryResources(ctx context.Context, req *endpoint.QueryResourc
 
 	rs := endpoint.NewResourceSet()
 	queryE := endpoint.NewQueryEndpointRequest(request.NewPageRequest(MaxQueryEndpoints, 1))
+	queryE.PermissionEnable = req.PermissionEnable
 	for _, id := range req.ServiceIds {
 		queryE.ServiceId = id
 		eps, err := s.QueryEndpoints(ctx, queryE)
