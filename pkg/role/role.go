@@ -54,7 +54,7 @@ func (r *Role) HasPermission(ep *endpoint.Endpoint) (*Permission, bool, error) {
 		rok, lok bool
 	)
 	for i := range r.Permissions {
-		rok = r.Permissions[i].MatchResource(ep.Entry.Resource)
+		rok = r.Permissions[i].MatchResource(ep.ServiceId, ep.Entry.Resource)
 		lok = r.Permissions[i].MatchLabel(ep.Entry.Labels)
 		if rok && lok {
 			return r.Permissions[i], true, nil
@@ -167,11 +167,18 @@ func (p *Permission) ID(namespace string) string {
 }
 
 // MatchResource 检测资源是否匹配
-func (p *Permission) MatchResource(r string) bool {
-	if p.ResourceName == "*" {
-		return true
+func (p *Permission) MatchResource(serviceID, resourceName string) bool {
+	// 服务匹配
+	if p.ServiceId != "*" && p.ServiceId != serviceID {
+		return false
 	}
-	return p.ResourceName == r
+
+	// 资源匹配
+	if p.ResourceName != "*" && p.ResourceName != resourceName {
+		return false
+	}
+
+	return true
 }
 
 // MatchLabel 匹配Label

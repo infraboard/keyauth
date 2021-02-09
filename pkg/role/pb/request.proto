@@ -32,23 +32,27 @@ message CreateRoleRequest {
 message Permission {
      // 效力
     EffectType effect = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"effect" json:"effect,omitempty"'}
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"effect" json:"effect"'}
+        ];
+    // 服务ID
+    string service_id = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"service_id" json:"service_id"'}
         ];
     // 资源列表
-    string resource_name = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"resource_name" json:"resource_name,omitempty"'}
+    string resource_name = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"resource_name" json:"resource_name"'}
         ];
     // 维度
-    string label_key = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"label_key" json:"label_key,omitempty"'}
+    string label_key = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"label_key" json:"label_key"'}
         ];
     // 适配所有值
-    bool match_all = 4[
+    bool match_all = 5[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"match_all" json:"match_all"'}
         ];
     // 标识值
-    repeated string label_values = 5[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"label_values" json:"label_values,omitempty"'}
+    repeated string label_values = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"label_values" json:"label_values"'}
         ]; 
 }
 

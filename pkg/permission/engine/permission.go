@@ -66,7 +66,7 @@ func (s *service) CheckPermission(ctx context.Context, req *permission.CheckPerm
 		return nil, exception.NewBadRequest("validate param error, %s", err)
 	}
 
-	rset, err := s.QueryRoles(ctx, permission.NewQueryRoleRequest(req.NamespaceId))
+	roleSet, err := s.QueryRoles(ctx, permission.NewQueryRoleRequest(req.NamespaceId))
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +76,7 @@ func (s *service) CheckPermission(ctx context.Context, req *permission.CheckPerm
 		return nil, err
 	}
 
-	p, ok, err := rset.HasPermission(ep)
+	p, ok, err := roleSet.HasPermission(ep)
 	if err != nil {
 		return nil, err
 	}

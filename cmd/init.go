@@ -291,6 +291,7 @@ func (i *Initialer) getAdminToken(app *application.Application) error {
 
 func (i *Initialer) initRole() ([]*role.Role, error) {
 	admin := role.NewDefaultPermission()
+	admin.ServiceId = "*"
 	admin.ResourceName = "*"
 	admin.LabelKey = "*"
 	admin.LabelValues = []string{"*"}
@@ -306,6 +307,7 @@ func (i *Initialer) initRole() ([]*role.Role, error) {
 	}
 
 	vistor := role.NewDefaultPermission()
+	vistor.ServiceId = "*"
 	vistor.ResourceName = "*"
 	vistor.LabelKey = label.ActionLableKey
 	vistor.LabelValues = []string{label.Get.Value(), label.List.Value()}
