@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/router"
 	"github.com/infraboard/mcube/types/ftime"
@@ -116,9 +117,24 @@ func NewDeleteEndpointRequestWithServiceID(id string) *DeleteEndpointRequest {
 func NewQueryResourceRequestFromHTTP(r *http.Request) *QueryResourceRequest {
 	page := request.NewPageRequestFromHTTP(r)
 	qs := r.URL.Query()
+	strIds := qs.Get("service_ids")
 
-	return &QueryResourceRequest{
-		Page:       &page.PageRequest,
-		ServiceIds: strings.Split(qs.Get("service_ids"), ","),
+	query := &QueryResourceRequest{
+		Page: &page.PageRequest,
 	}
+
+	if strIds != "" {
+		query.ServiceIds = strings.Split(strIds, ",")
+	}
+
+	return query
+}
+
+// Validate todo
+func (req *QueryResourceRequest) Validate() error {
+	if len(req.ServiceIds) == 0 {
+		return exception.NewBadRequest("service_ids required, but \"\"")
+	}
+
+	return nil
 }

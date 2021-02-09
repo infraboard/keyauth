@@ -8,8 +8,8 @@ import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
 // Resource todo
 message Resource {
     // 资源所属服务名称
-    string service_name = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"name"'}
+    string service_id = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"service_id"'}
         ];
     // 资源名称
     string name = 2[

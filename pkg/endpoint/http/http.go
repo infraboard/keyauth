@@ -28,7 +28,7 @@ func (h *handler) Registry(router router.SubRouter) {
 
 	rr := router.ResourceRouter("resource")
 	rr.BasePath("resources")
-	r.Handle("GET", "/", h.ListResource).AddLabel(label.List)
+	rr.Handle("GET", "/", h.ListResource).AddLabel(label.List)
 }
 
 func (h *handler) Config() error {

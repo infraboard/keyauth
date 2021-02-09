@@ -67,3 +67,92 @@ func NewEndpointSet() *Set {
 func (s *Set) Add(e *Endpoint) {
 	s.Items = append(s.Items, e)
 }
+
+// UpdatePath todo
+func (r *Resource) UpdatePath(path string) {
+	for _, p := range r.Paths {
+		if p == path {
+			return
+		}
+	}
+
+	r.Paths = append(r.Paths, path)
+}
+
+// UpdateMethod todo
+func (r *Resource) UpdateMethod(mothod string) {
+	for _, p := range r.Methods {
+		if p == mothod {
+			return
+		}
+	}
+
+	r.Methods = append(r.Methods, mothod)
+}
+
+// UpdateFunction todo
+func (r *Resource) UpdateFunction(fuction string) {
+	for _, p := range r.Functions {
+		if p == fuction {
+			return
+		}
+	}
+
+	r.Functions = append(r.Functions, fuction)
+}
+
+// UpdateAction todo
+func (r *Resource) UpdateAction(action string) {
+	for _, p := range r.Actions {
+		if p == action {
+			return
+		}
+	}
+
+	r.Actions = append(r.Actions, action)
+}
+
+// NewResourceSet todo
+func NewResourceSet() *ResourceSet {
+	return &ResourceSet{
+		Items: []*Resource{},
+	}
+}
+
+// AddEndpointSet todo
+func (s *ResourceSet) AddEndpointSet(eps *Set) {
+	for i := range eps.Items {
+		s.addEndpint(eps.Items[i])
+	}
+}
+
+func (s *ResourceSet) addEndpint(ep *Endpoint) {
+	if ep.Entry == nil {
+		return
+	}
+
+	rs := s.getOrCreateResource(ep.ServiceId, ep.Entry.Resource)
+	rs.UpdateMethod(ep.Entry.Method)
+	rs.UpdatePath(ep.Entry.Path)
+	rs.UpdateFunction(ep.Entry.FunctionName)
+	if v, ok := ep.Entry.Labels["action"]; ok {
+		rs.UpdateAction(v)
+	}
+
+	s.Items = append(s.Items, rs)
+}
+
+func (s *ResourceSet) getOrCreateResource(serviceID, name string) *Resource {
+	var rs *Resource
+	for i := range s.Items {
+		rs = s.Items[i]
+		if rs.ServiceId == serviceID && rs.Name == name {
+			return rs
+		}
+	}
+
+	return &Resource{
+		ServiceId: serviceID,
+		Name:      name,
+	}
+}
