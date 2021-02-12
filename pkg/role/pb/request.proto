@@ -15,15 +15,15 @@ message CreateRoleRequest {
         ];
     // 应用名称
     string name = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"name" json:"name,omitempty" validate:"required,lte=30"'}
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"name" json:"name" validate:"required,lte=30"'}
         ];
     // 应用简单的描述
     string description =3[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"description" json:"description,omitempty" validate:"lte=400"'}
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"description" json:"description" validate:"lte=400"'}
         ];
     // 读权限
     repeated Permission permissions = 4[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"permissions" json:"permissions,omitempty"'}
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"permissions" json:"permissions"'}
         ];                   
 }
 

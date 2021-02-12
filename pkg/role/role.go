@@ -150,8 +150,8 @@ func NewDefaultPermission() *Permission {
 
 // Validate todo
 func (p *Permission) Validate() error {
-	if p.ResourceName == "" || p.LabelKey == "" {
-		return fmt.Errorf("permisson required resource_name and label_key")
+	if p.ServiceId == "" || p.ResourceName == "" || p.LabelKey == "" {
+		return fmt.Errorf("permisson required service_id, resource_name and label_key")
 	}
 
 	if len(p.LabelValues) == 0 {
