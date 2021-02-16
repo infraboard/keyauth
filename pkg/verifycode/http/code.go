@@ -1,6 +1,7 @@
 package http
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/infraboard/mcube/http/request"
@@ -20,7 +21,7 @@ func (h *handler) IssueCodeByPass(w http.ResponseWriter, r *http.Request) {
 	}
 
 	req.IssueType = verifycode.IssueType_PASS
-	code, err := h.service.IssueCode(nil, req)
+	code, err := h.service.IssueCode(context.Background(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return
