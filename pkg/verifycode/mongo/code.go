@@ -46,7 +46,7 @@ func (s *service) IssueCode(ctx context.Context, req *verifycode.IssueCodeReques
 			return nil, err
 		}
 	case verifycode.IssueType_TOKEN:
-		return nil, fmt.Errorf("not impl")
+		tk = session.GetTokenFromContext(ctx)
 	default:
 		return nil, fmt.Errorf("unknown issue_type %s", req.IssueType)
 	}
