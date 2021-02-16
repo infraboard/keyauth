@@ -65,14 +65,15 @@ func (c *checker) MaxFailedRetryCheck(ctx context.Context, req *token.IssueToken
 	c.log.Debugf("max failed retry lock check enabled, checking ...")
 
 	var count uint32
-	err := c.cache.Get(req.AbnormalUserCheckKey(), count)
+	err := c.cache.Get(req.AbnormalUserCheckKey(), &count)
 	if err != nil {
 		c.log.Errorf("get key %s from cache error, %s", req.AbnormalUserCheckKey(), err)
 	}
 
 	rc := ss.LoginSecurity.RetryLockConfig
+	c.log.Debugf("retry times: %d, retry limite: %d", count, rc.RetryLimite)
 	if count > rc.RetryLimite {
-		return fmt.Errorf("retry %d times, reach the max(%d) retry limit", count, rc.RetryLimite)
+		return fmt.Errorf("retry %d times, reach the max(%d) retry limit, lock minite %d", count, rc.RetryLimite, rc.LockedMinite)
 	}
 
 	return nil
@@ -85,8 +86,10 @@ func (c *checker) UpdateFailedRetry(ctx context.Context, req *token.IssueTokenRe
 		return nil
 	}
 
+	c.log.Debugf("update failed retry count, check key: %s", req.AbnormalUserCheckKey())
+
 	var count int
-	if c.cache.IsExist(req.AbnormalUserCheckKey()) {
+	if err := c.cache.Get(req.AbnormalUserCheckKey(), &count); err == nil {
 		// 之前已经登陆失败过
 		err := c.cache.Put(req.AbnormalUserCheckKey(), count+1)
 		if err != nil {

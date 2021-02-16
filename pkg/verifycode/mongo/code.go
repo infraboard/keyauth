@@ -8,6 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
+	"github.com/infraboard/keyauth/common/session"
 	"github.com/infraboard/keyauth/pkg/system/notify"
 	"github.com/infraboard/keyauth/pkg/system/notify/mail"
 	"github.com/infraboard/keyauth/pkg/system/notify/sms"
@@ -16,7 +17,8 @@ import (
 	"github.com/infraboard/keyauth/pkg/verifycode"
 )
 
-func (s *service) IssueCode(ctx context.Context, req *verifycode.IssueCodeRequest) (*verifycode.IssueCodeResponse, error) {
+func (s *service) IssueCode(ctx context.Context, req *verifycode.IssueCodeRequest) (
+	*verifycode.IssueCodeResponse, error) {
 	code, err := verifycode.NewCode(req)
 	if err != nil {
 		return nil, err
@@ -31,8 +33,10 @@ func (s *service) IssueCode(ctx context.Context, req *verifycode.IssueCodeReques
 	}
 
 	// 如果是issue by pass, 这要检测
-	if req.IssueType.Equal(verifycode.IssueType_PASS) {
-		_, err = s.issuer.IssueToken(ctx, token.NewIssueTokenByPassword(
+	var tk *token.Token
+	switch req.IssueType {
+	case verifycode.IssueType_PASS:
+		tk, err = s.issuer.IssueToken(ctx, token.NewIssueTokenByPassword(
 			req.ClientId,
 			req.ClientSecret,
 			req.Username,
@@ -41,6 +45,10 @@ func (s *service) IssueCode(ctx context.Context, req *verifycode.IssueCodeReques
 		if err != nil {
 			return nil, err
 		}
+	case verifycode.IssueType_TOKEN:
+		return nil, fmt.Errorf("not impl")
+	default:
+		return nil, fmt.Errorf("unknown issue_type %s", req.IssueType)
 	}
 
 	if _, err := s.col.InsertOne(context.TODO(), code); err != nil {
@@ -49,6 +57,7 @@ func (s *service) IssueCode(ctx context.Context, req *verifycode.IssueCodeReques
 	}
 
 	// 发送验证码
+	ctx = session.WithTokenContext(context.Background(), tk)
 	msg, err := s.sendCode(ctx, code)
 	if err != nil {
 		return nil, exception.NewInternalServerError("send verify code error, %s", err)
