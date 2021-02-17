@@ -2,6 +2,7 @@ package verifycode
 
 import (
 	"fmt"
+	"hash/fnv"
 	"math/rand"
 	"strconv"
 	"strings"
@@ -23,18 +24,14 @@ func NewCode(req *IssueCodeRequest) (*Code, error) {
 		return nil, exception.NewBadRequest("validate issue code request error, %s", err)
 	}
 
-	cr := CheckCodeRequest{
-		Number:   GenRandomCode(6),
-		Username: req.Account(),
-	}
-
 	c := &Code{
-		Id:            cr.HashID(),
+		Number:        GenRandomCode(6),
 		Username:      req.Account(),
 		IssueAt:       ftime.Now().Timestamp(),
 		ExpiredMinite: 10,
 	}
 
+	c.Id = HashID(c.Username, c.Number)
 	return c, nil
 }
 
@@ -51,6 +48,14 @@ func (c *Code) IsExpired() bool {
 // ExpiredMiniteString todo
 func (c *Code) ExpiredMiniteString() string {
 	return fmt.Sprintf("%d", c.ExpiredMinite)
+}
+
+// HashID todo
+func HashID(username, number string) string {
+	hash := fnv.New32a()
+	hash.Write([]byte(username))
+	hash.Write([]byte(number))
+	return fmt.Sprintf("%x", hash.Sum32())
 }
 
 // NewDefaultConfig todo
