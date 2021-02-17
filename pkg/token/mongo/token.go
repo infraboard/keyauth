@@ -51,7 +51,7 @@ func (s *service) IssueToken(ctx context.Context, req *token.IssueTokenRequest) 
 func (s *service) loginBeforeCheck(ctx context.Context, req *token.IssueTokenRequest) error {
 	// 连续登录失败检测
 	if err := s.checker.MaxFailedRetryCheck(ctx, req); err != nil {
-		return exception.NewBadRequest("max retry error, %s", err)
+		return exception.NewBadRequest("%s", err)
 	}
 
 	// IP保护检测

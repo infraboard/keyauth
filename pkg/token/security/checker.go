@@ -72,8 +72,8 @@ func (c *checker) MaxFailedRetryCheck(ctx context.Context, req *token.IssueToken
 
 	rc := ss.LoginSecurity.RetryLockConfig
 	c.log.Debugf("retry times: %d, retry limite: %d", count, rc.RetryLimite)
-	if count > rc.RetryLimite {
-		return fmt.Errorf("retry %d times, reach the max(%d) retry limit, lock minite %d", count, rc.RetryLimite, rc.LockedMinite)
+	if count+1 >= rc.RetryLimite {
+		return fmt.Errorf("登录失败次数过多, 请%d分钟后重试", rc.LockedMinite)
 	}
 
 	return nil
