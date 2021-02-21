@@ -48,6 +48,10 @@ func NewDepartment(ctx context.Context, req *CreateDepartmentRequest, d Departme
 		}
 		ins.ParentPath = pd.Path()
 		ins.Grade = int32(len(strings.Split(pd.Path(), ".")))
+	} else {
+		ins.ParentId = "."
+		ins.ParentPath = "."
+		ins.Grade = 1
 	}
 
 	if req.Manager == "" {
