@@ -40,7 +40,11 @@ func (r *queryDepartmentRequest) FindFilter() bson.M {
 	tk := r.tk
 	filter["domain"] = tk.Domain
 	if r.ParentId != "" {
-		filter["parent_id"] = r.ParentId
+		if r.ParentId == "." {
+			filter["parent_id"] = ""
+		} else {
+			filter["parent_id"] = r.ParentId
+		}
 	}
 	if r.Keywords != "" {
 		filter["$or"] = bson.A{
