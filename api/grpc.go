@@ -34,14 +34,10 @@ type GRPCService struct {
 // Start 启动GRPC服务
 func (s *GRPCService) Start() error {
 	// 装载所有GRPC服务
-	if err := pkg.InitV1GRPCAPI(s.svr); err != nil {
-		return err
-	}
-
-	// GRPC 服务无效注册Endpoint
+	pkg.InitV1GRPCAPI(s.svr)
 
 	// 启动HTTP服务
-	s.l.Infof("GRPC 开始启动, 监听地址: %s ...", s.c.App.GRPCAddr())
+	s.l.Infof("GRPC 开始启动, 监听地址: %s", s.c.App.GRPCAddr())
 	lis, err := net.Listen("tcp", s.c.App.GRPCAddr())
 	if err != nil {
 		log.Fatal(err)

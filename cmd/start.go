@@ -106,7 +106,6 @@ type service struct {
 func (s *service) start() error {
 	s.log.Infof("loaded domain pkg: %v", pkg.LoadedService())
 	s.log.Infof("loaded http service: %s", pkg.LoadedHTTP())
-	s.log.Infof("loaded grpc service: %s", pkg.LoadedGRPC())
 	go s.grpc.Start()
 	return s.http.Start()
 }

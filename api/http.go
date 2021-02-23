@@ -71,10 +71,10 @@ func (s *HTTPService) Start() error {
 	if err := s.RegistryEndpoints(); err != nil {
 		s.l.Warnf("registry endpoints error, %s", err)
 	}
-	s.l.Infof("service endpoints registry success: \n%s", s.r.GetEndpoints())
+	s.l.Debug("service endpoints registry success")
 
 	// 启动HTTP服务
-	s.l.Infof("HTTP 服务开始启动, 监听地址: %s ...", s.server.Addr)
+	s.l.Infof("HTTP 服务开始启动, 监听地址: %s", s.server.Addr)
 	if err := s.server.ListenAndServe(); err != nil {
 		if err == http.ErrServerClosed {
 			s.l.Info("service is stopped")

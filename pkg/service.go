@@ -22,6 +22,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
 	"github.com/infraboard/keyauth/pkg/verifycode"
+	"google.golang.org/grpc"
 )
 
 var (
@@ -73,6 +74,26 @@ var (
 	servers       []Service
 	successLoaded []string
 )
+
+// InitV1GRPCAPI 初始化API服务
+func InitV1GRPCAPI(server *grpc.Server) {
+	domain.RegisterDomainServiceServer(server, Domain)
+	user.RegisterUserServiceServer(server, User)
+	application.RegisterAdminServiceServer(server, ApplicationAdmin)
+	application.RegisterUserServiceServer(server, ApplicationUser)
+	token.RegisterTokenServiceServer(server, Token)
+	micro.RegisterMicroServiceServer(server, Micro)
+	role.RegisterRoleServiceServer(server, Role)
+	endpoint.RegisterEndpointServiceServer(server, Endpoint)
+	policy.RegisterPolicyServiceServer(server, Policy)
+	department.RegisterDepartmentServiceServer(server, Department)
+	namespace.RegisterNamespaceServiceServer(server, Namespace)
+	permission.RegisterPermissionServiceServer(server, Permission)
+	session.RegisterAdminServiceServer(server, SessionAdmin)
+	session.RegisterUserServiceServer(server, SessionUser)
+	verifycode.RegisterVerifyCodeServiceServer(server, VerifyCode)
+	return
+}
 
 // LoadedService 查询加载成功的服务
 func LoadedService() []string {
