@@ -30,14 +30,13 @@ func GetInternalAdminTokenCtx(account string) context.Context {
 
 // NewInternalAuther 内部使用的auther
 func NewInternalAuther() router.Auther {
-	return &internal{}
+	return &httpAuther{}
 }
 
 // internal todo
-type internal struct {
-}
+type httpAuther struct{}
 
-func (i *internal) Auth(r *http.Request, entry router.Entry) (
+func (i *httpAuther) Auth(r *http.Request, entry router.Entry) (
 	authInfo interface{}, err error) {
 	var tk *token.Token
 	if entry.AuthEnable {
@@ -79,7 +78,7 @@ func (i *internal) Auth(r *http.Request, entry router.Entry) (
 	return tk, nil
 }
 
-func (i *internal) endpointHashID(entry router.Entry) string {
+func (i *httpAuther) endpointHashID(entry router.Entry) string {
 	return endpoint.GenHashID(version.ServiceName, entry.Path, entry.Method)
 }
 

@@ -9,13 +9,16 @@ import (
 	"github.com/infraboard/mcube/logger/zap"
 	"google.golang.org/grpc"
 
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
 )
 
 // NewGRPCService todo
 func NewGRPCService() *GRPCService {
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
+		pkg.GRPCAuther.Filter,
+	)))
 
 	return &GRPCService{
 		svr: grpcServer,

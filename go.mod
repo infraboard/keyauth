@@ -9,6 +9,7 @@ require (
 	github.com/go-ldap/ldap/v3 v3.2.4
 	github.com/go-playground/validator/v10 v10.4.1
 	github.com/golang/protobuf v1.4.3
+	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2 // indirect
 	github.com/infraboard/mcube v0.7.0
 	github.com/infraboard/protoc-gen-go-ext v0.0.2
 	github.com/mattn/go-colorable v0.1.8 // indirect
