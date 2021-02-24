@@ -92,7 +92,7 @@ func (h *handler) DestroyService(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func (h *handler) RefreshServiceClientCredential(w http.ResponseWriter, r *http.Request) {
+func (h *handler) RefreshServiceClientSecret(w http.ResponseWriter, r *http.Request) {
 	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
