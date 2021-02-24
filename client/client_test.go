@@ -13,7 +13,9 @@ import (
 
 func Test_Client(t *testing.T) {
 	should := assert.New(t)
-	c, err := client.NewClient(client.NewDefaultConfig())
+	conf := client.NewDefaultConfig()
+	conf.SetPasswordCredentials("user", "pass")
+	c, err := client.NewClient(conf)
 	if should.NoError(err) {
 		page := request.NewPageRequest(20, 1)
 		eps, err := c.Endpoint().QueryEndpoints(context.Background(), endpoint.NewQueryEndpointRequest(page))

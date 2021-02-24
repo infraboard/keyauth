@@ -17,7 +17,7 @@ import (
 // NewGRPCService todo
 func NewGRPCService() *GRPCService {
 	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
-		pkg.GRPCAuther.Filter,
+		pkg.AuthUnaryServerInterceptor(),
 	)))
 
 	return &GRPCService{
