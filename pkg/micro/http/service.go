@@ -103,7 +103,7 @@ func (h *handler) RefreshServiceClientCredential(w http.ResponseWriter, r *http.
 	req := micro.NewDescribeServiceRequest()
 	req.Id = rctx.PS.ByName("id")
 
-	d, err := h.service.RefreshServiceClientCredential(ctx, req)
+	d, err := h.service.RefreshServiceClientSecret(ctx, req)
 	if err != nil {
 		response.Failed(w, err)
 		return

@@ -153,16 +153,14 @@ func (s *service) DescribeService(ctx context.Context, req *micro.DescribeMicroR
 	return ins, nil
 }
 
-func (s *service) RefreshServiceClientCredential(ctx context.Context, req *micro.DescribeMicroRequest) (
+func (s *service) RefreshServiceClientSecret(ctx context.Context, req *micro.DescribeMicroRequest) (
 	*micro.Micro, error) {
 	ins, err := s.DescribeService(ctx, req)
 	if err != nil {
 		return nil, err
 	}
 
-	ins.ClientId = token.MakeBearer(16)
-	ins.ClientSecret = token.MakeBearer(16)
-
+	ins.ClientSecret = token.MakeBearer(24)
 	if err := s.update(ins); err != nil {
 		return nil, err
 	}

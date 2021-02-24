@@ -12,5 +12,5 @@ service MicroService {
 	rpc QueryService(QueryMicroRequest) returns(Set);
 	rpc DescribeService(DescribeMicroRequest) returns(Micro);
 	rpc DeleteService(DeleteMicroRequest) returns(Micro);
-	rpc RefreshServiceClientCredential(DescribeMicroRequest) returns(Micro);
+	rpc RefreshServiceClientSecret(DescribeMicroRequest) returns(Micro);
 }
