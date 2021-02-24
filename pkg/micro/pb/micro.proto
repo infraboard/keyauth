@@ -32,13 +32,13 @@ message Micro {
     string account = 6[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"account" json:"account"'}
         ];
-    // 服务访问凭证
-    string access_token = 7[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"access_token" json:"access_token"'}
+    // 服务客户端ID
+    string client_id = 7[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"client_id" json:"client_id"'}
         ];
-    // 服务刷新凭证
-    string refresh_token = 8[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"refresh_token" json:"-"'}
+    // 服务客户端凭证
+    string client_secret = 8[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"client_secret" json:"client_secret"'}
         ];
     // 是否启用该服务
     bool enabled = 9[
@@ -60,14 +60,6 @@ message Micro {
     string description = 13[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"description" json:"description,omitempty"'}
         ];
-    // 凭证申请的token的过期时间
-    int64 token_expire_time = 14[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"token_expire_time" json:"token_expire_time,omitempty"'}
-        ];
-    // 服务角色
-    string role_id = 15[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"role_id" json:"role_id,omitempty"'}
-        ]; 
 }
 
 message Set {

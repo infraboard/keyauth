@@ -59,7 +59,7 @@ func (s *service) configService() error {
 			Options: options.Index().SetUnique(true),
 		},
 		{
-			Keys: bsonx.Doc{{Key: "account", Value: bsonx.Int32(-1)}},
+			Keys: bsonx.Doc{{Key: "client_id", Value: bsonx.Int32(-1)}},
 		},
 		{
 			Keys: bsonx.Doc{{Key: "create_at", Value: bsonx.Int32(-1)}},

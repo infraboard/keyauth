@@ -4,7 +4,6 @@ package micro
 
 import (
 	context "context"
-	token "github.com/infraboard/keyauth/pkg/token"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -22,7 +21,7 @@ type MicroServiceClient interface {
 	QueryService(ctx context.Context, in *QueryMicroRequest, opts ...grpc.CallOption) (*Set, error)
 	DescribeService(ctx context.Context, in *DescribeMicroRequest, opts ...grpc.CallOption) (*Micro, error)
 	DeleteService(ctx context.Context, in *DeleteMicroRequest, opts ...grpc.CallOption) (*Micro, error)
-	RefreshServiceToken(ctx context.Context, in *DescribeMicroRequest, opts ...grpc.CallOption) (*token.Token, error)
+	RefreshServiceClientCredential(ctx context.Context, in *DescribeMicroRequest, opts ...grpc.CallOption) (*Micro, error)
 }
 
 type microServiceClient struct {
@@ -69,9 +68,9 @@ func (c *microServiceClient) DeleteService(ctx context.Context, in *DeleteMicroR
 	return out, nil
 }
 
-func (c *microServiceClient) RefreshServiceToken(ctx context.Context, in *DescribeMicroRequest, opts ...grpc.CallOption) (*token.Token, error) {
-	out := new(token.Token)
-	err := c.cc.Invoke(ctx, "/keyauth.micro.MicroService/RefreshServiceToken", in, out, opts...)
+func (c *microServiceClient) RefreshServiceClientCredential(ctx context.Context, in *DescribeMicroRequest, opts ...grpc.CallOption) (*Micro, error) {
+	out := new(Micro)
+	err := c.cc.Invoke(ctx, "/keyauth.micro.MicroService/RefreshServiceClientCredential", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +85,7 @@ type MicroServiceServer interface {
 	QueryService(context.Context, *QueryMicroRequest) (*Set, error)
 	DescribeService(context.Context, *DescribeMicroRequest) (*Micro, error)
 	DeleteService(context.Context, *DeleteMicroRequest) (*Micro, error)
-	RefreshServiceToken(context.Context, *DescribeMicroRequest) (*token.Token, error)
+	RefreshServiceClientCredential(context.Context, *DescribeMicroRequest) (*Micro, error)
 	mustEmbedUnimplementedMicroServiceServer()
 }
 
@@ -106,8 +105,8 @@ func (UnimplementedMicroServiceServer) DescribeService(context.Context, *Describ
 func (UnimplementedMicroServiceServer) DeleteService(context.Context, *DeleteMicroRequest) (*Micro, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteService not implemented")
 }
-func (UnimplementedMicroServiceServer) RefreshServiceToken(context.Context, *DescribeMicroRequest) (*token.Token, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RefreshServiceToken not implemented")
+func (UnimplementedMicroServiceServer) RefreshServiceClientCredential(context.Context, *DescribeMicroRequest) (*Micro, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RefreshServiceClientCredential not implemented")
 }
 func (UnimplementedMicroServiceServer) mustEmbedUnimplementedMicroServiceServer() {}
 
@@ -194,20 +193,20 @@ func _MicroService_DeleteService_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MicroService_RefreshServiceToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _MicroService_RefreshServiceClientCredential_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DescribeMicroRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MicroServiceServer).RefreshServiceToken(ctx, in)
+		return srv.(MicroServiceServer).RefreshServiceClientCredential(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.micro.MicroService/RefreshServiceToken",
+		FullMethod: "/keyauth.micro.MicroService/RefreshServiceClientCredential",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MicroServiceServer).RefreshServiceToken(ctx, req.(*DescribeMicroRequest))
+		return srv.(MicroServiceServer).RefreshServiceClientCredential(ctx, req.(*DescribeMicroRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -233,8 +232,8 @@ var _MicroService_serviceDesc = grpc.ServiceDesc{
 			Handler:    _MicroService_DeleteService_Handler,
 		},
 		{
-			MethodName: "RefreshServiceToken",
-			Handler:    _MicroService_RefreshServiceToken_Handler,
+			MethodName: "RefreshServiceClientCredential",
+			Handler:    _MicroService_RefreshServiceClientCredential_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

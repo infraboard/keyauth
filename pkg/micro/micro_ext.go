@@ -2,6 +2,7 @@ package micro
 
 import (
 	"github.com/go-playground/validator/v10"
+	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/types/ftime"
 	"github.com/rs/xid"
@@ -19,19 +20,24 @@ func New(req *CreateMicroRequest) (*Micro, error) {
 	}
 
 	ins := &Micro{
-		Id:              xid.New().String(),
-		CreateAt:        ftime.Now().Timestamp(),
-		UpdateAt:        ftime.Now().Timestamp(),
-		Enabled:         true,
-		Type:            req.Type,
-		Name:            req.Name,
-		Label:           req.Label,
-		Description:     req.Description,
-		TokenExpireTime: req.TokenExpireTime,
-		RoleId:          req.RoleId,
+		Id:           xid.New().String(),
+		CreateAt:     ftime.Now().Timestamp(),
+		UpdateAt:     ftime.Now().Timestamp(),
+		Enabled:      true,
+		Type:         req.Type,
+		Name:         req.Name,
+		Label:        req.Label,
+		Description:  req.Description,
+		ClientId:     token.MakeBearer(16),
+		ClientSecret: token.MakeBearer(24),
 	}
 
 	return ins, nil
+}
+
+// ValiateClientCredential todo
+func (m *Micro) ValiateClientCredential(clientSecret string) bool {
+	return m.ClientSecret != clientSecret
 }
 
 // NewCreateMicroRequest todo

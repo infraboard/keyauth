@@ -7,7 +7,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"github.com/infraboard/keyauth/common/session"
 	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/micro"
 )
@@ -66,12 +65,14 @@ func (s *service) Registry(ctx context.Context, req *endpoint.RegistryRequest) (
 		return nil, exception.NewBadRequest(err.Error())
 	}
 
-	tk := session.GetTokenFromContext(ctx)
-
 	// 查询该服务
-	svr, err := s.micro.DescribeService(ctx, micro.NewDescribeServiceRequestWithAccount(tk.Account))
+	svr, err := s.micro.DescribeService(ctx, micro.NewDescribeServiceRequestWithClientID(req.ClientId))
 	if err != nil {
 		return nil, err
+	}
+
+	if svr.ValiateClientCredential(req.ClientSecret) {
+		return nil, exception.NewUnauthorized("service client secret is invalidate")
 	}
 
 	// 生产该服务的Endpoint

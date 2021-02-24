@@ -32,8 +32,7 @@ func (h *handler) Registry(router router.SubRouter) {
 
 	r = r.ResourceRouter("service_token")
 	r.BasePath(":id/token")
-	r.Handle("GET", "/", h.GetServiceToken).AddLabel(label.Get)
-	r.Handle("POST", "/", h.RefreshServiceToken).AddLabel(label.Create)
+	r.Handle("POST", "/", h.RefreshServiceClientCredential).AddLabel(label.Create)
 }
 
 func (h *handler) Config() error {

@@ -14,13 +14,10 @@ import (
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
 
-	"github.com/infraboard/keyauth/common/session"
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/micro"
-	"github.com/infraboard/keyauth/pkg/token"
-	"github.com/infraboard/keyauth/pkg/user/types"
 	"github.com/infraboard/keyauth/version"
 )
 
@@ -105,9 +102,11 @@ func (s *HTTPService) RegistryEndpoints() error {
 		return fmt.Errorf("dependence micro service is nil")
 	}
 
+	internalCtx := pkg.GetInternalAdminTokenCtx("internal")
+
 	desc := micro.NewDescribeServiceRequest()
 	desc.Name = version.ServiceName
-	svr, err := pkg.Micro.DescribeService(pkg.GetInternalAdminTokenCtx("internal"), desc)
+	svr, err := pkg.Micro.DescribeService(internalCtx, desc)
 	if err != nil {
 		return err
 	}
@@ -116,13 +115,9 @@ func (s *HTTPService) RegistryEndpoints() error {
 		return fmt.Errorf("dependence endpoint service is nil")
 	}
 
-	tk := token.NewDefaultToken()
-	tk.AccessToken = svr.AccessToken
-	tk.RefreshToken = svr.RefreshToken
-	tk.UserType = types.UserType_SERVICE
-	tk.Account = svr.Name
 	req := endpoint.NewRegistryRequest(version.Short(), s.r.GetEndpoints().Items)
-	ctx := session.WithTokenContext(context.Background(), tk)
-	_, err = pkg.Endpoint.Registry(ctx, req)
+	req.ClientId = svr.ClientId
+	req.ClientSecret = svr.ClientSecret
+	_, err = pkg.Endpoint.Registry(internalCtx, req)
 	return err
 }

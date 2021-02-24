@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/infraboard/mcube/exception"
-	"github.com/rs/xid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
@@ -31,29 +30,8 @@ func (s *service) CreateService(ctx context.Context, req *micro.CreateMicroReque
 		return nil, exception.NewPermissionDeny("token required")
 	}
 
-	user, pass := ins.Name, xid.New().String()
-	// 创建服务用户
-	account, err := s.createServiceAccount(ctx, user, pass)
-	if err != nil {
-		return nil, exception.NewInternalServerError("create service account error, %s", err)
-	}
-	ins.Account = account.Account
-
-	// 使用用户创建服务访问Token
-	svrTK, err := s.createServiceToken(tk.GetUserAgent(), tk.GetRemoteIP(), user, pass)
-	if err != nil {
-		return nil, exception.NewInternalServerError("create service token error, %s", err)
-	}
-	ins.AccessToken = svrTK.AccessToken
-	ins.RefreshToken = svrTK.RefreshToken
-	ins.Creater = svrTK.Account
-	ins.Domain = svrTK.Domain
-
-	// 为服务用户添加策略
-	_, err = s.createPolicy(ctx, ins.Account, req.RoleId)
-	if err != nil {
-		s.log.Errorf("create service: %s policy error, %s", ins.Name, err)
-	}
+	ins.Creater = tk.Account
+	ins.Domain = tk.Domain
 
 	if _, err := s.scol.InsertOne(context.TODO(), ins); err != nil {
 		return nil, exception.NewInternalServerError("inserted a service document error, %s", err)
@@ -175,27 +153,21 @@ func (s *service) DescribeService(ctx context.Context, req *micro.DescribeMicroR
 	return ins, nil
 }
 
-func (s *service) RefreshServiceToken(ctx context.Context, req *micro.DescribeMicroRequest) (
-	*token.Token, error) {
+func (s *service) RefreshServiceClientCredential(ctx context.Context, req *micro.DescribeMicroRequest) (
+	*micro.Micro, error) {
 	ins, err := s.DescribeService(ctx, req)
 	if err != nil {
 		return nil, err
 	}
 
-	tk, err := s.refreshServiceToken(ins.AccessToken, ins.RefreshToken)
-	if err != nil {
-		return nil, err
-	}
-
-	ins.AccessToken = tk.AccessToken
-	ins.RefreshToken = tk.RefreshToken
-	tk.Desensitize()
+	ins.ClientId = token.MakeBearer(16)
+	ins.ClientSecret = token.MakeBearer(16)
 
 	if err := s.update(ins); err != nil {
 		return nil, err
 	}
 
-	return tk, nil
+	return ins, nil
 }
 
 func (s *service) DeleteService(ctx context.Context, req *micro.DeleteMicroRequest) (*micro.Micro, error) {
@@ -232,12 +204,6 @@ func (s *service) DeleteService(ctx context.Context, req *micro.DeleteMicroReque
 	_, err = s.endpoint.DeleteEndpoint(ctx, deReq)
 	if err != nil {
 		s.log.Errorf("delete service endpoint error, %s", err)
-	}
-
-	// 删除服务的Token
-	err = s.revolkServiceToken(svr.AccessToken)
-	if err != nil {
-		s.log.Errorf("revolk service token error, %s", err)
 	}
 
 	return svr, nil

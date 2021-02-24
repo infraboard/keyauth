@@ -38,15 +38,6 @@ func (req *RegistryRequest) Validate() error {
 		return fmt.Errorf("must require *router.Entry")
 	}
 
-	// tk := req.GetToken()
-	// if tk == nil {
-	// 	return fmt.Errorf("token required when service endpoints registry")
-	// }
-
-	// if !tk.UserType.IsIn(types.UserType_SERVICE) {
-	// 	return fmt.Errorf("only service account can registry endpoints")
-	// }
-
 	return validate.Struct(req)
 }
 

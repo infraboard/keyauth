@@ -14,10 +14,10 @@ func NewQueryMicroRequest(pageReq *request.PageRequest) *QueryMicroRequest {
 	}
 }
 
-// NewDescribeServiceRequestWithAccount new实例
-func NewDescribeServiceRequestWithAccount(account string) *DescribeMicroRequest {
+// NewDescribeServiceRequestWithClientID new实例
+func NewDescribeServiceRequestWithClientID(account string) *DescribeMicroRequest {
 	req := NewDescribeServiceRequest()
-	req.Account = account
+	req.ClientId = account
 	return req
 }
 
@@ -28,8 +28,8 @@ func NewDescribeServiceRequest() *DescribeMicroRequest {
 
 // Validate 校验详情查询请求
 func (req *DescribeMicroRequest) Validate() error {
-	if req.Id == "" && req.Name == "" && req.Account == "" {
-		return errors.New("id, name or account is required")
+	if req.Id == "" && req.Name == "" && req.ClientId == "" {
+		return errors.New("id, name or client_id is required")
 	}
 
 	return nil

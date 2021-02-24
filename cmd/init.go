@@ -342,7 +342,6 @@ func (i *Initialer) initService(r *role.Role) (*micro.Micro, error) {
 	req.Name = version.ServiceName
 	req.Description = version.Description
 	req.Type = micro.Type_BUILD_IN
-	req.RoleId = r.Id
 	return pkg.Micro.CreateService(i.userContext(), req)
 }
 

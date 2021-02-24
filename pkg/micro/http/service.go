@@ -9,7 +9,6 @@ import (
 
 	"github.com/infraboard/keyauth/common/session"
 	"github.com/infraboard/keyauth/pkg/micro"
-	"github.com/infraboard/keyauth/pkg/token"
 )
 
 func (h *handler) QueryService(w http.ResponseWriter, r *http.Request) {
@@ -93,7 +92,7 @@ func (h *handler) DestroyService(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func (h *handler) GetServiceToken(w http.ResponseWriter, r *http.Request) {
+func (h *handler) RefreshServiceClientCredential(w http.ResponseWriter, r *http.Request) {
 	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
@@ -104,34 +103,7 @@ func (h *handler) GetServiceToken(w http.ResponseWriter, r *http.Request) {
 	req := micro.NewDescribeServiceRequest()
 	req.Id = rctx.PS.ByName("id")
 
-	d, err := h.service.DescribeService(ctx, req)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
-	tk, err := h.token.DescribeToken(nil, token.NewDescribeTokenRequestWithAccessToken(d.AccessToken))
-	tk.Desensitize()
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
-	response.Success(w, tk)
-}
-
-func (h *handler) RefreshServiceToken(w http.ResponseWriter, r *http.Request) {
-	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-	rctx := context.GetContext(r)
-
-	req := micro.NewDescribeServiceRequest()
-	req.Id = rctx.PS.ByName("id")
-
-	d, err := h.service.RefreshServiceToken(ctx, req)
+	d, err := h.service.RefreshServiceClientCredential(ctx, req)
 	if err != nil {
 		response.Failed(w, err)
 		return
