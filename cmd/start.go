@@ -28,7 +28,6 @@ var (
 	// pusher service config option
 	confType string
 	confFile string
-	confEtcd string
 )
 
 // startCmd represents the start command
@@ -125,8 +124,6 @@ func loadGlobalConfig(configType string) error {
 			return err
 		}
 		return nil
-	case "etcd":
-		return errors.New("not implemented")
 	default:
 		return errors.New("unknown config type")
 	}
@@ -216,6 +213,5 @@ func (s *service) waitSign(sign chan os.Signal) {
 func init() {
 	serviceCmd.Flags().StringVarP(&confType, "config-type", "t", "file", "the service config type [file/env/etcd]")
 	serviceCmd.Flags().StringVarP(&confFile, "config-file", "f", "etc/keyauth.toml", "the service config from file")
-	serviceCmd.Flags().StringVarP(&confEtcd, "config-etcd", "e", "127.0.0.1:2379", "the service config from etcd")
 	RootCmd.AddCommand(serviceCmd)
 }
