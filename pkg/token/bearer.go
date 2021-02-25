@@ -1,7 +1,6 @@
 package token
 
 import (
-	"encoding/base64"
 	"math/rand"
 	"strings"
 	"time"
@@ -20,5 +19,5 @@ func MakeBearer(lenth int) string {
 	}
 
 	token := strings.Join(t, "")
-	return base64.RawURLEncoding.EncodeToString([]byte(token))
+	return token
 }
