@@ -20,16 +20,17 @@ func New(req *CreateMicroRequest) (*Micro, error) {
 	}
 
 	ins := &Micro{
-		Id:           xid.New().String(),
-		CreateAt:     ftime.Now().Timestamp(),
-		UpdateAt:     ftime.Now().Timestamp(),
-		Enabled:      true,
-		Type:         req.Type,
-		Name:         req.Name,
-		Label:        req.Label,
-		Description:  req.Description,
-		ClientId:     token.MakeBearer(16),
-		ClientSecret: token.MakeBearer(24),
+		Id:            xid.New().String(),
+		CreateAt:      ftime.Now().Timestamp(),
+		UpdateAt:      ftime.Now().Timestamp(),
+		Enabled:       true,
+		Type:          req.Type,
+		Name:          req.Name,
+		Label:         req.Label,
+		Description:   req.Description,
+		ClientId:      token.MakeBearer(16),
+		ClientSecret:  token.MakeBearer(24),
+		ClientEnabled: true,
 	}
 
 	return ins, nil

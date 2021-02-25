@@ -4,18 +4,14 @@ import (
 	"context"
 
 	"github.com/infraboard/mcube/exception"
+	"github.com/infraboard/mcube/types/ftime"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/infraboard/keyauth/common/session"
-	"github.com/infraboard/keyauth/pkg/application"
 	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/micro"
-	"github.com/infraboard/keyauth/pkg/policy"
-	"github.com/infraboard/keyauth/pkg/role"
 	"github.com/infraboard/keyauth/pkg/token"
-	"github.com/infraboard/keyauth/pkg/user"
-	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
 func (s *service) CreateService(ctx context.Context, req *micro.CreateMicroRequest) (
@@ -37,73 +33,6 @@ func (s *service) CreateService(ctx context.Context, req *micro.CreateMicroReque
 		return nil, exception.NewInternalServerError("inserted a service document error, %s", err)
 	}
 	return ins, nil
-}
-
-func (s *service) createServiceAccount(ctx context.Context, name, pass string) (*user.User, error) {
-	req := user.NewCreateUserRequest()
-	req.Account = name
-	req.Password = pass
-	req.UserType = types.UserType_SERVICE
-	return s.user.CreateAccount(ctx, req)
-}
-
-func (s *service) createServiceToken(userAgent, remoteIP, user, pass string) (*token.Token, error) {
-	app, err := s.app.GetBuildInApplication(context.Background(), application.NewGetBuildInAdminApplicationRequest())
-	if err != nil {
-		return nil, err
-	}
-	req := token.NewIssueTokenRequest()
-	req.GrantType = token.GrantType_PASSWORD
-	req.Username = user
-	req.Password = pass
-	req.ClientId = app.ClientId
-	req.ClientSecret = app.ClientSecret
-	req.WithRemoteIP(remoteIP)
-	req.WithUserAgent(userAgent)
-	return s.token.IssueToken(context.Background(), req)
-}
-
-func (s *service) revolkServiceToken(accessToken string) error {
-	app, err := s.app.GetBuildInApplication(context.Background(), application.NewGetBuildInAdminApplicationRequest())
-	if err != nil {
-		return err
-	}
-	req := token.NewRevolkTokenRequest(app.ClientId, app.ClientSecret)
-	req.AccessToken = accessToken
-	_, err = s.token.RevolkToken(context.Background(), req)
-	return err
-}
-
-func (s *service) createPolicy(ctx context.Context, account, roleID string) (*policy.Policy, error) {
-	if roleID == "" {
-		descR := role.NewDescribeRoleRequestWithName(role.VisitorRoleName)
-		adminR, err := s.role.DescribeRole(ctx, descR)
-		if err != nil {
-			return nil, err
-		}
-		roleID = adminR.Id
-	}
-
-	req := policy.NewCreatePolicyRequest()
-	req.Account = account
-	req.NamespaceId = "*"
-	req.RoleId = roleID
-	req.Type = policy.PolicyType_BUILD_IN
-	return s.policy.CreatePolicy(ctx, req)
-}
-
-func (s *service) refreshServiceToken(at, rt string) (*token.Token, error) {
-	app, err := s.app.GetBuildInApplication(context.Background(), application.NewGetBuildInAdminApplicationRequest())
-	if err != nil {
-		return nil, err
-	}
-	req := token.NewIssueTokenRequest()
-	req.GrantType = token.GrantType_REFRESH
-	req.AccessToken = at
-	req.RefreshToken = rt
-	req.ClientId = app.ClientId
-	req.ClientSecret = app.ClientSecret
-	return s.token.IssueToken(nil, req)
 }
 
 func (s *service) QueryService(ctx context.Context, req *micro.QueryMicroRequest) (*micro.Set, error) {
@@ -160,7 +89,12 @@ func (s *service) RefreshServiceClientSecret(ctx context.Context, req *micro.Des
 		return nil, err
 	}
 
+	if !ins.ClientEnabled {
+		return nil, exception.NewBadRequest("client is not enabled")
+	}
+
 	ins.ClientSecret = token.MakeBearer(24)
+	ins.ClientRefreshAt = ftime.Now().Timestamp()
 	if err := s.update(ins); err != nil {
 		return nil, err
 	}
@@ -188,13 +122,6 @@ func (s *service) DeleteService(ctx context.Context, req *micro.DeleteMicroReque
 	_, err = s.scol.DeleteOne(context.TODO(), bson.M{"_id": req.Id})
 	if err != nil {
 		return nil, exception.NewInternalServerError("delete service(%s) error, %s", req.Id, err)
-	}
-
-	// 删除服务默认策略
-	dpReq := policy.NewDeletePolicyRequestWithAccount(svr.Account)
-	_, err = s.policy.DeletePolicy(ctx, dpReq)
-	if err != nil {
-		s.log.Errorf("delete service policy error, %s", err)
 	}
 
 	// 删除服务注册的Endpoint
