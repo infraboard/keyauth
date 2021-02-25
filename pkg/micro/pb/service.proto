@@ -8,6 +8,7 @@ import "pkg/micro/pb/micro.proto";
 
 // MicroService 服务
 service MicroService {
+	rpc ValidateClientCredential(ValidateClientCredentialRequest) returns(Micro);
 	rpc CreateService(CreateMicroRequest) returns(Micro);
 	rpc QueryService(QueryMicroRequest) returns(Set);
 	rpc DescribeService(DescribeMicroRequest) returns(Micro);

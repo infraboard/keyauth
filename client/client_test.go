@@ -14,7 +14,7 @@ import (
 func Test_Client(t *testing.T) {
 	should := assert.New(t)
 	conf := client.NewDefaultConfig()
-	conf.SetPasswordCredentials("user", "pass")
+	conf.SetPasswordCredentials("VYizVq1fsK7olinqVHrBvFOl", "qS9FGBoFGRaVfbgeqFVDRcgH7nNJi9fp")
 	c, err := client.NewClient(conf)
 	if should.NoError(err) {
 		page := request.NewPageRequest(20, 1)

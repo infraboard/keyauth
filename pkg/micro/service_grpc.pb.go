@@ -17,6 +17,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MicroServiceClient interface {
+	ValidateClientCredential(ctx context.Context, in *ValidateClientCredentialRequest, opts ...grpc.CallOption) (*Micro, error)
 	CreateService(ctx context.Context, in *CreateMicroRequest, opts ...grpc.CallOption) (*Micro, error)
 	QueryService(ctx context.Context, in *QueryMicroRequest, opts ...grpc.CallOption) (*Set, error)
 	DescribeService(ctx context.Context, in *DescribeMicroRequest, opts ...grpc.CallOption) (*Micro, error)
@@ -30,6 +31,15 @@ type microServiceClient struct {
 
 func NewMicroServiceClient(cc grpc.ClientConnInterface) MicroServiceClient {
 	return &microServiceClient{cc}
+}
+
+func (c *microServiceClient) ValidateClientCredential(ctx context.Context, in *ValidateClientCredentialRequest, opts ...grpc.CallOption) (*Micro, error) {
+	out := new(Micro)
+	err := c.cc.Invoke(ctx, "/keyauth.micro.MicroService/ValidateClientCredential", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *microServiceClient) CreateService(ctx context.Context, in *CreateMicroRequest, opts ...grpc.CallOption) (*Micro, error) {
@@ -81,6 +91,7 @@ func (c *microServiceClient) RefreshServiceClientSecret(ctx context.Context, in 
 // All implementations must embed UnimplementedMicroServiceServer
 // for forward compatibility
 type MicroServiceServer interface {
+	ValidateClientCredential(context.Context, *ValidateClientCredentialRequest) (*Micro, error)
 	CreateService(context.Context, *CreateMicroRequest) (*Micro, error)
 	QueryService(context.Context, *QueryMicroRequest) (*Set, error)
 	DescribeService(context.Context, *DescribeMicroRequest) (*Micro, error)
@@ -93,6 +104,9 @@ type MicroServiceServer interface {
 type UnimplementedMicroServiceServer struct {
 }
 
+func (UnimplementedMicroServiceServer) ValidateClientCredential(context.Context, *ValidateClientCredentialRequest) (*Micro, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ValidateClientCredential not implemented")
+}
 func (UnimplementedMicroServiceServer) CreateService(context.Context, *CreateMicroRequest) (*Micro, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateService not implemented")
 }
@@ -119,6 +133,24 @@ type UnsafeMicroServiceServer interface {
 
 func RegisterMicroServiceServer(s grpc.ServiceRegistrar, srv MicroServiceServer) {
 	s.RegisterService(&_MicroService_serviceDesc, srv)
+}
+
+func _MicroService_ValidateClientCredential_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ValidateClientCredentialRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MicroServiceServer).ValidateClientCredential(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/keyauth.micro.MicroService/ValidateClientCredential",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MicroServiceServer).ValidateClientCredential(ctx, req.(*ValidateClientCredentialRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _MicroService_CreateService_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -215,6 +247,10 @@ var _MicroService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "keyauth.micro.MicroService",
 	HandlerType: (*MicroServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ValidateClientCredential",
+			Handler:    _MicroService_ValidateClientCredential_Handler,
+		},
 		{
 			MethodName: "CreateService",
 			Handler:    _MicroService_CreateService_Handler,

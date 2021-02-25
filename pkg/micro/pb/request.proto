@@ -7,6 +7,18 @@ import "pkg/micro/pb/enum.proto";
 import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
 import "github.com/infraboard/mcube/pb/page/page.proto";
 
+// ValidateClientCredentialRequest 校验服务凭证
+message ValidateClientCredentialRequest {
+    // 服务客户端ID
+    string client_id = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"client_id" validate:"required,lte=100"'}
+        ];
+    // 服务客户端凭证
+    string client_secret = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"client_secret" validate:"required,lte=100"'}
+        ];                  
+}
+
 // CreateMicroRequest 服务创建请求
 message CreateMicroRequest {
     // 服务类型

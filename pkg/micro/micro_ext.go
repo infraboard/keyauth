@@ -36,6 +36,11 @@ func New(req *CreateMicroRequest) (*Micro, error) {
 	return ins, nil
 }
 
+// Desensitize 数据脱敏
+func (m *Micro) Desensitize() {
+	m.ClientSecret = ""
+}
+
 // ValiateClientCredential todo
 func (m *Micro) ValiateClientCredential(clientSecret string) error {
 	if !m.ClientEnabled {

@@ -9,6 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/infraboard/keyauth/common/session"
+	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/micro"
 	"github.com/infraboard/keyauth/pkg/token"
@@ -79,6 +80,20 @@ func (s *service) DescribeService(ctx context.Context, req *micro.DescribeMicroR
 
 		return nil, exception.NewInternalServerError("find service %s error, %s", req, err)
 	}
+	return ins, nil
+}
+
+func (s *service) ValidateClientCredential(ctx context.Context, req *micro.ValidateClientCredentialRequest) (
+	*micro.Micro, error) {
+	descReq := micro.NewDescribeServiceRequestWithClientID(req.ClientId)
+	ins, err := s.DescribeService(pkg.GetInternalAdminTokenCtx("internal"), descReq)
+	if err != nil {
+		return nil, err
+	}
+	if err := ins.ValiateClientCredential(req.ClientSecret); err != nil {
+		return nil, err
+	}
+	ins.Desensitize()
 	return ins, nil
 }
 

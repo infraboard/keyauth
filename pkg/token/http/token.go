@@ -49,7 +49,7 @@ func (h *handler) ValidateToken(w http.ResponseWriter, r *http.Request) {
 	req.EndpointId = qs.Get("endpoint_id")
 	req.NamespaceId = qs.Get("namespace_id")
 
-	d, err := h.service.ValidateToken(nil, req)
+	d, err := h.service.ValidateToken(context.Background(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return

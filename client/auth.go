@@ -13,7 +13,7 @@ type Authentication struct {
 // SetPasswordCredentials todo
 func (a *Authentication) SetPasswordCredentials(clientID, clientSecret string) {
 	a.clientID = clientID
-	a.clientSecret = clientID
+	a.clientSecret = clientSecret
 }
 
 // GetRequestMetadata todo

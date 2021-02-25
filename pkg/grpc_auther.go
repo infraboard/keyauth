@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/infraboard/keyauth/pkg/micro"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -36,15 +37,8 @@ func (a *grpcAuther) Auth(
 	}
 
 	// 校验调用的客户端凭证是否有效
-	var clientID, clientSecret string
-	if val, ok := md["client_id"]; ok {
-		clientID = val[0]
-	}
-	if val, ok := md["client_secret"]; ok {
-		clientSecret = val[0]
-	}
-	if clientID == "" && clientSecret == "" {
-		return nil, grpc.Errorf(codes.Unauthenticated, "client_id or client_secret is \"\"")
+	if err := a.validateServiceCredential(md); err != nil {
+		return nil, err
 	}
 
 	defer func() {
@@ -54,4 +48,30 @@ func (a *grpcAuther) Auth(
 	}()
 
 	return handler(ctx, req)
+}
+
+func (a *grpcAuther) validateServiceCredential(md metadata.MD) error {
+	var clientID, clientSecret string
+	if val, ok := md["client_id"]; ok {
+		clientID = val[0]
+	}
+	if val, ok := md["client_secret"]; ok {
+		clientSecret = val[0]
+	}
+
+	if clientID == "" && clientSecret == "" {
+		return grpc.Errorf(codes.Unauthenticated, "client_id or client_secret is \"\"")
+	}
+
+	if Micro == nil {
+		return grpc.Errorf(codes.Internal, "micro service is nil")
+	}
+
+	vsReq := micro.NewValidateClientCredentialRequest(clientID, clientSecret)
+	_, err := Micro.ValidateClientCredential(context.Background(), vsReq)
+	if err != nil {
+		return grpc.Errorf(codes.Unauthenticated, "service auth error, %s", err)
+	}
+
+	return nil
 }

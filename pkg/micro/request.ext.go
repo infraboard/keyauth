@@ -7,6 +7,14 @@ import (
 	"github.com/infraboard/mcube/http/request"
 )
 
+// NewValidateClientCredentialRequest todo
+func NewValidateClientCredentialRequest(clientID, clientSecret string) *ValidateClientCredentialRequest {
+	return &ValidateClientCredentialRequest{
+		ClientId:     clientID,
+		ClientSecret: clientSecret,
+	}
+}
+
 // NewQueryMicroRequest 列表查询请求
 func NewQueryMicroRequest(pageReq *request.PageRequest) *QueryMicroRequest {
 	return &QueryMicroRequest{
