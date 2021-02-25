@@ -28,8 +28,8 @@ func New(req *CreateMicroRequest) (*Micro, error) {
 		Name:          req.Name,
 		Label:         req.Label,
 		Description:   req.Description,
-		ClientId:      token.MakeBearer(16),
-		ClientSecret:  token.MakeBearer(24),
+		ClientId:      token.MakeBearer(24),
+		ClientSecret:  token.MakeBearer(32),
 		ClientEnabled: true,
 	}
 

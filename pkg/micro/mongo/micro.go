@@ -93,7 +93,7 @@ func (s *service) RefreshServiceClientSecret(ctx context.Context, req *micro.Des
 		return nil, exception.NewBadRequest("client is not enabled")
 	}
 
-	ins.ClientSecret = token.MakeBearer(24)
+	ins.ClientSecret = token.MakeBearer(32)
 	ins.ClientRefreshAt = ftime.Now().Timestamp()
 	if err := s.update(ins); err != nil {
 		return nil, err

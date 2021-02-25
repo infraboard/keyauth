@@ -41,7 +41,7 @@ func newDeafultApplication(req *CreateApplicatonRequest) *Application {
 		BuildIn:      false,
 		CreateAt:     now,
 		UpdateAt:     now,
-		ClientId:     token.MakeBearer(16),
+		ClientId:     token.MakeBearer(24),
 		ClientSecret: token.MakeBearer(32),
 
 		Name:                     req.Name,
