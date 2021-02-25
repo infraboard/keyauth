@@ -71,8 +71,8 @@ func (s *service) Registry(ctx context.Context, req *endpoint.RegistryRequest) (
 		return nil, err
 	}
 
-	if svr.ValiateClientCredential(req.ClientSecret) {
-		return nil, exception.NewUnauthorized("service client secret is invalidate")
+	if err := svr.ValiateClientCredential(req.ClientSecret); err != nil {
+		return nil, err
 	}
 
 	// 生产该服务的Endpoint

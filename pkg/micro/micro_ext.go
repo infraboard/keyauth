@@ -37,8 +37,15 @@ func New(req *CreateMicroRequest) (*Micro, error) {
 }
 
 // ValiateClientCredential todo
-func (m *Micro) ValiateClientCredential(clientSecret string) bool {
-	return m.ClientSecret != clientSecret
+func (m *Micro) ValiateClientCredential(clientSecret string) error {
+	if !m.ClientEnabled {
+		return exception.NewBadRequest("client not enabled")
+	}
+
+	if m.ClientSecret != clientSecret {
+		return exception.NewUnauthorized("client credentail invalidate")
+	}
+	return nil
 }
 
 // NewCreateMicroRequest todo
