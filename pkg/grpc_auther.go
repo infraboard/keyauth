@@ -64,7 +64,7 @@ func (a *grpcAuther) validateServiceCredential(md metadata.MD) error {
 	}
 
 	if Micro == nil {
-		return grpc.Errorf(codes.Internal, "micro service is nil")
+		return grpc.Errorf(codes.Internal, "micro service is initial")
 	}
 
 	vsReq := micro.NewValidateClientCredentialRequest(clientID, clientSecret)
