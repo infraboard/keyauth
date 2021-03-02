@@ -131,7 +131,7 @@ type UnsafeDomainServiceServer interface {
 	mustEmbedUnimplementedDomainServiceServer()
 }
 
-func RegisterDomainServiceServer(s grpc.ServiceRegistrar, srv DomainServiceServer) {
+func RegisterDomainServiceServer(s *grpc.Server, srv DomainServiceServer) {
 	s.RegisterService(&_DomainService_serviceDesc, srv)
 }
 

@@ -173,7 +173,7 @@ type UnsafeDepartmentServiceServer interface {
 	mustEmbedUnimplementedDepartmentServiceServer()
 }
 
-func RegisterDepartmentServiceServer(s grpc.ServiceRegistrar, srv DepartmentServiceServer) {
+func RegisterDepartmentServiceServer(s *grpc.Server, srv DepartmentServiceServer) {
 	s.RegisterService(&_DepartmentService_serviceDesc, srv)
 }
 

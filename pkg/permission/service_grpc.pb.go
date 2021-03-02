@@ -90,7 +90,7 @@ type UnsafePermissionServiceServer interface {
 	mustEmbedUnimplementedPermissionServiceServer()
 }
 
-func RegisterPermissionServiceServer(s grpc.ServiceRegistrar, srv PermissionServiceServer) {
+func RegisterPermissionServiceServer(s *grpc.Server, srv PermissionServiceServer) {
 	s.RegisterService(&_PermissionService_serviceDesc, srv)
 }
 

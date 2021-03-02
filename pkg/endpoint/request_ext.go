@@ -8,7 +8,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/request"
-	"github.com/infraboard/mcube/http/router"
+	httpb "github.com/infraboard/mcube/pb/http"
 	"github.com/infraboard/mcube/types/ftime"
 )
 
@@ -18,7 +18,7 @@ var (
 )
 
 // NewRegistryRequest 注册请求
-func NewRegistryRequest(version string, entries []*router.Entry) *RegistryRequest {
+func NewRegistryRequest(version string, entries []*httpb.Entry) *RegistryRequest {
 	return &RegistryRequest{
 		Version: version,
 		Entries: entries,
@@ -28,7 +28,7 @@ func NewRegistryRequest(version string, entries []*router.Entry) *RegistryReques
 // NewDefaultRegistryRequest todo
 func NewDefaultRegistryRequest() *RegistryRequest {
 	return &RegistryRequest{
-		Entries: []*router.Entry{},
+		Entries: []*httpb.Entry{},
 	}
 }
 

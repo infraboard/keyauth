@@ -131,7 +131,7 @@ type UnsafeMicroServiceServer interface {
 	mustEmbedUnimplementedMicroServiceServer()
 }
 
-func RegisterMicroServiceServer(s grpc.ServiceRegistrar, srv MicroServiceServer) {
+func RegisterMicroServiceServer(s *grpc.Server, srv MicroServiceServer) {
 	s.RegisterService(&_MicroService_serviceDesc, srv)
 }
 

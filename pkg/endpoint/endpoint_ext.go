@@ -5,7 +5,7 @@ import (
 	"hash/fnv"
 	"strings"
 
-	"github.com/infraboard/mcube/http/router"
+	http "github.com/infraboard/mcube/pb/http"
 	"github.com/infraboard/mcube/types/ftime"
 )
 
@@ -15,7 +15,7 @@ func NewDefaultEndpoint() *Endpoint {
 }
 
 // NewEndpoint todo
-func NewEndpoint(serviceID, version string, entry router.Entry) *Endpoint {
+func NewEndpoint(serviceID, version string, entry http.Entry) *Endpoint {
 	return &Endpoint{
 		Id:        GenHashID(serviceID, entry.Path, entry.Method),
 		CreateAt:  ftime.Now().Timestamp(),

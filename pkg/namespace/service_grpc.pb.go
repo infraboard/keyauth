@@ -103,7 +103,7 @@ type UnsafeNamespaceServiceServer interface {
 	mustEmbedUnimplementedNamespaceServiceServer()
 }
 
-func RegisterNamespaceServiceServer(s grpc.ServiceRegistrar, srv NamespaceServiceServer) {
+func RegisterNamespaceServiceServer(s *grpc.Server, srv NamespaceServiceServer) {
 	s.RegisterService(&_NamespaceService_serviceDesc, srv)
 }
 

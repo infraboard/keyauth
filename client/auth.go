@@ -10,8 +10,8 @@ type Authentication struct {
 	clientSecret string
 }
 
-// SetPasswordCredentials todo
-func (a *Authentication) SetPasswordCredentials(clientID, clientSecret string) {
+// SetClientCredentials todo
+func (a *Authentication) SetClientCredentials(clientID, clientSecret string) {
 	a.clientID = clientID
 	a.clientSecret = clientSecret
 }

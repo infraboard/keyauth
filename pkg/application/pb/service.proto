@@ -5,9 +5,23 @@ option go_package = "github.com/infraboard/keyauth/pkg/application";
 
 import "pkg/application/pb/request.proto";
 import "pkg/application/pb/application.proto";
+import "github.com/infraboard/mcube/pb/http/entry.proto";
+
 
 service UserService {
-	rpc CreateUserApplication(CreateApplicatonRequest) returns(Application);
+	rpc CreateUserApplication(CreateApplicatonRequest) returns(Application) {
+		option (mcube.http.rest_api) = {
+			path: "/applications/"
+			method: "POST"
+			resource: "application"
+			auth_enable: true
+			permission_enable: true
+			labels: [{
+				key: "action"
+				value: "list"
+			}]
+		};
+	};
 	rpc DescribeApplication(DescribeApplicationRequest) returns(Application);
 	rpc QueryApplication(QueryApplicationRequest) returns(Set);
 	rpc DeleteApplication(DeleteApplicationRequest) returns(Application);

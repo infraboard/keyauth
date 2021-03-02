@@ -4,7 +4,7 @@ package keyauth.endpoint;
 option go_package = "github.com/infraboard/keyauth/pkg/endpoint";
 
 import "github.com/infraboard/mcube/pb/page/page.proto";
-import "github.com/infraboard/mcube/pb/router/entry.proto";
+import "github.com/infraboard/mcube/pb/http/entry.proto";
 import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
 
 import "pkg/endpoint/pb/enum.proto";
@@ -20,7 +20,7 @@ message RegistryRequest {
 	string version = 3[
         (google.protobuf.field_tag) = {struct_tag: 'json:"version" validate:"required,lte=32"'}
         ];
-	repeated mcube.router.Entry entries = 4[
+	repeated mcube.http.Entry entries = 4[
         (google.protobuf.field_tag) = {struct_tag: 'json:"entries"'}
         ];
 }

@@ -75,7 +75,7 @@ type UnsafeVerifyCodeServiceServer interface {
 	mustEmbedUnimplementedVerifyCodeServiceServer()
 }
 
-func RegisterVerifyCodeServiceServer(s grpc.ServiceRegistrar, srv VerifyCodeServiceServer) {
+func RegisterVerifyCodeServiceServer(s *grpc.Server, srv VerifyCodeServiceServer) {
 	s.RegisterService(&_VerifyCodeService_serviceDesc, srv)
 }
 

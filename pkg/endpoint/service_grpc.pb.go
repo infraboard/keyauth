@@ -117,7 +117,7 @@ type UnsafeEndpointServiceServer interface {
 	mustEmbedUnimplementedEndpointServiceServer()
 }
 
-func RegisterEndpointServiceServer(s grpc.ServiceRegistrar, srv EndpointServiceServer) {
+func RegisterEndpointServiceServer(s *grpc.Server, srv EndpointServiceServer) {
 	s.RegisterService(&_EndpointService_serviceDesc, srv)
 }
 

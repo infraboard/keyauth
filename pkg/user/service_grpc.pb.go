@@ -175,7 +175,7 @@ type UnsafeUserServiceServer interface {
 	mustEmbedUnimplementedUserServiceServer()
 }
 
-func RegisterUserServiceServer(s grpc.ServiceRegistrar, srv UserServiceServer) {
+func RegisterUserServiceServer(s *grpc.Server, srv UserServiceServer) {
 	s.RegisterService(&_UserService_serviceDesc, srv)
 }
 

@@ -103,7 +103,7 @@ type UnsafePolicyServiceServer interface {
 	mustEmbedUnimplementedPolicyServiceServer()
 }
 
-func RegisterPolicyServiceServer(s grpc.ServiceRegistrar, srv PolicyServiceServer) {
+func RegisterPolicyServiceServer(s *grpc.Server, srv PolicyServiceServer) {
 	s.RegisterService(&_PolicyService_serviceDesc, srv)
 }
 

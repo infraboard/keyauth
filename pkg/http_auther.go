@@ -9,6 +9,7 @@ import (
 
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/router"
+	httpb "github.com/infraboard/mcube/pb/http"
 
 	"github.com/infraboard/keyauth/common/session"
 	"github.com/infraboard/keyauth/pkg/domain"
@@ -36,7 +37,7 @@ func NewInternalAuther() router.Auther {
 // internal todo
 type httpAuther struct{}
 
-func (i *httpAuther) Auth(r *http.Request, entry router.Entry) (
+func (i *httpAuther) Auth(r *http.Request, entry httpb.Entry) (
 	authInfo interface{}, err error) {
 	var tk *token.Token
 	if entry.AuthEnable {
@@ -78,7 +79,7 @@ func (i *httpAuther) Auth(r *http.Request, entry router.Entry) (
 	return tk, nil
 }
 
-func (i *httpAuther) endpointHashID(entry router.Entry) string {
+func (i *httpAuther) endpointHashID(entry httpb.Entry) string {
 	return endpoint.GenHashID(version.ServiceName, entry.Path, entry.Method)
 }
 

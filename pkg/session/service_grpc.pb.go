@@ -104,7 +104,7 @@ type UnsafeUserServiceServer interface {
 	mustEmbedUnimplementedUserServiceServer()
 }
 
-func RegisterUserServiceServer(s grpc.ServiceRegistrar, srv UserServiceServer) {
+func RegisterUserServiceServer(s *grpc.Server, srv UserServiceServer) {
 	s.RegisterService(&_UserService_serviceDesc, srv)
 }
 
@@ -253,7 +253,7 @@ type UnsafeAdminServiceServer interface {
 	mustEmbedUnimplementedAdminServiceServer()
 }
 
-func RegisterAdminServiceServer(s grpc.ServiceRegistrar, srv AdminServiceServer) {
+func RegisterAdminServiceServer(s *grpc.Server, srv AdminServiceServer) {
 	s.RegisterService(&_AdminService_serviceDesc, srv)
 }
 

@@ -4,7 +4,7 @@ package keyauth.endpoint;
 option go_package = "github.com/infraboard/keyauth/pkg/endpoint";
 
 import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
-import "github.com/infraboard/mcube/pb/router/entry.proto";
+import "github.com/infraboard/mcube/pb/http/entry.proto";
 
 // Endpoint Service's features
 message Endpoint {
@@ -29,7 +29,7 @@ message Endpoint {
         (google.protobuf.field_tag) = {struct_tag: 'bson:"version" json:"version,omitempty" validate:"required,lte=64"'}
         ];
     // 路由条目信息
-    mcube.router.Entry entry = 6[
+    mcube.http.Entry entry = 6[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"entry" json:"entry" validate:"required"'}
         ];
 }
