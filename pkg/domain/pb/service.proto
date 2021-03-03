@@ -5,14 +5,87 @@ option go_package = "github.com/infraboard/keyauth/pkg/domain";
 
 import "pkg/domain/pb/request.proto";
 import "pkg/domain/pb/domain.proto";
+import "github.com/infraboard/mcube/pb/http/entry.proto";
 
 // DomainService is an domain service
 service DomainService {
-	rpc CreateDomain(CreateDomainRequest) returns(Domain);
-	rpc UpdateDomain(UpdateDomainInfoRequest) returns(Domain);
-	rpc DescribeDomain(DescribeDomainRequest) returns(Domain);
-	rpc QueryDomain(QueryDomainRequest) returns(Set);
-	rpc DeleteDomain(DeleteDomainRequest) returns(Domain);
+	rpc CreateDomain(CreateDomainRequest) returns(Domain) {
+		option (mcube.http.rest_api) = {
+			path: "/domains"
+			method: "POST"
+			resource: "domain"
+			auth_enable: true
+			permission_enable: true
+			labels: [{
+				key: "action"
+				value: "create"
+			}]
+		};
+	};
+	rpc UpdateDomain(UpdateDomainInfoRequest) returns(Domain) {
+		option (mcube.http.rest_api) = {
+			path: "/domains/:name"
+			method: "GET"
+			resource: "domain"
+			auth_enable: true
+			permission_enable: true
+			labels: [{
+				key: "action"
+				value: "update"
+			}]
+		};
+	};
+	rpc DescribeDomain(DescribeDomainRequest) returns(Domain) {
+		option (mcube.http.rest_api) = {
+			path: "/domains/:name"
+			method: "GET"
+			resource: "domain"
+			auth_enable: true
+			permission_enable: true
+			labels: [{
+				key: "action"
+				value: "get"
+			}]
+		};
+	};
+	rpc QueryDomain(QueryDomainRequest) returns(Set) {
+		option (mcube.http.rest_api) = {
+			path: "/domains"
+			method: "GET"
+			resource: "domain"
+			auth_enable: true
+			permission_enable: true
+			labels: [{
+				key: "action"
+				value: "list"
+			}]
+		};
+	};
+	rpc DeleteDomain(DeleteDomainRequest) returns(Domain) {
+		option (mcube.http.rest_api) = {
+			path: "/domains"
+			method: "DELETE"
+			resource: "domain"
+			auth_enable: true
+			permission_enable: true
+			labels: [{
+				key: "action"
+				value: "delete"
+			}]
+		};
+	};
 
-	rpc UpdateDomainSecurity(UpdateDomainSecurityRequest) returns(SecuritySetting);
+	rpc UpdateDomainSecurity(UpdateDomainSecurityRequest) returns(SecuritySetting) {
+		option (mcube.http.rest_api) = {
+			path: "/domains/:name/security"
+			method: "PUT"
+			resource: "domain"
+			auth_enable: true
+			permission_enable: true
+			labels: [{
+				key: "action"
+				value: "update"
+			}]
+		};
+	};
 }

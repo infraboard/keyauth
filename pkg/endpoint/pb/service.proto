@@ -6,12 +6,73 @@ option go_package = "github.com/infraboard/keyauth/pkg/endpoint";
 import "pkg/endpoint/pb/request.proto";
 import "pkg/endpoint/pb/endpoint.proto";
 import "pkg/endpoint/pb/resource.proto";
+import "github.com/infraboard/mcube/pb/http/entry.proto";
 
 // Service token管理服务
 service EndpointService {
-	rpc DescribeEndpoint(DescribeEndpointRequest) returns(Endpoint);
-	rpc QueryEndpoints(QueryEndpointRequest) returns(Set);
-	rpc Registry(RegistryRequest) returns(RegistryResponse);
-	rpc DeleteEndpoint(DeleteEndpointRequest) returns(Endpoint);
-	rpc QueryResources(QueryResourceRequest) returns(ResourceSet);
+	rpc DescribeEndpoint(DescribeEndpointRequest) returns(Endpoint) {
+		option (mcube.http.rest_api) = {
+			path: "/endpoints/:id"
+			method: "GET"
+			resource: "endpoint"
+			auth_enable: true
+			permission_enable: true
+			labels: [{
+				key: "action"
+				value: "get"
+			}]
+		};
+	};
+	rpc QueryEndpoints(QueryEndpointRequest) returns(Set) {
+		option (mcube.http.rest_api) = {
+			path: "/endpoints"
+			method: "GET"
+			resource: "endpoint"
+			auth_enable: true
+			permission_enable: true
+			labels: [{
+				key: "action"
+				value: "list"
+			}]
+		};
+	};
+	rpc Registry(RegistryRequest) returns(RegistryResponse) {
+		option (mcube.http.rest_api) = {
+			path: "/endpoints"
+			method: "POST"
+			resource: "endpoint"
+			auth_enable: false
+			permission_enable: false
+			labels: [{
+				key: "action"
+				value: "create"
+			}]
+		};
+	};
+	rpc DeleteEndpoint(DeleteEndpointRequest) returns(Endpoint) {
+		option (mcube.http.rest_api) = {
+			path: "/endpoints"
+			method: "DELETE"
+			resource: "endpoint"
+			auth_enable: true
+			permission_enable: true
+			labels: [{
+				key: "action"
+				value: "delete"
+			}]
+		};
+	};
+	rpc QueryResources(QueryResourceRequest) returns(ResourceSet) {
+		option (mcube.http.rest_api) = {
+			path: "/resources"
+			method: "GET"
+			resource: "resource"
+			auth_enable: true
+			permission_enable: true
+			labels: [{
+				key: "action"
+				value: "list"
+			}]
+		};
+	};
 }

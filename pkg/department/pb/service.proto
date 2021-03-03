@@ -5,17 +5,126 @@ option go_package = "github.com/infraboard/keyauth/pkg/department";
 
 import "pkg/department/pb/request.proto";
 import "pkg/department/pb/department.proto";
+import "github.com/infraboard/mcube/pb/http/entry.proto";
 
 // Service 服务
 service DepartmentService {
-	rpc QueryDepartment(QueryDepartmentRequest) returns(Set);
-	rpc DescribeDepartment(DescribeDeparmentRequest) returns(Department);
-	rpc CreateDepartment(CreateDepartmentRequest) returns(Department);
-	rpc UpdateDepartment(UpdateDepartmentRequest) returns(Department);
-	rpc DeleteDepartment(DeleteDepartmentRequest) returns(Department);
+	rpc QueryDepartment(QueryDepartmentRequest) returns(Set) {
+		option (mcube.http.rest_api) = {
+			path: "/departments"
+			method: "GET"
+			resource: "department"
+			auth_enable: true
+			permission_enable: true
+			labels: [{
+				key: "action"
+				value: "list"
+			}]
+		};
+	};
+	rpc DescribeDepartment(DescribeDeparmentRequest) returns(Department) {
+		option (mcube.http.rest_api) = {
+			path: "/departments/:id"
+			method: "POST"
+			resource: "department"
+			auth_enable: true
+			permission_enable: true
+			labels: [{
+				key: "action"
+				value: "get"
+			}]
+		};
+	};
+	rpc CreateDepartment(CreateDepartmentRequest) returns(Department) {
+		option (mcube.http.rest_api) = {
+			path: "/departments"
+			method: "POST"
+			resource: "department"
+			auth_enable: true
+			permission_enable: true
+			labels: [{
+				key: "action"
+				value: "create"
+			}]
+		};
+	};
+	rpc UpdateDepartment(UpdateDepartmentRequest) returns(Department) {
+		option (mcube.http.rest_api) = {
+			path: "/departments/:id"
+			method: "PUT"
+			resource: "department"
+			auth_enable: true
+			permission_enable: true
+			labels: [{
+				key: "action"
+				value: "update"
+			}]
+		};
+	};
+	rpc DeleteDepartment(DeleteDepartmentRequest) returns(Department) {
+		option (mcube.http.rest_api) = {
+			path: "/departments/:id"
+			method: "DELETE"
+			resource: "department"
+			auth_enable: true
+			permission_enable: true
+			labels: [{
+				key: "action"
+				value: "delete"
+			}]
+		};
+	};
 
-	rpc QueryApplicationForm(QueryApplicationFormRequet) returns(ApplicationFormSet);
-	rpc DescribeApplicationForm(DescribeApplicationFormRequet) returns(ApplicationForm);
-	rpc JoinDepartment(JoinDepartmentRequest) returns(ApplicationForm);
-	rpc DealApplicationForm(DealApplicationFormRequest) returns(ApplicationForm);
+	rpc QueryApplicationForm(QueryApplicationFormRequet) returns(ApplicationFormSet) {
+		option (mcube.http.rest_api) = {
+			path: "/join_apply"
+			method: "GET"
+			resource: "department_apply"
+			auth_enable: true
+			permission_enable: true
+			labels: [{
+				key: "action"
+				value: "list"
+			}]
+		};
+	};
+	rpc DescribeApplicationForm(DescribeApplicationFormRequet) returns(ApplicationForm) {
+		option (mcube.http.rest_api) = {
+			path: "/join_apply/:id"
+			method: "GET"
+			resource: "department_apply"
+			auth_enable: true
+			permission_enable: true
+			labels: [{
+				key: "action"
+				value: "get"
+			}]
+		};
+	};
+	rpc JoinDepartment(JoinDepartmentRequest) returns(ApplicationForm) {
+		option (mcube.http.rest_api) = {
+			path: "/join_apply/:id"
+			method: "POST"
+			resource: "department_apply"
+			auth_enable: true
+			permission_enable: true
+			labels: [{
+				key: "action"
+				value: "create"
+			}]
+		};
+	};
+	rpc DealApplicationForm(DealApplicationFormRequest) returns(ApplicationForm) {
+		option (mcube.http.rest_api) = {
+			path: "/join_apply/:id"
+			method: "PUT"
+			resource: "department_apply"
+			auth_enable: true
+			permission_enable: true
+			labels: [{
+				key: "action"
+				value: "update"
+			}]
+		};
+	};
 }
