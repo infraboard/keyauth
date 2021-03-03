@@ -5,11 +5,60 @@ option go_package = "github.com/infraboard/keyauth/pkg/policy";
 
 import "pkg/policy/pb/request.proto";
 import "pkg/policy/pb/policy.proto";
+import "github.com/infraboard/mcube/pb/http/entry.proto";
 
 // PolicyService 策略服务
 service PolicyService {
-	rpc CreatePolicy(CreatePolicyRequest) returns(Policy);
-	rpc QueryPolicy(QueryPolicyRequest) returns(Set);
-	rpc DescribePolicy(DescribePolicyRequest) returns(Policy);
-	rpc DeletePolicy(DeletePolicyRequest) returns(Policy);
+	rpc CreatePolicy(CreatePolicyRequest) returns(Policy) {
+		option (mcube.http.rest_api) = {
+			path: "/policies"
+			method: "POST"
+			resource: "policy"
+			auth_enable: true
+			permission_enable: true
+			labels: [{
+				key: "action"
+				value: "create"
+			}]
+		};
+	};
+	rpc QueryPolicy(QueryPolicyRequest) returns(Set) {
+		option (mcube.http.rest_api) = {
+			path: "/policies"
+			method: "GET"
+			resource: "policy"
+			auth_enable: true
+			permission_enable: true
+			labels: [{
+				key: "action"
+				value: "list"
+			}]
+		};
+	};
+	rpc DescribePolicy(DescribePolicyRequest) returns(Policy) {
+		option (mcube.http.rest_api) = {
+			path: "/policies/:id"
+			method: "GET"
+			resource: "policy"
+			auth_enable: true
+			permission_enable: true
+			labels: [{
+				key: "action"
+				value: "get"
+			}]
+		};
+	};
+	rpc DeletePolicy(DeletePolicyRequest) returns(Policy) {
+		option (mcube.http.rest_api) = {
+			path: "/policies/:id"
+			method: "DELETE"
+			resource: "policy"
+			auth_enable: true
+			permission_enable: true
+			labels: [{
+				key: "action"
+				value: "delete"
+			}]
+		};
+	};
 }

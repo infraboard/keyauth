@@ -19,10 +19,10 @@ const _ = grpc.SupportPackageIsVersion7
 type UserServiceClient interface {
 	// 查询用户
 	QueryAccount(ctx context.Context, in *QueryAccountRequest, opts ...grpc.CallOption) (*Set, error)
-	// 创建用户
-	CreateAccount(ctx context.Context, in *CreateAccountRequest, opts ...grpc.CallOption) (*User, error)
 	// 获取账号Profile
 	DescribeAccount(ctx context.Context, in *DescribeAccountRequest, opts ...grpc.CallOption) (*User, error)
+	// 创建用户
+	CreateAccount(ctx context.Context, in *CreateAccountRequest, opts ...grpc.CallOption) (*User, error)
 	// 警用账号
 	BlockAccount(ctx context.Context, in *BlockAccountRequest, opts ...grpc.CallOption) (*User, error)
 	// DeleteAccount 删除用户
@@ -52,18 +52,18 @@ func (c *userServiceClient) QueryAccount(ctx context.Context, in *QueryAccountRe
 	return out, nil
 }
 
-func (c *userServiceClient) CreateAccount(ctx context.Context, in *CreateAccountRequest, opts ...grpc.CallOption) (*User, error) {
+func (c *userServiceClient) DescribeAccount(ctx context.Context, in *DescribeAccountRequest, opts ...grpc.CallOption) (*User, error) {
 	out := new(User)
-	err := c.cc.Invoke(ctx, "/keyauth.user.UserService/CreateAccount", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/keyauth.user.UserService/DescribeAccount", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userServiceClient) DescribeAccount(ctx context.Context, in *DescribeAccountRequest, opts ...grpc.CallOption) (*User, error) {
+func (c *userServiceClient) CreateAccount(ctx context.Context, in *CreateAccountRequest, opts ...grpc.CallOption) (*User, error) {
 	out := new(User)
-	err := c.cc.Invoke(ctx, "/keyauth.user.UserService/DescribeAccount", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/keyauth.user.UserService/CreateAccount", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -121,10 +121,10 @@ func (c *userServiceClient) GeneratePassword(ctx context.Context, in *GeneratePa
 type UserServiceServer interface {
 	// 查询用户
 	QueryAccount(context.Context, *QueryAccountRequest) (*Set, error)
-	// 创建用户
-	CreateAccount(context.Context, *CreateAccountRequest) (*User, error)
 	// 获取账号Profile
 	DescribeAccount(context.Context, *DescribeAccountRequest) (*User, error)
+	// 创建用户
+	CreateAccount(context.Context, *CreateAccountRequest) (*User, error)
 	// 警用账号
 	BlockAccount(context.Context, *BlockAccountRequest) (*User, error)
 	// DeleteAccount 删除用户
@@ -145,11 +145,11 @@ type UnimplementedUserServiceServer struct {
 func (UnimplementedUserServiceServer) QueryAccount(context.Context, *QueryAccountRequest) (*Set, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryAccount not implemented")
 }
-func (UnimplementedUserServiceServer) CreateAccount(context.Context, *CreateAccountRequest) (*User, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateAccount not implemented")
-}
 func (UnimplementedUserServiceServer) DescribeAccount(context.Context, *DescribeAccountRequest) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DescribeAccount not implemented")
+}
+func (UnimplementedUserServiceServer) CreateAccount(context.Context, *CreateAccountRequest) (*User, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateAccount not implemented")
 }
 func (UnimplementedUserServiceServer) BlockAccount(context.Context, *BlockAccountRequest) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BlockAccount not implemented")
@@ -197,24 +197,6 @@ func _UserService_QueryAccount_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_CreateAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateAccountRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServiceServer).CreateAccount(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/keyauth.user.UserService/CreateAccount",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).CreateAccount(ctx, req.(*CreateAccountRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _UserService_DescribeAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DescribeAccountRequest)
 	if err := dec(in); err != nil {
@@ -229,6 +211,24 @@ func _UserService_DescribeAccount_Handler(srv interface{}, ctx context.Context, 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).DescribeAccount(ctx, req.(*DescribeAccountRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_CreateAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateAccountRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).CreateAccount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/keyauth.user.UserService/CreateAccount",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).CreateAccount(ctx, req.(*CreateAccountRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -332,12 +332,12 @@ var _UserService_serviceDesc = grpc.ServiceDesc{
 			Handler:    _UserService_QueryAccount_Handler,
 		},
 		{
-			MethodName: "CreateAccount",
-			Handler:    _UserService_CreateAccount_Handler,
-		},
-		{
 			MethodName: "DescribeAccount",
 			Handler:    _UserService_DescribeAccount_Handler,
+		},
+		{
+			MethodName: "CreateAccount",
+			Handler:    _UserService_CreateAccount_Handler,
 		},
 		{
 			MethodName: "BlockAccount",

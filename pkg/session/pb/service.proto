@@ -6,13 +6,38 @@ option go_package = "github.com/infraboard/keyauth/pkg/session";
 import "pkg/session/pb/request.proto";
 import "pkg/session/pb/session.proto";
 import "pkg/token/pb/token.proto";
+import "github.com/infraboard/mcube/pb/http/entry.proto";
 
 // UserService 用户端接口
 service UserService {
-	rpc Login(token.Token) returns(Session);
-	rpc Logout(LogoutRequest) returns(Session);
-	rpc DescribeSession(DescribeSessionRequest) returns(Session);
-	rpc QuerySession(QuerySessionRequest) returns(Set);
+	rpc Login(token.Token) returns(Session) ;
+	rpc Logout(LogoutRequest) returns(Session) ;
+	rpc DescribeSession(DescribeSessionRequest) returns(Session) {
+		option (mcube.http.rest_api) = {
+			path: "/sessions"
+			method: "GET"
+			resource: "session"
+			auth_enable: true
+			permission_enable: true
+			labels: [{
+				key: "action"
+				value: "get"
+			}]
+		};
+	};
+	rpc QuerySession(QuerySessionRequest) returns(Set) {
+		option (mcube.http.rest_api) = {
+			path: "/sessions"
+			method: "GET"
+			resource: "session"
+			auth_enable: true
+			permission_enable: true
+			labels: [{
+				key: "action"
+				value: "list"
+			}]
+		};
+	};
 }
 
 // AdminService admin接口
