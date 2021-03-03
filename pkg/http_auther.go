@@ -80,7 +80,7 @@ func (i *httpAuther) Auth(r *http.Request, entry httpb.Entry) (
 }
 
 func (i *httpAuther) endpointHashID(entry httpb.Entry) string {
-	return endpoint.GenHashID(version.ServiceName, entry.Path, entry.Method)
+	return endpoint.GenHashID(version.ServiceName, entry.GrpcPath)
 }
 
 // parseBasicAuth parses an HTTP Basic Authentication string.

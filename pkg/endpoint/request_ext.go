@@ -46,7 +46,7 @@ func (req *RegistryRequest) Endpoints(serviceID string) []*Endpoint {
 	eps := make([]*Endpoint, 0, len(req.Entries))
 	for i := range req.Entries {
 		ep := &Endpoint{
-			Id:        GenHashID(serviceID, req.Entries[i].Path, req.Entries[i].Method),
+			Id:        GenHashID(serviceID, req.Entries[i].GrpcPath),
 			CreateAt:  ftime.Now().Timestamp(),
 			UpdateAt:  ftime.Now().Timestamp(),
 			ServiceId: serviceID,

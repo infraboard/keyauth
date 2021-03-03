@@ -423,8 +423,8 @@ github.com/imdario/mergo v0.3.5/go.mod h1:2EnlNZ0deacrJVfApfmtdGgDfMuh/nq6Ok1EcJ
 github.com/imdario/mergo v0.3.6/go.mod h1:2EnlNZ0deacrJVfApfmtdGgDfMuh/nq6Ok1EcJh5FfA=
 github.com/inconshreveable/mousetrap v1.0.0 h1:Z8tu5sraLXCXIcARxBp/8cbvlwVa7Z1NHg9XEKhtSvM=
 github.com/inconshreveable/mousetrap v1.0.0/go.mod h1:PxqpIevigyE2G7u3NXJIT2ANytuPF1OarO4DADm73n8=
-github.com/infraboard/mcube v0.7.4 h1:3u5z52fNd8jWgfQFms+6nommzo1VcfYXt5aslNOey3U=
-github.com/infraboard/mcube v0.7.4/go.mod h1:Ul+AqzcZLhCxeY7nvqUx1TtFb49SbOpItAubO9ZwIow=
+github.com/infraboard/mcube v0.7.6 h1:7EsxNP8IXKigguM4+1fJtL1LnSZu536G3eNmOiBL3jY=
+github.com/infraboard/mcube v0.7.6/go.mod h1:Ul+AqzcZLhCxeY7nvqUx1TtFb49SbOpItAubO9ZwIow=
 github.com/infraboard/protoc-gen-go-ext v0.0.2 h1:ijHgiWSFS8AzZh9kZK4WKEbaeNSoPvJCQNrhAPE0H7s=
 github.com/infraboard/protoc-gen-go-ext v0.0.2/go.mod h1:HOugbyoABx9qoYfEcn6dOsHogdeRtxXvZOE1yAQWpmk=
 github.com/jcmturner/gofork v1.0.0/go.mod h1:MK8+TM0La+2rjBD4jE12Kj1pCCxK7d2LK/UM3ncEo0o=

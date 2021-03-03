@@ -17,7 +17,7 @@ func NewDefaultEndpoint() *Endpoint {
 // NewEndpoint todo
 func NewEndpoint(serviceID, version string, entry http.Entry) *Endpoint {
 	return &Endpoint{
-		Id:        GenHashID(serviceID, entry.Path, entry.Method),
+		Id:        GenHashID(serviceID, entry.GrpcPath),
 		CreateAt:  ftime.Now().Timestamp(),
 		UpdateAt:  ftime.Now().Timestamp(),
 		ServiceId: serviceID,
@@ -27,8 +27,8 @@ func NewEndpoint(serviceID, version string, entry http.Entry) *Endpoint {
 }
 
 // GenHashID hash id
-func GenHashID(service, path, method string) string {
-	hashedStr := fmt.Sprintf("%s-%s-%s", service, path, method)
+func GenHashID(service, grpcPath string) string {
+	hashedStr := fmt.Sprintf("%s-%s", service, grpcPath)
 	h := fnv.New32a()
 	h.Write([]byte(hashedStr))
 	return fmt.Sprintf("%x", h.Sum32())

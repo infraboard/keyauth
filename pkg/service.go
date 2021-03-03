@@ -3,6 +3,9 @@ package pkg
 import (
 	"fmt"
 
+	"github.com/infraboard/mcube/pb/http"
+	"google.golang.org/grpc"
+
 	"github.com/infraboard/keyauth/pkg/application"
 	"github.com/infraboard/keyauth/pkg/counter"
 	"github.com/infraboard/keyauth/pkg/department"
@@ -22,7 +25,6 @@ import (
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
 	"github.com/infraboard/keyauth/pkg/verifycode"
-	"google.golang.org/grpc"
 )
 
 var (
@@ -73,6 +75,9 @@ var (
 var (
 	servers       []Service
 	successLoaded []string
+
+	entrySet  = http.NewEntrySet()
+	entryInit = false
 )
 
 // InitV1GRPCAPI 初始化API服务
@@ -93,6 +98,33 @@ func InitV1GRPCAPI(server *grpc.Server) {
 	session.RegisterUserServiceServer(server, SessionUser)
 	verifycode.RegisterVerifyCodeServiceServer(server, VerifyCode)
 	return
+}
+
+// HTTPEntry todo
+func HTTPEntry() *http.EntrySet {
+	if entryInit {
+		return entrySet
+	}
+
+	addServiceEntry()
+	entryInit = true
+	return entrySet
+}
+
+func addServiceEntry() {
+	entrySet.Merge(domain.HttpEntry())
+	entrySet.Merge(user.HttpEntry())
+	entrySet.Merge(application.HttpEntry())
+	entrySet.Merge(token.HttpEntry())
+	entrySet.Merge(micro.HttpEntry())
+	entrySet.Merge(role.HttpEntry())
+	entrySet.Merge(endpoint.HttpEntry())
+	entrySet.Merge(policy.HttpEntry())
+	entrySet.Merge(department.HttpEntry())
+	entrySet.Merge(namespace.HttpEntry())
+	entrySet.Merge(permission.HttpEntry())
+	entrySet.Merge(session.HttpEntry())
+	entrySet.Merge(verifycode.HttpEntry())
 }
 
 // LoadedService 查询加载成功的服务

@@ -12,6 +12,9 @@ import (
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
+	"github.com/infraboard/keyauth/pkg/endpoint"
+	"github.com/infraboard/keyauth/pkg/micro"
+	"github.com/infraboard/keyauth/version"
 )
 
 // NewGRPCService todo
@@ -39,6 +42,13 @@ func (s *GRPCService) Start() error {
 	// 装载所有GRPC服务
 	pkg.InitV1GRPCAPI(s.svr)
 
+	// 注册服务
+	s.l.Info("start registry endpoints ...")
+	if err := s.RegistryEndpoints(); err != nil {
+		s.l.Warnf("registry endpoints error, %s", err)
+	}
+	s.l.Debug("service endpoints registry success")
+
 	// 启动HTTP服务
 	s.l.Infof("GRPC 开始启动, 监听地址: %s", s.c.App.GRPCAddr())
 	lis, err := net.Listen("tcp", s.c.App.GRPCAddr())
@@ -54,6 +64,32 @@ func (s *GRPCService) Start() error {
 	}
 
 	return nil
+}
+
+// RegistryEndpoints 注册条目
+func (s *GRPCService) RegistryEndpoints() error {
+	if pkg.Micro == nil {
+		return fmt.Errorf("dependence micro service is nil")
+	}
+
+	internalCtx := pkg.GetInternalAdminTokenCtx("internal")
+
+	desc := micro.NewDescribeServiceRequest()
+	desc.Name = version.ServiceName
+	svr, err := pkg.Micro.DescribeService(internalCtx, desc)
+	if err != nil {
+		return err
+	}
+
+	if pkg.Endpoint == nil {
+		return fmt.Errorf("dependence endpoint service is nil")
+	}
+
+	req := endpoint.NewRegistryRequest(version.Short(), pkg.HTTPEntry().PermissionEnableEntry())
+	req.ClientId = svr.ClientId
+	req.ClientSecret = svr.ClientSecret
+	_, err = pkg.Endpoint.Registry(internalCtx, req)
+	return err
 }
 
 // Stop 停止GRPC服务
