@@ -20,7 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 type PermissionServiceClient interface {
 	QueryPermission(ctx context.Context, in *QueryPermissionRequest, opts ...grpc.CallOption) (*role.PermissionSet, error)
 	QueryRoles(ctx context.Context, in *QueryRoleRequest, opts ...grpc.CallOption) (*role.Set, error)
-	CheckPermission(ctx context.Context, in *CheckPermissionrequest, opts ...grpc.CallOption) (*role.Permission, error)
+	CheckPermission(ctx context.Context, in *CheckPermissionRequest, opts ...grpc.CallOption) (*role.Permission, error)
 }
 
 type permissionServiceClient struct {
@@ -49,7 +49,7 @@ func (c *permissionServiceClient) QueryRoles(ctx context.Context, in *QueryRoleR
 	return out, nil
 }
 
-func (c *permissionServiceClient) CheckPermission(ctx context.Context, in *CheckPermissionrequest, opts ...grpc.CallOption) (*role.Permission, error) {
+func (c *permissionServiceClient) CheckPermission(ctx context.Context, in *CheckPermissionRequest, opts ...grpc.CallOption) (*role.Permission, error) {
 	out := new(role.Permission)
 	err := c.cc.Invoke(ctx, "/keyauth.permission.PermissionService/CheckPermission", in, out, opts...)
 	if err != nil {
@@ -64,7 +64,7 @@ func (c *permissionServiceClient) CheckPermission(ctx context.Context, in *Check
 type PermissionServiceServer interface {
 	QueryPermission(context.Context, *QueryPermissionRequest) (*role.PermissionSet, error)
 	QueryRoles(context.Context, *QueryRoleRequest) (*role.Set, error)
-	CheckPermission(context.Context, *CheckPermissionrequest) (*role.Permission, error)
+	CheckPermission(context.Context, *CheckPermissionRequest) (*role.Permission, error)
 	mustEmbedUnimplementedPermissionServiceServer()
 }
 
@@ -78,7 +78,7 @@ func (UnimplementedPermissionServiceServer) QueryPermission(context.Context, *Qu
 func (UnimplementedPermissionServiceServer) QueryRoles(context.Context, *QueryRoleRequest) (*role.Set, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryRoles not implemented")
 }
-func (UnimplementedPermissionServiceServer) CheckPermission(context.Context, *CheckPermissionrequest) (*role.Permission, error) {
+func (UnimplementedPermissionServiceServer) CheckPermission(context.Context, *CheckPermissionRequest) (*role.Permission, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckPermission not implemented")
 }
 func (UnimplementedPermissionServiceServer) mustEmbedUnimplementedPermissionServiceServer() {}
@@ -131,7 +131,7 @@ func _PermissionService_QueryRoles_Handler(srv interface{}, ctx context.Context,
 }
 
 func _PermissionService_CheckPermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CheckPermissionrequest)
+	in := new(CheckPermissionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -143,7 +143,7 @@ func _PermissionService_CheckPermission_Handler(srv interface{}, ctx context.Con
 		FullMethod: "/keyauth.permission.PermissionService/CheckPermission",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PermissionServiceServer).CheckPermission(ctx, req.(*CheckPermissionrequest))
+		return srv.(PermissionServiceServer).CheckPermission(ctx, req.(*CheckPermissionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

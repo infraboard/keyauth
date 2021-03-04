@@ -23,14 +23,14 @@ func (req *QueryPermissionRequest) Validate() error {
 }
 
 // NewCheckPermissionrequest todo
-func NewCheckPermissionrequest() *CheckPermissionrequest {
-	return &CheckPermissionrequest{
+func NewCheckPermissionrequest() *CheckPermissionRequest {
+	return &CheckPermissionRequest{
 		Page: &request.NewPageRequest(100, 1).PageRequest,
 	}
 }
 
 // Validate 校验请求合法
-func (req *CheckPermissionrequest) Validate() error {
+func (req *CheckPermissionRequest) Validate() error {
 	if req.NamespaceId == "" {
 		return fmt.Errorf("namespace required")
 	}

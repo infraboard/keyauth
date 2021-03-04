@@ -36,7 +36,7 @@ service PermissionService {
 			}]
 		};
 	};
-	rpc CheckPermission(CheckPermissionrequest) returns(role.Permission) {
+	rpc CheckPermission(CheckPermissionRequest) returns(role.Permission) {
 		option (mcube.http.rest_api) = {
 			path: "/namespaces/:id/permissions/endpoints/:eid"
 			method: "GET"

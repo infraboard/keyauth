@@ -28,7 +28,6 @@ func (h *handler) Registry(router router.SubRouter) {
 	appRouter.Handle("GET", "/", h.QueryUserApplication).AddLabel(label.List)
 	appRouter.Handle("GET", "/:id", h.GetApplication).AddLabel(label.Get)
 	appRouter.Handle("DELETE", "/:id", h.DestroyApplication).AddLabel(label.Delete)
-
 }
 
 func (h *handler) Config() error {

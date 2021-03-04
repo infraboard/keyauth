@@ -26,8 +26,8 @@ message QueryRoleRequest {
         ];
 }
 
-// CheckPermissionrequest todo
-message CheckPermissionrequest {
+// CheckPermissionRequest todo
+message CheckPermissionRequest {
     page.PageRequest page = 1[
         (google.protobuf.field_tag) = {struct_tag: 'json:"page"'}
         ];

@@ -142,8 +142,8 @@ func (x *QueryRoleRequest) GetNamespaceId() string {
 	return ""
 }
 
-// CheckPermissionrequest todo
-type CheckPermissionrequest struct {
+// CheckPermissionRequest todo
+type CheckPermissionRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -153,8 +153,8 @@ type CheckPermissionrequest struct {
 	EndpointId  string            `protobuf:"bytes,3,opt,name=endpoint_id,json=endpointId,proto3" json:"endpoint_id"`
 }
 
-func (x *CheckPermissionrequest) Reset() {
-	*x = CheckPermissionrequest{}
+func (x *CheckPermissionRequest) Reset() {
+	*x = CheckPermissionRequest{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_pkg_permission_pb_request_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -162,13 +162,13 @@ func (x *CheckPermissionrequest) Reset() {
 	}
 }
 
-func (x *CheckPermissionrequest) String() string {
+func (x *CheckPermissionRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CheckPermissionrequest) ProtoMessage() {}
+func (*CheckPermissionRequest) ProtoMessage() {}
 
-func (x *CheckPermissionrequest) ProtoReflect() protoreflect.Message {
+func (x *CheckPermissionRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_pkg_permission_pb_request_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -180,26 +180,26 @@ func (x *CheckPermissionrequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CheckPermissionrequest.ProtoReflect.Descriptor instead.
-func (*CheckPermissionrequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use CheckPermissionRequest.ProtoReflect.Descriptor instead.
+func (*CheckPermissionRequest) Descriptor() ([]byte, []int) {
 	return file_pkg_permission_pb_request_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *CheckPermissionrequest) GetPage() *page.PageRequest {
+func (x *CheckPermissionRequest) GetPage() *page.PageRequest {
 	if x != nil {
 		return x.Page
 	}
 	return nil
 }
 
-func (x *CheckPermissionrequest) GetNamespaceId() string {
+func (x *CheckPermissionRequest) GetNamespaceId() string {
 	if x != nil {
 		return x.NamespaceId
 	}
 	return ""
 }
 
-func (x *CheckPermissionrequest) GetEndpointId() string {
+func (x *CheckPermissionRequest) GetEndpointId() string {
 	if x != nil {
 		return x.EndpointId
 	}
@@ -238,7 +238,7 @@ var file_pkg_permission_pb_request_proto_rawDesc = []byte{
 	0xc2, 0xde, 0x1f, 0x15, 0x0a, 0x13, 0x6a, 0x73, 0x6f, 0x6e, 0x3a, 0x22, 0x6e, 0x61, 0x6d, 0x65,
 	0x73, 0x70, 0x61, 0x63, 0x65, 0x5f, 0x69, 0x64, 0x22, 0x52, 0x0b, 0x6e, 0x61, 0x6d, 0x65, 0x73,
 	0x70, 0x61, 0x63, 0x65, 0x49, 0x64, 0x22, 0xcb, 0x01, 0x0a, 0x16, 0x43, 0x68, 0x65, 0x63, 0x6b,
-	0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
 	0x74, 0x12, 0x38, 0x0a, 0x04, 0x70, 0x61, 0x67, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32,
 	0x11, 0x2e, 0x70, 0x61, 0x67, 0x65, 0x2e, 0x50, 0x61, 0x67, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65,
 	0x73, 0x74, 0x42, 0x11, 0xc2, 0xde, 0x1f, 0x0d, 0x0a, 0x0b, 0x6a, 0x73, 0x6f, 0x6e, 0x3a, 0x22,
@@ -272,13 +272,13 @@ var file_pkg_permission_pb_request_proto_msgTypes = make([]protoimpl.MessageInfo
 var file_pkg_permission_pb_request_proto_goTypes = []interface{}{
 	(*QueryPermissionRequest)(nil), // 0: keyauth.permission.QueryPermissionRequest
 	(*QueryRoleRequest)(nil),       // 1: keyauth.permission.QueryRoleRequest
-	(*CheckPermissionrequest)(nil), // 2: keyauth.permission.CheckPermissionrequest
+	(*CheckPermissionRequest)(nil), // 2: keyauth.permission.CheckPermissionRequest
 	(*page.PageRequest)(nil),       // 3: page.PageRequest
 }
 var file_pkg_permission_pb_request_proto_depIdxs = []int32{
 	3, // 0: keyauth.permission.QueryPermissionRequest.page:type_name -> page.PageRequest
 	3, // 1: keyauth.permission.QueryRoleRequest.page:type_name -> page.PageRequest
-	3, // 2: keyauth.permission.CheckPermissionrequest.page:type_name -> page.PageRequest
+	3, // 2: keyauth.permission.CheckPermissionRequest.page:type_name -> page.PageRequest
 	3, // [3:3] is the sub-list for method output_type
 	3, // [3:3] is the sub-list for method input_type
 	3, // [3:3] is the sub-list for extension type_name
@@ -317,7 +317,7 @@ func file_pkg_permission_pb_request_proto_init() {
 			}
 		}
 		file_pkg_permission_pb_request_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CheckPermissionrequest); i {
+			switch v := v.(*CheckPermissionRequest); i {
 			case 0:
 				return &v.state
 			case 1:
