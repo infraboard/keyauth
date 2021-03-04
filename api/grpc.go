@@ -85,7 +85,7 @@ func (s *GRPCService) RegistryEndpoints() error {
 		return fmt.Errorf("dependence endpoint service is nil")
 	}
 
-	req := endpoint.NewRegistryRequest(version.Short(), pkg.HTTPEntry().PermissionEnableEntry())
+	req := endpoint.NewRegistryRequest(version.Short(), pkg.HTTPEntry().Items)
 	req.ClientId = svr.ClientId
 	req.ClientSecret = svr.ClientSecret
 	_, err = pkg.Endpoint.Registry(internalCtx, req)

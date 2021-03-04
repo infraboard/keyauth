@@ -20,7 +20,10 @@ func (a *Authentication) SetClientCredentials(clientID, clientSecret string) {
 func (a *Authentication) GetRequestMetadata(context.Context, ...string) (
 	map[string]string, error,
 ) {
-	return map[string]string{"client_id": a.clientID, "client_secret": a.clientSecret}, nil
+	return map[string]string{
+		"client_id":     a.clientID,
+		"client_secret": a.clientSecret,
+	}, nil
 }
 
 // RequireTransportSecurity todo

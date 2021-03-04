@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"google.golang.org/grpc/metadata"
 
 	"github.com/infraboard/keyauth/client"
 	"github.com/infraboard/keyauth/pkg/endpoint"
@@ -18,9 +19,11 @@ func Test_Client(t *testing.T) {
 	c, err := client.NewClient(conf)
 	if should.NoError(err) {
 		page := request.NewPageRequest(20, 1)
-		eps, err := c.Endpoint().QueryEndpoints(context.Background(), endpoint.NewQueryEndpointRequest(page))
+		meta := metadata.Pairs("access_token", "xxxx")
+		ctx := metadata.NewOutgoingContext(context.Background(), meta)
+		eps, err := c.Endpoint().QueryEndpoints(ctx, endpoint.NewQueryEndpointRequest(page))
 		if should.NoError(err) {
-			t.Logf("get eps: %s", eps)
+			t.Logf("get eps: %s ", eps)
 		}
 	}
 }
