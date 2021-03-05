@@ -7,7 +7,7 @@ import (
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 
-	"github.com/infraboard/keyauth/common/session"
+	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/system/notify/mail"
 	"github.com/infraboard/keyauth/pkg/system/notify/sms"
 	"github.com/infraboard/keyauth/pkg/user/types"
@@ -15,7 +15,13 @@ import (
 )
 
 func (h *handler) GetSystemConfig(w http.ResponseWriter, r *http.Request) {
-	tk, err := session.GetTokenFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	tk, err := ctx.GetToken()
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -38,7 +44,13 @@ func (h *handler) GetSystemConfig(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) TestEmailSend(w http.ResponseWriter, r *http.Request) {
-	tk, err := session.GetTokenFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	tk, err := ctx.GetToken()
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -65,7 +77,13 @@ func (h *handler) TestEmailSend(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) SettingEmail(w http.ResponseWriter, r *http.Request) {
-	tk, err := session.GetTokenFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	tk, err := ctx.GetToken()
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -93,7 +111,13 @@ func (h *handler) SettingEmail(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) TestSMSSend(w http.ResponseWriter, r *http.Request) {
-	tk, err := session.GetTokenFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	tk, err := ctx.GetToken()
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -120,7 +144,13 @@ func (h *handler) TestSMSSend(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) SettingSMS(w http.ResponseWriter, r *http.Request) {
-	tk, err := session.GetTokenFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	tk, err := ctx.GetToken()
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -148,7 +178,13 @@ func (h *handler) SettingSMS(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) SettingVerifyCode(w http.ResponseWriter, r *http.Request) {
-	tk, err := session.GetTokenFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	tk, err := ctx.GetToken()
 	if err != nil {
 		response.Failed(w, err)
 		return

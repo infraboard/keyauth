@@ -13,3 +13,8 @@ type Config struct {
 	address string
 	*Authentication
 }
+
+// SetAddress todo
+func (c *Config) SetAddress(addr string) {
+	c.address = addr
+}

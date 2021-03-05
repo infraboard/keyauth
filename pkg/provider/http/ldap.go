@@ -7,21 +7,14 @@ import (
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 
-	"github.com/infraboard/keyauth/common/session"
+	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/provider"
 	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
 func (h *handler) List(w http.ResponseWriter, r *http.Request) {
-	tk, err := session.GetTokenFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
 	page := request.NewPageRequestFromHTTP(r)
 	req := provider.NewQueryLDAPConfigRequest(page)
-	req.WithToken(tk)
 
 	apps, err := h.service.QueryConfig(req)
 	if err != nil {
@@ -35,7 +28,13 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 
 // CreateApplication 创建主账号
 func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
-	tk, err := session.GetTokenFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	tk, err := ctx.GetToken()
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -65,12 +64,17 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
-	tk, err := session.GetTokenFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
 
+	tk, err := ctx.GetToken()
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
 	req := provider.NewDescribeLDAPConfigWithDomain(tk.Domain)
 	d, err := h.service.DescribeConfig(req)
 	if err != nil {
@@ -84,7 +88,13 @@ func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) Check(w http.ResponseWriter, r *http.Request) {
-	tk, err := session.GetTokenFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	tk, err := ctx.GetToken()
 	if err != nil {
 		response.Failed(w, err)
 		return

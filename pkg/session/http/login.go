@@ -1,18 +1,17 @@
 package http
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/response"
 
-	tool "github.com/infraboard/keyauth/common/session"
+	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/session"
 )
 
 func (h *handler) QueryLoginLog(w http.ResponseWriter, r *http.Request) {
-	tk, err := tool.GetTokenFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -24,8 +23,7 @@ func (h *handler) QueryLoginLog(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx := tool.WithTokenContext(context.Background(), tk)
-	set, err := h.service.QuerySession(ctx, req)
+	set, err := h.service.QuerySession(ctx.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return

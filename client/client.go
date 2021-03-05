@@ -20,6 +20,20 @@ import (
 	"github.com/infraboard/keyauth/pkg/verifycode"
 )
 
+var (
+	client *Client
+)
+
+// SetGlobal todo
+func SetGlobal(cli *Client) {
+	client = cli
+}
+
+// C Global
+func C() *Client {
+	return client
+}
+
 // NewClient todo
 func NewClient(conf *Config) (*Client, error) {
 	zap.DevelopmentSetup()

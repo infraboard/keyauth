@@ -6,23 +6,15 @@ import (
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/response"
 
-	"github.com/infraboard/keyauth/common/session"
 	"github.com/infraboard/keyauth/pkg/ip2region"
 )
 
 func (h *handler) UpdateDBFile(w http.ResponseWriter, r *http.Request) {
-	tk, err := session.GetTokenFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
 	req, err := ip2region.NewUploadFileRequestFromHTTP(r)
 	if err != nil {
 		response.Failed(w, exception.NewBadRequest("init request error, %s", err))
 		return
 	}
-	req.WithToken(tk)
 
 	err = h.service.UpdateDBFile(req)
 	if err != nil {

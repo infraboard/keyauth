@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/infraboard/keyauth/common/session"
+	"github.com/infraboard/keyauth/client"
 	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/micro"
 	"github.com/infraboard/keyauth/pkg/permission"
@@ -12,10 +12,9 @@ import (
 	"github.com/infraboard/keyauth/pkg/user/types"
 	"github.com/infraboard/keyauth/version"
 	"github.com/infraboard/mcube/exception"
-	"github.com/infraboard/mcube/pb/http"
+	httpb "github.com/infraboard/mcube/pb/http"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/metadata"
 )
 
 var (
@@ -40,7 +39,7 @@ func (a *grpcAuther) Auth(
 	info *grpc.UnaryServerInfo,
 	handler grpc.UnaryHandler,
 ) (resp interface{}, err error) {
-	rctx, err := NewGrpcCtx(ctx)
+	rctx, err := GetGrpcCtx(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -119,14 +118,15 @@ func (a *grpcAuther) validatePermission(ctx *GrpcCtx, path string) error {
 
 		// 其他比如服务类型, 主账号类型, 子账号类型
 		// 如果开启权限认证都需要检查
-		if Permission == nil {
-			return fmt.Errorf("permission service not load")
+		client := client.C()
+		if client == nil {
+			return fmt.Errorf("grpc client service not initial")
 		}
 
 		req := permission.NewCheckPermissionrequest()
 		req.EndpointId = a.endpointHashID(entry)
-		ctx := session.WithTokenContext(context.Background(), tk)
-		_, err = Permission.CheckPermission(ctx, req)
+
+		_, err = client.Permission().CheckPermission(ctx.Context(), req)
 		if err != nil {
 			return exception.NewPermissionDeny("no permission")
 		}
@@ -135,53 +135,6 @@ func (a *grpcAuther) validatePermission(ctx *GrpcCtx, path string) error {
 	return nil
 }
 
-func (a *grpcAuther) endpointHashID(entry *http.Entry) string {
+func (a *grpcAuther) endpointHashID(entry *httpb.Entry) string {
 	return endpoint.GenHashID(version.ServiceName, entry.GrpcPath)
-}
-
-// NewGrpcCtx todo
-func NewGrpcCtx(ctx context.Context) (*GrpcCtx, error) {
-	// 获取认证信息
-	md, ok := metadata.FromIncomingContext(ctx)
-	if !ok {
-		return nil, fmt.Errorf("ctx is not an grpc incoming context")
-	}
-
-	return &GrpcCtx{md: md}, nil
-}
-
-// GrpcCtx todo
-type GrpcCtx struct {
-	md metadata.MD
-}
-
-// Get todo
-func (c *GrpcCtx) get(key string) string {
-	if val, ok := c.md[key]; ok {
-		return val[0]
-	}
-
-	return ""
-}
-
-// GetAccessToKen todo
-func (c *GrpcCtx) GetAccessToKen() string {
-	return c.get("access_token")
-}
-
-// GetToken todo
-func (c *GrpcCtx) GetToken() (*token.Token, error) {
-	ctx := context.Background()
-	req := token.NewDescribeTokenRequestWithAccessToken(c.GetAccessToKen())
-	return Token.DescribeToken(ctx, req)
-}
-
-// GetClientID todo
-func (c *GrpcCtx) GetClientID() string {
-	return c.get("client_id")
-}
-
-// GetClientSecret todo
-func (c *GrpcCtx) GetClientSecret() string {
-	return c.get("client_secret")
 }

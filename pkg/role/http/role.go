@@ -7,13 +7,13 @@ import (
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 
-	"github.com/infraboard/keyauth/common/session"
+	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/role"
 )
 
 // CreateApplication 创建自定义角色
 func (h *handler) CreateRole(w http.ResponseWriter, r *http.Request) {
-	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -25,7 +25,7 @@ func (h *handler) CreateRole(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	d, err := h.service.CreateRole(ctx, req)
+	d, err := h.service.CreateRole(ctx.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -36,14 +36,14 @@ func (h *handler) CreateRole(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) QueryRole(w http.ResponseWriter, r *http.Request) {
-	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
 
 	req := role.NewQueryRoleRequestFromHTTP(r)
-	apps, err := h.service.QueryRole(ctx, req)
+	apps, err := h.service.QueryRole(ctx.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -54,7 +54,7 @@ func (h *handler) QueryRole(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) DescribeRole(w http.ResponseWriter, r *http.Request) {
-	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -67,7 +67,7 @@ func (h *handler) DescribeRole(w http.ResponseWriter, r *http.Request) {
 	req := role.NewDescribeRoleRequestWithID(pid)
 	req.WithPermissions = qs.Get("with_permissions") == "true"
 
-	ins, err := h.service.DescribeRole(ctx, req)
+	ins, err := h.service.DescribeRole(ctx.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return

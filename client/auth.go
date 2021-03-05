@@ -21,8 +21,8 @@ func (a *Authentication) GetRequestMetadata(context.Context, ...string) (
 	map[string]string, error,
 ) {
 	return map[string]string{
-		"client_id":     a.clientID,
-		"client_secret": a.clientSecret,
+		"client-id":     a.clientID,
+		"client-secret": a.clientSecret,
 	}, nil
 }
 

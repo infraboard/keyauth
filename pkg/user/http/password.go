@@ -1,17 +1,22 @@
 package http
 
 import (
-	"context"
 	"net/http"
 
-	"github.com/infraboard/keyauth/common/session"
+	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/user"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 )
 
 func (h *handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
-	tk, err := session.GetTokenFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	tk, err := ctx.GetToken()
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -25,8 +30,7 @@ func (h *handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 	}
 	req.Account = tk.Account
 
-	ctx := session.WithTokenContext(context.Background(), tk)
-	pass, err := h.service.UpdateAccountPassword(ctx, req)
+	pass, err := h.service.UpdateAccountPassword(ctx.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -38,7 +42,7 @@ func (h *handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) GeneratePassword(w http.ResponseWriter, r *http.Request) {
-	tk, err := session.GetTokenFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -51,8 +55,7 @@ func (h *handler) GeneratePassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx := session.WithTokenContext(context.Background(), tk)
-	pass, err := h.service.GeneratePassword(ctx, req)
+	pass, err := h.service.GeneratePassword(ctx.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return

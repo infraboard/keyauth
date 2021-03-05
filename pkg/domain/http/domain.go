@@ -7,20 +7,21 @@ import (
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 
-	"github.com/infraboard/keyauth/common/session"
+	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/domain"
 )
 
 func (h *handler) ListDomains(w http.ResponseWriter, r *http.Request) {
-	page := request.NewPageRequestFromHTTP(r)
-	req := domain.NewQueryDomainRequest(page)
-	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
 
-	dommains, err := h.service.QueryDomain(ctx, req)
+	page := request.NewPageRequestFromHTTP(r)
+	req := domain.NewQueryDomainRequest(page)
+
+	dommains, err := h.service.QueryDomain(ctx.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -35,13 +36,13 @@ func (h *handler) GetDomain(w http.ResponseWriter, r *http.Request) {
 	req := domain.NewDescribeDomainRequest()
 	req.Name = rctx.PS.ByName("name")
 
-	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
 
-	d, err := h.service.DescribeDomain(ctx, req)
+	d, err := h.service.DescribeDomain(ctx.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -58,13 +59,13 @@ func (h *handler) CreateDomain(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
 
-	d, err := h.service.CreateDomain(ctx, req)
+	d, err := h.service.CreateDomain(ctx.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -75,11 +76,12 @@ func (h *handler) CreateDomain(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) PutDomain(w http.ResponseWriter, r *http.Request) {
-	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
+
 	rctx := httpcontext.GetContext(r)
 
 	// 查找出原来的domain
@@ -92,7 +94,7 @@ func (h *handler) PutDomain(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ins, err := h.service.UpdateDomain(ctx, req)
+	ins, err := h.service.UpdateDomain(ctx.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -104,7 +106,7 @@ func (h *handler) PutDomain(w http.ResponseWriter, r *http.Request) {
 
 func (h *handler) PatchDomain(w http.ResponseWriter, r *http.Request) {
 	rctx := httpcontext.GetContext(r)
-	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -120,7 +122,7 @@ func (h *handler) PatchDomain(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ins, err := h.service.UpdateDomain(ctx, req)
+	ins, err := h.service.UpdateDomain(ctx.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -132,14 +134,14 @@ func (h *handler) PatchDomain(w http.ResponseWriter, r *http.Request) {
 
 func (h *handler) DeleteDomain(w http.ResponseWriter, r *http.Request) {
 	rctx := httpcontext.GetContext(r)
-	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
 
 	req := domain.NewDeleteDomainRequestByName(rctx.PS.ByName("name"))
-	if _, err := h.service.DeleteDomain(ctx, req); err != nil {
+	if _, err := h.service.DeleteDomain(ctx.Context(), req); err != nil {
 		response.Failed(w, err)
 		return
 	}
@@ -150,7 +152,7 @@ func (h *handler) DeleteDomain(w http.ResponseWriter, r *http.Request) {
 
 func (h *handler) UpdateDomainSecurity(w http.ResponseWriter, r *http.Request) {
 	rctx := httpcontext.GetContext(r)
-	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -167,7 +169,7 @@ func (h *handler) UpdateDomainSecurity(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ins, err := h.service.UpdateDomainSecurity(ctx, req)
+	ins, err := h.service.UpdateDomainSecurity(ctx.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return

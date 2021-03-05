@@ -7,7 +7,7 @@ import (
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 
-	"github.com/infraboard/keyauth/common/session"
+	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/verifycode"
 )
 
@@ -32,14 +32,14 @@ func (h *handler) IssueCodeByPass(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) IssueCodeByToken(w http.ResponseWriter, r *http.Request) {
-	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
 
 	req := verifycode.NewIssueCodeRequestByToken()
-	code, err := h.service.IssueCode(ctx, req)
+	code, err := h.service.IssueCode(ctx.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return

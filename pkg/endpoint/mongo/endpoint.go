@@ -34,7 +34,7 @@ func (s *service) DescribeEndpoint(ctx context.Context, req *endpoint.DescribeEn
 
 func (s *service) QueryEndpoints(ctx context.Context, req *endpoint.QueryEndpointRequest) (
 	*endpoint.Set, error) {
-	rctx, err := pkg.NewGrpcCtx(ctx)
+	rctx, err := pkg.GetGrpcCtx(ctx)
 	if err != nil {
 		return nil, err
 	}

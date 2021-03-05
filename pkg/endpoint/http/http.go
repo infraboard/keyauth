@@ -6,6 +6,7 @@ import (
 	"github.com/infraboard/mcube/http/label"
 	"github.com/infraboard/mcube/http/router"
 
+	"github.com/infraboard/keyauth/client"
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/endpoint"
 )
@@ -15,7 +16,7 @@ var (
 )
 
 type handler struct {
-	endpoint endpoint.EndpointServiceServer
+	endpoint endpoint.EndpointServiceClient
 }
 
 // Registry 注册HTTP服务路由
@@ -32,11 +33,12 @@ func (h *handler) Registry(router router.SubRouter) {
 }
 
 func (h *handler) Config() error {
-	if pkg.Endpoint == nil {
-		return errors.New("denpence endpoint service is nil")
+	client := client.C()
+	if client == nil {
+		return errors.New("grpc client not initial")
 	}
 
-	h.endpoint = pkg.Endpoint
+	h.endpoint = client.Endpoint()
 	return nil
 }
 

@@ -1,10 +1,9 @@
 package http
 
 import (
-	"context"
 	"net/http"
 
-	"github.com/infraboard/keyauth/common/session"
+	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/domain"
 	"github.com/infraboard/keyauth/pkg/user"
 	"github.com/infraboard/mcube/http/request"
@@ -12,14 +11,14 @@ import (
 )
 
 func (h *handler) QueryProfile(w http.ResponseWriter, r *http.Request) {
-	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
 
 	req := user.NewDescriptAccountRequest()
-	ins, err := h.service.DescribeAccount(ctx, req)
+	ins, err := h.service.DescribeAccount(ctx.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -31,7 +30,13 @@ func (h *handler) QueryProfile(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) PutProfile(w http.ResponseWriter, r *http.Request) {
-	tk, err := session.GetTokenFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	tk, err := ctx.GetToken()
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -45,8 +50,7 @@ func (h *handler) PutProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx := session.WithTokenContext(context.Background(), tk)
-	ins, err := h.service.UpdateAccountProfile(ctx, req)
+	ins, err := h.service.UpdateAccountProfile(ctx.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -58,7 +62,13 @@ func (h *handler) PutProfile(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) PatchProfile(w http.ResponseWriter, r *http.Request) {
-	tk, err := session.GetTokenFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	tk, err := ctx.GetToken()
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -72,8 +82,7 @@ func (h *handler) PatchProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx := session.WithTokenContext(context.Background(), tk)
-	ins, err := h.service.UpdateAccountProfile(ctx, req)
+	ins, err := h.service.UpdateAccountProfile(ctx.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -85,17 +94,22 @@ func (h *handler) PatchProfile(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) QueryDomain(w http.ResponseWriter, r *http.Request) {
-	tk, err := session.GetTokenFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
-	ctx := session.WithTokenContext(context.Background(), tk)
+
+	tk, err := ctx.GetToken()
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
 
 	req := domain.NewDescribeDomainRequest()
 	req.Name = tk.Domain
 
-	ins, err := h.domain.DescribeDomain(ctx, req)
+	ins, err := h.domain.DescribeDomain(ctx.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -106,12 +120,17 @@ func (h *handler) QueryDomain(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) UpdateDomainInfo(w http.ResponseWriter, r *http.Request) {
-	tk, err := session.GetTokenFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
-	ctx := session.WithTokenContext(context.Background(), tk)
+
+	tk, err := ctx.GetToken()
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
 
 	// 查找出原来的domain
 	req := domain.NewPatchDomainRequest()
@@ -123,7 +142,7 @@ func (h *handler) UpdateDomainInfo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ins, err := h.domain.UpdateDomain(ctx, req)
+	ins, err := h.domain.UpdateDomain(ctx.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -134,12 +153,17 @@ func (h *handler) UpdateDomainInfo(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) UpdateDomainSecurity(w http.ResponseWriter, r *http.Request) {
-	tk, err := session.GetTokenFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
-	ctx := session.WithTokenContext(context.Background(), tk)
+
+	tk, err := ctx.GetToken()
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
 
 	// 查找出原来的domain
 	req := domain.NewPutDomainSecurityRequest()
@@ -151,7 +175,7 @@ func (h *handler) UpdateDomainSecurity(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ins, err := h.domain.UpdateDomainSecurity(ctx, req)
+	ins, err := h.domain.UpdateDomainSecurity(ctx.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return

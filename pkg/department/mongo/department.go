@@ -8,8 +8,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"github.com/infraboard/keyauth/common/session"
 	common "github.com/infraboard/keyauth/common/types"
+	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/department"
 	"github.com/infraboard/keyauth/pkg/role"
 	"github.com/infraboard/keyauth/pkg/user"
@@ -21,7 +21,11 @@ func (s *service) QueryDepartment(ctx context.Context, req *department.QueryDepa
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest("validate query department error, %s", err)
 	}
-	tk := session.GetTokenFromContext(ctx)
+
+	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	query := newQueryDepartmentRequest(tk, req)
 	set := department.NewDepartmentSet()

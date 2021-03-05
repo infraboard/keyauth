@@ -8,13 +8,16 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"github.com/infraboard/keyauth/common/session"
+	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/policy"
 	"github.com/infraboard/keyauth/pkg/role"
 )
 
 func (s *service) CreateRole(ctx context.Context, req *role.CreateRoleRequest) (*role.Role, error) {
-	tk := session.GetTokenFromContext(ctx)
+	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	r, err := role.New(tk, req)
 	if err != nil {
@@ -30,7 +33,10 @@ func (s *service) CreateRole(ctx context.Context, req *role.CreateRoleRequest) (
 }
 
 func (s *service) QueryRole(ctx context.Context, req *role.QueryRoleRequest) (*role.Set, error) {
-	tk := session.GetTokenFromContext(ctx)
+	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	query, err := newQueryRoleRequest(tk, req)
 	if err != nil {

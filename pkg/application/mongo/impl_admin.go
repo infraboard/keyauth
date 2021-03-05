@@ -7,7 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"github.com/infraboard/keyauth/common/session"
+	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/application"
 )
 
@@ -32,7 +32,11 @@ func (s *adminimpl) GetBuildInApplication(ctx context.Context, req *application.
 
 func (s *adminimpl) CreateBuildInApplication(ctx context.Context, req *application.CreateApplicatonRequest) (
 	*application.Application, error) {
-	account := session.GetTokenFromContext(ctx).Account
+	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	account := tk.Account
 	app, err := application.NewBuildInApplication(account, req)
 	if err != nil {
 		return nil, err

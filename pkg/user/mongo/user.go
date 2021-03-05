@@ -10,7 +10,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/infraboard/keyauth/common/password"
-	"github.com/infraboard/keyauth/common/session"
 	common "github.com/infraboard/keyauth/common/types"
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/domain"
@@ -20,7 +19,11 @@ import (
 )
 
 func (s *service) QueryAccount(ctx context.Context, req *user.QueryAccountRequest) (*user.Set, error) {
-	tk := session.GetTokenFromContext(ctx)
+	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	r, err := newQueryUserRequest(tk, req)
 	if err != nil {
 		return nil, err
@@ -29,7 +32,10 @@ func (s *service) QueryAccount(ctx context.Context, req *user.QueryAccountReques
 }
 
 func (s *service) CreateAccount(ctx context.Context, req *user.CreateAccountRequest) (*user.User, error) {
-	tk := session.GetTokenFromContext(ctx)
+	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	// 非管理员, 主账号 可以创建子账号
 	if !tk.UserType.IsIn(types.UserType_SUPPER, types.UserType_PRIMARY) {
@@ -59,7 +65,11 @@ func (s *service) CreateAccount(ctx context.Context, req *user.CreateAccountRequ
 }
 
 func (s *service) UpdateAccountProfile(ctx context.Context, req *user.UpdateAccountRequest) (*user.User, error) {
-	tk := session.GetTokenFromContext(ctx)
+	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest("validate update department error, %s", err)
 	}
@@ -134,7 +144,11 @@ func (s *service) changePass(ctx context.Context, account, old, new string) (*us
 
 	// 非本人重置密码, 需要用户下次登录时重置
 	var isReset bool
-	tk := session.GetTokenFromContext(ctx)
+	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	if !tk.IsOwner(account) {
 		isReset = true
 	}
@@ -158,7 +172,11 @@ func (s *service) changePass(ctx context.Context, account, old, new string) (*us
 }
 
 func (s *service) DescribeAccount(ctx context.Context, req *user.DescribeAccountRequest) (*user.User, error) {
-	tk := session.GetTokenFromContext(ctx)
+	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	r, err := newDescribeRequest(tk, req)
 	if err != nil {
 		return nil, err
@@ -208,7 +226,10 @@ func (s *service) DeleteAccount(ctx context.Context, req *user.DeleteAccountRequ
 }
 
 func (s *service) GeneratePassword(ctx context.Context, req *user.GeneratePasswordRequest) (*user.GeneratePasswordResponse, error) {
-	tk := session.GetTokenFromContext(ctx)
+	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	s.log.Debugf("query domain security setting ...")
 	// 根据域设置的规则检测密码策略

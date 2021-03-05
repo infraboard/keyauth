@@ -10,7 +10,6 @@ import (
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/types/ftime"
 
-	"github.com/infraboard/keyauth/common/session"
 	"github.com/infraboard/keyauth/common/types"
 	"github.com/infraboard/keyauth/pkg/counter"
 	"github.com/infraboard/keyauth/pkg/role"

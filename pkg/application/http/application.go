@@ -1,19 +1,24 @@
 package http
 
 import (
-	"context"
 	"net/http"
 
 	httpctx "github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 
-	"github.com/infraboard/keyauth/common/session"
+	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/application"
 )
 
 func (h *handler) QueryUserApplication(w http.ResponseWriter, r *http.Request) {
-	tk, err := session.GetTokenFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	tk, err := ctx.GetToken()
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -23,8 +28,7 @@ func (h *handler) QueryUserApplication(w http.ResponseWriter, r *http.Request) {
 	req := application.NewQueryApplicationRequest(page)
 	req.Account = tk.Account
 
-	ctx := session.WithTokenContext(context.Background(), tk)
-	apps, err := h.service.QueryApplication(ctx, req)
+	apps, err := h.service.QueryApplication(ctx.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -36,7 +40,7 @@ func (h *handler) QueryUserApplication(w http.ResponseWriter, r *http.Request) {
 
 // CreateApplication 创建主账号
 func (h *handler) CreateUserApplication(w http.ResponseWriter, r *http.Request) {
-	tk, err := session.GetTokenFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -48,8 +52,7 @@ func (h *handler) CreateUserApplication(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	ctx := session.WithTokenContext(context.Background(), tk)
-	d, err := h.service.CreateUserApplication(ctx, req)
+	d, err := h.service.CreateUserApplication(ctx.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -60,7 +63,7 @@ func (h *handler) CreateUserApplication(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h *handler) GetApplication(w http.ResponseWriter, r *http.Request) {
-	tk, err := session.GetTokenFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -70,10 +73,7 @@ func (h *handler) GetApplication(w http.ResponseWriter, r *http.Request) {
 
 	req := application.NewDescriptApplicationRequest()
 	req.Id = rctx.PS.ByName("id")
-
-	ctx := session.WithTokenContext(context.Background(), tk)
-
-	d, err := h.service.DescribeApplication(ctx, req)
+	d, err := h.service.DescribeApplication(ctx.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -85,7 +85,7 @@ func (h *handler) GetApplication(w http.ResponseWriter, r *http.Request) {
 
 // DestroyPrimaryAccount 注销账号
 func (h *handler) DestroyApplication(w http.ResponseWriter, r *http.Request) {
-	tk, err := session.GetTokenFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -94,9 +94,8 @@ func (h *handler) DestroyApplication(w http.ResponseWriter, r *http.Request) {
 	rctx := httpctx.GetContext(r)
 
 	req := application.NewDeleteApplicationRequestWithID(rctx.PS.ByName("id"))
-	ctx := session.WithTokenContext(context.Background(), tk)
 
-	if _, err := h.service.DeleteApplication(ctx, req); err != nil {
+	if _, err := h.service.DeleteApplication(ctx.Context(), req); err != nil {
 		response.Failed(w, err)
 		return
 	}

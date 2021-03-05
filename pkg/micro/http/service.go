@@ -7,7 +7,7 @@ import (
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 
-	"github.com/infraboard/keyauth/common/session"
+	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/micro"
 )
 
@@ -15,13 +15,13 @@ func (h *handler) QueryService(w http.ResponseWriter, r *http.Request) {
 	page := request.NewPageRequestFromHTTP(r)
 	req := micro.NewQueryMicroRequest(page)
 
-	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
 
-	apps, err := h.service.QueryService(ctx, req)
+	apps, err := h.service.QueryService(ctx.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -32,7 +32,7 @@ func (h *handler) QueryService(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) CreateService(w http.ResponseWriter, r *http.Request) {
-	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -44,7 +44,7 @@ func (h *handler) CreateService(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	d, err := h.service.CreateService(ctx, req)
+	d, err := h.service.CreateService(ctx.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -54,7 +54,7 @@ func (h *handler) CreateService(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) GetService(w http.ResponseWriter, r *http.Request) {
-	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -64,7 +64,7 @@ func (h *handler) GetService(w http.ResponseWriter, r *http.Request) {
 	req := micro.NewDescribeServiceRequest()
 	req.Id = rctx.PS.ByName("id")
 
-	d, err := h.service.DescribeService(ctx, req)
+	d, err := h.service.DescribeService(ctx.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -75,7 +75,7 @@ func (h *handler) GetService(w http.ResponseWriter, r *http.Request) {
 
 // DestroyService 销毁服务
 func (h *handler) DestroyService(w http.ResponseWriter, r *http.Request) {
-	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -83,7 +83,7 @@ func (h *handler) DestroyService(w http.ResponseWriter, r *http.Request) {
 
 	rctx := context.GetContext(r)
 	req := micro.NewDeleteMicroRequestWithID(rctx.PS.ByName("id"))
-	if _, err := h.service.DeleteService(ctx, req); err != nil {
+	if _, err := h.service.DeleteService(ctx.Context(), req); err != nil {
 		response.Failed(w, err)
 		return
 	}
@@ -93,7 +93,7 @@ func (h *handler) DestroyService(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) RefreshServiceClientSecret(w http.ResponseWriter, r *http.Request) {
-	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -103,7 +103,7 @@ func (h *handler) RefreshServiceClientSecret(w http.ResponseWriter, r *http.Requ
 	req := micro.NewDescribeServiceRequest()
 	req.Id = rctx.PS.ByName("id")
 
-	d, err := h.service.RefreshServiceClientSecret(ctx, req)
+	d, err := h.service.RefreshServiceClientSecret(ctx.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return

@@ -8,7 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"github.com/infraboard/keyauth/common/session"
+	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/system/notify"
 	"github.com/infraboard/keyauth/pkg/system/notify/mail"
 	"github.com/infraboard/keyauth/pkg/system/notify/sms"
@@ -46,18 +46,20 @@ func (s *service) IssueCode(ctx context.Context, req *verifycode.IssueCodeReques
 			return nil, err
 		}
 	case verifycode.IssueType_TOKEN:
-		tk = session.GetTokenFromContext(ctx)
+		tk, err = pkg.GetTokenFromGrpcCtx(ctx)
+		if err != nil {
+			return nil, err
+		}
 	default:
 		return nil, fmt.Errorf("unknown issue_type %s", req.IssueType)
 	}
 
+	fmt.Println(tk)
 	if _, err := s.col.InsertOne(context.TODO(), code); err != nil {
 		return nil, exception.NewInternalServerError("inserted verify code(%s) document error, %s",
 			code, err)
 	}
 
-	// 发送验证码
-	ctx = session.WithTokenContext(context.Background(), tk)
 	msg, err := s.sendCode(ctx, code)
 	if err != nil {
 		return nil, exception.NewInternalServerError("send verify code error, %s", err)

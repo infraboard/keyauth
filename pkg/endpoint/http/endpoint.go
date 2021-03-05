@@ -7,13 +7,13 @@ import (
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 
-	"github.com/infraboard/keyauth/common/session"
+	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/endpoint"
 )
 
 // CreateApplication 创建自定义角色
 func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
-	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -25,7 +25,7 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = h.endpoint.Registry(ctx, req)
+	_, err = h.endpoint.Registry(ctx.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -36,14 +36,14 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) List(w http.ResponseWriter, r *http.Request) {
-	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
 
 	req := endpoint.NewQueryEndpointRequestFromHTTP(r)
-	set, err := h.endpoint.QueryEndpoints(ctx, req)
+	set, err := h.endpoint.QueryEndpoints(ctx.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -54,7 +54,7 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
-	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -63,7 +63,7 @@ func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 
 	id := rctx.PS.ByName("id")
 	req := endpoint.NewDescribeEndpointRequestWithID(id)
-	d, err := h.endpoint.DescribeEndpoint(ctx, req)
+	d, err := h.endpoint.DescribeEndpoint(ctx.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return

@@ -8,7 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"github.com/infraboard/keyauth/common/session"
+	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/department"
 	"github.com/infraboard/keyauth/pkg/user"
 )
@@ -18,7 +18,10 @@ var (
 )
 
 func (s *service) JoinDepartment(ctx context.Context, req *department.JoinDepartmentRequest) (*department.ApplicationForm, error) {
-	tk := session.GetTokenFromContext(ctx)
+	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	// 默认代表用户自己申请
 	if req.Account == "" {
@@ -67,7 +70,10 @@ func (s *service) DealApplicationForm(ctx context.Context, req *department.DealA
 		return nil, exception.NewBadRequest("validate deal application form request error, %s", err)
 	}
 
-	tk := session.GetTokenFromContext(ctx)
+	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	if err != nil {
+		return nil, err
+	}
 	descReq := department.NewDescribeApplicationFormRequetWithID(req.Id)
 	af, err := s.DescribeApplicationForm(ctx, descReq)
 	if err != nil {
@@ -124,7 +130,10 @@ func (s *service) QueryApplicationForm(ctx context.Context, req *department.Quer
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest("validate query application form error, %s", err)
 	}
-	tk := session.GetTokenFromContext(ctx)
+	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	query := newQueryApplicationFormRequest(tk, req)
 	set := department.NewDApplicationFormSet()
@@ -158,7 +167,10 @@ func (s *service) QueryApplicationForm(ctx context.Context, req *department.Quer
 
 func (s *service) DescribeApplicationForm(ctx context.Context, req *department.DescribeApplicationFormRequet) (
 	*department.ApplicationForm, error) {
-	tk := session.GetTokenFromContext(ctx)
+	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	if err != nil {
+		return nil, err
+	}
 	r := newDescribeApplicationForm(tk, req)
 
 	ins := department.NewDeafultApplicationForm()

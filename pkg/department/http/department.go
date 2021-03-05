@@ -7,19 +7,19 @@ import (
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 
-	"github.com/infraboard/keyauth/common/session"
+	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/department"
 )
 
 func (h *handler) List(w http.ResponseWriter, r *http.Request) {
-	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
 
 	req := department.NewQueryDepartmentRequestFromHTTP(r)
-	apps, err := h.service.QueryDepartment(ctx, req)
+	apps, err := h.service.QueryDepartment(ctx.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -31,7 +31,7 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 
 // Create 创建主账号
 func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
-	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -43,7 +43,7 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ins, err := h.service.CreateDepartment(ctx, req)
+	ins, err := h.service.CreateDepartment(ctx.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -56,7 +56,7 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 // Create 创建主账号
 func (h *handler) Put(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
-	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -68,7 +68,7 @@ func (h *handler) Put(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ins, err := h.service.UpdateDepartment(ctx, req)
+	ins, err := h.service.UpdateDepartment(ctx.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -82,7 +82,7 @@ func (h *handler) Put(w http.ResponseWriter, r *http.Request) {
 func (h *handler) Patch(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
 
-	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -94,7 +94,7 @@ func (h *handler) Patch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ins, err := h.service.UpdateDepartment(ctx, req)
+	ins, err := h.service.UpdateDepartment(ctx.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -105,7 +105,7 @@ func (h *handler) Patch(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
-	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -120,7 +120,7 @@ func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 	req.WithSubCount = qs.Get("with_sub_count") == "true"
 	req.WithUserCount = qs.Get("with_user_count") == "true"
 	req.WithRole = qs.Get("with_role") == "true"
-	ins, err := h.service.DescribeDepartment(ctx, req)
+	ins, err := h.service.DescribeDepartment(ctx.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -131,7 +131,7 @@ func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) GetSub(w http.ResponseWriter, r *http.Request) {
-	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -143,7 +143,7 @@ func (h *handler) GetSub(w http.ResponseWriter, r *http.Request) {
 	req := department.NewQueryDepartmentRequestFromHTTP(r)
 	req.ParentId = pid
 
-	ins, err := h.service.QueryDepartment(ctx, req)
+	ins, err := h.service.QueryDepartment(ctx.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -155,7 +155,7 @@ func (h *handler) GetSub(w http.ResponseWriter, r *http.Request) {
 
 // DestroyPrimaryAccount 注销账号
 func (h *handler) Delete(w http.ResponseWriter, r *http.Request) {
-	ctx, err := session.GetTokenCtxFromHTTPRequest(r)
+	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -164,7 +164,7 @@ func (h *handler) Delete(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
 
 	req := department.NewDeleteDepartmentRequestWithID(rctx.PS.ByName("id"))
-	if _, err := h.service.DeleteDepartment(ctx, req); err != nil {
+	if _, err := h.service.DeleteDepartment(ctx.Context(), req); err != nil {
 		response.Failed(w, err)
 		return
 	}

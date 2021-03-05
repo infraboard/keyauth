@@ -14,8 +14,11 @@ import (
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
 
+	"github.com/infraboard/keyauth/client"
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
+	"github.com/infraboard/keyauth/pkg/micro"
+	"github.com/infraboard/keyauth/version"
 )
 
 // NewHTTPService 构建函数
@@ -25,7 +28,6 @@ func NewHTTPService() *HTTPService {
 	r.Use(accesslog.NewWithLogger(zap.L().Named("AccessLog")))
 	r.Use(cors.AllowAll())
 	r.EnableAPIRoot()
-	r.SetAuther(pkg.NewInternalAuther())
 	r.Auth(true)
 	server := &http.Server{
 		ReadHeaderTimeout: 20 * time.Second,
@@ -55,6 +57,9 @@ type HTTPService struct {
 
 // Start 启动服务
 func (s *HTTPService) Start() error {
+	// 初始化GRPC客户端
+	s.InitGRPCClient()
+
 	// 装置子服务路由
 	if err := pkg.InitV1HTTPAPI(s.c.App.Name, s.r); err != nil {
 		return err
@@ -84,4 +89,30 @@ func (s *HTTPService) Stop() error {
 	}
 
 	return nil
+}
+
+// InitGRPCClient 初始化grpc客户端
+func (s *HTTPService) InitGRPCClient() error {
+	if pkg.Micro == nil {
+		return fmt.Errorf("dependence micro service is nil")
+	}
+
+	internalCtx := pkg.GetInternalAdminTokenCtx("internal")
+
+	desc := micro.NewDescribeServiceRequest()
+	desc.Name = version.ServiceName
+	svr, err := pkg.Micro.DescribeService(internalCtx, desc)
+	if err != nil {
+		return err
+	}
+
+	cf := client.NewDefaultConfig()
+	cf.SetAddress(s.c.App.GRPCAddr())
+	cf.SetClientCredentials(svr.ClientId, svr.ClientSecret)
+	cli, err := client.NewClient(cf)
+	if err != nil {
+		return err
+	}
+	client.SetGlobal(cli)
+	return err
 }

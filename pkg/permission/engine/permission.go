@@ -6,7 +6,7 @@ import (
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/request"
 
-	"github.com/infraboard/keyauth/common/session"
+	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/permission"
 	"github.com/infraboard/keyauth/pkg/policy"
@@ -19,7 +19,10 @@ func (s *service) QueryPermission(ctx context.Context, req *permission.QueryPerm
 		return nil, exception.NewBadRequest("validate param error, %s", err)
 	}
 
-	tk := session.GetTokenFromContext(ctx)
+	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	// 获取用户的策略列表
 	preq := policy.NewQueryPolicyRequest(request.NewPageRequest(100, 1))
@@ -46,7 +49,10 @@ func (s *service) QueryRoles(ctx context.Context, req *permission.QueryRoleReque
 		return nil, exception.NewBadRequest("validate param error, %s", err)
 	}
 
-	tk := session.GetTokenFromContext(ctx)
+	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	// 获取用户的策略列表
 	preq := policy.NewQueryPolicyRequest(request.NewPageRequest(100, 1))

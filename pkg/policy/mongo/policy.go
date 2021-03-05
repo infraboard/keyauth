@@ -7,7 +7,7 @@ import (
 	"github.com/infraboard/mcube/exception"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"github.com/infraboard/keyauth/common/session"
+	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/namespace"
 	"github.com/infraboard/keyauth/pkg/policy"
 	"github.com/infraboard/keyauth/pkg/role"
@@ -15,7 +15,11 @@ import (
 
 func (s *service) CreatePolicy(ctx context.Context, req *policy.CreatePolicyRequest) (
 	*policy.Policy, error) {
-	tk := session.GetTokenFromContext(ctx)
+	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	ins, err := policy.New(tk, req)
 	if err != nil {
 		return nil, exception.NewBadRequest(err.Error())
@@ -37,7 +41,11 @@ func (s *service) CreatePolicy(ctx context.Context, req *policy.CreatePolicyRequ
 
 func (s *service) QueryPolicy(ctx context.Context, req *policy.QueryPolicyRequest) (
 	*policy.Set, error) {
-	tk := session.GetTokenFromContext(ctx)
+	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	r, err := newQueryPolicyRequest(tk, req)
 	if err != nil {
 		return nil, err
@@ -107,7 +115,11 @@ func (s *service) DescribePolicy(ctx context.Context, req *policy.DescribePolicy
 }
 
 func (s *service) DeletePolicy(ctx context.Context, req *policy.DeletePolicyRequest) (*policy.Policy, error) {
-	tk := session.GetTokenFromContext(ctx)
+	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	r, err := newDeletePolicyRequest(tk, req)
 	if err != nil {
 		return nil, err

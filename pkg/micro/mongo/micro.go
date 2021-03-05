@@ -8,7 +8,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"github.com/infraboard/keyauth/common/session"
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/micro"
@@ -22,9 +21,9 @@ func (s *service) CreateService(ctx context.Context, req *micro.CreateMicroReque
 		return nil, err
 	}
 
-	tk := session.GetTokenFromContext(ctx)
-	if tk == nil {
-		return nil, exception.NewPermissionDeny("token required")
+	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	if err != nil {
+		return nil, err
 	}
 
 	ins.Creater = tk.Account
