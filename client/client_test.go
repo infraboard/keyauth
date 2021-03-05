@@ -19,7 +19,7 @@ func Test_Client(t *testing.T) {
 	c, err := client.NewClient(conf)
 	if should.NoError(err) {
 		page := request.NewPageRequest(20, 1)
-		meta := metadata.Pairs("access_token", "RmPLwePByCGhLm2Rmk9WpIB8")
+		meta := metadata.Pairs("access_token", "NEjvVOhmhAQXFuYSrZdJaBsH")
 		ctx := metadata.NewOutgoingContext(context.Background(), meta)
 		eps, err := c.Endpoint().QueryEndpoints(ctx, endpoint.NewQueryEndpointRequest(page))
 		if should.NoError(err) {

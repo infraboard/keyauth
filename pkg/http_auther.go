@@ -41,18 +41,7 @@ func (i *httpAuther) Auth(r *http.Request, entry httpb.Entry) (
 	authInfo interface{}, err error) {
 	var tk *token.Token
 	if entry.AuthEnable {
-		req := token.NewValidateTokenRequest()
-		// 获取需要校验的access token(用户的身份凭证)
-		accessToken := r.Header.Get("x-oauth-token")
-		if accessToken == "" {
-			return nil, exception.NewUnauthorized("x-oauth-token header required")
-		}
-		req.AccessToken = accessToken
 
-		tk, err = Token.ValidateToken(nil, req)
-		if err != nil {
-			return nil, err
-		}
 	}
 
 	if entry.PermissionEnable && tk != nil {

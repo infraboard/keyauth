@@ -48,20 +48,6 @@ func NewDefaultSession() *Session {
 	}
 }
 
-// ParseLoginAddress todo
-// func (s *Session) ParseLoginAddress(ip string) {
-// 	if ip == "" {
-// 		return
-// 	}
-
-// 	ipInfo, err := s.ip.LookupIP(ip)
-// 	if err != nil {
-// 		s.log.Errorf("parse ipinfo error, %s", err)
-// 	}
-// 	s.IPInfo = ipInfo
-// 	return
-// }
-
 // ParseUserAgent todo
 func (s *Session) ParseUserAgent(userAgent string) {
 	if userAgent == "" {

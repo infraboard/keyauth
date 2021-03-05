@@ -19,7 +19,7 @@ import (
 )
 
 var (
-	interceptor = &grpcAuther{}
+	interceptor = newGrpcAuther()
 )
 
 // AuthUnaryServerInterceptor returns a new unary server interceptor for auth.
@@ -27,27 +27,31 @@ func AuthUnaryServerInterceptor() grpc.UnaryServerInterceptor {
 	return interceptor.Auth
 }
 
+func newGrpcAuther() *grpcAuther {
+	return &grpcAuther{}
+}
+
 // internal todo
-type grpcAuther struct{}
+type grpcAuther struct {
+}
 
 func (a *grpcAuther) Auth(
 	ctx context.Context, req interface{},
 	info *grpc.UnaryServerInfo,
 	handler grpc.UnaryHandler,
 ) (resp interface{}, err error) {
-	// 获取认证信息
-	md, ok := metadata.FromIncomingContext(ctx)
-	if !ok {
-		return nil, fmt.Errorf("missing credentials")
+	rctx, err := NewGrpcCtx(ctx)
+	if err != nil {
+		return nil, err
 	}
 
 	// 校验调用的客户端凭证是否有效
-	if err := a.validateServiceCredential(md); err != nil {
+	if err := a.validateServiceCredential(rctx); err != nil {
 		return nil, err
 	}
 
 	// 校验用户权限是否合法
-	if err := a.validatePermission(info.FullMethod, md); err != nil {
+	if err := a.validatePermission(rctx, info.FullMethod); err != nil {
 		return nil, err
 	}
 
@@ -60,14 +64,9 @@ func (a *grpcAuther) Auth(
 	return handler(ctx, req)
 }
 
-func (a *grpcAuther) validateServiceCredential(md metadata.MD) error {
-	var clientID, clientSecret string
-	if val, ok := md["client_id"]; ok {
-		clientID = val[0]
-	}
-	if val, ok := md["client_secret"]; ok {
-		clientSecret = val[0]
-	}
+func (a *grpcAuther) validateServiceCredential(ctx *GrpcCtx) error {
+	clientID := ctx.GetClientID()
+	clientSecret := ctx.GetClientSecret()
 
 	if clientID == "" && clientSecret == "" {
 		return grpc.Errorf(codes.Unauthenticated, "client_id or client_secret is \"\"")
@@ -86,7 +85,7 @@ func (a *grpcAuther) validateServiceCredential(md metadata.MD) error {
 	return nil
 }
 
-func (a *grpcAuther) validatePermission(path string, md metadata.MD) error {
+func (a *grpcAuther) validatePermission(ctx *GrpcCtx, path string) error {
 	var (
 		tk  *token.Token
 		err error
@@ -99,18 +98,14 @@ func (a *grpcAuther) validatePermission(path string, md metadata.MD) error {
 
 	if entry.AuthEnable {
 		// 获取需要校验的access token(用户的身份凭证)
-		var accessToken string
-		if val, ok := md["access_token"]; ok {
-			accessToken = val[0]
-		}
-
+		accessToken := ctx.GetAccessToKen()
 		req := token.NewValidateTokenRequest()
 		if accessToken == "" {
 			return grpc.Errorf(codes.Unauthenticated, "access_token meta required")
 		}
 		req.AccessToken = accessToken
 
-		tk, err = Token.ValidateToken(nil, req)
+		tk, err = Token.ValidateToken(context.Background(), req)
 		if err != nil {
 			return err
 		}
@@ -142,4 +137,51 @@ func (a *grpcAuther) validatePermission(path string, md metadata.MD) error {
 
 func (a *grpcAuther) endpointHashID(entry *http.Entry) string {
 	return endpoint.GenHashID(version.ServiceName, entry.GrpcPath)
+}
+
+// NewGrpcCtx todo
+func NewGrpcCtx(ctx context.Context) (*GrpcCtx, error) {
+	// 获取认证信息
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		return nil, fmt.Errorf("ctx is not an grpc incoming context")
+	}
+
+	return &GrpcCtx{md: md}, nil
+}
+
+// GrpcCtx todo
+type GrpcCtx struct {
+	md metadata.MD
+}
+
+// Get todo
+func (c *GrpcCtx) get(key string) string {
+	if val, ok := c.md[key]; ok {
+		return val[0]
+	}
+
+	return ""
+}
+
+// GetAccessToKen todo
+func (c *GrpcCtx) GetAccessToKen() string {
+	return c.get("access_token")
+}
+
+// GetToken todo
+func (c *GrpcCtx) GetToken() (*token.Token, error) {
+	ctx := context.Background()
+	req := token.NewDescribeTokenRequestWithAccessToken(c.GetAccessToKen())
+	return Token.DescribeToken(ctx, req)
+}
+
+// GetClientID todo
+func (c *GrpcCtx) GetClientID() string {
+	return c.get("client_id")
+}
+
+// GetClientSecret todo
+func (c *GrpcCtx) GetClientSecret() string {
+	return c.get("client_secret")
 }

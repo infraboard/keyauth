@@ -2,11 +2,13 @@ package mongo
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/infraboard/mcube/exception"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
+	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/micro"
 )
@@ -32,6 +34,13 @@ func (s *service) DescribeEndpoint(ctx context.Context, req *endpoint.DescribeEn
 
 func (s *service) QueryEndpoints(ctx context.Context, req *endpoint.QueryEndpointRequest) (
 	*endpoint.Set, error) {
+	rctx, err := pkg.NewGrpcCtx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	tk, err := rctx.GetToken()
+	fmt.Println(tk)
+
 	r := newQueryEndpointRequest(req)
 	resp, err := s.col.Find(context.TODO(), r.FindFilter(), r.FindOptions())
 
