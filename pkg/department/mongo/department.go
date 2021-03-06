@@ -2,6 +2,8 @@ package mongo
 
 import (
 	"context"
+	"fmt"
+	"strings"
 
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/types/ftime"
@@ -155,7 +157,7 @@ func (s *service) queryUserCount(ctx context.Context, departmentID string) (int6
 
 func (s *service) CreateDepartment(ctx context.Context, req *department.CreateDepartmentRequest) (
 	*department.Department, error) {
-	ins, err := department.NewDepartment(ctx, req, s, s.role, s.counter)
+	ins, err := s.newDepartment(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -237,4 +239,66 @@ func (s *service) UpdateDepartment(ctx context.Context, req *department.UpdateDe
 	}
 
 	return dp, nil
+}
+
+func (s *service) newDepartment(ctx context.Context, req *department.CreateDepartmentRequest) (*department.Department, error) {
+	if err := req.Validate(); err != nil {
+		return nil, exception.NewBadRequest(err.Error())
+	}
+
+	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	ins := &department.Department{
+		CreateAt:      ftime.Now().Timestamp(),
+		UpdateAt:      ftime.Now().Timestamp(),
+		Creater:       tk.Account,
+		Domain:        tk.Domain,
+		Grade:         1,
+		Name:          req.Name,
+		DisplayName:   req.DisplayName,
+		ParentId:      req.ParentId,
+		Manager:       req.Manager,
+		DefaultRoleId: req.DefaultRoleId,
+	}
+
+	if req.ParentId != "" {
+		pd, err := s.DescribeDepartment(ctx, department.NewDescribeDepartmentRequestWithID(req.ParentId))
+		if err != nil {
+			return nil, err
+		}
+		ins.ParentPath = pd.Path()
+		ins.Grade = int32(len(strings.Split(pd.Path(), ".")))
+	}
+
+	if req.Manager == "" {
+		ins.Manager = tk.Account
+	}
+
+	// 检查Role是否存在
+	if req.DefaultRoleId != "" {
+		ins.DefaultRole, err = s.role.DescribeRole(ctx, role.NewDescribeRoleRequestWithID(req.DefaultRoleId))
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		// 默认补充访客角色
+		ins.DefaultRole, err = s.role.DescribeRole(ctx, role.NewDescribeRoleRequestWithName(role.VisitorRoleName))
+		if err != nil {
+			return nil, err
+		}
+		ins.DefaultRoleId = ins.DefaultRole.Id
+	}
+
+	// 计算ID
+	count, err := s.counter.GetNextSequenceValue(ins.CounterKey())
+	if err != nil {
+		return nil, err
+	}
+	ins.Number = count.Value
+	ins.Id = fmt.Sprintf("%s.%d", ins.ParentPath, ins.Number)
+
+	return ins, nil
 }

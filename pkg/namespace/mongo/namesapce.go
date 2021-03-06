@@ -5,9 +5,11 @@ import (
 	"fmt"
 
 	"github.com/infraboard/mcube/exception"
+	"github.com/infraboard/mcube/types/ftime"
+	"github.com/rs/xid"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"github.com/infraboard/keyauth/common/session"
+	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/department"
 	"github.com/infraboard/keyauth/pkg/namespace"
 	"github.com/infraboard/keyauth/pkg/policy"
@@ -16,7 +18,7 @@ import (
 
 func (s *service) CreateNamespace(ctx context.Context, req *namespace.CreateNamespaceRequest) (
 	*namespace.Namespace, error) {
-	ins, err := namespace.NewNamespace(ctx, req, s.depart)
+	ins, err := s.newNamespace(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -121,7 +123,11 @@ func (s *service) DescribeNamespace(ctx context.Context, req *namespace.Descript
 }
 
 func (s *service) DeleteNamespace(ctx context.Context, req *namespace.DeleteNamespaceRequest) (*namespace.Namespace, error) {
-	tk := session.GetTokenFromContext(ctx)
+	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	r, err := newDeleteRequest(tk, req)
 	if err != nil {
 		return nil, err
@@ -143,4 +149,40 @@ func (s *service) DeleteNamespace(ctx context.Context, req *namespace.DeleteName
 	}
 
 	return nil, nil
+}
+
+// NewNamespace todo
+func (s *service) newNamespace(ctx context.Context, req *namespace.CreateNamespaceRequest) (*namespace.Namespace, error) {
+	if err := req.Validate(); err != nil {
+		return nil, exception.NewBadRequest(err.Error())
+	}
+
+	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	ins := &namespace.Namespace{
+		Id:           xid.New().String(),
+		Domain:       tk.Domain,
+		Creater:      tk.Account,
+		CreateAt:     ftime.Now().Timestamp(),
+		UpdateAt:     ftime.Now().Timestamp(),
+		DepartmentId: req.DepartmentId,
+		Name:         req.Name,
+		Picture:      req.Picture,
+		Owner:        req.Owner,
+		Description:  req.Description,
+	}
+
+	descD := department.NewDescribeDepartmentRequest()
+	descD.Id = req.DepartmentId
+	d, err := s.depart.DescribeDepartment(ctx, descD)
+	if err != nil {
+		return nil, err
+	}
+	// 部门负责人就是空间负责人
+	ins.Owner = d.Manager
+
+	return ins, nil
 }

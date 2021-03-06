@@ -1,84 +1,18 @@
 package department
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
-	"strings"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/infraboard/mcube/exception"
-	"github.com/infraboard/mcube/types/ftime"
 
 	"github.com/infraboard/keyauth/common/types"
-	"github.com/infraboard/keyauth/pkg/counter"
-	"github.com/infraboard/keyauth/pkg/role"
 )
 
 // use a single instance of Validate, it caches struct info
 var (
 	validate = validator.New()
 )
-
-// NewDepartment 新建实例
-func NewDepartment(ctx context.Context, req *CreateDepartmentRequest, d DepartmentServiceServer, r role.RoleServiceServer, counter counter.Service) (*Department, error) {
-	if err := req.Validate(); err != nil {
-		return nil, exception.NewBadRequest(err.Error())
-	}
-
-	tk := session.GetTokenFromContext(ctx)
-	ins := &Department{
-		CreateAt:      ftime.Now().Timestamp(),
-		UpdateAt:      ftime.Now().Timestamp(),
-		Creater:       tk.Account,
-		Domain:        tk.Domain,
-		Grade:         1,
-		Name:          req.Name,
-		DisplayName:   req.DisplayName,
-		ParentId:      req.ParentId,
-		Manager:       req.Manager,
-		DefaultRoleId: req.DefaultRoleId,
-	}
-
-	if req.ParentId != "" {
-		pd, err := d.DescribeDepartment(ctx, NewDescribeDepartmentRequestWithID(req.ParentId))
-		if err != nil {
-			return nil, err
-		}
-		ins.ParentPath = pd.Path()
-		ins.Grade = int32(len(strings.Split(pd.Path(), ".")))
-	}
-
-	if req.Manager == "" {
-		ins.Manager = tk.Account
-	}
-
-	var err error
-	// 检查Role是否存在
-	if req.DefaultRoleId != "" {
-		ins.DefaultRole, err = r.DescribeRole(ctx, role.NewDescribeRoleRequestWithID(req.DefaultRoleId))
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		// 默认补充访客角色
-		ins.DefaultRole, err = r.DescribeRole(ctx, role.NewDescribeRoleRequestWithName(role.VisitorRoleName))
-		if err != nil {
-			return nil, err
-		}
-		ins.DefaultRoleId = ins.DefaultRole.Id
-	}
-
-	// 计算ID
-	count, err := counter.GetNextSequenceValue(ins.CounterKey())
-	if err != nil {
-		return nil, err
-	}
-	ins.Number = count.Value
-	ins.Id = fmt.Sprintf("%s.%d", ins.ParentPath, ins.Number)
-
-	return ins, nil
-}
 
 // NewDefaultDepartment todo
 func NewDefaultDepartment() *Department {

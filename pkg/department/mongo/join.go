@@ -33,7 +33,7 @@ func (s *service) JoinDepartment(ctx context.Context, req *department.JoinDepart
 	}
 
 	// 检测部署是否存在
-	_, err := s.DescribeDepartment(ctx, department.NewDescribeDepartmentRequestWithID(req.DepartmentId))
+	_, err = s.DescribeDepartment(ctx, department.NewDescribeDepartmentRequestWithID(req.DepartmentId))
 	if err != nil {
 		return nil, err
 	}
