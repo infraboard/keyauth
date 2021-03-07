@@ -10,7 +10,6 @@ import (
 	"github.com/infraboard/mcube/http/label"
 	"github.com/spf13/cobra"
 
-	"github.com/infraboard/keyauth/common/session"
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/application"
 	"github.com/infraboard/keyauth/pkg/department"
@@ -143,12 +142,16 @@ type Initialer struct {
 	mockTK     *token.Token
 }
 
-func (i *Initialer) mockContext() context.Context {
-	return session.WithTokenContext(context.Background(), i.mockTK)
+func (i *Initialer) mockContext(account string) context.Context {
+	ctx := pkg.NewGrpcCtx()
+	ctx.SetIsInternalCall(account, domain.AdminDomainName)
+	return ctx.Context()
 }
 
 func (i *Initialer) userContext() context.Context {
-	return session.WithTokenContext(context.Background(), i.tk)
+	ctx := pkg.NewGrpcCtx()
+	ctx.SetAccessToken(i.tk.AccessToken)
+	return ctx.Context()
 }
 
 // Run 执行初始化
@@ -219,8 +222,7 @@ func (i *Initialer) Run() error {
 func (i *Initialer) checkIsInit() error {
 	req := user.NewQueryAccountRequest()
 	req.UserType = types.UserType_SUPPER
-	ctx := session.WithTokenContext(context.Background(), i.mockTK)
-	userSet, err := pkg.User.QueryAccount(ctx, req)
+	userSet, err := pkg.User.QueryAccount(i.mockContext("internal"), req)
 	if err != nil {
 		return err
 	}
@@ -236,25 +238,23 @@ func (i *Initialer) initUser() (*user.User, error) {
 	req.UserType = types.UserType_SUPPER
 	req.Account = strings.TrimSpace(i.username)
 	req.Password = strings.TrimSpace(i.password)
-	return pkg.User.CreateAccount(i.mockContext(), req)
+	return pkg.User.CreateAccount(i.mockContext(i.username), req)
 }
 
 func (i *Initialer) initDomain(account string) (*domain.Domain, error) {
 	req := domain.NewCreateDomainRequest()
 	req.Name = domain.AdminDomainName
 	req.Profile.Description = strings.TrimSpace(i.domainDesc)
-	return pkg.Domain.CreateDomain(pkg.GetInternalAdminTokenCtx(account), req)
+	return pkg.Domain.CreateDomain(i.mockContext(account), req)
 }
 
-func (i *Initialer) initApp(ownerID string) ([]*application.Application, error) {
-	tk := &token.Token{Account: ownerID}
-
+func (i *Initialer) initApp(account string) ([]*application.Application, error) {
 	req := application.NewCreateApplicatonRequest()
 	req.Name = application.AdminWebApplicationName
 	req.ClientType = application.ClientType_PUBLIC
 	req.Description = "Admin Web管理端"
 
-	ctx := session.WithTokenContext(context.Background(), tk)
+	ctx := i.mockContext(account)
 	web, err := pkg.ApplicationAdmin.CreateBuildInApplication(ctx, req)
 	if err != nil {
 		return nil, fmt.Errorf("create admin web applicaton error, %s", err)

@@ -9,6 +9,6 @@ import (
 
 // Issuer todo
 type Issuer interface {
-	CheckClient(clientID, clientSecret string) (*application.Application, error)
+	CheckClient(ctx context.Context, clientID, clientSecret string) (*application.Application, error)
 	IssueToken(context.Context, *token.IssueTokenRequest) (*token.Token, error)
 }

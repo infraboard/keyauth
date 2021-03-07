@@ -6,6 +6,7 @@ import (
 	"github.com/infraboard/mcube/http/label"
 	"github.com/infraboard/mcube/http/router"
 
+	"github.com/infraboard/keyauth/client"
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/token"
 )
@@ -15,7 +16,7 @@ var (
 )
 
 type handler struct {
-	service token.TokenServiceServer
+	service token.TokenServiceClient
 }
 
 // Registry 注册HTTP服务路由
@@ -31,11 +32,12 @@ func (h *handler) Registry(router router.SubRouter) {
 }
 
 func (h *handler) Config() error {
-	if pkg.Token == nil {
-		return errors.New("denpence token service is nil")
+	client := client.C()
+	if client == nil {
+		return errors.New("grpc client not initial")
 	}
 
-	h.service = pkg.Token
+	h.service = client.Token()
 	return nil
 }
 

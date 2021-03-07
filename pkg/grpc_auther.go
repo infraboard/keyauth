@@ -60,7 +60,7 @@ func (a *grpcAuther) Auth(
 		}
 	}()
 
-	return handler(ctx, req)
+	return handler(rctx.ClearInternl().Context(), req)
 }
 
 func (a *grpcAuther) validateServiceCredential(ctx *GrpcCtx) error {

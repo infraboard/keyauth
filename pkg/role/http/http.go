@@ -6,6 +6,7 @@ import (
 	"github.com/infraboard/mcube/http/label"
 	"github.com/infraboard/mcube/http/router"
 
+	"github.com/infraboard/keyauth/client"
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/role"
 )
@@ -15,7 +16,7 @@ var (
 )
 
 type handler struct {
-	service role.RoleServiceServer
+	service role.RoleServiceClient
 }
 
 // Registry 注册HTTP服务路由
@@ -28,11 +29,12 @@ func (h *handler) Registry(router router.SubRouter) {
 }
 
 func (h *handler) Config() error {
-	if pkg.Role == nil {
-		return errors.New("denpence application service is nil")
+	client := client.C()
+	if client == nil {
+		return errors.New("grpc client not initial")
 	}
 
-	h.service = pkg.Role
+	h.service = client.Role()
 	return nil
 }
 

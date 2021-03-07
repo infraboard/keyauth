@@ -85,7 +85,7 @@ func (s *service) DescribeService(ctx context.Context, req *micro.DescribeMicroR
 func (s *service) ValidateClientCredential(ctx context.Context, req *micro.ValidateClientCredentialRequest) (
 	*micro.Micro, error) {
 	descReq := micro.NewDescribeServiceRequestWithClientID(req.ClientId)
-	ins, err := s.DescribeService(pkg.GetInternalAdminTokenCtx("internal"), descReq)
+	ins, err := s.DescribeService(ctx, descReq)
 	if err != nil {
 		return nil, err
 	}

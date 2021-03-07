@@ -6,6 +6,7 @@ import (
 	"github.com/infraboard/mcube/http/label"
 	"github.com/infraboard/mcube/http/router"
 
+	"github.com/infraboard/keyauth/client"
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/micro"
 	"github.com/infraboard/keyauth/pkg/token"
@@ -16,8 +17,8 @@ var (
 )
 
 type handler struct {
-	service micro.MicroServiceServer
-	token   token.TokenServiceServer
+	service micro.MicroServiceClient
+	token   token.TokenServiceClient
 }
 
 // Registry 注册HTTP服务路由
@@ -33,15 +34,13 @@ func (h *handler) Registry(router router.SubRouter) {
 }
 
 func (h *handler) Config() error {
-	if pkg.ApplicationAdmin == nil {
-		return errors.New("denpence application service is nil")
-	}
-	if pkg.Token == nil {
-		return errors.New("denpence token service is nil")
+	client := client.C()
+	if client == nil {
+		return errors.New("grpc client not initial")
 	}
 
-	h.service = pkg.Micro
-	h.token = pkg.Token
+	h.service = client.Micro()
+	h.token = client.Token()
 	return nil
 }
 

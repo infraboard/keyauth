@@ -1,13 +1,15 @@
 package issuer
 
 import (
+	"context"
+
 	"github.com/infraboard/keyauth/pkg/application"
 )
 
-func (i *issuer) CheckClient(clientID, clientSecret string) (*application.Application, error) {
+func (i *issuer) CheckClient(ctx context.Context, clientID, clientSecret string) (*application.Application, error) {
 	req := application.NewDescriptApplicationRequest()
 	req.ClientId = clientID
-	app, err := i.app.DescribeApplication(nil, req)
+	app, err := i.app.DescribeApplication(ctx, req)
 	if err != nil {
 		return nil, err
 	}

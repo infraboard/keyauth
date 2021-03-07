@@ -110,7 +110,7 @@ func (c *checker) UpdateFailedRetry(ctx context.Context, req *token.IssueTokenRe
 }
 
 func (c *checker) OtherPlaceLoggedInChecK(ctx context.Context, tk *token.Token) error {
-	ss := c.getOrDefaultSecuritySettingWithDomain(tk.Account, tk.Domain)
+	ss := c.getOrDefaultSecuritySettingWithDomain(ctx, tk.Account, tk.Domain)
 	if !ss.LoginSecurity.ExceptionLock {
 		c.log.Debugf("exception check disabled, don't check")
 		return nil
@@ -210,12 +210,12 @@ func (c *checker) getOrDefaultSecuritySettingWithUser(ctx context.Context, accou
 		return ss
 	}
 
-	return c.getOrDefaultSecuritySettingWithDomain(u.Account, u.Domain)
+	return c.getOrDefaultSecuritySettingWithDomain(ctx, u.Account, u.Domain)
 }
 
-func (c *checker) getOrDefaultSecuritySettingWithDomain(account, domainName string) *domain.SecuritySetting {
+func (c *checker) getOrDefaultSecuritySettingWithDomain(ctx context.Context, account, domainName string) *domain.SecuritySetting {
 	ss := domain.NewDefaultSecuritySetting()
-	d, err := c.domain.DescribeDomain(pkg.GetInternalAdminTokenCtx(account), domain.NewDescribeDomainRequestWithName(domainName))
+	d, err := c.domain.DescribeDomain(ctx, domain.NewDescribeDomainRequestWithName(domainName))
 	if err != nil {
 		c.log.Errorf("get domain error, %s, use default setting to check", err)
 		return ss

@@ -6,6 +6,7 @@ import (
 	"github.com/infraboard/mcube/http/label"
 	"github.com/infraboard/mcube/http/router"
 
+	"github.com/infraboard/keyauth/client"
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/department"
 	"github.com/infraboard/keyauth/pkg/user"
@@ -16,8 +17,8 @@ var (
 )
 
 type handler struct {
-	service department.DepartmentServiceServer
-	user    user.UserServiceServer
+	service department.DepartmentServiceClient
+	user    user.UserServiceClient
 }
 
 // Registry 注册HTTP服务路由
@@ -41,16 +42,13 @@ func (h *handler) Registry(router router.SubRouter) {
 }
 
 func (h *handler) Config() error {
-	if pkg.Department == nil {
-		return errors.New("denpence department service is nil")
+	client := client.C()
+	if client == nil {
+		return errors.New("grpc client not initial")
 	}
 
-	if pkg.User == nil {
-		return errors.New("dependence user service is nil")
-	}
-
-	h.service = pkg.Department
-	h.user = pkg.User
+	h.service = client.Department()
+	h.user = client.User()
 	return nil
 }
 

@@ -5,6 +5,7 @@ import (
 
 	"github.com/infraboard/mcube/http/router"
 
+	"github.com/infraboard/keyauth/client"
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/verifycode"
 )
@@ -14,7 +15,7 @@ var (
 )
 
 type handler struct {
-	service verifycode.VerifyCodeServiceServer
+	service verifycode.VerifyCodeServiceClient
 }
 
 // Registry 注册HTTP服务路由
@@ -26,11 +27,12 @@ func (h *handler) Registry(router router.SubRouter) {
 }
 
 func (h *handler) Config() error {
-	if pkg.VerifyCode == nil {
-		return errors.New("denpence verify code service is nil")
+	client := client.C()
+	if client == nil {
+		return errors.New("grpc client not initial")
 	}
 
-	h.service = pkg.VerifyCode
+	h.service = client.Verifycode()
 	return nil
 }
 

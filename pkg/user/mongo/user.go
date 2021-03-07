@@ -125,7 +125,7 @@ func (s *service) changePass(ctx context.Context, account, old, new string) (*us
 	s.log.Debugf("query domain security setting ...")
 	// 根据域设置的规则检测密码策略
 	descDom := domain.NewDescribeDomainRequestWithName(u.Domain)
-	dom, err := s.domain.DescribeDomain(pkg.GetInternalAdminTokenCtx(account), descDom)
+	dom, err := s.domain.DescribeDomain(ctx, descDom)
 	if err != nil {
 		return nil, err
 	}
@@ -191,7 +191,7 @@ func (s *service) DescribeAccount(ctx context.Context, req *user.DescribeAccount
 		return nil, exception.NewInternalServerError("find user %s error, %s", req, err)
 	}
 
-	dom, err := s.domain.DescribeDomain(pkg.GetInternalAdminTokenCtx(ins.Account), domain.NewDescribeDomainRequestWithName(ins.Domain))
+	dom, err := s.domain.DescribeDomain(ctx, domain.NewDescribeDomainRequestWithName(ins.Domain))
 	if err != nil {
 		return nil, err
 	}

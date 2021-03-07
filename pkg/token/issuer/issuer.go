@@ -77,8 +77,8 @@ func (i *issuer) checkUserPass(ctx context.Context, user, pass string) (*user.Us
 	return u, nil
 }
 
-func (i *issuer) checkUserPassExpired(u *user.User) error {
-	d, err := i.getDomain(u)
+func (i *issuer) checkUserPassExpired(ctx context.Context, u *user.User) error {
+	d, err := i.getDomain(ctx, u)
 	if err != nil {
 		return err
 	}
@@ -98,16 +98,16 @@ func (i *issuer) getUser(ctx context.Context, name string) (*user.User, error) {
 	return i.user.DescribeAccount(ctx, req)
 }
 
-func (i *issuer) getDomain(u *user.User) (*domain.Domain, error) {
+func (i *issuer) getDomain(ctx context.Context, u *user.User) (*domain.Domain, error) {
 	req := domain.NewDescribeDomainRequestWithName(u.Domain)
-	return i.domain.DescribeDomain(pkg.GetInternalAdminTokenCtx(u.Account), req)
+	return i.domain.DescribeDomain(ctx, req)
 }
 
-func (i *issuer) setTokenDomain(tk *token.Token) error {
+func (i *issuer) setTokenDomain(ctx context.Context, tk *token.Token) error {
 	// 获取最近1个
 	req := domain.NewQueryDomainRequest(request.NewPageRequest(1, 1))
 
-	domains, err := i.domain.QueryDomain(pkg.GetInternalAdminTokenCtx(tk.Account), req)
+	domains, err := i.domain.QueryDomain(ctx, req)
 	if err != nil {
 		return err
 	}
@@ -125,7 +125,7 @@ func (i *issuer) IssueToken(ctx context.Context, req *token.IssueTokenRequest) (
 		return nil, err
 	}
 
-	app, err := i.CheckClient(req.ClientId, req.ClientSecret)
+	app, err := i.CheckClient(ctx, req.ClientId, req.ClientSecret)
 	if err != nil {
 		return nil, exception.NewUnauthorized(err.Error())
 	}
@@ -138,7 +138,7 @@ func (i *issuer) IssueToken(ctx context.Context, req *token.IssueTokenRequest) (
 			return nil, exception.NewUnauthorized("user or password not connrect")
 		}
 
-		if err := i.checkUserPassExpired(u); err != nil {
+		if err := i.checkUserPassExpired(ctx, u); err != nil {
 			i.log.Debugf("issue password token error, %s", err)
 			if v, ok := err.(exception.APIException); ok {
 				v.WithData(u.Account)
@@ -149,7 +149,7 @@ func (i *issuer) IssueToken(ctx context.Context, req *token.IssueTokenRequest) (
 		tk := i.issueUserToken(app, u, token.GrantType_PASSWORD)
 		switch u.Type {
 		case types.UserType_SUPPER, types.UserType_PRIMARY:
-			err := i.setTokenDomain(tk)
+			err := i.setTokenDomain(ctx, tk)
 			if err != nil {
 				return nil, fmt.Errorf("set token domain error, %s", err)
 			}

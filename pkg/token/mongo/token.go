@@ -201,7 +201,7 @@ func (s *service) RevolkToken(ctx context.Context, req *token.RevolkTokenRequest
 	}
 
 	// 检测撤销token的客户端是否合法
-	app, err := s.issuer.CheckClient(req.ClientId, req.ClientSecret)
+	app, err := s.issuer.CheckClient(ctx, req.ClientId, req.ClientSecret)
 	if err != nil {
 		return nil, exception.NewUnauthorized(err.Error())
 	}

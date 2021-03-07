@@ -5,6 +5,7 @@ import (
 
 	"github.com/infraboard/mcube/http/router"
 
+	"github.com/infraboard/keyauth/client"
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/session"
 )
@@ -14,7 +15,7 @@ var (
 )
 
 type handler struct {
-	service session.UserServiceServer
+	service session.UserServiceClient
 }
 
 // Registry 注册HTTP服务路由
@@ -26,11 +27,12 @@ func (h *handler) Registry(router router.SubRouter) {
 }
 
 func (h *handler) Config() error {
-	if pkg.Domain == nil {
-		return errors.New("denpence domain service is nil")
+	client := client.C()
+	if client == nil {
+		return errors.New("grpc client not initial")
 	}
 
-	h.service = pkg.SessionUser
+	h.service = client.SessionUser()
 	return nil
 }
 
