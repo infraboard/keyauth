@@ -92,6 +92,11 @@ func (c *GrpcCtx) Context() context.Context {
 	return metadata.NewOutgoingContext(context.Background(), c.md)
 }
 
+// InContext todo
+func (c *GrpcCtx) InContext() context.Context {
+	return metadata.NewIncomingContext(context.Background(), c.md)
+}
+
 // GetAccessToKen todo
 func (c *GrpcCtx) GetAccessToKen() string {
 	return c.get("x-oauth-token")
@@ -99,8 +104,8 @@ func (c *GrpcCtx) GetAccessToKen() string {
 
 // GetToken todo
 func (c *GrpcCtx) GetToken() (*token.Token, error) {
-	ctx := context.Background()
 	req := token.NewDescribeTokenRequestWithAccessToken(c.GetAccessToKen())
+	ctx := NewInternalMockGrpcCtx("internal").Context()
 	return Token.DescribeToken(ctx, req)
 }
 

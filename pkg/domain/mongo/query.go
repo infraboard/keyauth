@@ -37,7 +37,6 @@ func (r *request) FindFilter() bson.M {
 	filter := bson.M{}
 
 	filter["owner"] = r.token.Account
-
 	return filter
 }
 

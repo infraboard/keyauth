@@ -38,26 +38,26 @@ func NewChecker() (Checker, error) {
 	}
 
 	return &checker{
-		domain:   pkg.Domain,
-		user:     pkg.User,
-		session:  pkg.SessionAdmin,
-		cache:    c,
-		ip2Regin: pkg.IP2Region,
-		log:      zap.L().Named("Login Security"),
+		domain:    pkg.Domain,
+		user:      pkg.User,
+		session:   pkg.SessionAdmin,
+		cache:     c,
+		ip2Regoin: pkg.IP2Region,
+		log:       zap.L().Named("Login Security"),
 	}, nil
 }
 
 type checker struct {
-	domain   domain.DomainServiceServer
-	user     user.UserServiceServer
-	session  session.AdminServiceServer
-	cache    cache.Cache
-	ip2Regin ip2region.Service
-	log      logger.Logger
+	domain    domain.DomainServiceServer
+	user      user.UserServiceServer
+	session   session.AdminServiceServer
+	cache     cache.Cache
+	ip2Regoin ip2region.Service
+	log       logger.Logger
 }
 
 func (c *checker) MaxFailedRetryCheck(ctx context.Context, req *token.IssueTokenRequest) error {
-	ss := c.getOrDefaultSecuritySettingWithUser(ctx, req.Username)
+	ss := c.getOrDefaultSecuritySettingWithUser(req.Username)
 	if !ss.LoginSecurity.RetryLock {
 		c.log.Debugf("retry lock check disabled, don't check")
 		return nil
@@ -80,7 +80,7 @@ func (c *checker) MaxFailedRetryCheck(ctx context.Context, req *token.IssueToken
 }
 
 func (c *checker) UpdateFailedRetry(ctx context.Context, req *token.IssueTokenRequest) error {
-	ss := c.getOrDefaultSecuritySettingWithUser(ctx, req.Username)
+	ss := c.getOrDefaultSecuritySettingWithUser(req.Username)
 	if !ss.LoginSecurity.RetryLock {
 		c.log.Debugf("retry lock check disabled, don't check")
 		return nil
@@ -124,7 +124,8 @@ func (c *checker) OtherPlaceLoggedInChecK(ctx context.Context, tk *token.Token) 
 	c.log.Debugf("other place login check enabled, checking ...")
 
 	// 查询当前登陆IP地域
-	login, err := c.ip2Regin.LookupIP(tk.GetRemoteIP())
+	c.log.Debugf("query remote ip: %s location ...", tk.GetRemoteIP())
+	login, err := c.ip2Regoin.LookupIP(tk.GetRemoteIP())
 	if err != nil {
 		return err
 	}
@@ -142,7 +143,7 @@ func (c *checker) OtherPlaceLoggedInChecK(ctx context.Context, tk *token.Token) 
 	}
 
 	// city为0 表示内网IP, 不错异地登录校验
-	if us.IpInfo.CityId == 0 {
+	if login.CityID == 0 || us.IpInfo.CityId == 0 {
 		c.log.Warnf("city id is 0, 内网IP skip OtherPlaceLoggedInChecK")
 		return nil
 	}
@@ -158,7 +159,7 @@ func (c *checker) OtherPlaceLoggedInChecK(ctx context.Context, tk *token.Token) 
 }
 
 func (c *checker) NotLoginDaysChecK(ctx context.Context, tk *token.Token) error {
-	ss := c.getOrDefaultSecuritySettingWithUser(ctx, tk.Account)
+	ss := c.getOrDefaultSecuritySettingWithUser(tk.Account)
 	if !ss.LoginSecurity.ExceptionLock {
 		c.log.Debugf("exception check disabled, don't check")
 		return nil
@@ -191,7 +192,7 @@ func (c *checker) NotLoginDaysChecK(ctx context.Context, tk *token.Token) error 
 }
 
 func (c *checker) IPProtectCheck(ctx context.Context, req *token.IssueTokenRequest) error {
-	ss := c.getOrDefaultSecuritySettingWithUser(ctx, req.Username)
+	ss := c.getOrDefaultSecuritySettingWithUser(req.Username)
 	if !ss.LoginSecurity.IpLimite {
 		c.log.Debugf("ip limite check disabled, don't check")
 		return nil
@@ -202,8 +203,9 @@ func (c *checker) IPProtectCheck(ctx context.Context, req *token.IssueTokenReque
 	return nil
 }
 
-func (c *checker) getOrDefaultSecuritySettingWithUser(ctx context.Context, account string) *domain.SecuritySetting {
+func (c *checker) getOrDefaultSecuritySettingWithUser(account string) *domain.SecuritySetting {
 	ss := domain.NewDefaultSecuritySetting()
+	ctx := pkg.NewInternalMockGrpcCtx(account).InContext()
 	u, err := c.user.DescribeAccount(ctx, user.NewDescriptAccountRequestWithAccount(account))
 	if err != nil {
 		c.log.Errorf("get user account error, %s, use default setting to check", err)

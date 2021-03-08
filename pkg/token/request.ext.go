@@ -44,7 +44,7 @@ func (m *DescribeTokenRequest) Validate() error {
 	}
 
 	if m.AccessToken == "" && m.RefreshToken == "" {
-		return errors.New("access_token and refresh_token required one")
+		return errors.New("describe token request validate error, access_token and refresh_token required one")
 	}
 
 	return nil

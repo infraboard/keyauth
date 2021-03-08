@@ -65,7 +65,8 @@ type issuer struct {
 	log     logger.Logger
 }
 
-func (i *issuer) checkUserPass(ctx context.Context, user, pass string) (*user.User, error) {
+func (i *issuer) checkUserPass(user, pass string) (*user.User, error) {
+	ctx := pkg.NewInternalMockGrpcCtx(user).InContext()
 	u, err := i.getUser(ctx, user)
 	if err != nil {
 		return nil, err
@@ -103,10 +104,10 @@ func (i *issuer) getDomain(ctx context.Context, u *user.User) (*domain.Domain, e
 	return i.domain.DescribeDomain(ctx, req)
 }
 
-func (i *issuer) setTokenDomain(ctx context.Context, tk *token.Token) error {
+func (i *issuer) setTokenDomain(tk *token.Token) error {
 	// 获取最近1个
 	req := domain.NewQueryDomainRequest(request.NewPageRequest(1, 1))
-
+	ctx := pkg.NewInternalMockGrpcCtx(tk.Account).InContext()
 	domains, err := i.domain.QueryDomain(ctx, req)
 	if err != nil {
 		return err
@@ -132,7 +133,7 @@ func (i *issuer) IssueToken(ctx context.Context, req *token.IssueTokenRequest) (
 
 	switch req.GrantType {
 	case token.GrantType_PASSWORD:
-		u, checkErr := i.checkUserPass(ctx, req.Username, req.Password)
+		u, checkErr := i.checkUserPass(req.Username, req.Password)
 		if checkErr != nil {
 			i.log.Debugf("issue password token error, %s", checkErr)
 			return nil, exception.NewUnauthorized("user or password not connrect")
@@ -149,10 +150,11 @@ func (i *issuer) IssueToken(ctx context.Context, req *token.IssueTokenRequest) (
 		tk := i.issueUserToken(app, u, token.GrantType_PASSWORD)
 		switch u.Type {
 		case types.UserType_SUPPER, types.UserType_PRIMARY:
-			err := i.setTokenDomain(ctx, tk)
+			err := i.setTokenDomain(tk)
 			if err != nil {
 				return nil, fmt.Errorf("set token domain error, %s", err)
 			}
+			tk.Domain = u.Domain
 		case types.UserType_SERVICE, types.UserType_SUB:
 			tk.Domain = u.Domain
 		}

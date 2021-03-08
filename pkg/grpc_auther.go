@@ -39,6 +39,7 @@ func (a *grpcAuther) Auth(
 	info *grpc.UnaryServerInfo,
 	handler grpc.UnaryHandler,
 ) (resp interface{}, err error) {
+	// 重上下文中获取认证信息
 	rctx, err := GetGrpcCtx(ctx)
 	if err != nil {
 		return nil, err
@@ -60,7 +61,8 @@ func (a *grpcAuther) Auth(
 		}
 	}()
 
-	return handler(rctx.ClearInternl().Context(), req)
+	rctx.ClearInternl()
+	return handler(ctx, req)
 }
 
 func (a *grpcAuther) validateServiceCredential(ctx *GrpcCtx) error {

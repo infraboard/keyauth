@@ -8,6 +8,7 @@ import (
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 
+	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/token"
 )
 
@@ -30,7 +31,7 @@ func (h *handler) IssueToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	d, err := h.service.IssueToken(context.Background(), req)
+	d, err := h.service.IssueToken(pkg.NewGrpcCtx().Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return
