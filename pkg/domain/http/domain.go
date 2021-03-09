@@ -12,7 +12,7 @@ import (
 )
 
 func (h *handler) ListDomains(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -36,7 +36,7 @@ func (h *handler) GetDomain(w http.ResponseWriter, r *http.Request) {
 	req := domain.NewDescribeDomainRequest()
 	req.Name = rctx.PS.ByName("name")
 
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -59,7 +59,7 @@ func (h *handler) CreateDomain(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -76,7 +76,7 @@ func (h *handler) CreateDomain(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) PutDomain(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -106,7 +106,7 @@ func (h *handler) PutDomain(w http.ResponseWriter, r *http.Request) {
 
 func (h *handler) PatchDomain(w http.ResponseWriter, r *http.Request) {
 	rctx := httpcontext.GetContext(r)
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -134,7 +134,7 @@ func (h *handler) PatchDomain(w http.ResponseWriter, r *http.Request) {
 
 func (h *handler) DeleteDomain(w http.ResponseWriter, r *http.Request) {
 	rctx := httpcontext.GetContext(r)
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -152,7 +152,7 @@ func (h *handler) DeleteDomain(w http.ResponseWriter, r *http.Request) {
 
 func (h *handler) UpdateDomainSecurity(w http.ResponseWriter, r *http.Request) {
 	rctx := httpcontext.GetContext(r)
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return

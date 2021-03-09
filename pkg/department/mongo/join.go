@@ -18,7 +18,7 @@ var (
 )
 
 func (s *service) JoinDepartment(ctx context.Context, req *department.JoinDepartmentRequest) (*department.ApplicationForm, error) {
-	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +70,7 @@ func (s *service) DealApplicationForm(ctx context.Context, req *department.DealA
 		return nil, exception.NewBadRequest("validate deal application form request error, %s", err)
 	}
 
-	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -130,7 +130,7 @@ func (s *service) QueryApplicationForm(ctx context.Context, req *department.Quer
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest("validate query application form error, %s", err)
 	}
-	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -167,7 +167,7 @@ func (s *service) QueryApplicationForm(ctx context.Context, req *department.Quer
 
 func (s *service) DescribeApplicationForm(ctx context.Context, req *department.DescribeApplicationFormRequet) (
 	*department.ApplicationForm, error) {
-	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
 	if err != nil {
 		return nil, err
 	}

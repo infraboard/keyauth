@@ -12,7 +12,7 @@ import (
 )
 
 func (h *handler) List(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -30,7 +30,7 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) ListSelfNamespace(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -49,7 +49,7 @@ func (h *handler) ListSelfNamespace(w http.ResponseWriter, r *http.Request) {
 
 // CreateApplication 创建主账号
 func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -72,7 +72,7 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -95,7 +95,7 @@ func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) Delete(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return

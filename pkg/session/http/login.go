@@ -11,7 +11,7 @@ import (
 )
 
 func (h *handler) QueryLoginLog(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return

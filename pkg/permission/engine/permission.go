@@ -19,7 +19,7 @@ func (s *service) QueryPermission(ctx context.Context, req *permission.QueryPerm
 		return nil, exception.NewBadRequest("validate param error, %s", err)
 	}
 
-	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +49,7 @@ func (s *service) QueryRoles(ctx context.Context, req *permission.QueryRoleReque
 		return nil, exception.NewBadRequest("validate param error, %s", err)
 	}
 
-	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
 	if err != nil {
 		return nil, err
 	}

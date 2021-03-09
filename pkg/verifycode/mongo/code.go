@@ -46,7 +46,7 @@ func (s *service) IssueCode(ctx context.Context, req *verifycode.IssueCodeReques
 			return nil, err
 		}
 	case verifycode.IssueType_TOKEN:
-		tk, err = pkg.GetTokenFromGrpcCtx(ctx)
+		tk, err = pkg.GetTokenFromGrpcInCtx(ctx)
 		if err != nil {
 			return nil, err
 		}

@@ -24,7 +24,7 @@ func (s *service) QueryDepartment(ctx context.Context, req *department.QueryDepa
 		return nil, exception.NewBadRequest("validate query department error, %s", err)
 	}
 
-	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -246,7 +246,7 @@ func (s *service) newDepartment(ctx context.Context, req *department.CreateDepar
 		return nil, exception.NewBadRequest(err.Error())
 	}
 
-	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
 	if err != nil {
 		return nil, err
 	}

@@ -16,34 +16,170 @@ import (
 const (
 	// InternalCallTokenHeader todo
 	InternalCallTokenHeader = "internal-call-token"
+	// ClientIDHeader tood
+	ClientIDHeader = "client-id"
+	// ClientSecretHeader todo
+	ClientSecretHeader = "client-secret"
+	// OauthTokenHeader todo
+	OauthTokenHeader = "x-oauth-token"
+	// RealIPHeader todo
+	RealIPHeader = "x-real-ip"
+	// UserAgentHeader todo
+	UserAgentHeader = "user-agent"
 )
 
-// NewGrpcCtx todo
-func NewGrpcCtx() *GrpcCtx {
-	return &GrpcCtx{md: metadata.Pairs()}
+// NewGrpcInCtx todo
+func NewGrpcInCtx() *GrpcInCtx {
+	return &GrpcInCtx{newGrpcCtx(metadata.Pairs())}
 }
 
-// NewInternalMockGrpcCtx todo
-func NewInternalMockGrpcCtx(account string) *GrpcCtx {
-	ctx := NewGrpcCtx()
-	ctx.SetIsInternalCall(account, domain.AdminDomainName)
-	return ctx
-}
-
-// GetGrpcCtx todo
-func GetGrpcCtx(ctx context.Context) (*GrpcCtx, error) {
+// GetGrpcInCtx todo
+func GetGrpcInCtx(ctx context.Context) (*GrpcInCtx, error) {
 	// 获取认证信息
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return nil, fmt.Errorf("ctx is not an grpc incoming context")
 	}
 
-	return &GrpcCtx{md: md}, nil
+	return &GrpcInCtx{newGrpcCtx(md)}, nil
 }
 
-// GetTokenFromGrpcCtx todo
-func GetTokenFromGrpcCtx(ctx context.Context) (*token.Token, error) {
-	rctx, err := GetGrpcCtx(ctx)
+// GrpcInCtx todo
+type GrpcInCtx struct {
+	*grpcCtx
+}
+
+// Context todo
+func (c *GrpcInCtx) Context() context.Context {
+	return metadata.NewIncomingContext(context.Background(), c.md)
+}
+
+// GetClientID todo
+func (c *GrpcInCtx) GetClientID() string {
+	return c.get(ClientIDHeader)
+}
+
+// GetClientSecret todo
+func (c *GrpcInCtx) GetClientSecret() string {
+	return c.get(ClientSecretHeader)
+}
+
+// GetAccessToKen todo
+func (c *GrpcInCtx) GetAccessToKen() string {
+	return c.get(OauthTokenHeader)
+}
+
+// SetIsInternalCall 内部调用不需要认证, 直接传给server端的接口
+func (c *GrpcInCtx) SetIsInternalCall(account, domain string) {
+	c.set(InternalCallTokenHeader, account, domain)
+}
+
+// IsInternalCall todo
+func (c *GrpcInCtx) IsInternalCall() bool {
+	if _, ok := c.md[InternalCallTokenHeader]; ok {
+		return true
+	}
+
+	return false
+}
+
+// ClearInternl todo
+func (c *GrpcInCtx) ClearInternl() *GrpcInCtx {
+	delete(c.md, InternalCallTokenHeader)
+	return c
+}
+
+// GetToken todo
+func (c *GrpcInCtx) GetToken() (*token.Token, error) {
+	req := token.NewDescribeTokenRequestWithAccessToken(c.GetAccessToKen())
+	ctx := NewInternalMockGrpcCtx("internal").Context()
+	return Token.DescribeToken(ctx, req)
+}
+
+// InternalCallToken 是不是内部调用
+func (c *GrpcInCtx) InternalCallToken() *token.Token {
+	tk := &token.Token{UserType: types.UserType_INTERNAL}
+	tk.Account = c.getWithIndex(InternalCallTokenHeader, 0)
+	tk.Domain = c.getWithIndex(InternalCallTokenHeader, 1)
+	return tk
+}
+
+// NewGrpcOutCtx todo
+func NewGrpcOutCtx() *GrpcOutCtx {
+	return &GrpcOutCtx{newGrpcCtx(metadata.Pairs())}
+}
+
+// GrpcOutCtx todo
+type GrpcOutCtx struct {
+	*grpcCtx
+}
+
+// Context todo
+func (c *GrpcOutCtx) Context() context.Context {
+	return metadata.NewOutgoingContext(context.Background(), c.md)
+}
+
+// SetRemoteIP todo
+func (c *GrpcOutCtx) SetRemoteIP(ip string) {
+	c.set(RealIPHeader, ip)
+}
+
+// SetUserAgent todo
+func (c *GrpcOutCtx) SetUserAgent(ua string) {
+	c.set(UserAgentHeader, ua)
+}
+
+// GetToken todo
+func (c *GrpcOutCtx) GetToken() (*token.Token, error) {
+	req := token.NewDescribeTokenRequestWithAccessToken(c.get(OauthTokenHeader))
+	ctx := NewInternalMockGrpcCtx("internal").Context()
+	return Token.DescribeToken(ctx, req)
+}
+
+func newGrpcCtx(md metadata.MD) *grpcCtx {
+	return &grpcCtx{md: md}
+}
+
+// GrpcCtx todo
+type grpcCtx struct {
+	md metadata.MD
+}
+
+// Get todo
+func (c *grpcCtx) get(key string) string {
+	return c.getWithIndex(key, 0)
+}
+
+// Get todo
+func (c *grpcCtx) getWithIndex(key string, index int) string {
+	if val, ok := c.md[key]; ok {
+		if len(val) > index {
+			return val[index]
+		}
+	}
+
+	return ""
+}
+
+func (c *grpcCtx) set(key string, values ...string) {
+	c.md.Set(key, values...)
+}
+
+// SetAccessToken todo
+func (c *grpcCtx) SetAccessToken(ak string) {
+	c.set(OauthTokenHeader, ak)
+}
+
+// NewInternalMockGrpcCtx todo
+func NewInternalMockGrpcCtx(account string) *GrpcInCtx {
+	ctx := NewGrpcInCtx()
+	ctx.SetIsInternalCall(account, domain.AdminDomainName)
+	return ctx
+}
+
+// GetTokenFromGrpcInCtx todo
+func GetTokenFromGrpcInCtx(ctx context.Context) (*token.Token, error) {
+	rctx, err := GetGrpcInCtx(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -56,109 +192,9 @@ func GetTokenFromGrpcCtx(ctx context.Context) (*token.Token, error) {
 	return rctx.GetToken()
 }
 
-// GrpcCtx todo
-type GrpcCtx struct {
-	md metadata.MD
-}
-
-// Get todo
-func (c *GrpcCtx) get(key string) string {
-	return c.getWithIndex(key, 0)
-}
-
-// Get todo
-func (c *GrpcCtx) getWithIndex(key string, index int) string {
-	if val, ok := c.md[key]; ok {
-		if len(val) > index {
-			return val[index]
-		}
-	}
-
-	return ""
-}
-
-func (c *GrpcCtx) set(key string, values ...string) {
-	c.md.Set(key, values...)
-}
-
-// ClearInternl todo
-func (c *GrpcCtx) ClearInternl() *GrpcCtx {
-	delete(c.md, InternalCallTokenHeader)
-	return c
-}
-
-// Context todo
-func (c *GrpcCtx) Context() context.Context {
-	return metadata.NewOutgoingContext(context.Background(), c.md)
-}
-
-// InContext todo
-func (c *GrpcCtx) InContext() context.Context {
-	return metadata.NewIncomingContext(context.Background(), c.md)
-}
-
-// GetAccessToKen todo
-func (c *GrpcCtx) GetAccessToKen() string {
-	return c.get("x-oauth-token")
-}
-
-// GetToken todo
-func (c *GrpcCtx) GetToken() (*token.Token, error) {
-	req := token.NewDescribeTokenRequestWithAccessToken(c.GetAccessToKen())
-	ctx := NewInternalMockGrpcCtx("internal").Context()
-	return Token.DescribeToken(ctx, req)
-}
-
-// GetClientID todo
-func (c *GrpcCtx) GetClientID() string {
-	return c.get("client-id")
-}
-
-// GetClientSecret todo
-func (c *GrpcCtx) GetClientSecret() string {
-	return c.get("client-secret")
-}
-
-// SetAccessToken todo
-func (c *GrpcCtx) SetAccessToken(ak string) {
-	c.set("x-oauth-token", ak)
-}
-
-// SetRemoteIP todo
-func (c *GrpcCtx) SetRemoteIP(ip string) {
-	c.set("x-real-ip", ip)
-}
-
-// SetUserAgent todo
-func (c *GrpcCtx) SetUserAgent(ua string) {
-	c.set("user-agent", ua)
-}
-
-// SetIsInternalCall 内部调用不需要认证
-func (c *GrpcCtx) SetIsInternalCall(account, domain string) {
-	c.set(InternalCallTokenHeader, account, domain)
-}
-
-// IsInternalCall todo
-func (c *GrpcCtx) IsInternalCall() bool {
-	if _, ok := c.md[InternalCallTokenHeader]; ok {
-		return true
-	}
-
-	return false
-}
-
-// InternalCallToken 是不是内部调用
-func (c *GrpcCtx) InternalCallToken() *token.Token {
-	tk := &token.Token{UserType: types.UserType_INTERNAL}
-	tk.Account = c.getWithIndex(InternalCallTokenHeader, 0)
-	tk.Domain = c.getWithIndex(InternalCallTokenHeader, 1)
-	return tk
-}
-
-// GetGrpcCtxFromHTTPRequest 从上下文中获取Token
-func GetGrpcCtxFromHTTPRequest(r *http.Request) (*GrpcCtx, error) {
-	rc := NewGrpcCtx()
+// NewGrpcOutCtxFromHTTPRequest 从上下文中获取Token
+func NewGrpcOutCtxFromHTTPRequest(r *http.Request) (*GrpcOutCtx, error) {
+	rc := NewGrpcOutCtx()
 	rc.SetAccessToken(r.Header.Get("X-OAUTH-TOKEN"))
 	rc.SetRemoteIP(request.GetRemoteIP(r))
 	rc.SetUserAgent(r.UserAgent())

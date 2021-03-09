@@ -19,7 +19,7 @@ import (
 )
 
 func (s *service) QueryAccount(ctx context.Context, req *user.QueryAccountRequest) (*user.Set, error) {
-	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -32,7 +32,7 @@ func (s *service) QueryAccount(ctx context.Context, req *user.QueryAccountReques
 }
 
 func (s *service) CreateAccount(ctx context.Context, req *user.CreateAccountRequest) (*user.User, error) {
-	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +65,7 @@ func (s *service) CreateAccount(ctx context.Context, req *user.CreateAccountRequ
 }
 
 func (s *service) UpdateAccountProfile(ctx context.Context, req *user.UpdateAccountRequest) (*user.User, error) {
-	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -144,7 +144,7 @@ func (s *service) changePass(ctx context.Context, account, old, new string) (*us
 
 	// 非本人重置密码, 需要用户下次登录时重置
 	var isReset bool
-	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -172,7 +172,7 @@ func (s *service) changePass(ctx context.Context, account, old, new string) (*us
 }
 
 func (s *service) DescribeAccount(ctx context.Context, req *user.DescribeAccountRequest) (*user.User, error) {
-	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -226,7 +226,7 @@ func (s *service) DeleteAccount(ctx context.Context, req *user.DeleteAccountRequ
 }
 
 func (s *service) GeneratePassword(ctx context.Context, req *user.GeneratePasswordRequest) (*user.GeneratePasswordResponse, error) {
-	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
 	if err != nil {
 		return nil, err
 	}

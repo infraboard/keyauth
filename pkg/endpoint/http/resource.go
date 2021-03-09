@@ -9,7 +9,7 @@ import (
 )
 
 func (h *handler) ListResource(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return

@@ -12,7 +12,7 @@ import (
 )
 
 func (h *handler) List(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -31,7 +31,7 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 
 // Create 创建主账号
 func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -56,7 +56,7 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 // Create 创建主账号
 func (h *handler) Put(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -82,7 +82,7 @@ func (h *handler) Put(w http.ResponseWriter, r *http.Request) {
 func (h *handler) Patch(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
 
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -105,7 +105,7 @@ func (h *handler) Patch(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -131,7 +131,7 @@ func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) GetSub(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -155,7 +155,7 @@ func (h *handler) GetSub(w http.ResponseWriter, r *http.Request) {
 
 // DestroyPrimaryAccount 注销账号
 func (h *handler) Delete(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return

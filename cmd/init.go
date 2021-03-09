@@ -143,13 +143,13 @@ type Initialer struct {
 }
 
 func (i *Initialer) mockContext(account string) context.Context {
-	ctx := pkg.NewGrpcCtx()
+	ctx := pkg.NewGrpcInCtx()
 	ctx.SetIsInternalCall(account, domain.AdminDomainName)
 	return ctx.Context()
 }
 
 func (i *Initialer) userContext() context.Context {
-	ctx := pkg.NewGrpcCtx()
+	ctx := pkg.NewGrpcInCtx()
 	ctx.SetAccessToken(i.tk.AccessToken)
 	return ctx.Context()
 }

@@ -31,7 +31,7 @@ func (h *handler) IssueToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	d, err := h.service.IssueToken(pkg.NewGrpcCtx().Context(), req)
+	d, err := h.service.IssueToken(pkg.NewGrpcOutCtx().Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return

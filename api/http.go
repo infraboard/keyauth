@@ -97,11 +97,10 @@ func (s *HTTPService) InitGRPCClient() error {
 		return fmt.Errorf("dependence micro service is nil")
 	}
 
-	internalCtx := pkg.NewInternalMockGrpcCtx("internal")
-
+	ctx := pkg.NewInternalMockGrpcCtx("internal")
 	desc := micro.NewDescribeServiceRequest()
 	desc.Name = version.ServiceName
-	svr, err := pkg.Micro.DescribeService(internalCtx.Context(), desc)
+	svr, err := pkg.Micro.DescribeService(ctx.Context(), desc)
 	if err != nil {
 		return err
 	}

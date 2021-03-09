@@ -13,7 +13,7 @@ import (
 )
 
 func (h *handler) CreateSubAccount(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -38,7 +38,7 @@ func (h *handler) CreateSubAccount(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) QuerySubAccount(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -58,7 +58,7 @@ func (h *handler) QuerySubAccount(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) DescribeSubAccount(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -77,7 +77,7 @@ func (h *handler) DescribeSubAccount(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) PatchSubAccount(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -105,7 +105,7 @@ func (h *handler) PatchSubAccount(w http.ResponseWriter, r *http.Request) {
 
 // DestroySubAccount 注销账号
 func (h *handler) DestroySubAccount(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -122,7 +122,7 @@ func (h *handler) DestroySubAccount(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) UpdateSubAccountDepartment(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return

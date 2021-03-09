@@ -21,7 +21,7 @@ func (s *service) CreateService(ctx context.Context, req *micro.CreateMicroReque
 		return nil, err
 	}
 
-	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
 	if err != nil {
 		return nil, err
 	}

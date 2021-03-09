@@ -134,7 +134,7 @@ func (s *userimpl) DescribeSession(ctx context.Context, req *session.DescribeSes
 }
 
 func (s *userimpl) QuerySession(ctx context.Context, req *session.QuerySessionRequest) (*session.Set, error) {
-	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
 	if err != nil {
 		return nil, err
 	}

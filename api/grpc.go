@@ -72,11 +72,10 @@ func (s *GRPCService) RegistryEndpoints() error {
 		return fmt.Errorf("dependence micro service is nil")
 	}
 
-	internalCtx := pkg.NewInternalMockGrpcCtx("internal")
-
+	ctx := pkg.NewInternalMockGrpcCtx("internal")
 	desc := micro.NewDescribeServiceRequest()
 	desc.Name = version.ServiceName
-	svr, err := pkg.Micro.DescribeService(internalCtx.Context(), desc)
+	svr, err := pkg.Micro.DescribeService(ctx.Context(), desc)
 	if err != nil {
 		return err
 	}
@@ -88,7 +87,7 @@ func (s *GRPCService) RegistryEndpoints() error {
 	req := endpoint.NewRegistryRequest(version.Short(), pkg.HTTPEntry().Items)
 	req.ClientId = svr.ClientId
 	req.ClientSecret = svr.ClientSecret
-	_, err = pkg.Endpoint.Registry(internalCtx.Context(), req)
+	_, err = pkg.Endpoint.Registry(ctx.Context(), req)
 	return err
 }
 

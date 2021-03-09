@@ -19,7 +19,7 @@ type userimpl struct {
 
 func (s *userimpl) CreateUserApplication(ctx context.Context, req *application.CreateApplicatonRequest) (
 	*application.Application, error) {
-	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
 	if err != nil {
 		return nil, err
 	}

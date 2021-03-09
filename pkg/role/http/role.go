@@ -13,7 +13,7 @@ import (
 
 // CreateApplication 创建自定义角色
 func (h *handler) CreateRole(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -36,7 +36,7 @@ func (h *handler) CreateRole(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) QueryRole(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -54,7 +54,7 @@ func (h *handler) QueryRole(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) DescribeRole(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return

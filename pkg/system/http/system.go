@@ -15,7 +15,7 @@ import (
 )
 
 func (h *handler) GetSystemConfig(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -44,7 +44,7 @@ func (h *handler) GetSystemConfig(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) TestEmailSend(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -77,7 +77,7 @@ func (h *handler) TestEmailSend(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) SettingEmail(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -111,7 +111,7 @@ func (h *handler) SettingEmail(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) TestSMSSend(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -144,7 +144,7 @@ func (h *handler) TestSMSSend(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) SettingSMS(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -178,7 +178,7 @@ func (h *handler) SettingSMS(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) SettingVerifyCode(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return

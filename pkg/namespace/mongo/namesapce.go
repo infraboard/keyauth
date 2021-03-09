@@ -123,7 +123,7 @@ func (s *service) DescribeNamespace(ctx context.Context, req *namespace.Descript
 }
 
 func (s *service) DeleteNamespace(ctx context.Context, req *namespace.DeleteNamespaceRequest) (*namespace.Namespace, error) {
-	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -157,7 +157,7 @@ func (s *service) newNamespace(ctx context.Context, req *namespace.CreateNamespa
 		return nil, exception.NewBadRequest(err.Error())
 	}
 
-	tk, err := pkg.GetTokenFromGrpcCtx(ctx)
+	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
 	if err != nil {
 		return nil, err
 	}

@@ -32,7 +32,7 @@ func (h *handler) IssueCodeByPass(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) IssueCodeByToken(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return

@@ -10,7 +10,7 @@ import (
 )
 
 func (h *handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -42,7 +42,7 @@ func (h *handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) GeneratePassword(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return

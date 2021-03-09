@@ -15,6 +15,7 @@ import (
 	httpb "github.com/infraboard/mcube/pb/http"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 var (
@@ -40,7 +41,7 @@ func (a *grpcAuther) Auth(
 	handler grpc.UnaryHandler,
 ) (resp interface{}, err error) {
 	// 重上下文中获取认证信息
-	rctx, err := GetGrpcCtx(ctx)
+	rctx, err := GetGrpcInCtx(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -62,10 +63,20 @@ func (a *grpcAuther) Auth(
 	}()
 
 	rctx.ClearInternl()
-	return handler(ctx, req)
+	resp, err = handler(rctx.ClearInternl().Context(), req)
+
+	//
+	fmt.Printf("%v", err)
+	switch t := err.(type) {
+	case exception.APIException:
+		fmt.Println(t.ErrorCode())
+		fmt.Println(t.Reason())
+		err = status.Errorf(codes.Code(t.ErrorCode()), t.Error())
+	}
+	return resp, err
 }
 
-func (a *grpcAuther) validateServiceCredential(ctx *GrpcCtx) error {
+func (a *grpcAuther) validateServiceCredential(ctx *GrpcInCtx) error {
 	clientID := ctx.GetClientID()
 	clientSecret := ctx.GetClientSecret()
 
@@ -86,7 +97,7 @@ func (a *grpcAuther) validateServiceCredential(ctx *GrpcCtx) error {
 	return nil
 }
 
-func (a *grpcAuther) validatePermission(ctx *GrpcCtx, path string) error {
+func (a *grpcAuther) validatePermission(ctx *GrpcInCtx, path string) error {
 	var (
 		tk  *token.Token
 		err error

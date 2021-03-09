@@ -205,7 +205,7 @@ func (c *checker) IPProtectCheck(ctx context.Context, req *token.IssueTokenReque
 
 func (c *checker) getOrDefaultSecuritySettingWithUser(account string) *domain.SecuritySetting {
 	ss := domain.NewDefaultSecuritySetting()
-	ctx := pkg.NewInternalMockGrpcCtx(account).InContext()
+	ctx := pkg.NewInternalMockGrpcCtx(account).Context()
 	u, err := c.user.DescribeAccount(ctx, user.NewDescriptAccountRequestWithAccount(account))
 	if err != nil {
 		c.log.Errorf("get user account error, %s, use default setting to check", err)

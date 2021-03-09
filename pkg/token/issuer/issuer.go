@@ -66,7 +66,7 @@ type issuer struct {
 }
 
 func (i *issuer) checkUserPass(user, pass string) (*user.User, error) {
-	ctx := pkg.NewInternalMockGrpcCtx(user).InContext()
+	ctx := pkg.NewInternalMockGrpcCtx(user).Context()
 	u, err := i.getUser(ctx, user)
 	if err != nil {
 		return nil, err
@@ -107,7 +107,7 @@ func (i *issuer) getDomain(ctx context.Context, u *user.User) (*domain.Domain, e
 func (i *issuer) setTokenDomain(tk *token.Token) error {
 	// 获取最近1个
 	req := domain.NewQueryDomainRequest(request.NewPageRequest(1, 1))
-	ctx := pkg.NewInternalMockGrpcCtx(tk.Account).InContext()
+	ctx := pkg.NewInternalMockGrpcCtx(tk.Account).Context()
 	domains, err := i.domain.QueryDomain(ctx, req)
 	if err != nil {
 		return err

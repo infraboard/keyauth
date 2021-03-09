@@ -15,7 +15,7 @@ func (h *handler) QueryService(w http.ResponseWriter, r *http.Request) {
 	page := request.NewPageRequestFromHTTP(r)
 	req := micro.NewQueryMicroRequest(page)
 
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -32,7 +32,7 @@ func (h *handler) QueryService(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) CreateService(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -54,7 +54,7 @@ func (h *handler) CreateService(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) GetService(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -75,7 +75,7 @@ func (h *handler) GetService(w http.ResponseWriter, r *http.Request) {
 
 // DestroyService 销毁服务
 func (h *handler) DestroyService(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -93,7 +93,7 @@ func (h *handler) DestroyService(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) RefreshServiceClientSecret(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.GetGrpcCtxFromHTTPRequest(r)
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
