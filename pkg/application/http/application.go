@@ -6,6 +6,8 @@ import (
 	httpctx "github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/application"
@@ -52,9 +54,15 @@ func (h *handler) CreateUserApplication(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	d, err := h.service.CreateUserApplication(ctx.Context(), req)
+	var header, trailer metadata.MD
+	d, err := h.service.CreateUserApplication(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 
@@ -70,12 +78,18 @@ func (h *handler) GetApplication(w http.ResponseWriter, r *http.Request) {
 	}
 
 	rctx := httpctx.GetContext(r)
-
 	req := application.NewDescriptApplicationRequest()
 	req.Id = rctx.PS.ByName("id")
-	d, err := h.service.DescribeApplication(ctx.Context(), req)
+
+	var header, trailer metadata.MD
+	d, err := h.service.DescribeApplication(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 
@@ -92,11 +106,18 @@ func (h *handler) DestroyApplication(w http.ResponseWriter, r *http.Request) {
 	}
 
 	rctx := httpctx.GetContext(r)
-
 	req := application.NewDeleteApplicationRequestWithID(rctx.PS.ByName("id"))
 
-	if _, err := h.service.DeleteApplication(ctx.Context(), req); err != nil {
-		response.Failed(w, err)
+	var header, trailer metadata.MD
+	_, err = h.service.DeleteApplication(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
+
+	if err != nil {
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 

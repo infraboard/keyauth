@@ -6,6 +6,8 @@ import (
 	"github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/policy"
@@ -20,9 +22,15 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 
 	req := policy.NewQueryPolicyRequestFromHTTP(r)
 
-	apps, err := h.service.QueryPolicy(ctx.Context(), req)
+	var header, trailer metadata.MD
+	apps, err := h.service.QueryPolicy(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 
@@ -46,9 +54,15 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 	req.Type = policy.PolicyType_CUSTOM
 
-	d, err := h.service.CreatePolicy(ctx.Context(), req)
+	var header, trailer metadata.MD
+	d, err := h.service.CreatePolicy(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 
@@ -66,9 +80,16 @@ func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 
 	req := policy.NewDescriptPolicyRequest()
 	req.Id = rctx.PS.ByName("id")
-	d, err := h.service.DescribePolicy(ctx.Context(), req)
+
+	var header, trailer metadata.MD
+	d, err := h.service.DescribePolicy(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 
@@ -86,8 +107,16 @@ func (h *handler) Delete(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
 
 	req := policy.NewDeletePolicyRequestWithID(rctx.PS.ByName("id"))
-	if _, err := h.service.DeletePolicy(ctx.Context(), req); err != nil {
-		response.Failed(w, err)
+
+	var header, trailer metadata.MD
+	_, err = h.service.DeletePolicy(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
+	if err != nil {
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 

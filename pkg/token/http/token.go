@@ -2,7 +2,6 @@ package http
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	httpCtx "github.com/infraboard/mcube/http/context"
@@ -42,8 +41,7 @@ func (h *handler) IssueToken(w http.ResponseWriter, r *http.Request) {
 		grpc.Trailer(&trailer),
 	)
 	if err != nil {
-		fmt.Println(trailer)
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 
@@ -60,9 +58,15 @@ func (h *handler) ValidateToken(w http.ResponseWriter, r *http.Request) {
 	req.EndpointId = qs.Get("endpoint_id")
 	req.NamespaceId = qs.Get("namespace_id")
 
-	d, err := h.service.ValidateToken(context.Background(), req)
+	var header, trailer metadata.MD
+	d, err := h.service.ValidateToken(
+		context.Background(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 
@@ -76,8 +80,16 @@ func (h *handler) RevolkToken(w http.ResponseWriter, r *http.Request) {
 	req.AccessToken = r.Header.Get("X-OAUTH-TOKEN")
 	req.ClientId, req.ClientSecret, _ = r.BasicAuth()
 
-	if _, err := h.service.RevolkToken(nil, req); err != nil {
-		response.Failed(w, err)
+	var header, trailer metadata.MD
+	_, err := h.service.RevolkToken(
+		context.Background(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
+
+	if err != nil {
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 
@@ -93,9 +105,15 @@ func (h *handler) QueryApplicationToken(w http.ResponseWriter, r *http.Request) 
 	req := token.NewQueryTokenRequest(&page.PageRequest)
 	req.ApplicationId = rctx.PS.ByName("id")
 
-	tkSet, err := h.service.QueryToken(nil, req)
+	var header, trailer metadata.MD
+	tkSet, err := h.service.QueryToken(
+		context.Background(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 

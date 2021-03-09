@@ -6,6 +6,8 @@ import (
 	"github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/department"
@@ -25,9 +27,15 @@ func (h *handler) CreateJoinApply(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ins, err := h.service.JoinDepartment(ctx.Context(), req)
+	var header, trailer metadata.MD
+	ins, err := h.service.JoinDepartment(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 
@@ -49,9 +57,15 @@ func (h *handler) QueryJoinApply(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ins, err := h.service.QueryApplicationForm(ctx.Context(), req)
+	var header, trailer metadata.MD
+	ins, err := h.service.QueryApplicationForm(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 
@@ -68,9 +82,16 @@ func (h *handler) GetJoinApply(w http.ResponseWriter, r *http.Request) {
 	}
 
 	req := department.NewDescribeApplicationFormRequetWithID(rctx.PS.ByName("id"))
-	ins, err := h.service.DescribeApplicationForm(ctx.Context(), req)
+
+	var header, trailer metadata.MD
+	ins, err := h.service.DescribeApplicationForm(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 
@@ -94,9 +115,15 @@ func (h *handler) DealJoinApply(w http.ResponseWriter, r *http.Request) {
 	}
 	req.Id = rctx.PS.ByName("id")
 
-	ins, err := h.service.DealApplicationForm(ctx.Context(), req)
+	var header, trailer metadata.MD
+	ins, err := h.service.DealApplicationForm(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 

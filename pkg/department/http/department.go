@@ -6,6 +6,8 @@ import (
 	"github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/department"
@@ -19,9 +21,16 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 	}
 
 	req := department.NewQueryDepartmentRequestFromHTTP(r)
-	apps, err := h.service.QueryDepartment(ctx.Context(), req)
+
+	var header, trailer metadata.MD
+	apps, err := h.service.QueryDepartment(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 
@@ -43,9 +52,15 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ins, err := h.service.CreateDepartment(ctx.Context(), req)
+	var header, trailer metadata.MD
+	ins, err := h.service.CreateDepartment(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 
@@ -68,9 +83,15 @@ func (h *handler) Put(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ins, err := h.service.UpdateDepartment(ctx.Context(), req)
+	var header, trailer metadata.MD
+	ins, err := h.service.UpdateDepartment(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 
@@ -94,9 +115,15 @@ func (h *handler) Patch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ins, err := h.service.UpdateDepartment(ctx.Context(), req)
+	var header, trailer metadata.MD
+	ins, err := h.service.UpdateDepartment(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 
@@ -120,9 +147,16 @@ func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 	req.WithSubCount = qs.Get("with_sub_count") == "true"
 	req.WithUserCount = qs.Get("with_user_count") == "true"
 	req.WithRole = qs.Get("with_role") == "true"
-	ins, err := h.service.DescribeDepartment(ctx.Context(), req)
+
+	var header, trailer metadata.MD
+	ins, err := h.service.DescribeDepartment(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 
@@ -143,9 +177,15 @@ func (h *handler) GetSub(w http.ResponseWriter, r *http.Request) {
 	req := department.NewQueryDepartmentRequestFromHTTP(r)
 	req.ParentId = pid
 
-	ins, err := h.service.QueryDepartment(ctx.Context(), req)
+	var header, trailer metadata.MD
+	ins, err := h.service.QueryDepartment(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 
@@ -164,8 +204,16 @@ func (h *handler) Delete(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
 
 	req := department.NewDeleteDepartmentRequestWithID(rctx.PS.ByName("id"))
-	if _, err := h.service.DeleteDepartment(ctx.Context(), req); err != nil {
-		response.Failed(w, err)
+
+	var header, trailer metadata.MD
+	_, err = h.service.DeleteDepartment(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
+	if err != nil {
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 

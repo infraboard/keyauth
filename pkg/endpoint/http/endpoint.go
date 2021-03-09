@@ -6,6 +6,8 @@ import (
 	"github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/endpoint"
@@ -25,9 +27,15 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = h.endpoint.Registry(ctx.Context(), req)
+	var header, trailer metadata.MD
+	_, err = h.endpoint.Registry(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 
@@ -43,9 +51,16 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 	}
 
 	req := endpoint.NewQueryEndpointRequestFromHTTP(r)
-	set, err := h.endpoint.QueryEndpoints(ctx.Context(), req)
+
+	var header, trailer metadata.MD
+	set, err := h.endpoint.QueryEndpoints(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 
@@ -63,9 +78,16 @@ func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 
 	id := rctx.PS.ByName("id")
 	req := endpoint.NewDescribeEndpointRequestWithID(id)
-	d, err := h.endpoint.DescribeEndpoint(ctx.Context(), req)
+
+	var header, trailer metadata.MD
+	d, err := h.endpoint.DescribeEndpoint(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 

@@ -6,6 +6,8 @@ import (
 	"github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/permission"
@@ -23,9 +25,15 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 	req := permission.NewQueryPermissionRequest(request.NewPageRequestFromHTTP(r))
 	req.NamespaceId = rctx.PS.ByName("id")
 
-	set, err := h.service.QueryPermission(ctx.Context(), req)
+	var header, trailer metadata.MD
+	set, err := h.service.QueryPermission(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 
@@ -46,9 +54,15 @@ func (h *handler) CheckPermission(w http.ResponseWriter, r *http.Request) {
 	req.NamespaceId = rctx.PS.ByName("id")
 	req.EndpointId = rctx.PS.ByName("eid")
 
-	d, err := h.service.CheckPermission(ctx.Context(), req)
+	var header, trailer metadata.MD
+	d, err := h.service.CheckPermission(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 

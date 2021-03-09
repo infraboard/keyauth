@@ -22,6 +22,7 @@ type handler struct {
 // Registry 注册HTTP服务路由
 func (h *handler) Registry(router router.SubRouter) {
 	r := router.ResourceRouter("token")
+
 	r.BasePath("/oauth2/tokens")
 	r.Handle("POST", "/", h.IssueToken).DisableAuth()
 	r.Handle("GET", "/", h.ValidateToken)

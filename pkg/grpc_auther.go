@@ -13,6 +13,8 @@ import (
 	"github.com/infraboard/keyauth/pkg/user/types"
 	"github.com/infraboard/keyauth/version"
 	"github.com/infraboard/mcube/exception"
+	"github.com/infraboard/mcube/logger"
+	"github.com/infraboard/mcube/logger/zap"
 	httpb "github.com/infraboard/mcube/pb/http"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -35,6 +37,7 @@ func newGrpcAuther() *grpcAuther {
 
 // internal todo
 type grpcAuther struct {
+	l logger.Logger
 }
 
 func (a *grpcAuther) Auth(
@@ -67,7 +70,6 @@ func (a *grpcAuther) Auth(
 	rctx.ClearInternl()
 	resp, err = handler(rctx.ClearInternl().Context(), req)
 
-	//
 	switch t := err.(type) {
 	case exception.APIException:
 		err = status.Errorf(codes.Code(t.ErrorCode()), t.Error())
@@ -75,8 +77,11 @@ func (a *grpcAuther) Auth(
 		trailer := metadata.Pairs(
 			ResponseCodeHeader, strconv.Itoa(t.ErrorCode()),
 			ResponseReasonHeader, t.Reason(),
+			ResponseDescHeader, t.Error(),
 		)
-		grpc.SetTrailer(ctx, trailer)
+		if err := grpc.SetTrailer(ctx, trailer); err != nil {
+			a.log().Errorf("send grpc trailer error, %s", err)
+		}
 	}
 	return resp, err
 }
@@ -155,4 +160,12 @@ func (a *grpcAuther) validatePermission(ctx *GrpcInCtx, path string) error {
 
 func (a *grpcAuther) endpointHashID(entry *httpb.Entry) string {
 	return endpoint.GenHashID(version.ServiceName, entry.GrpcPath)
+}
+
+func (a *grpcAuther) log() logger.Logger {
+	if a == nil {
+		a.l = zap.L().Named("GRPC Auther")
+	}
+
+	return a.l
 }

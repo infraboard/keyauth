@@ -5,6 +5,8 @@ import (
 
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/response"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/session"
@@ -23,9 +25,15 @@ func (h *handler) QueryLoginLog(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	set, err := h.service.QuerySession(ctx.Context(), req)
+	var header, trailer metadata.MD
+	set, err := h.service.QuerySession(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 	response.Success(w, set)

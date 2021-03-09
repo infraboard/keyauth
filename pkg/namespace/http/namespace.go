@@ -6,6 +6,8 @@ import (
 	"github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/namespace"
@@ -19,9 +21,16 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 	}
 
 	req := namespace.NewQueryNamespaceRequestFromHTTP(r)
-	apps, err := h.service.QueryNamespace(ctx.Context(), req)
+
+	var header, trailer metadata.MD
+	apps, err := h.service.QueryNamespace(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 
@@ -37,9 +46,16 @@ func (h *handler) ListSelfNamespace(w http.ResponseWriter, r *http.Request) {
 	}
 
 	req := namespace.NewQueryNamespaceRequestFromHTTP(r)
-	apps, err := h.service.QueryNamespace(ctx.Context(), req)
+
+	var header, trailer metadata.MD
+	apps, err := h.service.QueryNamespace(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 
@@ -61,9 +77,15 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	d, err := h.service.CreateNamespace(ctx.Context(), req)
+	var header, trailer metadata.MD
+	d, err := h.service.CreateNamespace(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 
@@ -84,9 +106,16 @@ func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 	req := namespace.NewDescriptNamespaceRequest()
 	req.Id = rctx.PS.ByName("id")
 	req.WithDepartment = qs.Get("with_department") == "true"
-	d, err := h.service.DescribeNamespace(ctx.Context(), req)
+
+	var header, trailer metadata.MD
+	d, err := h.service.DescribeNamespace(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 
@@ -102,10 +131,17 @@ func (h *handler) Delete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	rctx := context.GetContext(r)
-
 	req := namespace.NewDeleteNamespaceRequestWithID(rctx.PS.ByName("id"))
-	if _, err := h.service.DeleteNamespace(ctx.Context(), req); err != nil {
-		response.Failed(w, err)
+
+	var header, trailer metadata.MD
+	_, err = h.service.DeleteNamespace(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
+	if err != nil {
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 

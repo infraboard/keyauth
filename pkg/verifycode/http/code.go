@@ -6,6 +6,8 @@ import (
 
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/verifycode"
@@ -21,9 +23,16 @@ func (h *handler) IssueCodeByPass(w http.ResponseWriter, r *http.Request) {
 	}
 
 	req.IssueType = verifycode.IssueType_PASS
-	code, err := h.service.IssueCode(context.Background(), req)
+
+	var header, trailer metadata.MD
+	code, err := h.service.IssueCode(
+		context.Background(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 
@@ -39,9 +48,16 @@ func (h *handler) IssueCodeByToken(w http.ResponseWriter, r *http.Request) {
 	}
 
 	req := verifycode.NewIssueCodeRequestByToken()
-	code, err := h.service.IssueCode(ctx.Context(), req)
+
+	var header, trailer metadata.MD
+	code, err := h.service.IssueCode(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 

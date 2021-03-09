@@ -3,7 +3,6 @@ package http
 import (
 	"errors"
 
-	"github.com/infraboard/mcube/http/label"
 	"github.com/infraboard/mcube/http/router"
 
 	"github.com/infraboard/keyauth/client"
@@ -24,21 +23,21 @@ type handler struct {
 // Registry 注册HTTP服务路由
 func (h *handler) Registry(router router.SubRouter) {
 	appRouter := router.ResourceRouter("department")
+
 	appRouter.BasePath("join_apply")
-	appRouter.Handle("POST", "/", h.CreateJoinApply).AddLabel(label.Create)
-	appRouter.Handle("GET", "/", h.QueryJoinApply).AddLabel(label.List)
-	appRouter.Handle("GET", "/:id", h.GetJoinApply).AddLabel(label.Get)
-	appRouter.Handle("PATCH", "/:id", h.DealJoinApply).AddLabel(label.Update)
+	appRouter.Handle("POST", "/", h.CreateJoinApply)
+	appRouter.Handle("GET", "/", h.QueryJoinApply)
+	appRouter.Handle("GET", "/:id", h.GetJoinApply)
+	appRouter.Handle("PATCH", "/:id", h.DealJoinApply)
 
 	appRouter.BasePath("departments")
-	appRouter.Permission(true)
-	appRouter.Handle("POST", "/", h.Create).AddLabel(label.Create)
-	appRouter.Handle("GET", "/", h.List).AddLabel(label.List)
-	appRouter.Handle("GET", "/:id", h.Get).AddLabel(label.Get)
-	appRouter.Handle("PUT", "/:id", h.Put).AddLabel(label.Update)
-	appRouter.Handle("PATCH", "/:id", h.Patch).AddLabel(label.Update)
-	appRouter.Handle("GET", "/:id/subs", h.GetSub).AddLabel(label.Get)
-	appRouter.Handle("DELETE", "/:id", h.Delete).AddLabel(label.Delete)
+	appRouter.Handle("POST", "/", h.Create)
+	appRouter.Handle("GET", "/", h.List)
+	appRouter.Handle("GET", "/:id", h.Get)
+	appRouter.Handle("PUT", "/:id", h.Put)
+	appRouter.Handle("PATCH", "/:id", h.Patch)
+	appRouter.Handle("GET", "/:id/subs", h.GetSub)
+	appRouter.Handle("DELETE", "/:id", h.Delete)
 }
 
 func (h *handler) Config() error {

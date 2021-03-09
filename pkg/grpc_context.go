@@ -33,6 +33,8 @@ const (
 	ResponseCodeHeader = "x-rpc-code"
 	// ResponseReasonHeader todo
 	ResponseReasonHeader = "x-rpc-reason"
+	// ResponseDescHeader todo
+	ResponseDescHeader = "x-rpc-desc"
 	// ResponseMetaHeader todo
 	ResponseMetaHeader = "x-rpc-meta"
 	// ResponseDataHeader todo

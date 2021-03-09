@@ -3,7 +3,6 @@ package http
 import (
 	"errors"
 
-	"github.com/infraboard/mcube/http/label"
 	"github.com/infraboard/mcube/http/router"
 
 	"github.com/infraboard/keyauth/client"
@@ -24,16 +23,14 @@ func (h *handler) Registry(router router.SubRouter) {
 	r := router.ResourceRouter("namespace")
 	// 获取自己的namespace 不需做权限限制
 	r.BasePath("self/namespaces")
-	r.Handle("GET", "/", h.ListSelfNamespace).AddLabel(label.List)
+	r.Handle("GET", "/", h.ListSelfNamespace)
 
 	// 需要做权限限制
 	r.BasePath("namespaces")
-	r.Permission(true)
-	r.Handle("POST", "/", h.Create).AddLabel(label.Create)
-	r.Handle("GET", "/", h.List).AddLabel(label.List)
-	r.Handle("GET", "/:id", h.Get).AddLabel(label.Get)
-	r.Handle("DELETE", "/:id", h.Delete).AddLabel(label.Delete)
-
+	r.Handle("POST", "/", h.Create)
+	r.Handle("GET", "/", h.List)
+	r.Handle("GET", "/:id", h.Get)
+	r.Handle("DELETE", "/:id", h.Delete)
 }
 
 func (h *handler) Config() error {

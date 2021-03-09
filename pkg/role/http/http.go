@@ -3,7 +3,6 @@ package http
 import (
 	"errors"
 
-	"github.com/infraboard/mcube/http/label"
 	"github.com/infraboard/mcube/http/router"
 
 	"github.com/infraboard/keyauth/client"
@@ -22,10 +21,11 @@ type handler struct {
 // Registry 注册HTTP服务路由
 func (h *handler) Registry(router router.SubRouter) {
 	r := router.ResourceRouter("role")
+
 	r.BasePath("roles")
-	r.Handle("POST", "/", h.CreateRole).AddLabel(label.Create)
-	r.Handle("GET", "/", h.QueryRole).AddLabel(label.List)
-	r.Handle("GET", "/:name", h.DescribeRole).AddLabel(label.Get)
+	r.Handle("POST", "/", h.CreateRole)
+	r.Handle("GET", "/", h.QueryRole)
+	r.Handle("GET", "/:name", h.DescribeRole)
 }
 
 func (h *handler) Config() error {

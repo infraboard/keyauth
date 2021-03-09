@@ -3,7 +3,6 @@ package http
 import (
 	"errors"
 
-	"github.com/infraboard/mcube/http/label"
 	"github.com/infraboard/mcube/http/router"
 
 	"github.com/infraboard/keyauth/client"
@@ -23,8 +22,8 @@ type handler struct {
 func (h *handler) Registry(router router.SubRouter) {
 	r := router.ResourceRouter("permission")
 	r.BasePath("namespaces")
-	r.Handle("GET", "/:id/permissions", h.List).AddLabel(label.List)
-	r.Handle("GET", "/:id/permissions/endpoints/:eid", h.CheckPermission).AddLabel(label.Get)
+	r.Handle("GET", "/:id/permissions", h.List)
+	r.Handle("GET", "/:id/permissions/endpoints/:eid", h.CheckPermission)
 }
 
 func (h *handler) Config() error {

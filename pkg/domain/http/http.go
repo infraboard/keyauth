@@ -3,7 +3,6 @@ package http
 import (
 	"errors"
 
-	"github.com/infraboard/mcube/http/label"
 	"github.com/infraboard/mcube/http/router"
 
 	"github.com/infraboard/keyauth/client"
@@ -22,15 +21,15 @@ type handler struct {
 // Registry 注册HTTP服务路由
 func (h *handler) Registry(router router.SubRouter) {
 	domainRouter := router.ResourceRouter("domain")
+
 	domainRouter.BasePath("domains")
-	domainRouter.Permission(true)
-	domainRouter.Handle("POST", "/", h.CreateDomain).AddLabel(label.Create)
-	domainRouter.Handle("GET", "/", h.ListDomains).AddLabel(label.List)
-	domainRouter.Handle("GET", "/:name", h.GetDomain).AddLabel(label.Get)
-	domainRouter.Handle("PUT", "/:name", h.PutDomain).AddLabel(label.Update)
-	domainRouter.Handle("PATCH", "/:name", h.PatchDomain).AddLabel(label.Update)
-	domainRouter.Handle("DELETE", "/:name", h.DeleteDomain).AddLabel(label.Delete)
-	domainRouter.Handle("PUT", "/:name/security", h.UpdateDomainSecurity).AddLabel(label.Update)
+	domainRouter.Handle("POST", "/", h.CreateDomain)
+	domainRouter.Handle("GET", "/", h.ListDomains)
+	domainRouter.Handle("GET", "/:name", h.GetDomain)
+	domainRouter.Handle("PUT", "/:name", h.PutDomain)
+	domainRouter.Handle("PATCH", "/:name", h.PatchDomain)
+	domainRouter.Handle("DELETE", "/:name", h.DeleteDomain)
+	domainRouter.Handle("PUT", "/:name/security", h.UpdateDomainSecurity)
 }
 
 func (h *handler) Config() error {

@@ -6,6 +6,8 @@ import (
 	"github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/role"
@@ -25,9 +27,15 @@ func (h *handler) CreateRole(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	d, err := h.service.CreateRole(ctx.Context(), req)
+	var header, trailer metadata.MD
+	d, err := h.service.CreateRole(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 
@@ -43,9 +51,16 @@ func (h *handler) QueryRole(w http.ResponseWriter, r *http.Request) {
 	}
 
 	req := role.NewQueryRoleRequestFromHTTP(r)
-	apps, err := h.service.QueryRole(ctx.Context(), req)
+
+	var header, trailer metadata.MD
+	apps, err := h.service.QueryRole(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 
@@ -67,9 +82,15 @@ func (h *handler) DescribeRole(w http.ResponseWriter, r *http.Request) {
 	req := role.NewDescribeRoleRequestWithID(pid)
 	req.WithPermissions = qs.Get("with_permissions") == "true"
 
-	ins, err := h.service.DescribeRole(ctx.Context(), req)
+	var header, trailer metadata.MD
+	ins, err := h.service.DescribeRole(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 

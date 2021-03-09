@@ -21,9 +21,10 @@ type handler struct {
 // Registry 注册HTTP服务路由
 func (h *handler) Registry(router router.SubRouter) {
 	r := router.ResourceRouter("verify_code")
+
 	r.BasePath("verify_code")
-	r.Handle("POST", "/pass", h.IssueCodeByPass).DisableAuth()
-	r.Handle("POST", "/token", h.IssueCodeByToken).EnableAuth()
+	r.Handle("POST", "/pass", h.IssueCodeByPass)
+	r.Handle("POST", "/token", h.IssueCodeByToken)
 }
 
 func (h *handler) Config() error {

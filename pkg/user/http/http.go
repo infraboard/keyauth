@@ -3,7 +3,6 @@ package http
 import (
 	"errors"
 
-	"github.com/infraboard/mcube/http/label"
 	"github.com/infraboard/mcube/http/router"
 
 	"github.com/infraboard/keyauth/client"
@@ -25,36 +24,33 @@ type handler struct {
 func (h *handler) Registry(router router.SubRouter) {
 	prmaryRouter := router.ResourceRouter("primary_account")
 	prmaryRouter.BasePath("users")
-	prmaryRouter.Permission(true)
-	prmaryRouter.Handle("POST", "/", h.CreatePrimayAccount).AddLabel(label.Create)
-	prmaryRouter.Handle("DELETE", "/", h.DestroyPrimaryAccount).AddLabel(label.Delete)
+	prmaryRouter.Handle("POST", "/", h.CreatePrimayAccount)
+	prmaryRouter.Handle("DELETE", "/", h.DestroyPrimaryAccount)
 
 	ramRouter := router.ResourceRouter("ram_account")
-	ramRouter.Permission(true)
 	ramRouter.BasePath("sub_users")
-	ramRouter.Handle("POST", "/", h.CreateSubAccount).AddLabel(label.Create)
-	ramRouter.Handle("GET", "/", h.QuerySubAccount).AddLabel(label.List)
-	ramRouter.Handle("GET", "/:account", h.DescribeSubAccount).AddLabel(label.Get)
-	ramRouter.Handle("PATCH", "/:account", h.PatchSubAccount).AddLabel(label.Update)
-	ramRouter.Handle("DELETE", "/:account", h.DestroySubAccount).AddLabel(label.Delete)
+	ramRouter.Handle("POST", "/", h.CreateSubAccount)
+	ramRouter.Handle("GET", "/", h.QuerySubAccount)
+	ramRouter.Handle("GET", "/:account", h.DescribeSubAccount)
+	ramRouter.Handle("PATCH", "/:account", h.PatchSubAccount)
+	ramRouter.Handle("DELETE", "/:account", h.DestroySubAccount)
 
 	portalRouter := router.ResourceRouter("profile")
 	portalRouter.BasePath("profile")
-	portalRouter.Handle("GET", "/", h.QueryProfile).AddLabel(label.Get)
-	portalRouter.Handle("GET", "/domain", h.QueryDomain).AddLabel(label.Get)
-	portalRouter.Handle("PUT", "/", h.PutProfile).AddLabel(label.Update)
-	portalRouter.Handle("PATCH", "/", h.PatchProfile).AddLabel(label.Update)
+	portalRouter.Handle("GET", "/", h.QueryProfile)
+	portalRouter.Handle("GET", "/domain", h.QueryDomain)
+	portalRouter.Handle("PUT", "/", h.PutProfile)
+	portalRouter.Handle("PATCH", "/", h.PatchProfile)
 
 	domRouter := router.ResourceRouter("domain")
 	domRouter.BasePath("settings/domain")
-	domRouter.Permission(true)
-	domRouter.Handle("PUT", "/info", h.UpdateDomainInfo).AddLabel(label.Update)
-	domRouter.Handle("PUT", "/security", h.UpdateDomainSecurity).AddLabel(label.Update)
+	domRouter.Handle("PUT", "/info", h.UpdateDomainInfo)
+	domRouter.Handle("PUT", "/security", h.UpdateDomainSecurity)
 
 	passRouter := router.ResourceRouter("password")
 	passRouter.BasePath("password")
-	passRouter.Handle("POST", "/", h.GeneratePassword).AddLabel(label.Create)
-	passRouter.Handle("PUT", "/", h.UpdatePassword).AddLabel(label.Update)
+	passRouter.Handle("POST", "/", h.GeneratePassword)
+	passRouter.Handle("PUT", "/", h.UpdatePassword)
 }
 
 func (h *handler) Config() error {

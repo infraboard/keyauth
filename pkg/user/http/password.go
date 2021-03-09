@@ -7,6 +7,8 @@ import (
 	"github.com/infraboard/keyauth/pkg/user"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 )
 
 func (h *handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
@@ -30,9 +32,15 @@ func (h *handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 	}
 	req.Account = tk.Account
 
-	pass, err := h.service.UpdateAccountPassword(ctx.Context(), req)
+	var header, trailer metadata.MD
+	pass, err := h.service.UpdateAccountPassword(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 
@@ -55,9 +63,15 @@ func (h *handler) GeneratePassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pass, err := h.service.GeneratePassword(ctx.Context(), req)
+	var header, trailer metadata.MD
+	pass, err := h.service.GeneratePassword(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 

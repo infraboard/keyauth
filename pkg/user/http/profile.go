@@ -8,6 +8,8 @@ import (
 	"github.com/infraboard/keyauth/pkg/user"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 )
 
 func (h *handler) QueryProfile(w http.ResponseWriter, r *http.Request) {
@@ -18,9 +20,16 @@ func (h *handler) QueryProfile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	req := user.NewDescriptAccountRequest()
-	ins, err := h.service.DescribeAccount(ctx.Context(), req)
+
+	var header, trailer metadata.MD
+	ins, err := h.service.DescribeAccount(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 	ins.Desensitize()
@@ -50,9 +59,15 @@ func (h *handler) PutProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ins, err := h.service.UpdateAccountProfile(ctx.Context(), req)
+	var header, trailer metadata.MD
+	ins, err := h.service.UpdateAccountProfile(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 	ins.Desensitize()
@@ -82,9 +97,15 @@ func (h *handler) PatchProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ins, err := h.service.UpdateAccountProfile(ctx.Context(), req)
+	var header, trailer metadata.MD
+	ins, err := h.service.UpdateAccountProfile(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 	ins.Desensitize()
@@ -109,9 +130,15 @@ func (h *handler) QueryDomain(w http.ResponseWriter, r *http.Request) {
 	req := domain.NewDescribeDomainRequest()
 	req.Name = tk.Domain
 
-	ins, err := h.domain.DescribeDomain(ctx.Context(), req)
+	var header, trailer metadata.MD
+	ins, err := h.domain.DescribeDomain(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 
@@ -142,9 +169,15 @@ func (h *handler) UpdateDomainInfo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ins, err := h.domain.UpdateDomain(ctx.Context(), req)
+	var header, trailer metadata.MD
+	ins, err := h.domain.UpdateDomain(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 
@@ -175,9 +208,15 @@ func (h *handler) UpdateDomainSecurity(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ins, err := h.domain.UpdateDomainSecurity(ctx.Context(), req)
+	var header, trailer metadata.MD
+	ins, err := h.domain.UpdateDomainSecurity(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
-		response.Failed(w, err)
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
 		return
 	}
 
