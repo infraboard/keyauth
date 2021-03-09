@@ -2,11 +2,14 @@ package http
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	httpCtx "github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/token"
@@ -31,8 +34,15 @@ func (h *handler) IssueToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	d, err := h.service.IssueToken(pkg.NewGrpcOutCtx().Context(), req)
+	var header, trailer metadata.MD
+	d, err := h.service.IssueToken(
+		pkg.NewGrpcOutCtx().Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
 	if err != nil {
+		fmt.Println(trailer)
 		response.Failed(w, err)
 		return
 	}

@@ -3,6 +3,7 @@ package pkg
 import (
 	"context"
 	"fmt"
+	"strconv"
 
 	"github.com/infraboard/keyauth/client"
 	"github.com/infraboard/keyauth/pkg/endpoint"
@@ -15,6 +16,7 @@ import (
 	httpb "github.com/infraboard/mcube/pb/http"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 )
 
@@ -66,12 +68,15 @@ func (a *grpcAuther) Auth(
 	resp, err = handler(rctx.ClearInternl().Context(), req)
 
 	//
-	fmt.Printf("%v", err)
 	switch t := err.(type) {
 	case exception.APIException:
-		fmt.Println(t.ErrorCode())
-		fmt.Println(t.Reason())
 		err = status.Errorf(codes.Code(t.ErrorCode()), t.Error())
+		// create and set trailer
+		trailer := metadata.Pairs(
+			ResponseCodeHeader, strconv.Itoa(t.ErrorCode()),
+			ResponseReasonHeader, t.Reason(),
+		)
+		grpc.SetTrailer(ctx, trailer)
 	}
 	return resp, err
 }

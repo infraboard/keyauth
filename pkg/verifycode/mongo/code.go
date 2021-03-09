@@ -53,7 +53,6 @@ func (s *service) IssueCode(ctx context.Context, req *verifycode.IssueCodeReques
 	default:
 		return nil, fmt.Errorf("unknown issue_type %s", req.IssueType)
 	}
-
 	fmt.Println(tk)
 	if _, err := s.col.InsertOne(context.TODO(), code); err != nil {
 		return nil, exception.NewInternalServerError("inserted verify code(%s) document error, %s",

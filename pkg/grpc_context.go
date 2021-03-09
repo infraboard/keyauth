@@ -28,6 +28,17 @@ const (
 	UserAgentHeader = "user-agent"
 )
 
+const (
+	// ResponseCodeHeader todo
+	ResponseCodeHeader = "x-rpc-code"
+	// ResponseReasonHeader todo
+	ResponseReasonHeader = "x-rpc-reason"
+	// ResponseMetaHeader todo
+	ResponseMetaHeader = "x-rpc-meta"
+	// ResponseDataHeader todo
+	ResponseDataHeader = "x-rpc-data"
+)
+
 // NewGrpcInCtx todo
 func NewGrpcInCtx() *GrpcInCtx {
 	return &GrpcInCtx{newGrpcCtx(metadata.Pairs())}
