@@ -41,13 +41,6 @@ func (s *GRPCService) Start() error {
 	// 装载所有GRPC服务
 	pkg.InitV1GRPCAPI(s.svr)
 
-	// 注册服务
-	s.l.Info("start registry endpoints ...")
-	if err := s.RegistryEndpoints(); err != nil {
-		s.l.Warnf("registry endpoints error, %s", err)
-	}
-	s.l.Debug("service endpoints registry success")
-
 	// 启动HTTP服务
 	lis, err := net.Listen("tcp", s.c.App.GRPCAddr())
 	if err != nil {
