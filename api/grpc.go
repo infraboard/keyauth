@@ -2,7 +2,6 @@ package api
 
 import (
 	"fmt"
-	"log"
 	"net"
 
 	"github.com/infraboard/mcube/logger"
@@ -50,11 +49,12 @@ func (s *GRPCService) Start() error {
 	s.l.Debug("service endpoints registry success")
 
 	// 启动HTTP服务
-	s.l.Infof("GRPC 开始启动, 监听地址: %s", s.c.App.GRPCAddr())
 	lis, err := net.Listen("tcp", s.c.App.GRPCAddr())
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
+
+	s.l.Infof("GRPC 服务监听地址: %s", s.c.App.GRPCAddr())
 	if err := s.svr.Serve(lis); err != nil {
 		if err == grpc.ErrServerStopped {
 			s.l.Info("service is stopped")
@@ -93,10 +93,8 @@ func (s *GRPCService) RegistryEndpoints() error {
 
 // Stop 停止GRPC服务
 func (s *GRPCService) Stop() error {
-	s.l.Info("start graceful shutdown")
-
+	s.l.Info("start grpc graceful shutdown ...")
 	// 优雅关闭HTTP服务
 	s.svr.GracefulStop()
-
 	return nil
 }

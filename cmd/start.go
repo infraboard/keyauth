@@ -200,10 +200,14 @@ func (s *service) waitSign(sign chan os.Signal) {
 			switch v := sg.(type) {
 			default:
 				s.log.Infof("receive signal '%v', start graceful shutdown", v.String())
-				if err := s.http.Stop(); err != nil {
-					s.log.Errorf("graceful shutdown err: %s, force exit", err)
+				if err := s.grpc.Stop(); err != nil {
+					s.log.Errorf("grpc graceful shutdown err: %s, force exit", err)
 				}
-				s.log.Infof("service stop complete")
+				s.log.Info("grpc service stop complete")
+				if err := s.http.Stop(); err != nil {
+					s.log.Errorf("http graceful shutdown err: %s, force exit", err)
+				}
+				s.log.Infof("http service stop complete")
 				return
 			}
 		}

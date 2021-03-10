@@ -79,7 +79,7 @@ func (s *HTTPService) Start() error {
 
 // Stop 停止server
 func (s *HTTPService) Stop() error {
-	s.l.Info("start graceful shutdown")
+	s.l.Info("start http graceful shutdown ...")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
