@@ -3,11 +3,11 @@ package mongo
 import (
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
+	"github.com/infraboard/mcube/pb/http"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
-	"github.com/infraboard/keyauth/pkg/system"
 )
 
 var (
@@ -29,7 +29,11 @@ func (s *service) Config() error {
 	return nil
 }
 
+// HttpEntry todo
+func (s *service) HTTPEntry() *http.EntrySet {
+	return http.NewEntrySet()
+}
+
 func init() {
-	var _ system.Service = Service
 	pkg.RegistryService("system_config", Service)
 }

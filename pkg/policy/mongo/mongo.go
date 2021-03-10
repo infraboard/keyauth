@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/infraboard/mcube/pb/http"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/x/bsonx"
 
@@ -66,7 +67,11 @@ func (s *service) Config() error {
 	return nil
 }
 
+// HttpEntry todo
+func (s *service) HTTPEntry() *http.EntrySet {
+	return policy.HttpEntry()
+}
+
 func init() {
-	var _ policy.PolicyServiceServer = Service
 	pkg.RegistryService("policy", Service)
 }

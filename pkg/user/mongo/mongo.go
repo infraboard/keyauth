@@ -4,6 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/infraboard/mcube/logger"
+	"github.com/infraboard/mcube/logger/zap"
+	"github.com/infraboard/mcube/pb/http"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/x/bsonx"
 
@@ -13,8 +16,6 @@ import (
 	"github.com/infraboard/keyauth/pkg/domain"
 	"github.com/infraboard/keyauth/pkg/policy"
 	"github.com/infraboard/keyauth/pkg/user"
-	"github.com/infraboard/mcube/logger"
-	"github.com/infraboard/mcube/logger/zap"
 )
 
 var (
@@ -70,6 +71,11 @@ func (s *service) Config() error {
 	s.col = uc
 	s.log = zap.L().Named("User")
 	return nil
+}
+
+// HttpEntry todo
+func (s *service) HTTPEntry() *http.EntrySet {
+	return user.HttpEntry()
 }
 
 func init() {

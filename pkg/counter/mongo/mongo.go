@@ -11,6 +11,7 @@ import (
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/counter"
+	"github.com/infraboard/mcube/pb/http"
 )
 
 var (
@@ -48,7 +49,11 @@ func (s *service) GetNextSequenceValue(sequenceName string) (*counter.Count, err
 	return count, nil
 }
 
+// HttpEntry todo
+func (s *service) HTTPEntry() *http.EntrySet {
+	return http.NewEntrySet()
+}
+
 func init() {
-	var _ counter.Service = Service
 	pkg.RegistryService("counter", Service)
 }

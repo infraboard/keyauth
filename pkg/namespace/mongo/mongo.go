@@ -4,6 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/infraboard/mcube/logger"
+	"github.com/infraboard/mcube/logger/zap"
+	"github.com/infraboard/mcube/pb/http"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/x/bsonx"
@@ -14,8 +17,6 @@ import (
 	"github.com/infraboard/keyauth/pkg/namespace"
 	"github.com/infraboard/keyauth/pkg/policy"
 	"github.com/infraboard/keyauth/pkg/role"
-	"github.com/infraboard/mcube/logger"
-	"github.com/infraboard/mcube/logger/zap"
 )
 
 var (
@@ -77,7 +78,11 @@ func (s *service) Config() error {
 	return nil
 }
 
+// HttpEntry todo
+func (s *service) HTTPEntry() *http.EntrySet {
+	return namespace.HttpEntry()
+}
+
 func init() {
-	var _ namespace.NamespaceServiceServer = Service
 	pkg.RegistryService("namespace", Service)
 }

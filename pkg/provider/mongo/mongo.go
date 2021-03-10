@@ -3,13 +3,13 @@ package mongo
 import (
 	"context"
 
+	"github.com/infraboard/mcube/pb/http"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/x/bsonx"
 
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
-	"github.com/infraboard/keyauth/pkg/provider"
 )
 
 var (
@@ -50,7 +50,11 @@ func (s *service) Config() error {
 	return nil
 }
 
+// HttpEntry todo
+func (s *service) HTTPEntry() *http.EntrySet {
+	return http.NewEntrySet()
+}
+
 func init() {
-	var _ provider.LDAP = Service
 	pkg.RegistryService("ldap", Service)
 }

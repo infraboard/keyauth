@@ -6,6 +6,7 @@ import (
 
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
+	"github.com/infraboard/mcube/pb/http"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/x/bsonx"
 
@@ -55,7 +56,11 @@ func (s *service) Config() error {
 	return nil
 }
 
+// HttpEntry todo
+func (s *service) HTTPEntry() *http.EntrySet {
+	return endpoint.HttpEntry()
+}
+
 func init() {
-	var _ endpoint.EndpointServiceServer = Service
 	pkg.RegistryService("endpoint", Service)
 }

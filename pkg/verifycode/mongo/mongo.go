@@ -4,6 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/infraboard/mcube/logger"
+	"github.com/infraboard/mcube/logger/zap"
+	"github.com/infraboard/mcube/pb/http"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/x/bsonx"
 
@@ -13,8 +16,6 @@ import (
 	"github.com/infraboard/keyauth/pkg/token/issuer"
 	"github.com/infraboard/keyauth/pkg/user"
 	"github.com/infraboard/keyauth/pkg/verifycode"
-	"github.com/infraboard/mcube/logger"
-	"github.com/infraboard/mcube/logger/zap"
 )
 
 var (
@@ -67,7 +68,11 @@ func (s *service) Config() error {
 	return nil
 }
 
+// HttpEntry todo
+func (s *service) HTTPEntry() *http.EntrySet {
+	return verifycode.HttpEntry()
+}
+
 func init() {
-	var _ verifycode.VerifyCodeServiceServer = Service
 	pkg.RegistryService("verify_code", Service)
 }

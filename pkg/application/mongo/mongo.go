@@ -3,6 +3,7 @@ package mongo
 import (
 	"context"
 
+	"github.com/infraboard/mcube/pb/http"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/x/bsonx"
@@ -54,9 +55,12 @@ func (s *service) Config() error {
 	return nil
 }
 
+// HttpEntry todo
+func (s *service) HTTPEntry() *http.EntrySet {
+	return application.HttpEntry()
+}
+
 func init() {
-	var _ application.AdminServiceServer = AdminService
-	var _ application.UserServiceServer = UserService
 	pkg.RegistryService("application_admin", AdminService)
 	pkg.RegistryService("application_user", UserService)
 }

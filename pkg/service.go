@@ -76,8 +76,7 @@ var (
 	servers       []Service
 	successLoaded []string
 
-	entrySet  = http.NewEntrySet()
-	entryInit = false
+	entrySet = http.NewEntrySet()
 )
 
 // InitV1GRPCAPI 初始化API服务
@@ -102,12 +101,6 @@ func InitV1GRPCAPI(server *grpc.Server) {
 
 // HTTPEntry todo
 func HTTPEntry() *http.EntrySet {
-	if entryInit {
-		return entrySet
-	}
-
-	addServiceEntry()
-	entryInit = true
 	return entrySet
 }
 
@@ -123,22 +116,6 @@ func GetGrpcPathEntry(path string) *http.Entry {
 	return nil
 }
 
-func addServiceEntry() {
-	entrySet.Merge(domain.HttpEntry())
-	entrySet.Merge(user.HttpEntry())
-	entrySet.Merge(application.HttpEntry())
-	entrySet.Merge(token.HttpEntry())
-	entrySet.Merge(micro.HttpEntry())
-	entrySet.Merge(role.HttpEntry())
-	entrySet.Merge(endpoint.HttpEntry())
-	entrySet.Merge(policy.HttpEntry())
-	entrySet.Merge(department.HttpEntry())
-	entrySet.Merge(namespace.HttpEntry())
-	entrySet.Merge(permission.HttpEntry())
-	entrySet.Merge(session.HttpEntry())
-	entrySet.Merge(verifycode.HttpEntry())
-}
-
 // LoadedService 查询加载成功的服务
 func LoadedService() []string {
 	return successLoaded
@@ -152,6 +129,7 @@ func addService(name string, svr Service) {
 // Service 注册上的服务必须实现的方法
 type Service interface {
 	Config() error
+	HTTPEntry() *http.EntrySet
 }
 
 // RegistryService 服务实例注册
@@ -298,6 +276,7 @@ func InitService() error {
 		if err := s.Config(); err != nil {
 			return err
 		}
+		entrySet.Merge(s.HTTPEntry())
 	}
 
 	return nil

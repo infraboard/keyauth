@@ -6,9 +6,9 @@ import (
 
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
+	"github.com/infraboard/mcube/pb/http"
 
 	"github.com/infraboard/keyauth/pkg"
-	"github.com/infraboard/keyauth/pkg/ip2region"
 	"github.com/infraboard/keyauth/pkg/ip2region/reader"
 	"github.com/infraboard/keyauth/pkg/storage"
 )
@@ -40,7 +40,11 @@ func (s *service) Config() error {
 	return nil
 }
 
+// HttpEntry todo
+func (s *service) HTTPEntry() *http.EntrySet {
+	return http.NewEntrySet()
+}
+
 func init() {
-	var _ ip2region.Service = Service
 	pkg.RegistryService("ip2region", Service)
 }

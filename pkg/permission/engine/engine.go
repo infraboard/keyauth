@@ -3,6 +3,8 @@ package engine
 import (
 	"errors"
 
+	"github.com/infraboard/mcube/pb/http"
+
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/permission"
@@ -42,7 +44,11 @@ func (s *service) Config() error {
 	return nil
 }
 
+// HttpEntry todo
+func (s *service) HTTPEntry() *http.EntrySet {
+	return permission.HttpEntry()
+}
+
 func init() {
-	var _ permission.PermissionServiceServer = Service
 	pkg.RegistryService("permission", Service)
 }
