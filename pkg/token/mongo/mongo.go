@@ -119,10 +119,9 @@ func (s *service) Config() error {
 
 // HttpEntry todo
 func (s *service) HTTPEntry() *http.EntrySet {
-	return domain.HttpEntry()
+	return token.HttpEntry()
 }
 
 func init() {
-	var _ token.TokenServiceServer = Service
 	pkg.RegistryService("token", Service)
 }

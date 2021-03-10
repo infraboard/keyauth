@@ -17,5 +17,8 @@ func NewExceptionFromTrailer(md metadata.MD, err error) exception.APIException {
 	message := ctx.get(ResponseDescHeader)
 	ctx.get(ResponseMetaHeader)
 	ctx.get(ResponseDataHeader)
+	if message == "" {
+		message = err.Error()
+	}
 	return exception.NewAPIException(version.ServiceName, code, reason, message)
 }

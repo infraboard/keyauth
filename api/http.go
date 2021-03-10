@@ -28,7 +28,6 @@ func NewHTTPService() *HTTPService {
 	r.Use(accesslog.NewWithLogger(zap.L().Named("AccessLog")))
 	r.Use(cors.AllowAll())
 	r.EnableAPIRoot()
-	r.Auth(true)
 	server := &http.Server{
 		ReadHeaderTimeout: 20 * time.Second,
 		// ReadTimeout:       20 * time.Second,
