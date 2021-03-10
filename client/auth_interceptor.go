@@ -23,11 +23,9 @@ import (
 	"github.com/infraboard/keyauth/version"
 )
 
-// NewGrpcAuther todo
-func NewGrpcAuther(c *Client) *GrpcAuther {
-	return &GrpcAuther{
-		c: c,
-	}
+// NewGrpcKeyauthAuther todo
+func NewGrpcKeyauthAuther(c *Client) *GrpcAuther {
+	return &GrpcAuther{c: c}
 }
 
 // GrpcAuther todo

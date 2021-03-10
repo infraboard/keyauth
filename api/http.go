@@ -57,7 +57,9 @@ type HTTPService struct {
 // Start 启动服务
 func (s *HTTPService) Start() error {
 	// 初始化GRPC客户端
-	s.InitGRPCClient()
+	if err := s.initGRPCClient(); err != nil {
+		return err
+	}
 
 	// 装置子服务路由
 	if err := pkg.InitV1HTTPAPI(s.c.App.Name, s.r); err != nil {
@@ -91,7 +93,7 @@ func (s *HTTPService) Stop() error {
 }
 
 // InitGRPCClient 初始化grpc客户端
-func (s *HTTPService) InitGRPCClient() error {
+func (s *HTTPService) initGRPCClient() error {
 	if pkg.Micro == nil {
 		return fmt.Errorf("dependence micro service is nil")
 	}
