@@ -70,17 +70,22 @@ func (s *service) QueryEndpoints(ctx context.Context, req *endpoint.QueryEndpoin
 }
 
 func (s *service) Registry(ctx context.Context, req *endpoint.RegistryRequest) (*endpoint.RegistryResponse, error) {
+	rctx, err := pkg.GetGrpcInCtx(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest(err.Error())
 	}
 
 	// 查询该服务
-	svr, err := s.micro.DescribeService(ctx, micro.NewDescribeServiceRequestWithClientID(req.ClientId))
+	svr, err := s.micro.DescribeService(ctx, micro.NewDescribeServiceRequestWithClientID(rctx.GetClientID()))
 	if err != nil {
 		return nil, err
 	}
 
-	if err := svr.ValiateClientCredential(req.ClientSecret); err != nil {
+	if err := svr.ValiateClientCredential(rctx.GetClientSecret()); err != nil {
 		return nil, err
 	}
 

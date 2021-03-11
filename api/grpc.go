@@ -66,6 +66,7 @@ func (s *GRPCService) RegistryEndpoints() error {
 	}
 
 	ctx := pkg.NewInternalMockGrpcCtx("internal")
+
 	desc := micro.NewDescribeServiceRequest()
 	desc.Name = version.ServiceName
 	svr, err := pkg.Micro.DescribeService(ctx.Context(), desc)
@@ -78,8 +79,7 @@ func (s *GRPCService) RegistryEndpoints() error {
 	}
 
 	req := endpoint.NewRegistryRequest(version.Short(), pkg.HTTPEntry().Items)
-	req.ClientId = svr.ClientId
-	req.ClientSecret = svr.ClientSecret
+	ctx.SetClientCredentials(svr.ClientId, svr.ClientSecret)
 	_, err = pkg.Endpoint.Registry(ctx.Context(), req)
 	return err
 }

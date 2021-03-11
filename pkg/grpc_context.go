@@ -67,6 +67,12 @@ func (c *GrpcInCtx) Context() context.Context {
 	return metadata.NewIncomingContext(context.Background(), c.md)
 }
 
+// SetClientCredentials todo
+func (c *GrpcInCtx) SetClientCredentials(clientID, clientSecret string) {
+	c.set(ClientIDHeader, clientID)
+	c.set(ClientSecretHeader, clientSecret)
+}
+
 // GetClientID todo
 func (c *GrpcInCtx) GetClientID() string {
 	return c.get(ClientIDHeader)
