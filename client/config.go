@@ -18,3 +18,8 @@ type Config struct {
 func (c *Config) SetAddress(addr string) {
 	c.address = addr
 }
+
+// Address 地址
+func (c *Config) Address() string {
+	return c.address
+}
