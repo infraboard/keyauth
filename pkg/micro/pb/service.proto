@@ -14,8 +14,7 @@ service MicroService {
 			path: "/services/:id/validate"
 			method: "POST"
 			resource: "endpoint"
-			auth_enable: true
-			permission_enable: true
+			auth_enable: false
 			labels: [{
 				key: "action"
 				value: "get"

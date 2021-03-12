@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/infraboard/mcube/exception"
+	"github.com/infraboard/mcube/grpc/gcontext"
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
 	httpb "github.com/infraboard/mcube/pb/http"
@@ -80,9 +81,9 @@ func (a *GrpcAuther) auth(
 		err = status.Errorf(codes.Code(t.ErrorCode()), t.Error())
 		// create and set trailer
 		trailer := metadata.Pairs(
-			pkg.ResponseCodeHeader, strconv.Itoa(t.ErrorCode()),
-			pkg.ResponseReasonHeader, t.Reason(),
-			pkg.ResponseDescHeader, t.Error(),
+			gcontext.ResponseCodeHeader, strconv.Itoa(t.ErrorCode()),
+			gcontext.ResponseReasonHeader, t.Reason(),
+			gcontext.ResponseDescHeader, t.Error(),
 		)
 		if err := grpc.SetTrailer(ctx, trailer); err != nil {
 			a.log().Errorf("send grpc trailer error, %s", err)
@@ -116,7 +117,7 @@ func (a *GrpcAuther) validatePermission(ctx *pkg.GrpcInCtx, path string) error {
 
 	entry := pkg.GetGrpcPathEntry(path)
 	if entry == nil {
-		grpc.Errorf(codes.Internal, "entry not nod, check is registry")
+		return grpc.Errorf(codes.Internal, "entry not nod, check is registry")
 	}
 
 	if entry.AuthEnable {

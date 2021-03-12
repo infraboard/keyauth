@@ -9,6 +9,19 @@ import (
 	"github.com/infraboard/keyauth/version"
 )
 
+const (
+	// ResponseCodeHeader todo
+	ResponseCodeHeader = "x-rpc-code"
+	// ResponseReasonHeader todo
+	ResponseReasonHeader = "x-rpc-reason"
+	// ResponseDescHeader todo
+	ResponseDescHeader = "x-rpc-desc"
+	// ResponseMetaHeader todo
+	ResponseMetaHeader = "x-rpc-meta"
+	// ResponseDataHeader todo
+	ResponseDataHeader = "x-rpc-data"
+)
+
 // NewExceptionFromTrailer todo
 func NewExceptionFromTrailer(md metadata.MD, err error) exception.APIException {
 	ctx := newGrpcCtx(md)

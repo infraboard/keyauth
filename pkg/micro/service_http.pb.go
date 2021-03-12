@@ -16,8 +16,8 @@ func HttpEntry() *http.EntrySet {
 				Path:             "/services/:id/validate",
 				Method:           "POST",
 				Resource:         "endpoint",
-				AuthEnable:       true,
-				PermissionEnable: true,
+				AuthEnable:       false,
+				PermissionEnable: false,
 				Labels:           map[string]string{"action": "get"},
 			},
 			{
