@@ -24,15 +24,21 @@ import (
 	"github.com/infraboard/keyauth/version"
 )
 
+type PathEntryHandleFunc func(path string) *httpb.Entry
+
 // NewGrpcKeyauthAuther todo
-func NewGrpcKeyauthAuther(c *Client) *GrpcAuther {
-	return &GrpcAuther{c: c}
+func NewGrpcKeyauthAuther(hf PathEntryHandleFunc, c *Client) *GrpcAuther {
+	return &GrpcAuther{
+		hf: hf,
+		c:  c,
+	}
 }
 
 // GrpcAuther todo
 type GrpcAuther struct {
-	l logger.Logger
-	c *Client
+	hf PathEntryHandleFunc
+	l  logger.Logger
+	c  *Client
 }
 
 // AuthUnaryServerInterceptor returns a new unary server interceptor for auth.
@@ -115,9 +121,9 @@ func (a *GrpcAuther) validatePermission(ctx *pkg.GrpcInCtx, path string) error {
 		err error
 	)
 
-	entry := pkg.GetGrpcPathEntry(path)
+	entry := a.hf(path)
 	if entry == nil {
-		return grpc.Errorf(codes.Internal, "entry not nod, check is registry")
+		return grpc.Errorf(codes.Internal, "entry not found, check is registry")
 	}
 
 	if entry.AuthEnable {
