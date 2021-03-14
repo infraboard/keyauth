@@ -27,8 +27,8 @@ func HttpEntry() *http.EntrySet {
 				Method:           "GET",
 				Resource:         "user",
 				AuthEnable:       true,
-				PermissionEnable: true,
-				Labels:           map[string]string{"action": "get"},
+				PermissionEnable: false,
+				Labels:           map[string]string{},
 			},
 			{
 				GrpcPath:         "/keyauth.user.UserService/CreateAccount",

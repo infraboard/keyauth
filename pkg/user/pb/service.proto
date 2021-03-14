@@ -30,11 +30,6 @@ service UserService {
 			method: "GET"
 			resource: "user"
 			auth_enable: true
-			permission_enable: true
-			labels: [{
-				key: "action"
-				value: "get"
-			}]
 		};
 	};
 	// 创建用户
