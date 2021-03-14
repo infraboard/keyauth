@@ -139,7 +139,7 @@ func (a *GrpcAuther) validatePermission(ctx *gcontext.GrpcInCtx, path string) er
 		req := permission.NewCheckPermissionrequest()
 		req.EndpointId = a.endpointHashID(entry)
 		req.NamespaceId = ctx.GetNamespace()
-		_, err = a.c.Permission().CheckPermission(ctx.Context(), req)
+		_, err = a.c.Permission().CheckPermission(gcontext.NewGrpcOutCtxFromIn(ctx).Context(), req)
 		if err != nil {
 			return exception.NewPermissionDeny("no permission, %s", err)
 		}

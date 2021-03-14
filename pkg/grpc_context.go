@@ -41,6 +41,8 @@ func GetGrpcInCtx(ctx context.Context) (*GrpcInCtx, error) {
 		return nil, fmt.Errorf("ctx is not an grpc incoming context")
 	}
 
+	fmt.Println(md)
+
 	return &GrpcInCtx{newGrpcCtx(md)}, nil
 }
 
