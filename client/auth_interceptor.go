@@ -147,8 +147,6 @@ func (a *GrpcAuther) validatePermission(ctx *pkg.GrpcInCtx, path string) error {
 			return nil
 		}
 
-		// 其他比如服务类型, 主账号类型, 子账号类型
-		// 如果开启权限认证都需要检查
 		req := permission.NewCheckPermissionrequest()
 		req.EndpointId = a.endpointHashID(entry)
 		_, err = a.c.Permission().CheckPermission(ctx.Context(), req)

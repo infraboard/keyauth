@@ -88,6 +88,9 @@ message DescribeRoleRequest {
 // DeleteRoleRequest role删除
 message DeleteRoleRequest {
     string id = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"id,omitempty" validate:"required,lte=64"'}
+        (google.protobuf.field_tag) = {struct_tag: 'json:"id" validate:"required,lte=64"'}
+        ];
+    bool delete_policy = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"delete_policy"'}
         ];
 }

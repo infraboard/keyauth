@@ -25,7 +25,8 @@ func (h *handler) Registry(router router.SubRouter) {
 	r.BasePath("roles")
 	r.Handle("POST", "/", h.CreateRole)
 	r.Handle("GET", "/", h.QueryRole)
-	r.Handle("GET", "/:name", h.DescribeRole)
+	r.Handle("GET", "/:id", h.DescribeRole)
+	r.Handle("DELETE", "/:id", h.DeleteRole)
 }
 
 func (h *handler) Config() error {

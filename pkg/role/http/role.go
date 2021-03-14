@@ -76,7 +76,7 @@ func (h *handler) DescribeRole(w http.ResponseWriter, r *http.Request) {
 	}
 
 	rctx := context.GetContext(r)
-	pid := rctx.PS.ByName("name")
+	pid := rctx.PS.ByName("id")
 	qs := r.URL.Query()
 
 	req := role.NewDescribeRoleRequestWithID(pid)
@@ -95,5 +95,31 @@ func (h *handler) DescribeRole(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, ins)
+	return
+}
+
+func (h *handler) DeleteRole(w http.ResponseWriter, r *http.Request) {
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	rctx := context.GetContext(r)
+	req := role.NewDeleteRoleWithID(rctx.PS.ByName("id"))
+
+	var header, trailer metadata.MD
+	_, err = h.service.DeleteRole(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
+	if err != nil {
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		return
+	}
+
+	response.Success(w, "delete ok")
 	return
 }

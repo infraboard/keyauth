@@ -62,3 +62,10 @@ func (req *DescribeRoleRequest) Validate() error {
 
 	return nil
 }
+
+// NewDeleteRoleWithID todo
+func NewDeleteRoleWithID(id string) *DeleteRoleRequest {
+	return &DeleteRoleRequest{
+		Id: id,
+	}
+}

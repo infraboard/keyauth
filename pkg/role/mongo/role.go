@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/infraboard/mcube/exception"
+	"github.com/infraboard/mcube/http/request"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
@@ -95,6 +96,18 @@ func (s *service) DeleteRole(ctx context.Context, req *role.DeleteRoleRequest) (
 		return nil, fmt.Errorf("build_in role can't be delete")
 	}
 
+	if !req.DeletePolicy {
+		queryReq := policy.NewQueryPolicyRequest(request.NewPageRequest(20, 1))
+		queryReq.RoleId = req.Id
+		ps, err := s.policy.QueryPolicy(ctx, queryReq)
+		if err != nil {
+			return nil, err
+		}
+		if ps.Total > 0 {
+			return nil, exception.NewBadRequest("该角色还关联得有策略, 请先删除关联策略")
+		}
+	}
+
 	resp, err := s.col.DeleteOne(context.TODO(), bson.M{"_id": req.Id})
 	if err != nil {
 		return nil, exception.NewInternalServerError("delete role(%s) error, %s", req.Id, err)
@@ -104,7 +117,7 @@ func (s *service) DeleteRole(ctx context.Context, req *role.DeleteRoleRequest) (
 		return nil, exception.NewNotFound("role(%s) not found", req.Id)
 	}
 
-	// 清除角色管理的策略
+	// 清除角色关联的策略
 	_, err = s.policy.DeletePolicy(ctx, policy.NewDeletePolicyRequestWithRoleID(req.Id))
 	if err != nil {
 		s.log.Errorf("delete role policy error, %s", err)
