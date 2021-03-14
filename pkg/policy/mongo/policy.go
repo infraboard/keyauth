@@ -51,6 +51,11 @@ func (s *service) QueryPolicy(ctx context.Context, req *policy.QueryPolicyReques
 		return nil, err
 	}
 
+	_, err = s.namespace.DescribeNamespace(ctx, namespace.NewNewDescriptNamespaceRequestWithID(req.NamespaceId))
+	if err != nil {
+		return nil, err
+	}
+
 	resp, err := s.col.Find(context.TODO(), r.FindFilter(), r.FindOptions())
 	if err != nil {
 		return nil, exception.NewInternalServerError("find policy error, error is %s", err)
