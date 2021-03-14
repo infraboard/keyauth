@@ -95,11 +95,6 @@ service UserService {
 			method: "PUT"
 			resource: "password"
 			auth_enable: true
-			permission_enable: true
-			labels: [{
-				key: "action"
-				value: "update"
-			}]
 		};
 	};
 	// GeneratePassword 生成符合检测强度的随机密码

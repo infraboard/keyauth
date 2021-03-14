@@ -2,28 +2,33 @@ package pkg
 
 import (
 	"context"
-	"fmt"
 	"strconv"
+	"strings"
 
-	"github.com/infraboard/keyauth/pkg/endpoint"
-	"github.com/infraboard/keyauth/pkg/micro"
-	"github.com/infraboard/keyauth/pkg/permission"
-	"github.com/infraboard/keyauth/pkg/token"
-	"github.com/infraboard/keyauth/pkg/user/types"
-	"github.com/infraboard/keyauth/version"
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
-	httpb "github.com/infraboard/mcube/pb/http"
+	"github.com/infraboard/mcube/pb/http"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
+
+	"github.com/infraboard/keyauth/pkg/endpoint"
+	"github.com/infraboard/keyauth/pkg/micro"
+	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/user/types"
+	"github.com/infraboard/keyauth/version"
 )
 
 var (
 	interceptor = newGrpcAuther()
 )
+
+// 检测是不是owner请求
+type OwnerChecker interface {
+	CheckOwner(account string) bool
+}
 
 // AuthUnaryServerInterceptor returns a new unary server interceptor for auth.
 func AuthUnaryServerInterceptor() grpc.UnaryServerInterceptor {
@@ -55,9 +60,21 @@ func (a *grpcAuther) Auth(
 		return nil, err
 	}
 
-	// 校验用户权限是否合法
-	if err := a.validatePermission(rctx, info.FullMethod); err != nil {
-		return nil, err
+	entry := GetGrpcPathEntry(info.FullMethod)
+	if entry == nil {
+		return nil, grpc.Errorf(codes.Internal, "entry gprc path: %s not found, check is registry", info.FullMethod)
+	}
+
+	if entry.AuthEnable {
+		tk, err := a.checkToken(rctx)
+		if err != nil {
+			return nil, err
+		}
+
+		// 权限校验
+		if err := a.validatePermission(tk, entry, resp); err != nil {
+			return nil, err
+		}
 	}
 
 	rctx.ClearInternl()
@@ -100,57 +117,39 @@ func (a *grpcAuther) validateServiceCredential(ctx *GrpcInCtx) error {
 	return nil
 }
 
-func (a *grpcAuther) validatePermission(ctx *GrpcInCtx, path string) error {
-	var (
-		tk  *token.Token
-		err error
-	)
+// 获取需要校验的access token(用户的身份凭证)
+func (a *grpcAuther) checkToken(ctx *GrpcInCtx) (*token.Token, error) {
+	accessToken := ctx.GetAccessToKen()
+	req := token.NewValidateTokenRequest()
+	if accessToken == "" {
+		return nil, grpc.Errorf(codes.Unauthenticated, "access_token meta required")
+	}
+	req.AccessToken = accessToken
+	return Token.ValidateToken(context.Background(), req)
+}
 
-	entry := GetGrpcPathEntry(path)
-	if entry == nil {
-		return grpc.Errorf(codes.Internal, "entry gprc path: %s not found, check is registry", path)
+func (a *grpcAuther) validatePermission(tk *token.Token, entry *http.Entry, req interface{}) error {
+	// 如果是超级管理员不做权限校验, 直接放行
+	if tk.UserType.IsIn(types.UserType_SUPPER) {
+		return nil
 	}
 
-	if entry.AuthEnable {
-		// 获取需要校验的access token(用户的身份凭证)
-		accessToken := ctx.GetAccessToKen()
-		req := token.NewValidateTokenRequest()
-		if accessToken == "" {
-			return grpc.Errorf(codes.Unauthenticated, "access_token meta required")
-		}
-		req.AccessToken = accessToken
-
-		tk, err = Token.ValidateToken(context.Background(), req)
-		if err != nil {
-			return err
+	// 检测owner
+	if v, ok := req.(OwnerChecker); ok {
+		if !v.CheckOwner(tk.Account) {
+			return grpc.Errorf(codes.PermissionDenied, "only owner can operate")
 		}
 	}
 
-	if entry.PermissionEnable && tk != nil {
-		// 如果是超级管理员不做权限校验, 直接放行
-		if tk.UserType.IsIn(types.UserType_SUPPER) {
-			return nil
-		}
-
-		// 其他比如服务类型, 主账号类型, 子账号类型
-		// 如果开启权限认证都需要检查
-		if Permission == nil {
-			return fmt.Errorf("grpc client service not initial")
-		}
-
-		req := permission.NewCheckPermissionrequest()
-		req.EndpointId = a.endpointHashID(entry)
-
-		_, err = Permission.CheckPermission(ctx.Context(), req)
-		if err != nil {
-			return exception.NewPermissionDeny("no permission")
-		}
+	if v, ok := entry.Labels["allow"]; ok {
+		types := strings.Split(v, ",")
+		a.log().Debugf("allows: %v", types)
 	}
 
 	return nil
 }
 
-func (a *grpcAuther) endpointHashID(entry *httpb.Entry) string {
+func (a *grpcAuther) endpointHashID(entry *http.Entry) string {
 	return endpoint.GenHashID(version.ServiceName, entry.GrpcPath)
 }
 

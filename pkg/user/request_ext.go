@@ -117,6 +117,11 @@ func (req *UpdatePasswordRequest) Validate() error {
 	return nil
 }
 
+// 实现checkowner方法
+func (req *UpdatePasswordRequest) CheckOwner(account string) bool {
+	return req.Account == account
+}
+
 // NewGeneratePasswordRequest todo
 func NewGeneratePasswordRequest() *GeneratePasswordRequest {
 	return &GeneratePasswordRequest{}
