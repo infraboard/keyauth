@@ -23,9 +23,9 @@ func NewQueryMicroRequest(pageReq *request.PageRequest) *QueryMicroRequest {
 }
 
 // NewDescribeServiceRequestWithClientID new实例
-func NewDescribeServiceRequestWithClientID(account string) *DescribeMicroRequest {
+func NewDescribeServiceRequestWithClientID(clientID string) *DescribeMicroRequest {
 	req := NewDescribeServiceRequest()
-	req.ClientId = account
+	req.ClientId = clientID
 	return req
 }
 

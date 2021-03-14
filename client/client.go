@@ -45,6 +45,7 @@ func NewClient(conf *Config) (*Client, error) {
 	}
 
 	return &Client{
+		conf: conf,
 		conn: conn,
 		log:  log,
 	}, nil
@@ -52,8 +53,14 @@ func NewClient(conf *Config) (*Client, error) {
 
 // Client 客户端
 type Client struct {
+	conf *Config
 	conn *grpc.ClientConn
 	log  logger.Logger
+}
+
+// GetClientID todo
+func (c *Client) GetClientID() string {
+	return c.conf.clientID
 }
 
 // ApplicationAdmin todo

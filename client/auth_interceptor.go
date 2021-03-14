@@ -19,7 +19,6 @@ import (
 	"github.com/infraboard/keyauth/pkg/permission"
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user/types"
-	"github.com/infraboard/keyauth/version"
 )
 
 type PathEntryHandleFunc func(path string) *httpb.Entry
@@ -37,6 +36,8 @@ type GrpcAuther struct {
 	hf PathEntryHandleFunc
 	l  logger.Logger
 	c  *Client
+
+	serviceId string
 }
 
 // AuthUnaryServerInterceptor returns a new unary server interceptor for auth.
@@ -115,6 +116,9 @@ func (a *GrpcAuther) validatePermission(ctx *gcontext.GrpcInCtx, path string) er
 		return grpc.Errorf(codes.Internal, "entry not found, check is registry")
 	}
 
+	outCtx := gcontext.NewGrpcOutCtx()
+	outCtx.SetAccessToken(ctx.GetAccessToKen())
+
 	if entry.AuthEnable {
 		// 获取需要校验的access token(用户的身份凭证)
 		accessToken := ctx.GetAccessToKen()
@@ -124,7 +128,7 @@ func (a *GrpcAuther) validatePermission(ctx *gcontext.GrpcInCtx, path string) er
 		}
 		req.AccessToken = accessToken
 
-		tk, err = a.c.Token().ValidateToken(context.Background(), req)
+		tk, err = a.c.Token().ValidateToken(outCtx.Context(), req)
 		if err != nil {
 			return err
 		}
@@ -136,10 +140,15 @@ func (a *GrpcAuther) validatePermission(ctx *gcontext.GrpcInCtx, path string) er
 			return nil
 		}
 
+		eid, err := a.endpointHashID(outCtx, entry.GrpcPath)
+		if err != nil {
+			return err
+		}
+
 		req := permission.NewCheckPermissionrequest()
-		req.EndpointId = a.endpointHashID(entry)
+		req.EndpointId = eid
 		req.NamespaceId = ctx.GetNamespace()
-		_, err = a.c.Permission().CheckPermission(gcontext.NewGrpcOutCtxFromIn(ctx).Context(), req)
+		_, err = a.c.Permission().CheckPermission(outCtx.Context(), req)
 		if err != nil {
 			return exception.NewPermissionDeny("no permission, %s", err)
 		}
@@ -148,8 +157,17 @@ func (a *GrpcAuther) validatePermission(ctx *gcontext.GrpcInCtx, path string) er
 	return nil
 }
 
-func (a *GrpcAuther) endpointHashID(entry *httpb.Entry) string {
-	return endpoint.GenHashID(version.ServiceName, entry.GrpcPath)
+func (a *GrpcAuther) endpointHashID(ctx *gcontext.GrpcOutCtx, grpcPath string) (string, error) {
+	if a.serviceId == "" {
+		descReq := micro.NewDescribeServiceRequestWithClientID(a.c.GetClientID())
+		svr, err := a.c.Micro().DescribeService(ctx.Context(), descReq)
+		if err != nil {
+			return "", err
+		}
+		a.serviceId = svr.Id
+	}
+
+	return endpoint.GenHashID(a.serviceId, grpcPath), nil
 }
 
 func (a *GrpcAuther) log() logger.Logger {
