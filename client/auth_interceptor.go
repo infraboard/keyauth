@@ -2,7 +2,6 @@ package client
 
 import (
 	"context"
-	"fmt"
 	"strconv"
 
 	"github.com/infraboard/mcube/exception"
@@ -15,7 +14,6 @@ import (
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/micro"
 	"github.com/infraboard/keyauth/pkg/permission"
@@ -58,7 +56,7 @@ func (a *GrpcAuther) auth(
 	handler grpc.UnaryHandler,
 ) (resp interface{}, err error) {
 	// 重上下文中获取认证信息
-	rctx, err := pkg.GetGrpcInCtx(ctx)
+	rctx, err := gcontext.GetGrpcInCtx(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -73,19 +71,9 @@ func (a *GrpcAuther) auth(
 		return nil, err
 	}
 
-	defer func() {
-		if r := recover(); r != nil {
-			err = fmt.Errorf("panic: %v", r)
-		}
-	}()
-
-	rctx.ClearInternl()
-	resp, err = handler(rctx.ClearInternl().Context(), req)
-
 	switch t := err.(type) {
 	case exception.APIException:
 		err = status.Errorf(codes.Code(t.ErrorCode()), t.Error())
-		// create and set trailer
 		trailer := metadata.Pairs(
 			gcontext.ResponseCodeHeader, strconv.Itoa(t.ErrorCode()),
 			gcontext.ResponseReasonHeader, t.Reason(),
@@ -95,10 +83,11 @@ func (a *GrpcAuther) auth(
 			a.log().Errorf("send grpc trailer error, %s", err)
 		}
 	}
+
 	return resp, err
 }
 
-func (a *GrpcAuther) validateServiceCredential(ctx *pkg.GrpcInCtx) error {
+func (a *GrpcAuther) validateServiceCredential(ctx *gcontext.GrpcInCtx) error {
 	clientID := ctx.GetClientID()
 	clientSecret := ctx.GetClientSecret()
 
@@ -115,7 +104,7 @@ func (a *GrpcAuther) validateServiceCredential(ctx *pkg.GrpcInCtx) error {
 	return nil
 }
 
-func (a *GrpcAuther) validatePermission(ctx *pkg.GrpcInCtx, path string) error {
+func (a *GrpcAuther) validatePermission(ctx *gcontext.GrpcInCtx, path string) error {
 	var (
 		tk  *token.Token
 		err error
@@ -149,9 +138,10 @@ func (a *GrpcAuther) validatePermission(ctx *pkg.GrpcInCtx, path string) error {
 
 		req := permission.NewCheckPermissionrequest()
 		req.EndpointId = a.endpointHashID(entry)
+		req.NamespaceId = ctx.GetNamespace()
 		_, err = a.c.Permission().CheckPermission(ctx.Context(), req)
 		if err != nil {
-			return exception.NewPermissionDeny("no permission")
+			return exception.NewPermissionDeny("no permission, %s", err)
 		}
 	}
 
