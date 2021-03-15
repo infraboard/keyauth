@@ -76,13 +76,19 @@ func (h *handler) ValidateToken(w http.ResponseWriter, r *http.Request) {
 
 // RevolkToken 撤销资源访问令牌
 func (h *handler) RevolkToken(w http.ResponseWriter, r *http.Request) {
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
 	req := token.NewRevolkTokenRequest("", "")
 	req.AccessToken = r.Header.Get("X-OAUTH-TOKEN")
 	req.ClientId, req.ClientSecret, _ = r.BasicAuth()
 
 	var header, trailer metadata.MD
-	_, err := h.service.RevolkToken(
-		context.Background(),
+	_, err = h.service.RevolkToken(
+		ctx.Context(),
 		req,
 		grpc.Header(&header),
 		grpc.Trailer(&trailer),

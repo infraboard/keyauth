@@ -1,6 +1,7 @@
 package http
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/infraboard/keyauth/pkg"
@@ -126,6 +127,8 @@ func (h *handler) QueryDomain(w http.ResponseWriter, r *http.Request) {
 		response.Failed(w, err)
 		return
 	}
+
+	fmt.Println(tk)
 
 	req := domain.NewDescribeDomainRequest()
 	req.Name = tk.Domain

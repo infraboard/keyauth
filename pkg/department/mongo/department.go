@@ -33,6 +33,7 @@ func (s *service) QueryDepartment(ctx context.Context, req *department.QueryDepa
 	set := department.NewDepartmentSet()
 
 	if !req.SkipItems {
+		s.log.Debugf("query filter: %s", query.FindFilter())
 		resp, err := s.dc.Find(context.TODO(), query.FindFilter(), query.FindOptions())
 
 		if err != nil {
