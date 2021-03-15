@@ -6,7 +6,10 @@ option go_package = "github.com/infraboard/keyauth/pkg/user/types";
 enum UserType {
     SUB = 0;
     PRIMARY = 1;
-    SERVICE = 2;
-    SUPPER = 3;
-    INTERNAL = 4;
+    SUPPER = 2;
+    INTERNAL = 3;
+    DOMAIN_ADMIN = 4;
+    ORG_ADMIN = 5;
+    PERM_ADMIN = 6;
+    AUDIT_ADMIN = 7;
 }

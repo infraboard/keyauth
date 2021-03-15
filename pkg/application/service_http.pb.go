@@ -17,8 +17,8 @@ func HttpEntry() *http.EntrySet {
 				Method:           "POST",
 				Resource:         "application",
 				AuthEnable:       true,
-				PermissionEnable: true,
-				Labels:           map[string]string{"action": "create"},
+				PermissionEnable: false,
+				Labels:           map[string]string{"allow": "domain_admin"},
 			},
 			{
 				GrpcPath:         "/keyauth.application.UserService/DescribeApplication",
@@ -27,8 +27,8 @@ func HttpEntry() *http.EntrySet {
 				Method:           "GET",
 				Resource:         "application",
 				AuthEnable:       true,
-				PermissionEnable: true,
-				Labels:           map[string]string{"action": "get"},
+				PermissionEnable: false,
+				Labels:           map[string]string{"allow": "domain_admin"},
 			},
 			{
 				GrpcPath:         "/keyauth.application.UserService/QueryApplication",
@@ -37,8 +37,8 @@ func HttpEntry() *http.EntrySet {
 				Method:           "GET",
 				Resource:         "application",
 				AuthEnable:       true,
-				PermissionEnable: true,
-				Labels:           map[string]string{"action": "list"},
+				PermissionEnable: false,
+				Labels:           map[string]string{"allow": "domain_admin"},
 			},
 			{
 				GrpcPath:         "/keyauth.application.UserService/DeleteApplication",
@@ -47,8 +47,8 @@ func HttpEntry() *http.EntrySet {
 				Method:           "DELETE",
 				Resource:         "application",
 				AuthEnable:       true,
-				PermissionEnable: true,
-				Labels:           map[string]string{"action": "delete"},
+				PermissionEnable: false,
+				Labels:           map[string]string{"allow": "domain_admin"},
 			},
 			{
 				GrpcPath:     "/keyauth.application.AdminService/CreateBuildInApplication",

@@ -15,10 +15,9 @@ service DepartmentService {
 			method: "GET"
 			resource: "department"
 			auth_enable: true
-			permission_enable: true
 			labels: [{
-				key: "action"
-				value: "list"
+				key: "allow"
+				value: "org_admin"
 			}]
 		};
 	};
@@ -28,10 +27,9 @@ service DepartmentService {
 			method: "POST"
 			resource: "department"
 			auth_enable: true
-			permission_enable: true
 			labels: [{
-				key: "action"
-				value: "get"
+				key: "allow"
+				value: "org_admin"
 			}]
 		};
 	};
@@ -41,10 +39,9 @@ service DepartmentService {
 			method: "POST"
 			resource: "department"
 			auth_enable: true
-			permission_enable: true
 			labels: [{
-				key: "action"
-				value: "create"
+				key: "allow"
+				value: "org_admin"
 			}]
 		};
 	};
@@ -54,10 +51,9 @@ service DepartmentService {
 			method: "PUT"
 			resource: "department"
 			auth_enable: true
-			permission_enable: true
 			labels: [{
-				key: "action"
-				value: "update"
+				key: "allow"
+				value: "org_admin"
 			}]
 		};
 	};
@@ -67,10 +63,9 @@ service DepartmentService {
 			method: "DELETE"
 			resource: "department"
 			auth_enable: true
-			permission_enable: true
 			labels: [{
-				key: "action"
-				value: "delete"
+				key: "allow"
+				value: "org_admin"
 			}]
 		};
 	};
@@ -81,10 +76,9 @@ service DepartmentService {
 			method: "GET"
 			resource: "department_apply"
 			auth_enable: true
-			permission_enable: true
 			labels: [{
-				key: "action"
-				value: "list"
+				key: "allow"
+				value: "org_admin"
 			}]
 		};
 	};
@@ -94,10 +88,9 @@ service DepartmentService {
 			method: "GET"
 			resource: "department_apply"
 			auth_enable: true
-			permission_enable: true
 			labels: [{
-				key: "action"
-				value: "get"
+				key: "allow"
+				value: "org_admin"
 			}]
 		};
 	};
@@ -107,10 +100,9 @@ service DepartmentService {
 			method: "POST"
 			resource: "department_apply"
 			auth_enable: true
-			permission_enable: true
 			labels: [{
-				key: "action"
-				value: "create"
+				key: "allow"
+				value: "org_admin"
 			}]
 		};
 	};
@@ -120,10 +112,9 @@ service DepartmentService {
 			method: "PUT"
 			resource: "department_apply"
 			auth_enable: true
-			permission_enable: true
 			labels: [{
-				key: "action"
-				value: "update"
+				key: "allow"
+				value: "org_admin"
 			}]
 		};
 	};

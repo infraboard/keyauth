@@ -16,11 +16,6 @@ service EndpointService {
 			method: "GET"
 			resource: "endpoint"
 			auth_enable: true
-			permission_enable: true
-			labels: [{
-				key: "action"
-				value: "get"
-			}]
 		};
 	};
 	rpc QueryEndpoints(QueryEndpointRequest) returns(Set) {
@@ -29,11 +24,6 @@ service EndpointService {
 			method: "GET"
 			resource: "endpoint"
 			auth_enable: true
-			permission_enable: true
-			labels: [{
-				key: "action"
-				value: "list"
-			}]
 		};
 	};
 	rpc Registry(RegistryRequest) returns(RegistryResponse) {
@@ -42,11 +32,6 @@ service EndpointService {
 			method: "POST"
 			resource: "endpoint"
 			auth_enable: false
-			permission_enable: false
-			labels: [{
-				key: "action"
-				value: "create"
-			}]
 		};
 	};
 	rpc DeleteEndpoint(DeleteEndpointRequest) returns(Endpoint) {
@@ -55,11 +40,6 @@ service EndpointService {
 			method: "DELETE"
 			resource: "endpoint"
 			auth_enable: true
-			permission_enable: true
-			labels: [{
-				key: "action"
-				value: "delete"
-			}]
 		};
 	};
 	rpc QueryResources(QueryResourceRequest) returns(ResourceSet) {
@@ -68,11 +48,6 @@ service EndpointService {
 			method: "GET"
 			resource: "resource"
 			auth_enable: true
-			permission_enable: true
-			labels: [{
-				key: "action"
-				value: "list"
-			}]
 		};
 	};
 }

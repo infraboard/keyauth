@@ -28,7 +28,7 @@ func (h *handler) CreateSubAccount(w http.ResponseWriter, r *http.Request) {
 	}
 
 	req.UserType = types.UserType_SUB
-	req.CreateType = user.CreateType_DOMAIN_ADMIN
+	req.CreateType = user.CreateType_DOMAIN_CREATED
 
 	var header, trailer metadata.MD
 	d, err := h.service.CreateAccount(

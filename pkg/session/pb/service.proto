@@ -18,10 +18,9 @@ service UserService {
 			method: "GET"
 			resource: "session"
 			auth_enable: true
-			permission_enable: true
 			labels: [{
-				key: "action"
-				value: "get"
+				key: "allow"
+				value: "audit_admin"
 			}]
 		};
 	};
@@ -31,10 +30,9 @@ service UserService {
 			method: "GET"
 			resource: "session"
 			auth_enable: true
-			permission_enable: true
 			labels: [{
-				key: "action"
-				value: "list"
+				key: "allow"
+				value: "audit_admin"
 			}]
 		};
 	};

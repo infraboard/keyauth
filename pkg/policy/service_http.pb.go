@@ -17,8 +17,8 @@ func HttpEntry() *http.EntrySet {
 				Method:           "POST",
 				Resource:         "policy",
 				AuthEnable:       true,
-				PermissionEnable: true,
-				Labels:           map[string]string{"action": "create"},
+				PermissionEnable: false,
+				Labels:           map[string]string{"allow": "perm_admin"},
 			},
 			{
 				GrpcPath:         "/keyauth.policy.PolicyService/QueryPolicy",
@@ -27,8 +27,8 @@ func HttpEntry() *http.EntrySet {
 				Method:           "GET",
 				Resource:         "policy",
 				AuthEnable:       true,
-				PermissionEnable: true,
-				Labels:           map[string]string{"action": "list"},
+				PermissionEnable: false,
+				Labels:           map[string]string{"allow": "perm_admin"},
 			},
 			{
 				GrpcPath:         "/keyauth.policy.PolicyService/DescribePolicy",
@@ -37,8 +37,8 @@ func HttpEntry() *http.EntrySet {
 				Method:           "GET",
 				Resource:         "policy",
 				AuthEnable:       true,
-				PermissionEnable: true,
-				Labels:           map[string]string{"action": "get"},
+				PermissionEnable: false,
+				Labels:           map[string]string{"allow": "perm_admin"},
 			},
 			{
 				GrpcPath:         "/keyauth.policy.PolicyService/DeletePolicy",
@@ -47,8 +47,8 @@ func HttpEntry() *http.EntrySet {
 				Method:           "DELETE",
 				Resource:         "policy",
 				AuthEnable:       true,
-				PermissionEnable: true,
-				Labels:           map[string]string{"action": "delete"},
+				PermissionEnable: false,
+				Labels:           map[string]string{"allow": "perm_admin"},
 			},
 		},
 	}

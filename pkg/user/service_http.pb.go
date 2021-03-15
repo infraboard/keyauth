@@ -17,8 +17,8 @@ func HttpEntry() *http.EntrySet {
 				Method:           "GET",
 				Resource:         "user",
 				AuthEnable:       true,
-				PermissionEnable: true,
-				Labels:           map[string]string{"action": "list"},
+				PermissionEnable: false,
+				Labels:           map[string]string{"allow": "org_admin"},
 			},
 			{
 				GrpcPath:         "/keyauth.user.UserService/DescribeAccount",
@@ -28,7 +28,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "user",
 				AuthEnable:       true,
 				PermissionEnable: false,
-				Labels:           map[string]string{},
+				Labels:           map[string]string{"allow": "org_admin"},
 			},
 			{
 				GrpcPath:         "/keyauth.user.UserService/CreateAccount",
@@ -37,8 +37,8 @@ func HttpEntry() *http.EntrySet {
 				Method:           "POST",
 				Resource:         "user",
 				AuthEnable:       true,
-				PermissionEnable: true,
-				Labels:           map[string]string{"action": "create"},
+				PermissionEnable: false,
+				Labels:           map[string]string{"allow": "org_admin"},
 			},
 			{
 				GrpcPath:         "/keyauth.user.UserService/BlockAccount",
@@ -47,8 +47,8 @@ func HttpEntry() *http.EntrySet {
 				Method:           "POST",
 				Resource:         "user",
 				AuthEnable:       true,
-				PermissionEnable: true,
-				Labels:           map[string]string{"action": "update"},
+				PermissionEnable: false,
+				Labels:           map[string]string{"allow": "org_admin"},
 			},
 			{
 				GrpcPath:         "/keyauth.user.UserService/DeleteAccount",
@@ -57,8 +57,8 @@ func HttpEntry() *http.EntrySet {
 				Method:           "DELETE",
 				Resource:         "user",
 				AuthEnable:       true,
-				PermissionEnable: true,
-				Labels:           map[string]string{"action": "delete"},
+				PermissionEnable: false,
+				Labels:           map[string]string{"allow": "org_admin"},
 			},
 			{
 				GrpcPath:         "/keyauth.user.UserService/UpdateAccountProfile",
@@ -67,8 +67,8 @@ func HttpEntry() *http.EntrySet {
 				Method:           "PUT",
 				Resource:         "user",
 				AuthEnable:       true,
-				PermissionEnable: true,
-				Labels:           map[string]string{"action": "update"},
+				PermissionEnable: false,
+				Labels:           map[string]string{"allow": "org_admin"},
 			},
 			{
 				GrpcPath:         "/keyauth.user.UserService/UpdateAccountPassword",
@@ -77,8 +77,8 @@ func HttpEntry() *http.EntrySet {
 				Method:           "PUT",
 				Resource:         "password",
 				AuthEnable:       true,
-				PermissionEnable: true,
-				Labels:           map[string]string{"action": "update"},
+				PermissionEnable: false,
+				Labels:           map[string]string{"allow": "org_admin"},
 			},
 			{
 				GrpcPath:         "/keyauth.user.UserService/GeneratePassword",
@@ -88,7 +88,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "password",
 				AuthEnable:       true,
 				PermissionEnable: false,
-				Labels:           map[string]string{},
+				Labels:           map[string]string{"allow": "*"},
 			},
 		},
 	}

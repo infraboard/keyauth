@@ -155,7 +155,7 @@ func (i *issuer) IssueToken(ctx context.Context, req *token.IssueTokenRequest) (
 				return nil, fmt.Errorf("set token domain error, %s", err)
 			}
 			tk.Domain = u.Domain
-		case types.UserType_SERVICE, types.UserType_SUB:
+		case types.UserType_SUB:
 			tk.Domain = u.Domain
 		}
 

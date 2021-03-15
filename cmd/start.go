@@ -106,13 +106,6 @@ func (s *service) start() error {
 	s.log.Infof("loaded domain pkg: %v", pkg.LoadedService())
 	s.log.Infof("loaded http service: %s", pkg.LoadedHTTP())
 
-	// 注册服务权限条目
-	s.log.Info("start registry endpoints ...")
-	if err := s.grpc.RegistryEndpoints(); err != nil {
-		s.log.Warnf("registry endpoints error, %s", err)
-	}
-	s.log.Debug("service endpoints registry success")
-
 	go s.grpc.Start()
 	return s.http.Start()
 }

@@ -17,8 +17,8 @@ func HttpEntry() *http.EntrySet {
 				Method:           "GET",
 				Resource:         "endpoint",
 				AuthEnable:       true,
-				PermissionEnable: true,
-				Labels:           map[string]string{"action": "get"},
+				PermissionEnable: false,
+				Labels:           map[string]string{},
 			},
 			{
 				GrpcPath:         "/keyauth.endpoint.EndpointService/QueryEndpoints",
@@ -27,8 +27,8 @@ func HttpEntry() *http.EntrySet {
 				Method:           "GET",
 				Resource:         "endpoint",
 				AuthEnable:       true,
-				PermissionEnable: true,
-				Labels:           map[string]string{"action": "list"},
+				PermissionEnable: false,
+				Labels:           map[string]string{},
 			},
 			{
 				GrpcPath:         "/keyauth.endpoint.EndpointService/Registry",
@@ -38,7 +38,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "endpoint",
 				AuthEnable:       false,
 				PermissionEnable: false,
-				Labels:           map[string]string{"action": "create"},
+				Labels:           map[string]string{},
 			},
 			{
 				GrpcPath:         "/keyauth.endpoint.EndpointService/DeleteEndpoint",
@@ -47,8 +47,8 @@ func HttpEntry() *http.EntrySet {
 				Method:           "DELETE",
 				Resource:         "endpoint",
 				AuthEnable:       true,
-				PermissionEnable: true,
-				Labels:           map[string]string{"action": "delete"},
+				PermissionEnable: false,
+				Labels:           map[string]string{},
 			},
 			{
 				GrpcPath:         "/keyauth.endpoint.EndpointService/QueryResources",
@@ -57,8 +57,8 @@ func HttpEntry() *http.EntrySet {
 				Method:           "GET",
 				Resource:         "resource",
 				AuthEnable:       true,
-				PermissionEnable: true,
-				Labels:           map[string]string{"action": "list"},
+				PermissionEnable: false,
+				Labels:           map[string]string{},
 			},
 		},
 	}

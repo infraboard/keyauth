@@ -134,16 +134,23 @@ func (a *grpcAuther) validatePermission(tk *token.Token, entry *http.Entry, req 
 		return nil
 	}
 
-	// 检测owner
+	// 如果是owner 直接放行
 	if v, ok := req.(OwnerChecker); ok {
 		if !v.CheckOwner(tk.Account) {
 			return grpc.Errorf(codes.PermissionDenied, "only owner can operate")
 		}
+		return nil
 	}
 
+	// 如果是允许的用户类型 直接放行
 	if v, ok := entry.Labels["allow"]; ok {
-		types := strings.Split(v, ",")
-		a.log().Debugf("allows: %v", types)
+		if v != "*" {
+			a.log().Debugf("allows: %s", v)
+			if !tk.UserType.IsIn(transferToUserType(v)...) {
+				return grpc.Errorf(codes.PermissionDenied, "access grpc path %s permission deny, allow types: %s", entry.GrpcPath, v)
+			}
+		}
+		return nil
 	}
 
 	return nil
@@ -154,9 +161,38 @@ func (a *grpcAuther) endpointHashID(entry *http.Entry) string {
 }
 
 func (a *grpcAuther) log() logger.Logger {
-	if a == nil {
+	if a.l == nil {
 		a.l = zap.L().Named("GRPC Auther")
 	}
 
 	return a.l
+}
+
+func transferToUserType(allows string) []types.UserType {
+	set := []types.UserType{}
+	for _, t := range strings.Split(allows, ",") {
+		var ut types.UserType
+		switch t {
+		case "sub":
+			ut = types.UserType_SUB
+		case "primary":
+			ut = types.UserType_PRIMARY
+		case "super":
+			ut = types.UserType_SUPPER
+		case "internal":
+			ut = types.UserType_INTERNAL
+		case "domain_admin":
+			ut = types.UserType_DOMAIN_ADMIN
+		case "org_admin":
+			ut = types.UserType_ORG_ADMIN
+		case "perm_admin":
+			ut = types.UserType_PERM_ADMIN
+		case "audit_admin":
+			ut = types.UserType_AUDIT_ADMIN
+		}
+		set = append(set, ut)
+	}
+
+	return set
+
 }

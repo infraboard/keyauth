@@ -18,7 +18,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "endpoint",
 				AuthEnable:       false,
 				PermissionEnable: false,
-				Labels:           map[string]string{"action": "get"},
+				Labels:           map[string]string{},
 			},
 			{
 				GrpcPath:         "/keyauth.micro.MicroService/CreateService",
@@ -27,8 +27,8 @@ func HttpEntry() *http.EntrySet {
 				Method:           "POST",
 				Resource:         "service",
 				AuthEnable:       true,
-				PermissionEnable: true,
-				Labels:           map[string]string{"action": "create"},
+				PermissionEnable: false,
+				Labels:           map[string]string{},
 			},
 			{
 				GrpcPath:         "/keyauth.micro.MicroService/QueryService",
@@ -37,8 +37,8 @@ func HttpEntry() *http.EntrySet {
 				Method:           "GET",
 				Resource:         "service",
 				AuthEnable:       true,
-				PermissionEnable: true,
-				Labels:           map[string]string{"action": "list"},
+				PermissionEnable: false,
+				Labels:           map[string]string{},
 			},
 			{
 				GrpcPath:         "/keyauth.micro.MicroService/DescribeService",
@@ -47,8 +47,8 @@ func HttpEntry() *http.EntrySet {
 				Method:           "GET",
 				Resource:         "service",
 				AuthEnable:       true,
-				PermissionEnable: true,
-				Labels:           map[string]string{"action": "get"},
+				PermissionEnable: false,
+				Labels:           map[string]string{},
 			},
 			{
 				GrpcPath:         "/keyauth.micro.MicroService/DeleteService",
@@ -57,8 +57,8 @@ func HttpEntry() *http.EntrySet {
 				Method:           "DELETE",
 				Resource:         "service",
 				AuthEnable:       true,
-				PermissionEnable: true,
-				Labels:           map[string]string{"action": "delete"},
+				PermissionEnable: false,
+				Labels:           map[string]string{},
 			},
 			{
 				GrpcPath:         "/keyauth.micro.MicroService/RefreshServiceClientSecret",
@@ -67,8 +67,8 @@ func HttpEntry() *http.EntrySet {
 				Method:           "POST",
 				Resource:         "service",
 				AuthEnable:       true,
-				PermissionEnable: true,
-				Labels:           map[string]string{"action": "update"},
+				PermissionEnable: false,
+				Labels:           map[string]string{},
 			},
 		},
 	}

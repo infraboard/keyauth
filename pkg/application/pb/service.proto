@@ -14,10 +14,9 @@ service UserService {
 			method: "POST"
 			resource: "application"
 			auth_enable: true
-			permission_enable: true
 			labels: [{
-				key: "action"
-				value: "create"
+				key: "allow"
+				value: "domain_admin"
 			}]
 		};
 	};
@@ -27,10 +26,9 @@ service UserService {
 			method: "GET"
 			resource: "application"
 			auth_enable: true
-			permission_enable: true
 			labels: [{
-				key: "action"
-				value: "get"
+				key: "allow"
+				value: "domain_admin"
 			}]
 		};
 	};
@@ -40,10 +38,9 @@ service UserService {
 			method: "GET"
 			resource: "application"
 			auth_enable: true
-			permission_enable: true
 			labels: [{
-				key: "action"
-				value: "list"
+				key: "allow"
+				value: "domain_admin"
 			}]
 		};
 	};
@@ -53,16 +50,15 @@ service UserService {
 			method: "DELETE"
 			resource: "application"
 			auth_enable: true
-			permission_enable: true
 			labels: [{
-				key: "action"
-				value: "delete"
+				key: "allow"
+				value: "domain_admin"
 			}]
 		};
 	};
 }
 
 service AdminService {
-	rpc CreateBuildInApplication(CreateApplicatonRequest) returns (Application) ;
-	rpc GetBuildInApplication(GetBuildInApplicationRequest) returns(Application) ;
+	rpc CreateBuildInApplication(CreateApplicatonRequest) returns (Application);
+	rpc GetBuildInApplication(GetBuildInApplicationRequest) returns(Application);
 }

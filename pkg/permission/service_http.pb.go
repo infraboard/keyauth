@@ -17,8 +17,8 @@ func HttpEntry() *http.EntrySet {
 				Method:           "GET",
 				Resource:         "permission",
 				AuthEnable:       true,
-				PermissionEnable: true,
-				Labels:           map[string]string{"action": "list"},
+				PermissionEnable: false,
+				Labels:           map[string]string{"allow": "perm_admin"},
 			},
 			{
 				GrpcPath:         "/keyauth.permission.PermissionService/QueryRoles",
@@ -27,8 +27,8 @@ func HttpEntry() *http.EntrySet {
 				Method:           "POST",
 				Resource:         "role",
 				AuthEnable:       true,
-				PermissionEnable: true,
-				Labels:           map[string]string{"action": "list"},
+				PermissionEnable: false,
+				Labels:           map[string]string{"allow": "perm_admin"},
 			},
 			{
 				GrpcPath:         "/keyauth.permission.PermissionService/CheckPermission",
@@ -37,8 +37,8 @@ func HttpEntry() *http.EntrySet {
 				Method:           "GET",
 				Resource:         "permission",
 				AuthEnable:       true,
-				PermissionEnable: true,
-				Labels:           map[string]string{"action": "get"},
+				PermissionEnable: false,
+				Labels:           map[string]string{"allow": "*"},
 			},
 		},
 	}

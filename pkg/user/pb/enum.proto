@@ -12,8 +12,8 @@ enum Gender {
 enum CreateType {
     // UserRegistry (user_registry) 用户自己注册的用户
     USER_REGISTRY = 0;
-    // DomainAdmin (domain_admin) 域管理员创建的用户
-    DOMAIN_ADMIN = 1;
+    // DOMAIN_CREATED (domain_admin) 域管理员创建的用户
+    DOMAIN_CREATED = 1;
     // LDAPSync (ldap_sync) LDAP同步的用户
     LDAP_SYNC = 2;
     

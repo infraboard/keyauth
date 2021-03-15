@@ -17,8 +17,8 @@ func HttpEntry() *http.EntrySet {
 				Method:           "POST",
 				Resource:         "namespace",
 				AuthEnable:       true,
-				PermissionEnable: true,
-				Labels:           map[string]string{"action": "create"},
+				PermissionEnable: false,
+				Labels:           map[string]string{"allow": "perm_admin"},
 			},
 			{
 				GrpcPath:         "/keyauth.namespace.NamespaceService/QueryNamespace",
@@ -27,8 +27,8 @@ func HttpEntry() *http.EntrySet {
 				Method:           "GET",
 				Resource:         "namespace",
 				AuthEnable:       true,
-				PermissionEnable: true,
-				Labels:           map[string]string{"action": "list"},
+				PermissionEnable: false,
+				Labels:           map[string]string{"allow": "perm_admin"},
 			},
 			{
 				GrpcPath:         "/keyauth.namespace.NamespaceService/DescribeNamespace",
@@ -37,8 +37,8 @@ func HttpEntry() *http.EntrySet {
 				Method:           "GET",
 				Resource:         "namespace",
 				AuthEnable:       true,
-				PermissionEnable: true,
-				Labels:           map[string]string{"action": "get"},
+				PermissionEnable: false,
+				Labels:           map[string]string{"allow": "perm_admin"},
 			},
 			{
 				GrpcPath:         "/keyauth.namespace.NamespaceService/DeleteNamespace",
@@ -47,8 +47,8 @@ func HttpEntry() *http.EntrySet {
 				Method:           "GET",
 				Resource:         "namespace",
 				AuthEnable:       true,
-				PermissionEnable: true,
-				Labels:           map[string]string{"action": "delete"},
+				PermissionEnable: false,
+				Labels:           map[string]string{"allow": "perm_admin"},
 			},
 		},
 	}

@@ -5,11 +5,56 @@ option go_package = "github.com/infraboard/keyauth/pkg/role";
 
 import "pkg/role/pb/request.proto";
 import "pkg/role/pb/role.proto";
+import "github.com/infraboard/mcube/pb/http/entry.proto";
 
 // Service 角色服务
 service RoleService {
-	rpc CreateRole(CreateRoleRequest) returns(Role);
-	rpc QueryRole(QueryRoleRequest) returns(Set);
-	rpc DescribeRole(DescribeRoleRequest) returns(Role);
-	rpc DeleteRole(DeleteRoleRequest) returns(Role);
+	rpc CreateRole(CreateRoleRequest) returns(Role) {
+		option (mcube.http.rest_api) = {
+			path: "/policies"
+			method: "POST"
+			resource: "policy"
+			auth_enable: true
+			labels: [{
+				key: "allow"
+				value: "perm_admin"
+			}]
+		};
+	};
+	rpc QueryRole(QueryRoleRequest) returns(Set) {
+		option (mcube.http.rest_api) = {
+			path: "/policies"
+			method: "POST"
+			resource: "policy"
+			auth_enable: true
+			labels: [{
+				key: "allow"
+				value: "perm_admin"
+			}]
+		};
+	};
+	rpc DescribeRole(DescribeRoleRequest) returns(Role) {
+		option (mcube.http.rest_api) = {
+			path: "/policies"
+			method: "POST"
+			resource: "policy"
+			auth_enable: true
+			labels: [{
+				key: "allow"
+				value: "perm_admin"
+			}]
+		};
+	};
+	rpc DeleteRole(DeleteRoleRequest) returns(Role) {
+		option (mcube.http.rest_api) = {
+			path: "/policies"
+			method: "POST"
+			resource: "policy"
+			auth_enable: true
+			labels: [{
+				key: "allow"
+				value: "perm_admin"
+			}]
+		};
+	};
 }

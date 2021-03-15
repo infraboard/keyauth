@@ -16,10 +16,9 @@ service UserService {
 			method: "GET"
 			resource: "user"
 			auth_enable: true
-			permission_enable: true
 			labels: [{
-				key: "action"
-				value: "list"
+				key: "allow"
+				value: "org_admin"
 			}]
 		};
 	};
@@ -30,6 +29,10 @@ service UserService {
 			method: "GET"
 			resource: "user"
 			auth_enable: true
+			labels: [{
+				key: "allow"
+				value: "org_admin"
+			}]
 		};
 	};
 	// 创建用户
@@ -39,10 +42,9 @@ service UserService {
 			method: "POST"
 			resource: "user"
 			auth_enable: true
-			permission_enable: true
 			labels: [{
-				key: "action"
-				value: "create"
+				key: "allow"
+				value: "org_admin"
 			}]
 		};
 	};
@@ -53,10 +55,9 @@ service UserService {
 			method: "POST"
 			resource: "user"
 			auth_enable: true
-			permission_enable: true
 			labels: [{
-				key: "action"
-				value: "update"
+				key: "allow"
+				value: "org_admin"
 			}]
 		};
 	};
@@ -67,10 +68,9 @@ service UserService {
 			method: "DELETE"
 			resource: "user"
 			auth_enable: true
-			permission_enable: true
 			labels: [{
-				key: "action"
-				value: "delete"
+				key: "allow"
+				value: "org_admin"
 			}]
 		};
 	};
@@ -81,10 +81,9 @@ service UserService {
 			method: "PUT"
 			resource: "user"
 			auth_enable: true
-			permission_enable: true
 			labels: [{
-				key: "action"
-				value: "update"
+				key: "allow"
+				value: "org_admin"
 			}]
 		};
 	};
@@ -95,6 +94,10 @@ service UserService {
 			method: "PUT"
 			resource: "password"
 			auth_enable: true
+			labels: [{
+				key: "allow"
+				value: "org_admin"
+			}]
 		};
 	};
 	// GeneratePassword 生成符合检测强度的随机密码
@@ -104,6 +107,10 @@ service UserService {
 			method: "POST"
 			resource: "password"
 			auth_enable: true
+			labels: [{
+				key: "allow"
+				value: "*"
+			}]
 		};
 	};
 }

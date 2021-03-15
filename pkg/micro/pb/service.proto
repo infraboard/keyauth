@@ -15,10 +15,6 @@ service MicroService {
 			method: "POST"
 			resource: "endpoint"
 			auth_enable: false
-			labels: [{
-				key: "action"
-				value: "get"
-			}]
 		};
 	};
 	rpc CreateService(CreateMicroRequest) returns(Micro) {
@@ -27,11 +23,6 @@ service MicroService {
 			method: "POST"
 			resource: "service"
 			auth_enable: true
-			permission_enable: true
-			labels: [{
-				key: "action"
-				value: "create"
-			}]
 		};
 	};
 	rpc QueryService(QueryMicroRequest) returns(Set) {
@@ -40,11 +31,6 @@ service MicroService {
 			method: "GET"
 			resource: "service"
 			auth_enable: true
-			permission_enable: true
-			labels: [{
-				key: "action"
-				value: "list"
-			}]
 		};
 	};
 	rpc DescribeService(DescribeMicroRequest) returns(Micro) {
@@ -53,11 +39,6 @@ service MicroService {
 			method: "GET"
 			resource: "service"
 			auth_enable: true
-			permission_enable: true
-			labels: [{
-				key: "action"
-				value: "get"
-			}]
 		};
 	};
 	rpc DeleteService(DeleteMicroRequest) returns(Micro) {
@@ -66,11 +47,6 @@ service MicroService {
 			method: "DELETE"
 			resource: "service"
 			auth_enable: true
-			permission_enable: true
-			labels: [{
-				key: "action"
-				value: "delete"
-			}]
 		};
 	};
 	rpc RefreshServiceClientSecret(DescribeMicroRequest) returns(Micro) {
@@ -79,11 +55,6 @@ service MicroService {
 			method: "POST"
 			resource: "service"
 			auth_enable: true
-			permission_enable: true
-			labels: [{
-				key: "action"
-				value: "update"
-			}]
 		};
 	};
 }

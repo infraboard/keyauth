@@ -52,7 +52,7 @@ func (s *service) CreateAccount(ctx context.Context, req *user.CreateAccountRequ
 	}
 
 	// 如果是管理员创建的账号需要用户自己重置密码
-	if u.CreateType.IsIn(user.CreateType_DOMAIN_ADMIN) {
+	if u.CreateType.IsIn(user.CreateType_DOMAIN_CREATED) {
 		u.HashedPassword.SetNeedReset("admin created user need reset when first login")
 	}
 

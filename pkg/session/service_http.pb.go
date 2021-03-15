@@ -25,8 +25,8 @@ func HttpEntry() *http.EntrySet {
 				Method:           "GET",
 				Resource:         "session",
 				AuthEnable:       true,
-				PermissionEnable: true,
-				Labels:           map[string]string{"action": "get"},
+				PermissionEnable: false,
+				Labels:           map[string]string{"allow": "audit_admin"},
 			},
 			{
 				GrpcPath:         "/keyauth.session.UserService/QuerySession",
@@ -35,8 +35,8 @@ func HttpEntry() *http.EntrySet {
 				Method:           "GET",
 				Resource:         "session",
 				AuthEnable:       true,
-				PermissionEnable: true,
-				Labels:           map[string]string{"action": "list"},
+				PermissionEnable: false,
+				Labels:           map[string]string{"allow": "audit_admin"},
 			},
 			{
 				GrpcPath:     "/keyauth.session.AdminService/QueryUserLastSession",

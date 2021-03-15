@@ -16,10 +16,9 @@ service PermissionService {
 			method: "GET"
 			resource: "permission"
 			auth_enable: true
-			permission_enable: true
 			labels: [{
-				key: "action"
-				value: "list"
+				key: "allow"
+				value: "perm_admin"
 			}]
 		};
 	};
@@ -29,10 +28,9 @@ service PermissionService {
 			method: "POST"
 			resource: "role"
 			auth_enable: true
-			permission_enable: true
 			labels: [{
-				key: "action"
-				value: "list"
+				key: "allow"
+				value: "perm_admin"
 			}]
 		};
 	};
@@ -42,10 +40,9 @@ service PermissionService {
 			method: "GET"
 			resource: "permission"
 			auth_enable: true
-			permission_enable: true
 			labels: [{
-				key: "action"
-				value: "get"
+				key: "allow"
+				value: "*"
 			}]
 		};
 	};

@@ -15,10 +15,9 @@ service NamespaceService {
 			method: "POST"
 			resource: "namespace"
 			auth_enable: true
-			permission_enable: true
 			labels: [{
-				key: "action"
-				value: "create"
+				key: "allow"
+				value: "perm_admin"
 			}]
 		};
 	};
@@ -28,10 +27,9 @@ service NamespaceService {
 			method: "GET"
 			resource: "namespace"
 			auth_enable: true
-			permission_enable: true
 			labels: [{
-				key: "action"
-				value: "list"
+				key: "allow"
+				value: "perm_admin"
 			}]
 		};
 	};
@@ -41,10 +39,9 @@ service NamespaceService {
 			method: "GET"
 			resource: "namespace"
 			auth_enable: true
-			permission_enable: true
 			labels: [{
-				key: "action"
-				value: "get"
+				key: "allow"
+				value: "perm_admin"
 			}]
 		};
 	};
@@ -54,10 +51,9 @@ service NamespaceService {
 			method: "GET"
 			resource: "namespace"
 			auth_enable: true
-			permission_enable: true
 			labels: [{
-				key: "action"
-				value: "delete"
+				key: "allow"
+				value: "perm_admin"
 			}]
 		};
 	};
