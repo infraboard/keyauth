@@ -72,7 +72,7 @@ func (a *grpcAuther) Auth(
 		}
 
 		// 权限校验
-		if err := a.validatePermission(tk, entry, resp); err != nil {
+		if err := a.validatePermission(tk, entry, req); err != nil {
 			return nil, err
 		}
 	}
@@ -130,7 +130,7 @@ func (a *grpcAuther) checkToken(ctx *GrpcInCtx) (*token.Token, error) {
 
 func (a *grpcAuther) validatePermission(tk *token.Token, entry *http.Entry, req interface{}) error {
 	// 如果是超级管理员不做权限校验, 直接放行
-	if tk.UserType.IsIn(types.UserType_SUPPER) {
+	if tk.UserType.IsIn(types.UserType_SUPPER, types.UserType_INTERNAL) {
 		return nil
 	}
 
