@@ -299,7 +299,7 @@ func (i *Initialer) initRole() ([]*role.Role, error) {
 	req := role.NewCreateRoleRequest()
 	req.Name = role.AdminRoleName
 	req.Description = "系统管理员, 有系统所有功能的访问权限"
-	req.Permissions = []*role.Permission{admin}
+	req.Permissions = []*role.CreatePermssionRequest{admin}
 	req.Type = role.RoleType_BUILDIN
 	adminRole, err := pkg.Role.CreateRole(i.userContext(), req)
 	if err != nil {
@@ -315,7 +315,7 @@ func (i *Initialer) initRole() ([]*role.Role, error) {
 	req = role.NewCreateRoleRequest()
 	req.Name = role.VisitorRoleName
 	req.Description = "访客, 登录系统后, 默认的权限"
-	req.Permissions = []*role.Permission{vistor}
+	req.Permissions = []*role.CreatePermssionRequest{vistor}
 	req.Type = role.RoleType_BUILDIN
 	vistorRole, err := pkg.Role.CreateRole(i.userContext(), req)
 	if err != nil {

@@ -4,7 +4,6 @@ package keyauth.permission;
 option go_package = "github.com/infraboard/keyauth/pkg/permission";
 
 import "pkg/role/pb/role.proto";
-import "pkg/role/pb/request.proto";
 import "pkg/permission/pb/request.proto";
 import "github.com/infraboard/mcube/pb/http/entry.proto";
 

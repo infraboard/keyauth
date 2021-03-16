@@ -92,8 +92,8 @@ type QueryRoleRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Page        *page.PageRequest `protobuf:"bytes,1,opt,name=page,proto3" json:"page" bson:"page"`
-	NamespaceId string            `protobuf:"bytes,2,opt,name=namespace_id,json=namespaceId,proto3" json:"namespace_id,omitempty"`
+	Page        *page.PageRequest `protobuf:"bytes,1,opt,name=page,proto3" json:"page"`
+	NamespaceId string            `protobuf:"bytes,2,opt,name=namespace_id,json=namespaceId,proto3" json:"namespace_id"`
 }
 
 func (x *QueryRoleRequest) Reset() {

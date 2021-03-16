@@ -27,7 +27,7 @@ func New(tk *token.Token, req *CreateRoleRequest) (*Role, error) {
 		return nil, fmt.Errorf("only supper account can create global and build role")
 	}
 
-	return &Role{
+	r := &Role{
 		Id:          xid.New().String(),
 		CreateAt:    ftime.Now().Timestamp(),
 		UpdateAt:    ftime.Now().Timestamp(),
@@ -35,9 +35,12 @@ func New(tk *token.Token, req *CreateRoleRequest) (*Role, error) {
 		Creater:     tk.Account,
 		Type:        req.Type,
 		Name:        req.Name,
+		PageMarked:  req.PageMarked,
 		Description: req.Description,
-		Permissions: req.Permissions,
-	}, nil
+	}
+
+	r.AddPerm(tk.Account, req.Permissions)
+	return r, nil
 }
 
 // NewDefaultRole 默认实例
@@ -63,10 +66,26 @@ func (r *Role) HasPermission(ep *endpoint.Endpoint) (*Permission, bool, error) {
 	return nil, false, nil
 }
 
+func (r *Role) AddPerm(creater string, perms []*CreatePermssionRequest) {
+	for i := range perms {
+		r.Permissions = append(r.Permissions, &Permission{
+			Id:           xid.New().String(),
+			CreateAt:     ftime.Now().Timestamp(),
+			Creater:      creater,
+			Effect:       perms[i].Effect,
+			ServiceId:    perms[i].ServiceId,
+			ResourceName: perms[i].ResourceName,
+			LabelKey:     perms[i].LabelKey,
+			MatchAll:     perms[i].MatchAll,
+			LabelValues:  perms[i].LabelValues,
+		})
+	}
+}
+
 // NewCreateRoleRequest 实例化请求
 func NewCreateRoleRequest() *CreateRoleRequest {
 	return &CreateRoleRequest{
-		Permissions: []*Permission{},
+		Permissions: []*CreatePermssionRequest{},
 		Type:        RoleType_CUSTOM,
 	}
 }
@@ -142,14 +161,14 @@ func (s *Set) HasPermission(ep *endpoint.Endpoint) (*Permission, bool, error) {
 }
 
 // NewDefaultPermission todo
-func NewDefaultPermission() *Permission {
-	return &Permission{
+func NewDefaultPermission() *CreatePermssionRequest {
+	return &CreatePermssionRequest{
 		Effect: EffectType_ALLOW,
 	}
 }
 
 // Validate todo
-func (p *Permission) Validate() error {
+func (p *CreatePermssionRequest) Validate() error {
 	if p.ServiceId == "" || p.ResourceName == "" || p.LabelKey == "" {
 		return fmt.Errorf("permisson required service_id, resource_name and label_key")
 	}

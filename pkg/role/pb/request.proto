@@ -7,31 +7,33 @@ import "pkg/role/pb/enum.proto";
 import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
 import "github.com/infraboard/mcube/pb/page/page.proto";
 
-// CreateRoleRequest 创建应用请求
+// CreateRoleRequest 创建角色请求
 message CreateRoleRequest {
     // 角色类型
     RoleType type = 1[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"type" json:"type"'}
         ];
-    // 应用名称
+    // 角色名称
     string name = 2[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"name" json:"name" validate:"required,lte=30"'}
         ];
-    // 应用简单的描述
+    // 角色描述
     string description =3[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"description" json:"description" validate:"lte=400"'}
         ];
+    // 角色关联的page
+    string page_marked =4[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"page_marked" json:"page_marked" validate:"lte=400"'}
+        ];
     // 读权限
-    repeated Permission permissions = 4[
+    repeated CreatePermssionRequest permissions = 9[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"permissions" json:"permissions"'}
         ];                   
 }
 
-
-// Permission 权限
-message Permission {
-     // 效力
-    EffectType effect = 1[
+message CreatePermssionRequest {
+        // 效力
+        EffectType effect = 1[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"effect" json:"effect"'}
         ];
     // 服务ID
