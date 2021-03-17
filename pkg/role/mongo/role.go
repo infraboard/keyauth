@@ -85,7 +85,7 @@ func (s *service) DescribeRole(ctx context.Context, req *role.DescribeRoleReques
 	}
 
 	if req.WithPermissions {
-		queryPerm := role.NewQueryPermissionRequest(request.NewPageRequest(role.MaxPermissionCount, 1))
+		queryPerm := role.NewQueryPermissionRequest(request.NewPageRequest(role.RoleMaxPermission, 1))
 		queryPerm.RoleId = ins.Id
 		ps, err := s.QueryPermission(ctx, queryPerm)
 		if err != nil {

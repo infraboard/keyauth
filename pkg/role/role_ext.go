@@ -13,11 +13,6 @@ import (
 	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
-const (
-	// MaxPermissionCount 一个角色最多可以容纳的权限条数
-	MaxPermissionCount = 500
-)
-
 // New 新创建一个Role
 func New(tk *token.Token, req *CreateRoleRequest) (*Role, error) {
 	if err := req.Validate(); err != nil {
@@ -111,9 +106,9 @@ func (req *CreateRoleRequest) IsCumstomType() bool {
 // Validate 请求校验
 func (req *CreateRoleRequest) Validate() error {
 	pc := len(req.Permissions)
-	if pc > MaxPermissionCount {
+	if pc > RoleMaxPermission {
 		return fmt.Errorf("role permission overed max count: %d",
-			MaxPermissionCount)
+			RoleMaxPermission)
 	}
 
 	errs := []string{}

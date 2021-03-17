@@ -70,15 +70,15 @@ func (s *service) AddPermissionToRole(ctx context.Context, req *role.AddPermissi
 	}
 
 	// 查询角色条目数是否超标
-	queryPerm := role.NewQueryPermissionRequest(request.NewPageRequest(role.MaxPermissionCount, 1))
+	queryPerm := role.NewQueryPermissionRequest(request.NewPageRequest(role.RoleMaxPermission, 1))
 	queryPerm.SkipItmes = true
 	ps, err := s.QueryPermission(ctx, queryPerm)
 	if err != nil {
 		return nil, err
 	}
-	if ps.Total+int64(req.Length()) > role.MaxPermissionCount {
+	if ps.Total+int64(req.Length()) > role.RoleMaxPermission {
 		return nil, exception.NewBadRequest("一个角色最多可以添加%d权限条目, 当前条目数: %d, 新增条目数: %d",
-			role.MaxPermissionCount, ps.Total, req.Length())
+			role.RoleMaxPermission, ps.Total, req.Length())
 	}
 
 	perms := role.NewPermission(ins.Id, tk.Account, req.Permissions)
