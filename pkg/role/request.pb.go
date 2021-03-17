@@ -510,6 +510,61 @@ func (x *RemovePermissionFromRoleRequest) GetPermissionId() []string {
 	return nil
 }
 
+type QueryPermissionRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Page   *page.PageRequest `protobuf:"bytes,1,opt,name=page,proto3" json:"page"`
+	RoleId string            `protobuf:"bytes,2,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
+}
+
+func (x *QueryPermissionRequest) Reset() {
+	*x = QueryPermissionRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_role_pb_request_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *QueryPermissionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*QueryPermissionRequest) ProtoMessage() {}
+
+func (x *QueryPermissionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_role_pb_request_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use QueryPermissionRequest.ProtoReflect.Descriptor instead.
+func (*QueryPermissionRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_role_pb_request_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *QueryPermissionRequest) GetPage() *page.PageRequest {
+	if x != nil {
+		return x.Page
+	}
+	return nil
+}
+
+func (x *QueryPermissionRequest) GetRoleId() string {
+	if x != nil {
+		return x.RoleId
+	}
+	return ""
+}
+
 var File_pkg_role_pb_request_proto protoreflect.FileDescriptor
 
 var file_pkg_role_pb_request_proto_rawDesc = []byte{
@@ -656,10 +711,21 @@ var file_pkg_role_pb_request_proto_rawDesc = []byte{
 	0x6a, 0x73, 0x6f, 0x6e, 0x3a, 0x22, 0x70, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e,
 	0x5f, 0x69, 0x64, 0x22, 0x20, 0x76, 0x61, 0x6c, 0x69, 0x64, 0x61, 0x74, 0x65, 0x3a, 0x22, 0x72,
 	0x65, 0x71, 0x75, 0x69, 0x72, 0x65, 0x64, 0x22, 0x52, 0x0c, 0x70, 0x65, 0x72, 0x6d, 0x69, 0x73,
-	0x73, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x42, 0x28, 0x5a, 0x26, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62,
-	0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x69, 0x6e, 0x66, 0x72, 0x61, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x2f,
-	0x6b, 0x65, 0x79, 0x61, 0x75, 0x74, 0x68, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x72, 0x6f, 0x6c, 0x65,
-	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x73, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x22, 0xa8, 0x01, 0x0a, 0x16, 0x51, 0x75, 0x65, 0x72, 0x79,
+	0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x12, 0x44, 0x0a, 0x04, 0x70, 0x61, 0x67, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32,
+	0x11, 0x2e, 0x70, 0x61, 0x67, 0x65, 0x2e, 0x50, 0x61, 0x67, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x73, 0x74, 0x42, 0x1d, 0xc2, 0xde, 0x1f, 0x19, 0x0a, 0x17, 0x62, 0x73, 0x6f, 0x6e, 0x3a, 0x22,
+	0x70, 0x61, 0x67, 0x65, 0x22, 0x20, 0x6a, 0x73, 0x6f, 0x6e, 0x3a, 0x22, 0x70, 0x61, 0x67, 0x65,
+	0x22, 0x52, 0x04, 0x70, 0x61, 0x67, 0x65, 0x12, 0x48, 0x0a, 0x07, 0x72, 0x6f, 0x6c, 0x65, 0x5f,
+	0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x42, 0x2f, 0xc2, 0xde, 0x1f, 0x2b, 0x0a, 0x29,
+	0x6a, 0x73, 0x6f, 0x6e, 0x3a, 0x22, 0x72, 0x6f, 0x6c, 0x65, 0x5f, 0x69, 0x64, 0x22, 0x20, 0x76,
+	0x61, 0x6c, 0x69, 0x64, 0x61, 0x74, 0x65, 0x3a, 0x22, 0x72, 0x65, 0x71, 0x75, 0x69, 0x72, 0x65,
+	0x64, 0x2c, 0x6c, 0x74, 0x65, 0x3d, 0x36, 0x34, 0x22, 0x52, 0x06, 0x72, 0x6f, 0x6c, 0x65, 0x49,
+	0x64, 0x42, 0x28, 0x5a, 0x26, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f,
+	0x69, 0x6e, 0x66, 0x72, 0x61, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x2f, 0x6b, 0x65, 0x79, 0x61, 0x75,
+	0x74, 0x68, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x72, 0x6f, 0x6c, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x33,
 }
 
 var (
@@ -674,7 +740,7 @@ func file_pkg_role_pb_request_proto_rawDescGZIP() []byte {
 	return file_pkg_role_pb_request_proto_rawDescData
 }
 
-var file_pkg_role_pb_request_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_pkg_role_pb_request_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_pkg_role_pb_request_proto_goTypes = []interface{}{
 	(*CreateRoleRequest)(nil),               // 0: keyauth.role.CreateRoleRequest
 	(*CreatePermssionRequest)(nil),          // 1: keyauth.role.CreatePermssionRequest
@@ -683,23 +749,25 @@ var file_pkg_role_pb_request_proto_goTypes = []interface{}{
 	(*DeleteRoleRequest)(nil),               // 4: keyauth.role.DeleteRoleRequest
 	(*AddPermissionToRoleRequest)(nil),      // 5: keyauth.role.AddPermissionToRoleRequest
 	(*RemovePermissionFromRoleRequest)(nil), // 6: keyauth.role.RemovePermissionFromRoleRequest
-	(RoleType)(0),                           // 7: keyauth.role.RoleType
-	(EffectType)(0),                         // 8: keyauth.role.EffectType
-	(*page.PageRequest)(nil),                // 9: page.PageRequest
+	(*QueryPermissionRequest)(nil),          // 7: keyauth.role.QueryPermissionRequest
+	(RoleType)(0),                           // 8: keyauth.role.RoleType
+	(EffectType)(0),                         // 9: keyauth.role.EffectType
+	(*page.PageRequest)(nil),                // 10: page.PageRequest
 }
 var file_pkg_role_pb_request_proto_depIdxs = []int32{
-	7, // 0: keyauth.role.CreateRoleRequest.type:type_name -> keyauth.role.RoleType
-	1, // 1: keyauth.role.CreateRoleRequest.permissions:type_name -> keyauth.role.CreatePermssionRequest
-	8, // 2: keyauth.role.CreatePermssionRequest.effect:type_name -> keyauth.role.EffectType
-	9, // 3: keyauth.role.QueryRoleRequest.page:type_name -> page.PageRequest
-	7, // 4: keyauth.role.QueryRoleRequest.type:type_name -> keyauth.role.RoleType
-	7, // 5: keyauth.role.DescribeRoleRequest.type:type_name -> keyauth.role.RoleType
-	1, // 6: keyauth.role.AddPermissionToRoleRequest.permissions:type_name -> keyauth.role.CreatePermssionRequest
-	7, // [7:7] is the sub-list for method output_type
-	7, // [7:7] is the sub-list for method input_type
-	7, // [7:7] is the sub-list for extension type_name
-	7, // [7:7] is the sub-list for extension extendee
-	0, // [0:7] is the sub-list for field type_name
+	8,  // 0: keyauth.role.CreateRoleRequest.type:type_name -> keyauth.role.RoleType
+	1,  // 1: keyauth.role.CreateRoleRequest.permissions:type_name -> keyauth.role.CreatePermssionRequest
+	9,  // 2: keyauth.role.CreatePermssionRequest.effect:type_name -> keyauth.role.EffectType
+	10, // 3: keyauth.role.QueryRoleRequest.page:type_name -> page.PageRequest
+	8,  // 4: keyauth.role.QueryRoleRequest.type:type_name -> keyauth.role.RoleType
+	8,  // 5: keyauth.role.DescribeRoleRequest.type:type_name -> keyauth.role.RoleType
+	1,  // 6: keyauth.role.AddPermissionToRoleRequest.permissions:type_name -> keyauth.role.CreatePermssionRequest
+	10, // 7: keyauth.role.QueryPermissionRequest.page:type_name -> page.PageRequest
+	8,  // [8:8] is the sub-list for method output_type
+	8,  // [8:8] is the sub-list for method input_type
+	8,  // [8:8] is the sub-list for extension type_name
+	8,  // [8:8] is the sub-list for extension extendee
+	0,  // [0:8] is the sub-list for field type_name
 }
 
 func init() { file_pkg_role_pb_request_proto_init() }
@@ -793,6 +861,18 @@ func file_pkg_role_pb_request_proto_init() {
 				return nil
 			}
 		}
+		file_pkg_role_pb_request_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*QueryPermissionRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -800,7 +880,7 @@ func file_pkg_role_pb_request_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_pkg_role_pb_request_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   7,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

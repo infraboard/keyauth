@@ -73,7 +73,7 @@ func NewInitialerFromCLI() (*Initialer, error) {
 			Message: "请输入公司(组织)名称:",
 			Default: "基础设施服务中心",
 		},
-		&i.domainDesc,
+		&i.domainDisplayName,
 		survey.WithValidator(survey.Required),
 	)
 	if err != nil {
@@ -135,11 +135,11 @@ func NewInitialer() *Initialer {
 
 // Initialer 初始化控制器
 type Initialer struct {
-	domainDesc string
-	username   string
-	password   string
-	tk         *token.Token
-	mockTK     *token.Token
+	domainDisplayName string
+	username          string
+	password          string
+	tk                *token.Token
+	mockTK            *token.Token
 }
 
 func (i *Initialer) mockContext(account string) context.Context {
@@ -169,7 +169,7 @@ func (i *Initialer) Run() error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("初始化域: %s   [成功]\n", i.domainDesc)
+	fmt.Printf("初始化域: %s   [成功]\n", i.domainDisplayName)
 
 	apps, err := i.initApp(u.Account)
 	if err != nil {
@@ -208,7 +208,7 @@ func (i *Initialer) Run() error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("初始化部门: %s   [成功]\n", dep.DisplayName)
+	fmt.Printf("初始化根部门: %s   [成功]\n", dep.DisplayName)
 
 	sysconf, err := i.initSystemConfig()
 	if err != nil {
@@ -244,7 +244,7 @@ func (i *Initialer) initUser() (*user.User, error) {
 func (i *Initialer) initDomain(account string) (*domain.Domain, error) {
 	req := domain.NewCreateDomainRequest()
 	req.Name = domain.AdminDomainName
-	req.Profile.Description = strings.TrimSpace(i.domainDesc)
+	req.Profile.DisplayName = strings.TrimSpace(i.domainDisplayName)
 	return pkg.Domain.CreateDomain(i.mockContext(account), req)
 }
 
@@ -332,7 +332,7 @@ func (i *Initialer) initDepartment() (*department.Department, error) {
 
 	req := department.NewCreateDepartmentRequest()
 	req.Name = department.DefaultDepartmentName
-	req.DisplayName = "默认部门"
+	req.DisplayName = i.domainDisplayName
 	req.Manager = strings.TrimSpace(i.username)
 	return pkg.Department.CreateDepartment(i.userContext(), req)
 }

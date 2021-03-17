@@ -66,6 +66,10 @@ func (r *Role) HasPermission(ep *endpoint.Endpoint) (*Permission, bool, error) {
 	return nil, false, nil
 }
 
+func NewDeaultPermission() *Permission {
+	return &Permission{}
+}
+
 func NewPermission(roleID, creater string, perms []*CreatePermssionRequest) []*Permission {
 	set := []*Permission{}
 	for i := range perms {
@@ -237,4 +241,8 @@ func NewPermissionSet() *PermissionSet {
 // Add todo
 func (s *PermissionSet) Add(items ...*Permission) {
 	s.Items = append(s.Items, items...)
+}
+
+func (req *QueryPermissionRequest) Validate() error {
+	return validate.Struct(req)
 }

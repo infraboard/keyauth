@@ -114,3 +114,12 @@ message RemovePermissionFromRoleRequest {
         (google.protobuf.field_tag) = {struct_tag: 'json:"permission_id" validate:"required"'}
         ];
 }
+
+message QueryPermissionRequest {
+    page.PageRequest page = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"page" json:"page"'}
+        ];
+    string role_id = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"role_id" validate:"required,lte=64"'}
+        ];
+}

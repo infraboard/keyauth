@@ -93,3 +93,40 @@ func (r *queryRoleRequest) FindFilter() bson.M {
 
 	return filter
 }
+
+func newQueryPermissionRequest(tk *token.Token, req *role.QueryPermissionRequest) (*queryPermissionRequest, error) {
+	if err := req.Validate(); err != nil {
+		return nil, err
+	}
+	return &queryPermissionRequest{
+		tk:                     tk,
+		QueryPermissionRequest: req}, nil
+}
+
+type queryPermissionRequest struct {
+	tk *token.Token
+	*role.QueryPermissionRequest
+}
+
+func (r *queryPermissionRequest) FindOptions() *options.FindOptions {
+	pageSize := int64(r.Page.PageSize)
+	skip := int64(r.Page.PageSize) * int64(r.Page.PageNumber-1)
+
+	opt := &options.FindOptions{
+		Sort:  bson.D{{Key: "create_at", Value: -1}},
+		Limit: &pageSize,
+		Skip:  &skip,
+	}
+
+	return opt
+}
+
+func (r *queryPermissionRequest) FindFilter() bson.M {
+	filter := bson.M{}
+
+	if r.RoleId != "" {
+		filter["role_id"] = r.RoleId
+	}
+
+	return filter
+}

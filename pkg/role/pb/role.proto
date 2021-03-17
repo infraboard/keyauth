@@ -56,6 +56,7 @@ message Permission {
     string id = 1[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"_id" json:"id"'}
         ];
+    // 关联角色ID
     string role_id = 2[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"role_id" json:"role_id"'}
         ];

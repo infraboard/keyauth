@@ -57,7 +57,7 @@ service RoleService {
 			}]
 		};
 	};
-	rpc AddPermissionToRole(AddPermissionToRoleRequest) returns(Role) {
+	rpc QueryPermission(QueryPermissionRequest) returns(PermissionSet) {
 		option (mcube.http.rest_api) = {
 			path: "/policies"
 			method: "POST"
@@ -69,7 +69,19 @@ service RoleService {
 			}]
 		};		
 	};
-	rpc RemovePermissionFromRole(RemovePermissionFromRoleRequest) returns(Role) {
+	rpc AddPermissionToRole(AddPermissionToRoleRequest) returns(PermissionSet) {
+		option (mcube.http.rest_api) = {
+			path: "/policies"
+			method: "POST"
+			resource: "policy"
+			auth_enable: true
+			labels: [{
+				key: "allow"
+				value: "perm_admin"
+			}]
+		};		
+	};
+	rpc RemovePermissionFromRole(RemovePermissionFromRoleRequest) returns(PermissionSet) {
 		option (mcube.http.rest_api) = {
 			path: "/policies"
 			method: "POST"
