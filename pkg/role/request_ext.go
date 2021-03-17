@@ -76,6 +76,10 @@ func (req *AddPermissionToRoleRequest) Validate() error {
 	return validate.Struct(req)
 }
 
+func (req *AddPermissionToRoleRequest) Length() int {
+	return len(req.Permissions)
+}
+
 // NewRemovePermissionFromRoleRequest todo
 func NewRemovePermissionFromRoleRequest() *RemovePermissionFromRoleRequest {
 	return &RemovePermissionFromRoleRequest{

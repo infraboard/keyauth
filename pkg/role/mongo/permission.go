@@ -6,6 +6,7 @@ import (
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/role"
 	"github.com/infraboard/mcube/exception"
+	"github.com/infraboard/mcube/http/request"
 )
 
 func insertDocs(perms []*role.Permission) []interface{} {
@@ -32,14 +33,16 @@ func (s *service) QueryPermission(ctx context.Context, req *role.QueryPermission
 		return nil, exception.NewInternalServerError("find permissionn error, error is %s", err)
 	}
 
-	set := role.NewPermissionSet()
 	// 循环
-	for resp.Next(context.TODO()) {
-		ins := role.NewDeaultPermission()
-		if err := resp.Decode(ins); err != nil {
-			return nil, exception.NewInternalServerError("decode permission error, error is %s", err)
+	set := role.NewPermissionSet()
+	if !req.SkipItmes {
+		for resp.Next(context.TODO()) {
+			ins := role.NewDeaultPermission()
+			if err := resp.Decode(ins); err != nil {
+				return nil, exception.NewInternalServerError("decode permission error, error is %s", err)
+			}
+			set.Add(ins)
 		}
-		set.Add(ins)
 	}
 
 	// count
@@ -64,6 +67,18 @@ func (s *service) AddPermissionToRole(ctx context.Context, req *role.AddPermissi
 	ins, err := s.DescribeRole(ctx, role.NewDescribeRoleRequestWithID(req.RoleId))
 	if err != nil {
 		return nil, err
+	}
+
+	// 查询角色条目数是否超标
+	queryPerm := role.NewQueryPermissionRequest(request.NewPageRequest(role.MaxPermissionCount, 1))
+	queryPerm.SkipItmes = true
+	ps, err := s.QueryPermission(ctx, queryPerm)
+	if err != nil {
+		return nil, err
+	}
+	if ps.Total+int64(req.Length()) > role.MaxPermissionCount {
+		return nil, exception.NewBadRequest("一个角色最多可以添加%d权限条目, 当前条目数: %d, 新增条目数: %d",
+			role.MaxPermissionCount, ps.Total, req.Length())
 	}
 
 	perms := role.NewPermission(ins.Id, tk.Account, req.Permissions)

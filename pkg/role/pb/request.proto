@@ -122,4 +122,7 @@ message QueryPermissionRequest {
     string role_id = 2[
         (google.protobuf.field_tag) = {struct_tag: 'json:"role_id" validate:"required,lte=64"'}
         ];
+    bool skip_itmes = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"skip_itmes"'}
+        ];
 }
