@@ -24,6 +24,7 @@ var (
 
 type service struct {
 	col           *mongo.Collection
+	perm          *mongo.Collection
 	enableCache   bool
 	notifyCachPre string
 
@@ -44,6 +45,12 @@ func (s *service) Config() error {
 	indexs := []mongo.IndexModel{
 		{
 			Keys: bsonx.Doc{
+				{Key: "permissions.0._id", Value: bsonx.Int32(-1)},
+			},
+			Options: options.Index().SetUnique(true),
+		},
+		{
+			Keys: bsonx.Doc{
 				{Key: "name", Value: bsonx.Int32(-1)},
 				{Key: "domain", Value: bsonx.Int32(-1)},
 			},
@@ -59,7 +66,20 @@ func (s *service) Config() error {
 		return err
 	}
 
+	perm := db.Collection("permission")
+	permIndexs := []mongo.IndexModel{
+		{
+			Keys: bsonx.Doc{{Key: "create_at", Value: bsonx.Int32(-1)}},
+		},
+	}
+
+	_, err = perm.Indexes().CreateMany(context.Background(), permIndexs)
+	if err != nil {
+		return err
+	}
+
 	s.col = col
+	s.perm = perm
 	s.log = zap.L().Named("Role")
 	return nil
 }

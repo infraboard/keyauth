@@ -123,3 +123,69 @@ func (h *handler) DeleteRole(w http.ResponseWriter, r *http.Request) {
 	response.Success(w, "delete ok")
 	return
 }
+
+// CreateApplication 创建自定义角色
+func (h *handler) AddPermissionToRole(w http.ResponseWriter, r *http.Request) {
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	rctx := context.GetContext(r)
+	req := role.NewAddPermissionToRoleRequest()
+	req.RoleId = rctx.PS.ByName("id")
+
+	if err := request.GetDataFromRequest(r, req); err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	var header, trailer metadata.MD
+	d, err := h.service.AddPermissionToRole(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
+	if err != nil {
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		return
+	}
+
+	response.Success(w, d)
+	return
+}
+
+// CreateApplication 创建自定义角色
+func (h *handler) RemovePermissionFromRole(w http.ResponseWriter, r *http.Request) {
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	rctx := context.GetContext(r)
+	req := role.NewRemovePermissionFromRoleRequest()
+	req.RoleId = rctx.PS.ByName("id")
+
+	if err := request.GetDataFromRequest(r, req); err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	var header, trailer metadata.MD
+	d, err := h.service.RemovePermissionFromRole(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
+	if err != nil {
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		return
+	}
+
+	response.Success(w, d)
+	return
+}

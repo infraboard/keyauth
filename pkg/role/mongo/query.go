@@ -43,10 +43,6 @@ func (req *describeRoleRequest) FindFilter() bson.M {
 func (req *describeRoleRequest) FindOptions() *options.FindOneOptions {
 	opt := &options.FindOneOptions{}
 
-	if !req.WithPermissions {
-		opt.Projection = bson.M{"permissions": 0}
-	}
-
 	return opt
 }
 

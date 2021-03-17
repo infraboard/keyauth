@@ -50,6 +50,26 @@ func HttpEntry() *http.EntrySet {
 				PermissionEnable: false,
 				Labels:           map[string]string{"allow": "perm_admin"},
 			},
+			{
+				GrpcPath:         "/keyauth.role.RoleService/AddPermissionToRole",
+				FunctionName:     "AddPermissionToRole",
+				Path:             "/policies",
+				Method:           "POST",
+				Resource:         "policy",
+				AuthEnable:       true,
+				PermissionEnable: false,
+				Labels:           map[string]string{"allow": "perm_admin"},
+			},
+			{
+				GrpcPath:         "/keyauth.role.RoleService/RemovePermissionFromRole",
+				FunctionName:     "RemovePermissionFromRole",
+				Path:             "/policies",
+				Method:           "POST",
+				Resource:         "policy",
+				AuthEnable:       true,
+				PermissionEnable: false,
+				Labels:           map[string]string{"allow": "perm_admin"},
+			},
 		},
 	}
 	return set

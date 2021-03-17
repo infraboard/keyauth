@@ -400,6 +400,116 @@ func (x *DeleteRoleRequest) GetDeletePolicy() bool {
 	return false
 }
 
+type AddPermissionToRoleRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	RoleId      string                    `protobuf:"bytes,1,opt,name=role_id,json=roleId,proto3" json:"role_id" validate:"required,lte=64"`
+	Permissions []*CreatePermssionRequest `protobuf:"bytes,2,rep,name=permissions,proto3" json:"permissions" validate:"required"`
+}
+
+func (x *AddPermissionToRoleRequest) Reset() {
+	*x = AddPermissionToRoleRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_role_pb_request_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AddPermissionToRoleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AddPermissionToRoleRequest) ProtoMessage() {}
+
+func (x *AddPermissionToRoleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_role_pb_request_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AddPermissionToRoleRequest.ProtoReflect.Descriptor instead.
+func (*AddPermissionToRoleRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_role_pb_request_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *AddPermissionToRoleRequest) GetRoleId() string {
+	if x != nil {
+		return x.RoleId
+	}
+	return ""
+}
+
+func (x *AddPermissionToRoleRequest) GetPermissions() []*CreatePermssionRequest {
+	if x != nil {
+		return x.Permissions
+	}
+	return nil
+}
+
+type RemovePermissionFromRoleRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	RoleId       string   `protobuf:"bytes,1,opt,name=role_id,json=roleId,proto3" json:"role_id" validate:"required,lte=64"`
+	PermissionId []string `protobuf:"bytes,3,rep,name=permission_id,json=permissionId,proto3" json:"permission_id" validate:"required"`
+}
+
+func (x *RemovePermissionFromRoleRequest) Reset() {
+	*x = RemovePermissionFromRoleRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_role_pb_request_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *RemovePermissionFromRoleRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RemovePermissionFromRoleRequest) ProtoMessage() {}
+
+func (x *RemovePermissionFromRoleRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_role_pb_request_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RemovePermissionFromRoleRequest.ProtoReflect.Descriptor instead.
+func (*RemovePermissionFromRoleRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_role_pb_request_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *RemovePermissionFromRoleRequest) GetRoleId() string {
+	if x != nil {
+		return x.RoleId
+	}
+	return ""
+}
+
+func (x *RemovePermissionFromRoleRequest) GetPermissionId() []string {
+	if x != nil {
+		return x.PermissionId
+	}
+	return nil
+}
+
 var File_pkg_role_pb_request_proto protoreflect.FileDescriptor
 
 var file_pkg_role_pb_request_proto_rawDesc = []byte{
@@ -520,10 +630,36 @@ var file_pkg_role_pb_request_proto_rawDesc = []byte{
 	0x6c, 0x69, 0x63, 0x79, 0x18, 0x02, 0x20, 0x01, 0x28, 0x08, 0x42, 0x1a, 0xc2, 0xde, 0x1f, 0x16,
 	0x0a, 0x14, 0x6a, 0x73, 0x6f, 0x6e, 0x3a, 0x22, 0x64, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x5f, 0x70,
 	0x6f, 0x6c, 0x69, 0x63, 0x79, 0x22, 0x52, 0x0c, 0x64, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x50, 0x6f,
-	0x6c, 0x69, 0x63, 0x79, 0x42, 0x28, 0x5a, 0x26, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63,
-	0x6f, 0x6d, 0x2f, 0x69, 0x6e, 0x66, 0x72, 0x61, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x2f, 0x6b, 0x65,
-	0x79, 0x61, 0x75, 0x74, 0x68, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x72, 0x6f, 0x6c, 0x65, 0x62, 0x06,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x6c, 0x69, 0x63, 0x79, 0x22, 0xdc, 0x01, 0x0a, 0x1a, 0x41, 0x64, 0x64, 0x50, 0x65, 0x72, 0x6d,
+	0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x54, 0x6f, 0x52, 0x6f, 0x6c, 0x65, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x12, 0x48, 0x0a, 0x07, 0x72, 0x6f, 0x6c, 0x65, 0x5f, 0x69, 0x64, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x09, 0x42, 0x2f, 0xc2, 0xde, 0x1f, 0x2b, 0x0a, 0x29, 0x6a, 0x73, 0x6f, 0x6e,
+	0x3a, 0x22, 0x72, 0x6f, 0x6c, 0x65, 0x5f, 0x69, 0x64, 0x22, 0x20, 0x76, 0x61, 0x6c, 0x69, 0x64,
+	0x61, 0x74, 0x65, 0x3a, 0x22, 0x72, 0x65, 0x71, 0x75, 0x69, 0x72, 0x65, 0x64, 0x2c, 0x6c, 0x74,
+	0x65, 0x3d, 0x36, 0x34, 0x22, 0x52, 0x06, 0x72, 0x6f, 0x6c, 0x65, 0x49, 0x64, 0x12, 0x74, 0x0a,
+	0x0b, 0x70, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x73, 0x18, 0x02, 0x20, 0x03,
+	0x28, 0x0b, 0x32, 0x24, 0x2e, 0x6b, 0x65, 0x79, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x72, 0x6f, 0x6c,
+	0x65, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x50, 0x65, 0x72, 0x6d, 0x73, 0x73, 0x69, 0x6f,
+	0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x42, 0x2c, 0xc2, 0xde, 0x1f, 0x28, 0x0a, 0x26,
+	0x6a, 0x73, 0x6f, 0x6e, 0x3a, 0x22, 0x70, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e,
+	0x73, 0x22, 0x20, 0x76, 0x61, 0x6c, 0x69, 0x64, 0x61, 0x74, 0x65, 0x3a, 0x22, 0x72, 0x65, 0x71,
+	0x75, 0x69, 0x72, 0x65, 0x64, 0x22, 0x52, 0x0b, 0x70, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69,
+	0x6f, 0x6e, 0x73, 0x22, 0xc0, 0x01, 0x0a, 0x1f, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x50, 0x65,
+	0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x46, 0x72, 0x6f, 0x6d, 0x52, 0x6f, 0x6c, 0x65,
+	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x48, 0x0a, 0x07, 0x72, 0x6f, 0x6c, 0x65, 0x5f,
+	0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x2f, 0xc2, 0xde, 0x1f, 0x2b, 0x0a, 0x29,
+	0x6a, 0x73, 0x6f, 0x6e, 0x3a, 0x22, 0x72, 0x6f, 0x6c, 0x65, 0x5f, 0x69, 0x64, 0x22, 0x20, 0x76,
+	0x61, 0x6c, 0x69, 0x64, 0x61, 0x74, 0x65, 0x3a, 0x22, 0x72, 0x65, 0x71, 0x75, 0x69, 0x72, 0x65,
+	0x64, 0x2c, 0x6c, 0x74, 0x65, 0x3d, 0x36, 0x34, 0x22, 0x52, 0x06, 0x72, 0x6f, 0x6c, 0x65, 0x49,
+	0x64, 0x12, 0x53, 0x0a, 0x0d, 0x70, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x5f,
+	0x69, 0x64, 0x18, 0x03, 0x20, 0x03, 0x28, 0x09, 0x42, 0x2e, 0xc2, 0xde, 0x1f, 0x2a, 0x0a, 0x28,
+	0x6a, 0x73, 0x6f, 0x6e, 0x3a, 0x22, 0x70, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e,
+	0x5f, 0x69, 0x64, 0x22, 0x20, 0x76, 0x61, 0x6c, 0x69, 0x64, 0x61, 0x74, 0x65, 0x3a, 0x22, 0x72,
+	0x65, 0x71, 0x75, 0x69, 0x72, 0x65, 0x64, 0x22, 0x52, 0x0c, 0x70, 0x65, 0x72, 0x6d, 0x69, 0x73,
+	0x73, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x42, 0x28, 0x5a, 0x26, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62,
+	0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x69, 0x6e, 0x66, 0x72, 0x61, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x2f,
+	0x6b, 0x65, 0x79, 0x61, 0x75, 0x74, 0x68, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x72, 0x6f, 0x6c, 0x65,
+	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -538,29 +674,32 @@ func file_pkg_role_pb_request_proto_rawDescGZIP() []byte {
 	return file_pkg_role_pb_request_proto_rawDescData
 }
 
-var file_pkg_role_pb_request_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_pkg_role_pb_request_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_pkg_role_pb_request_proto_goTypes = []interface{}{
-	(*CreateRoleRequest)(nil),      // 0: keyauth.role.CreateRoleRequest
-	(*CreatePermssionRequest)(nil), // 1: keyauth.role.CreatePermssionRequest
-	(*QueryRoleRequest)(nil),       // 2: keyauth.role.QueryRoleRequest
-	(*DescribeRoleRequest)(nil),    // 3: keyauth.role.DescribeRoleRequest
-	(*DeleteRoleRequest)(nil),      // 4: keyauth.role.DeleteRoleRequest
-	(RoleType)(0),                  // 5: keyauth.role.RoleType
-	(EffectType)(0),                // 6: keyauth.role.EffectType
-	(*page.PageRequest)(nil),       // 7: page.PageRequest
+	(*CreateRoleRequest)(nil),               // 0: keyauth.role.CreateRoleRequest
+	(*CreatePermssionRequest)(nil),          // 1: keyauth.role.CreatePermssionRequest
+	(*QueryRoleRequest)(nil),                // 2: keyauth.role.QueryRoleRequest
+	(*DescribeRoleRequest)(nil),             // 3: keyauth.role.DescribeRoleRequest
+	(*DeleteRoleRequest)(nil),               // 4: keyauth.role.DeleteRoleRequest
+	(*AddPermissionToRoleRequest)(nil),      // 5: keyauth.role.AddPermissionToRoleRequest
+	(*RemovePermissionFromRoleRequest)(nil), // 6: keyauth.role.RemovePermissionFromRoleRequest
+	(RoleType)(0),                           // 7: keyauth.role.RoleType
+	(EffectType)(0),                         // 8: keyauth.role.EffectType
+	(*page.PageRequest)(nil),                // 9: page.PageRequest
 }
 var file_pkg_role_pb_request_proto_depIdxs = []int32{
-	5, // 0: keyauth.role.CreateRoleRequest.type:type_name -> keyauth.role.RoleType
+	7, // 0: keyauth.role.CreateRoleRequest.type:type_name -> keyauth.role.RoleType
 	1, // 1: keyauth.role.CreateRoleRequest.permissions:type_name -> keyauth.role.CreatePermssionRequest
-	6, // 2: keyauth.role.CreatePermssionRequest.effect:type_name -> keyauth.role.EffectType
-	7, // 3: keyauth.role.QueryRoleRequest.page:type_name -> page.PageRequest
-	5, // 4: keyauth.role.QueryRoleRequest.type:type_name -> keyauth.role.RoleType
-	5, // 5: keyauth.role.DescribeRoleRequest.type:type_name -> keyauth.role.RoleType
-	6, // [6:6] is the sub-list for method output_type
-	6, // [6:6] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	8, // 2: keyauth.role.CreatePermssionRequest.effect:type_name -> keyauth.role.EffectType
+	9, // 3: keyauth.role.QueryRoleRequest.page:type_name -> page.PageRequest
+	7, // 4: keyauth.role.QueryRoleRequest.type:type_name -> keyauth.role.RoleType
+	7, // 5: keyauth.role.DescribeRoleRequest.type:type_name -> keyauth.role.RoleType
+	1, // 6: keyauth.role.AddPermissionToRoleRequest.permissions:type_name -> keyauth.role.CreatePermssionRequest
+	7, // [7:7] is the sub-list for method output_type
+	7, // [7:7] is the sub-list for method input_type
+	7, // [7:7] is the sub-list for extension type_name
+	7, // [7:7] is the sub-list for extension extendee
+	0, // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_pkg_role_pb_request_proto_init() }
@@ -630,6 +769,30 @@ func file_pkg_role_pb_request_proto_init() {
 				return nil
 			}
 		}
+		file_pkg_role_pb_request_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AddPermissionToRoleRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_role_pb_request_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*RemovePermissionFromRoleRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -637,7 +800,7 @@ func file_pkg_role_pb_request_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_pkg_role_pb_request_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

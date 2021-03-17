@@ -96,3 +96,21 @@ message DeleteRoleRequest {
         (google.protobuf.field_tag) = {struct_tag: 'json:"delete_policy"'}
         ];
 }
+
+message AddPermissionToRoleRequest {
+    string role_id = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"role_id" validate:"required,lte=64"'}
+        ];
+    repeated CreatePermssionRequest permissions = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"permissions" validate:"required"'}
+        ];
+}
+
+message RemovePermissionFromRoleRequest {
+    string role_id = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"role_id" validate:"required,lte=64"'}
+        ];
+    repeated string permission_id = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"permission_id" validate:"required"'}
+        ];
+}

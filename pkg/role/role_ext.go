@@ -2,6 +2,7 @@ package role
 
 import (
 	"fmt"
+	"hash/fnv"
 	"strings"
 
 	"github.com/infraboard/mcube/types/ftime"
@@ -38,8 +39,7 @@ func New(tk *token.Token, req *CreateRoleRequest) (*Role, error) {
 		PageMarked:  req.PageMarked,
 		Description: req.Description,
 	}
-
-	r.AddPerm(tk.Account, req.Permissions)
+	r.Permissions = NewPermission(r.Id, tk.Account, req.Permissions)
 	return r, nil
 }
 
@@ -66,10 +66,12 @@ func (r *Role) HasPermission(ep *endpoint.Endpoint) (*Permission, bool, error) {
 	return nil, false, nil
 }
 
-func (r *Role) AddPerm(creater string, perms []*CreatePermssionRequest) {
+func NewPermission(roleID, creater string, perms []*CreatePermssionRequest) []*Permission {
+	set := []*Permission{}
 	for i := range perms {
-		r.Permissions = append(r.Permissions, &Permission{
-			Id:           xid.New().String(),
+		set = append(set, &Permission{
+			Id:           PermissionHash(roleID, perms[i]),
+			RoleId:       roleID,
 			CreateAt:     ftime.Now().Timestamp(),
 			Creater:      creater,
 			Effect:       perms[i].Effect,
@@ -80,6 +82,13 @@ func (r *Role) AddPerm(creater string, perms []*CreatePermssionRequest) {
 			LabelValues:  perms[i].LabelValues,
 		})
 	}
+	return set
+}
+
+func PermissionHash(namesapce string, perm *CreatePermssionRequest) string {
+	h := fnv.New32a()
+	h.Write([]byte(namesapce + perm.String()))
+	return fmt.Sprintf("%x", h.Sum32())
 }
 
 // NewCreateRoleRequest 实例化请求
