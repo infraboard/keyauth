@@ -126,3 +126,28 @@ func (r *queryPermissionRequest) FindFilter() bson.M {
 
 	return filter
 }
+
+func newDeletePermissionRequest(tk *token.Token, req *role.RemovePermissionFromRoleRequest) (*deletePermissionRequest, error) {
+	if err := req.Validate(); err != nil {
+		return nil, err
+	}
+	return &deletePermissionRequest{
+		tk:                              tk,
+		RemovePermissionFromRoleRequest: req}, nil
+}
+
+type deletePermissionRequest struct {
+	tk *token.Token
+	*role.RemovePermissionFromRoleRequest
+}
+
+func (r *deletePermissionRequest) FindFilter() bson.M {
+	filter := bson.M{}
+
+	filter["role_id"] = r.RoleId
+	if !r.RemoveAll {
+		filter["_id"] = bson.M{"$in": r.PermissionId}
+	}
+
+	return filter
+}

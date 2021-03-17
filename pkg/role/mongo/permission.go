@@ -6,7 +6,6 @@ import (
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/role"
 	"github.com/infraboard/mcube/exception"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 func insertDocs(perms []*role.Permission) []interface{} {
@@ -79,16 +78,21 @@ func (s *service) AddPermissionToRole(ctx context.Context, req *role.AddPermissi
 }
 
 func (s *service) RemovePermissionFromRole(ctx context.Context, req *role.RemovePermissionFromRoleRequest) (*role.PermissionSet, error) {
-	if err := req.Validate(); err != nil {
-		return nil, exception.NewBadRequest("validate remove permission error, %s", err)
-	}
-
-	r, err := s.DescribeRole(ctx, role.NewDescribeRoleRequestWithID(req.RoleId))
+	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := s.perm.DeleteMany(context.TODO(), bson.M{"role_id": r.Id, "_id": bson.M{"$in": req.PermissionId}})
+	if err := req.Validate(); err != nil {
+		return nil, exception.NewBadRequest("validate remove permission error, %s", err)
+	}
+
+	delReq, err := newDeletePermissionRequest(tk, req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := s.perm.DeleteMany(context.TODO(), delReq.FindFilter())
 	if err != nil {
 		return nil, exception.NewInternalServerError("delete permission(%s) error, %s", req.PermissionId, err)
 	}

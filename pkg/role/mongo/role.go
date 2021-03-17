@@ -128,6 +128,12 @@ func (s *service) DeleteRole(ctx context.Context, req *role.DeleteRoleRequest) (
 		return nil, exception.NewNotFound("role(%s) not found", req.Id)
 	}
 
+	// 清除角色关联的权限
+	permReq := role.NewRemovePermissionFromRoleRequest()
+	permReq.RoleId = req.Id
+	permReq.RemoveAll = true
+	s.RemovePermissionFromRole(ctx, permReq)
+
 	// 清除角色关联的策略
 	_, err = s.policy.DeletePolicy(ctx, policy.NewDeletePolicyRequestWithRoleID(req.Id))
 	if err != nil {

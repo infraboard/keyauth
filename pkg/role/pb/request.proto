@@ -107,8 +107,11 @@ message RemovePermissionFromRoleRequest {
     string role_id = 1[
         (google.protobuf.field_tag) = {struct_tag: 'json:"role_id" validate:"required,lte=64"'}
         ];
+    bool remove_all = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"remove_all"'}
+        ];;
     repeated string permission_id = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"permission_id" validate:"required"'}
+        (google.protobuf.field_tag) = {struct_tag: 'json:"permission_id"'}
         ];
 }
 
