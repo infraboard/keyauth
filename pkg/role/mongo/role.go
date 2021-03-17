@@ -132,7 +132,10 @@ func (s *service) DeleteRole(ctx context.Context, req *role.DeleteRoleRequest) (
 	permReq := role.NewRemovePermissionFromRoleRequest()
 	permReq.RoleId = req.Id
 	permReq.RemoveAll = true
-	s.RemovePermissionFromRole(ctx, permReq)
+	_, err = s.RemovePermissionFromRole(ctx, permReq)
+	if err != nil {
+		s.log.Errorf("delete role permission error, %s", err)
+	}
 
 	// 清除角色关联的策略
 	_, err = s.policy.DeletePolicy(ctx, policy.NewDeletePolicyRequestWithRoleID(req.Id))
