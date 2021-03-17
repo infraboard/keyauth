@@ -66,9 +66,6 @@ message QueryRoleRequest {
     RoleType type = 2[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"type" json:"type"'}
         ];
-    bool with_permissions = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"with_permissions" json:"with_permissions"'}
-        ];
 }
 
 // DescribeRoleRequest role详情

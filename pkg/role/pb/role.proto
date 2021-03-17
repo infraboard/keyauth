@@ -46,7 +46,7 @@ message Role {
         ];
     // 读权限
     repeated Permission permissions = 9[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"permissions"'}
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"permissions,omitempty"'}
         ];  
 }
 

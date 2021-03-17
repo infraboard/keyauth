@@ -65,6 +65,7 @@ func (s *service) QueryRole(ctx context.Context, req *role.QueryRoleRequest) (*r
 		return nil, exception.NewInternalServerError("get token count error, error is %s", err)
 	}
 	set.Total = count
+
 	return set, nil
 }
 
@@ -81,6 +82,16 @@ func (s *service) DescribeRole(ctx context.Context, req *role.DescribeRoleReques
 		}
 
 		return nil, exception.NewInternalServerError("find role %s error, %s", req, err)
+	}
+
+	if req.WithPermissions {
+		queryPerm := role.NewQueryPermissionRequest(request.NewPageRequest(500, 1))
+		queryPerm.RoleId = ins.Id
+		ps, err := s.QueryPermission(ctx, queryPerm)
+		if err != nil {
+			return nil, err
+		}
+		ins.Permissions = ps.Items
 	}
 
 	return ins, nil

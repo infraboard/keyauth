@@ -124,6 +124,34 @@ func (h *handler) DeleteRole(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+// ListRolePermission 创建自定义角色
+func (h *handler) ListRolePermission(w http.ResponseWriter, r *http.Request) {
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	req := role.NewQueryPermissionRequestFromHTTP(r)
+	rctx := context.GetContext(r)
+	req.RoleId = rctx.PS.ByName("id")
+
+	var header, trailer metadata.MD
+	d, err := h.service.QueryPermission(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
+	if err != nil {
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		return
+	}
+
+	response.Success(w, d)
+	return
+}
+
 // CreateApplication 创建自定义角色
 func (h *handler) AddPermissionToRole(w http.ResponseWriter, r *http.Request) {
 	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)

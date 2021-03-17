@@ -70,10 +70,6 @@ func (r *queryRoleRequest) FindOptions() *options.FindOptions {
 		Skip:  &skip,
 	}
 
-	if !r.WithPermissions {
-		opt.Projection = bson.M{"permissions": 0}
-	}
-
 	return opt
 }
 

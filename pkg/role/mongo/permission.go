@@ -68,7 +68,7 @@ func (s *service) AddPermissionToRole(ctx context.Context, req *role.AddPermissi
 	}
 
 	perms := role.NewPermission(ins.Id, tk.Account, req.Permissions)
-	if _, err := s.col.InsertMany(context.TODO(), insertDocs(perms)); err != nil {
+	if _, err := s.perm.InsertMany(context.TODO(), insertDocs(perms)); err != nil {
 		return nil, exception.NewInternalServerError("inserted permission(%s) document error, %s",
 			perms, err)
 	}
@@ -88,7 +88,7 @@ func (s *service) RemovePermissionFromRole(ctx context.Context, req *role.Remove
 		return nil, err
 	}
 
-	resp, err := s.col.DeleteMany(context.TODO(), bson.M{"role_id": r.Id, "_id": bson.M{"$in": req.PermissionId}})
+	resp, err := s.perm.DeleteMany(context.TODO(), bson.M{"role_id": r.Id, "_id": bson.M{"$in": req.PermissionId}})
 	if err != nil {
 		return nil, exception.NewInternalServerError("delete permission(%s) error, %s", req.PermissionId, err)
 	}

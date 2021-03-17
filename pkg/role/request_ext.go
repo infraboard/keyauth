@@ -1,5 +1,70 @@
 package role
 
+import (
+	"fmt"
+	"net/http"
+
+	"github.com/go-playground/validator/v10"
+	"github.com/infraboard/mcube/http/request"
+)
+
+// use a single instance of Validate, it caches struct info
+var (
+	validate = validator.New()
+)
+
+// NewQueryRoleRequestFromHTTP 列表查询请求
+func NewQueryRoleRequestFromHTTP(r *http.Request) *QueryRoleRequest {
+	page := request.NewPageRequestFromHTTP(r)
+
+	req := NewQueryRoleRequest(page)
+	return req
+}
+
+// NewQueryRoleRequest 列表查询请求
+func NewQueryRoleRequest(pageReq *request.PageRequest) *QueryRoleRequest {
+	return &QueryRoleRequest{
+		Page: &pageReq.PageRequest,
+	}
+}
+
+// Validate todo
+func (req *QueryRoleRequest) Validate() error {
+	return nil
+}
+
+// NewDescribeRoleRequestWithID todo
+func NewDescribeRoleRequestWithID(id string) *DescribeRoleRequest {
+	return &DescribeRoleRequest{
+		Id:              id,
+		WithPermissions: false,
+	}
+}
+
+// NewDescribeRoleRequestWithName todo
+func NewDescribeRoleRequestWithName(name string) *DescribeRoleRequest {
+	return &DescribeRoleRequest{
+		Name:            name,
+		WithPermissions: false,
+	}
+}
+
+// Validate todo
+func (req *DescribeRoleRequest) Validate() error {
+	if req.Id == "" && req.Name == "" {
+		return fmt.Errorf("id or name required")
+	}
+
+	return nil
+}
+
+// NewDeleteRoleWithID todo
+func NewDeleteRoleWithID(id string) *DeleteRoleRequest {
+	return &DeleteRoleRequest{
+		Id: id,
+	}
+}
+
 // NewAddPermissionToRoleRequest todo
 func NewAddPermissionToRoleRequest() *AddPermissionToRoleRequest {
 	return &AddPermissionToRoleRequest{
@@ -20,4 +85,19 @@ func NewRemovePermissionFromRoleRequest() *RemovePermissionFromRoleRequest {
 
 func (req *RemovePermissionFromRoleRequest) Validate() error {
 	return validate.Struct(req)
+}
+
+// NewQueryPermissionRequest todo
+func NewQueryPermissionRequest(pageReq *request.PageRequest) *QueryPermissionRequest {
+	return &QueryPermissionRequest{
+		Page: &pageReq.PageRequest,
+	}
+}
+
+// NewQueryPermissionRequestFromHTTP 列表查询请求
+func NewQueryPermissionRequestFromHTTP(r *http.Request) *QueryPermissionRequest {
+	page := request.NewPageRequestFromHTTP(r)
+	req := NewQueryPermissionRequest(page)
+
+	return req
 }
