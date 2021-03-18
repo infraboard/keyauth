@@ -22,8 +22,10 @@ type RoleServiceClient interface {
 	DescribeRole(ctx context.Context, in *DescribeRoleRequest, opts ...grpc.CallOption) (*Role, error)
 	DeleteRole(ctx context.Context, in *DeleteRoleRequest, opts ...grpc.CallOption) (*Role, error)
 	QueryPermission(ctx context.Context, in *QueryPermissionRequest, opts ...grpc.CallOption) (*PermissionSet, error)
+	DescribePermission(ctx context.Context, in *DescribePermissionRequest, opts ...grpc.CallOption) (*Permission, error)
 	AddPermissionToRole(ctx context.Context, in *AddPermissionToRoleRequest, opts ...grpc.CallOption) (*PermissionSet, error)
 	RemovePermissionFromRole(ctx context.Context, in *RemovePermissionFromRoleRequest, opts ...grpc.CallOption) (*PermissionSet, error)
+	UpdatePermission(ctx context.Context, in *UpdatePermissionRequest, opts ...grpc.CallOption) (*Permission, error)
 }
 
 type roleServiceClient struct {
@@ -79,6 +81,15 @@ func (c *roleServiceClient) QueryPermission(ctx context.Context, in *QueryPermis
 	return out, nil
 }
 
+func (c *roleServiceClient) DescribePermission(ctx context.Context, in *DescribePermissionRequest, opts ...grpc.CallOption) (*Permission, error) {
+	out := new(Permission)
+	err := c.cc.Invoke(ctx, "/keyauth.role.RoleService/DescribePermission", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *roleServiceClient) AddPermissionToRole(ctx context.Context, in *AddPermissionToRoleRequest, opts ...grpc.CallOption) (*PermissionSet, error) {
 	out := new(PermissionSet)
 	err := c.cc.Invoke(ctx, "/keyauth.role.RoleService/AddPermissionToRole", in, out, opts...)
@@ -97,6 +108,15 @@ func (c *roleServiceClient) RemovePermissionFromRole(ctx context.Context, in *Re
 	return out, nil
 }
 
+func (c *roleServiceClient) UpdatePermission(ctx context.Context, in *UpdatePermissionRequest, opts ...grpc.CallOption) (*Permission, error) {
+	out := new(Permission)
+	err := c.cc.Invoke(ctx, "/keyauth.role.RoleService/UpdatePermission", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RoleServiceServer is the server API for RoleService service.
 // All implementations must embed UnimplementedRoleServiceServer
 // for forward compatibility
@@ -106,8 +126,10 @@ type RoleServiceServer interface {
 	DescribeRole(context.Context, *DescribeRoleRequest) (*Role, error)
 	DeleteRole(context.Context, *DeleteRoleRequest) (*Role, error)
 	QueryPermission(context.Context, *QueryPermissionRequest) (*PermissionSet, error)
+	DescribePermission(context.Context, *DescribePermissionRequest) (*Permission, error)
 	AddPermissionToRole(context.Context, *AddPermissionToRoleRequest) (*PermissionSet, error)
 	RemovePermissionFromRole(context.Context, *RemovePermissionFromRoleRequest) (*PermissionSet, error)
+	UpdatePermission(context.Context, *UpdatePermissionRequest) (*Permission, error)
 	mustEmbedUnimplementedRoleServiceServer()
 }
 
@@ -130,11 +152,17 @@ func (UnimplementedRoleServiceServer) DeleteRole(context.Context, *DeleteRoleReq
 func (UnimplementedRoleServiceServer) QueryPermission(context.Context, *QueryPermissionRequest) (*PermissionSet, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryPermission not implemented")
 }
+func (UnimplementedRoleServiceServer) DescribePermission(context.Context, *DescribePermissionRequest) (*Permission, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribePermission not implemented")
+}
 func (UnimplementedRoleServiceServer) AddPermissionToRole(context.Context, *AddPermissionToRoleRequest) (*PermissionSet, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddPermissionToRole not implemented")
 }
 func (UnimplementedRoleServiceServer) RemovePermissionFromRole(context.Context, *RemovePermissionFromRoleRequest) (*PermissionSet, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemovePermissionFromRole not implemented")
+}
+func (UnimplementedRoleServiceServer) UpdatePermission(context.Context, *UpdatePermissionRequest) (*Permission, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdatePermission not implemented")
 }
 func (UnimplementedRoleServiceServer) mustEmbedUnimplementedRoleServiceServer() {}
 
@@ -239,6 +267,24 @@ func _RoleService_QueryPermission_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RoleService_DescribePermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DescribePermissionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoleServiceServer).DescribePermission(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/keyauth.role.RoleService/DescribePermission",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoleServiceServer).DescribePermission(ctx, req.(*DescribePermissionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _RoleService_AddPermissionToRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddPermissionToRoleRequest)
 	if err := dec(in); err != nil {
@@ -275,6 +321,24 @@ func _RoleService_RemovePermissionFromRole_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RoleService_UpdatePermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdatePermissionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RoleServiceServer).UpdatePermission(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/keyauth.role.RoleService/UpdatePermission",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RoleServiceServer).UpdatePermission(ctx, req.(*UpdatePermissionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _RoleService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "keyauth.role.RoleService",
 	HandlerType: (*RoleServiceServer)(nil),
@@ -300,12 +364,20 @@ var _RoleService_serviceDesc = grpc.ServiceDesc{
 			Handler:    _RoleService_QueryPermission_Handler,
 		},
 		{
+			MethodName: "DescribePermission",
+			Handler:    _RoleService_DescribePermission_Handler,
+		},
+		{
 			MethodName: "AddPermissionToRole",
 			Handler:    _RoleService_AddPermissionToRole_Handler,
 		},
 		{
 			MethodName: "RemovePermissionFromRole",
 			Handler:    _RoleService_RemovePermissionFromRole_Handler,
+		},
+		{
+			MethodName: "UpdatePermission",
+			Handler:    _RoleService_UpdatePermission_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

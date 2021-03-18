@@ -11,9 +11,6 @@ import "github.com/infraboard/mcube/pb/http/entry.proto";
 service RoleService {
 	rpc CreateRole(CreateRoleRequest) returns(Role) {
 		option (mcube.http.rest_api) = {
-			path: "/policies"
-			method: "POST"
-			resource: "policy"
 			auth_enable: true
 			labels: [{
 				key: "allow"
@@ -23,9 +20,6 @@ service RoleService {
 	};
 	rpc QueryRole(QueryRoleRequest) returns(Set) {
 		option (mcube.http.rest_api) = {
-			path: "/policies"
-			method: "POST"
-			resource: "policy"
 			auth_enable: true
 			labels: [{
 				key: "allow"
@@ -35,9 +29,6 @@ service RoleService {
 	};
 	rpc DescribeRole(DescribeRoleRequest) returns(Role) {
 		option (mcube.http.rest_api) = {
-			path: "/policies"
-			method: "POST"
-			resource: "policy"
 			auth_enable: true
 			labels: [{
 				key: "allow"
@@ -47,9 +38,6 @@ service RoleService {
 	};
 	rpc DeleteRole(DeleteRoleRequest) returns(Role) {
 		option (mcube.http.rest_api) = {
-			path: "/policies"
-			method: "POST"
-			resource: "policy"
 			auth_enable: true
 			labels: [{
 				key: "allow"
@@ -59,9 +47,6 @@ service RoleService {
 	};
 	rpc QueryPermission(QueryPermissionRequest) returns(PermissionSet) {
 		option (mcube.http.rest_api) = {
-			path: "/policies"
-			method: "POST"
-			resource: "policy"
 			auth_enable: true
 			labels: [{
 				key: "allow"
@@ -69,11 +54,17 @@ service RoleService {
 			}]
 		};		
 	};
+	rpc DescribePermission(DescribePermissionRequest) returns(Permission) {
+		option (mcube.http.rest_api) = {
+			auth_enable: true
+			labels: [{
+				key: "allow"
+				value: "perm_admin"
+			}]
+		};			
+	}
 	rpc AddPermissionToRole(AddPermissionToRoleRequest) returns(PermissionSet) {
 		option (mcube.http.rest_api) = {
-			path: "/policies"
-			method: "POST"
-			resource: "policy"
 			auth_enable: true
 			labels: [{
 				key: "allow"
@@ -83,9 +74,6 @@ service RoleService {
 	};
 	rpc RemovePermissionFromRole(RemovePermissionFromRoleRequest) returns(PermissionSet) {
 		option (mcube.http.rest_api) = {
-			path: "/policies"
-			method: "POST"
-			resource: "policy"
 			auth_enable: true
 			labels: [{
 				key: "allow"
@@ -93,4 +81,13 @@ service RoleService {
 			}]
 		};	
 	};
+	rpc UpdatePermission(UpdatePermissionRequest) returns(Permission) {
+		option (mcube.http.rest_api) = {
+			auth_enable: true
+			labels: [{
+				key: "allow"
+				value: "perm_admin"
+			}]
+		};		
+	}
 }

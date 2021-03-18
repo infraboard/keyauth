@@ -151,3 +151,35 @@ func (r *deletePermissionRequest) FindFilter() bson.M {
 
 	return filter
 }
+
+func newDescribePermissionRequest(req *role.DescribePermissionRequest) (*describePermissionRequest, error) {
+	if err := req.Validate(); err != nil {
+		return nil, err
+	}
+	return &describePermissionRequest{req}, nil
+}
+
+type describePermissionRequest struct {
+	*role.DescribePermissionRequest
+}
+
+func (req *describePermissionRequest) String() string {
+	return fmt.Sprintf("permission: %s", req.Id)
+}
+
+func (req *describePermissionRequest) FindFilter() bson.M {
+	filter := bson.M{}
+
+	if req.Id != "" {
+		filter["_id"] = req.Id
+	}
+
+	return filter
+}
+
+// FindOptions todo
+func (req *describePermissionRequest) FindOptions() *options.FindOneOptions {
+	opt := &options.FindOneOptions{}
+
+	return opt
+}

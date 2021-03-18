@@ -30,6 +30,8 @@ func (h *handler) Registry(router router.SubRouter) {
 	r.Handle("GET", "/:id/permissions", h.ListRolePermission)
 	r.Handle("POST", "/:id/permissions", h.AddPermissionToRole)
 	r.Handle("DELETE", "/:id/permissions", h.RemovePermissionFromRole)
+	r.BasePath("permissions")
+	r.Handle("PUT", "/:id", h.UpdatePermission)
 }
 
 func (h *handler) Config() error {

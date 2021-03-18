@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/request"
 )
 
@@ -104,4 +105,27 @@ func NewQueryPermissionRequestFromHTTP(r *http.Request) *QueryPermissionRequest 
 	req := NewQueryPermissionRequest(page)
 
 	return req
+}
+
+func NewDescribePermissionRequestWithID(id string) *DescribePermissionRequest {
+	return &DescribePermissionRequest{Id: id}
+}
+
+func (req *DescribePermissionRequest) Validate() error {
+	if req.Id == "" {
+		return exception.NewBadRequest("id required")
+	}
+	return nil
+}
+
+func NewUpdatePermissionRequest() *UpdatePermissionRequest {
+	return &UpdatePermissionRequest{}
+}
+
+func (req *UpdatePermissionRequest) Validate() error {
+	if req.Id == "" {
+		return exception.NewBadRequest("id required")
+	}
+
+	return nil
 }

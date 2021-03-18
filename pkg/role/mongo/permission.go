@@ -7,6 +7,8 @@ import (
 	"github.com/infraboard/keyauth/pkg/role"
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/request"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func insertDocs(perms []*role.Permission) []interface{} {
@@ -52,6 +54,24 @@ func (s *service) QueryPermission(ctx context.Context, req *role.QueryPermission
 	}
 	set.Total = count
 	return set, nil
+}
+
+func (s *service) DescribePermission(ctx context.Context, req *role.DescribePermissionRequest) (*role.Permission, error) {
+	query, err := newDescribePermissionRequest(req)
+	if err != nil {
+		return nil, err
+	}
+
+	ins := role.NewDeaultPermission()
+	if err := s.perm.FindOne(context.TODO(), query.FindFilter(), query.FindOptions()).Decode(ins); err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, exception.NewNotFound("permission %s not found", req)
+		}
+
+		return nil, exception.NewInternalServerError("permission %s error, %s", req, err)
+	}
+
+	return ins, nil
 }
 
 func (s *service) AddPermissionToRole(ctx context.Context, req *role.AddPermissionToRoleRequest) (*role.PermissionSet, error) {
@@ -118,4 +138,25 @@ func (s *service) RemovePermissionFromRole(ctx context.Context, req *role.Remove
 
 	set := role.NewPermissionSet()
 	return set, nil
+}
+
+func (s *service) UpdatePermission(ctx context.Context, req *role.UpdatePermissionRequest) (*role.Permission, error) {
+	if err := req.Validate(); err != nil {
+		return nil, exception.NewBadRequest("validate remove permission error, %s", err)
+	}
+
+	ins, err := s.DescribePermission(ctx, role.NewDescribePermissionRequestWithID(req.Id))
+	if err != nil {
+		return nil, err
+	}
+
+	ins.LabelKey = req.LabelKey
+	ins.MatchAll = req.MatchAll
+	ins.LabelValues = req.LabelValues
+
+	_, err = s.perm.UpdateOne(context.TODO(), bson.M{"_id": ins.Id}, bson.M{"$set": ins})
+	if err != nil {
+		return nil, exception.NewInternalServerError("update permission(%s) error, %s", ins.Id, err)
+	}
+	return ins, nil
 }
