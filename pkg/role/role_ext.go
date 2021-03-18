@@ -86,7 +86,8 @@ func NewPermission(roleID, creater string, perms []*CreatePermssionRequest) []*P
 
 func PermissionHash(namesapce string, perm *CreatePermssionRequest) string {
 	h := fnv.New32a()
-	h.Write([]byte(namesapce + perm.String()))
+
+	h.Write([]byte(namesapce + perm.Effect.String() + perm.ServiceId + perm.ResourceName))
 	return fmt.Sprintf("%x", h.Sum32())
 }
 
