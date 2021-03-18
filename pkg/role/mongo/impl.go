@@ -45,12 +45,6 @@ func (s *service) Config() error {
 	indexs := []mongo.IndexModel{
 		{
 			Keys: bsonx.Doc{
-				{Key: "permissions.0._id", Value: bsonx.Int32(-1)},
-			},
-			Options: options.Index().SetUnique(true),
-		},
-		{
-			Keys: bsonx.Doc{
 				{Key: "name", Value: bsonx.Int32(-1)},
 				{Key: "domain", Value: bsonx.Int32(-1)},
 			},
