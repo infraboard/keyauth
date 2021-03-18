@@ -49,6 +49,24 @@ func (a *grpcAuther) Auth(
 	info *grpc.UnaryServerInfo,
 	handler grpc.UnaryHandler,
 ) (resp interface{}, err error) {
+	// 转换异常类型
+	defer func() {
+		if err != nil {
+			switch t := err.(type) {
+			case exception.APIException:
+				err = status.Errorf(codes.Code(t.ErrorCode()), t.Error())
+				trailer := metadata.Pairs(
+					ResponseCodeHeader, strconv.Itoa(t.ErrorCode()),
+					ResponseReasonHeader, t.Reason(),
+					ResponseDescHeader, t.Error(),
+				)
+				if err := grpc.SetTrailer(ctx, trailer); err != nil {
+					a.log().Errorf("send grpc trailer error, %s", err)
+				}
+			}
+		}
+	}()
+
 	// 重上下文中获取认证信息
 	rctx, err := GetGrpcInCtx(ctx)
 	if err != nil {
@@ -79,20 +97,6 @@ func (a *grpcAuther) Auth(
 
 	rctx.ClearInternl()
 	resp, err = handler(rctx.ClearInternl().Context(), req)
-
-	switch t := err.(type) {
-	case exception.APIException:
-		err = status.Errorf(codes.Code(t.ErrorCode()), t.Error())
-		// create and set trailer
-		trailer := metadata.Pairs(
-			ResponseCodeHeader, strconv.Itoa(t.ErrorCode()),
-			ResponseReasonHeader, t.Reason(),
-			ResponseDescHeader, t.Error(),
-		)
-		if err := grpc.SetTrailer(ctx, trailer); err != nil {
-			a.log().Errorf("send grpc trailer error, %s", err)
-		}
-	}
 	return resp, err
 }
 
