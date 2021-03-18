@@ -28,7 +28,7 @@ func (s *service) QueryPermission(ctx context.Context, req *role.QueryPermission
 		return nil, err
 	}
 
-	resp, err := s.col.Find(context.TODO(), query.FindFilter(), query.FindOptions())
+	resp, err := s.perm.Find(context.TODO(), query.FindFilter(), query.FindOptions())
 	if err != nil {
 		return nil, exception.NewInternalServerError("find permissionn error, error is %s", err)
 	}
