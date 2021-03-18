@@ -12,9 +12,6 @@ service UserService {
 	// 查询用户
 	rpc QueryAccount(QueryAccountRequest) returns(Set) {
 		option (mcube.http.rest_api) = {
-			path: "/users"
-			method: "GET"
-			resource: "user"
 			auth_enable: true
 			labels: [{
 				key: "allow"
@@ -25,22 +22,16 @@ service UserService {
 	// 获取账号Profile
 	rpc DescribeAccount(DescribeAccountRequest) returns(User) {
 		option (mcube.http.rest_api) = {
-			path: "/users/:account"
-			method: "GET"
-			resource: "user"
 			auth_enable: true
 			labels: [{
 				key: "allow"
-				value: "org_admin"
+				value: "*"
 			}]
 		};
 	};
 	// 创建用户
 	rpc CreateAccount(CreateAccountRequest) returns(User) {
 		option (mcube.http.rest_api) = {
-			path: "/users"
-			method: "POST"
-			resource: "user"
 			auth_enable: true
 			labels: [{
 				key: "allow"
@@ -51,9 +42,6 @@ service UserService {
 	// 警用账号
 	rpc BlockAccount(BlockAccountRequest) returns(User) {
 		option (mcube.http.rest_api) = {
-			path: "/users/:account/block"
-			method: "POST"
-			resource: "user"
 			auth_enable: true
 			labels: [{
 				key: "allow"
@@ -64,9 +52,6 @@ service UserService {
 	// DeleteAccount 删除用户
 	rpc DeleteAccount(DeleteAccountRequest) returns(User) {
 		option (mcube.http.rest_api) = {
-			path: "/users/:account"
-			method: "DELETE"
-			resource: "user"
 			auth_enable: true
 			labels: [{
 				key: "allow"
@@ -77,9 +62,6 @@ service UserService {
 	// 更新用户
     rpc UpdateAccountProfile(UpdateAccountRequest) returns(User) {
 		option (mcube.http.rest_api) = {
-			path: "/users/:account"
-			method: "PUT"
-			resource: "user"
 			auth_enable: true
 			labels: [{
 				key: "allow"
@@ -90,9 +72,6 @@ service UserService {
     // 修改用户密码
 	rpc UpdateAccountPassword(UpdatePasswordRequest) returns(Password) {
 		option (mcube.http.rest_api) = {
-			path: "/users/:account/password"
-			method: "PUT"
-			resource: "password"
 			auth_enable: true
 			labels: [{
 				key: "allow"
@@ -103,9 +82,6 @@ service UserService {
 	// GeneratePassword 生成符合检测强度的随机密码
 	rpc GeneratePassword(GeneratePasswordRequest) returns(GeneratePasswordResponse) {
 		option (mcube.http.rest_api) = {
-			path: "/passwords"
-			method: "POST"
-			resource: "password"
 			auth_enable: true
 			labels: [{
 				key: "allow"

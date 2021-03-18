@@ -28,11 +28,6 @@ func (req *DescribeAccountRequest) Validate() error {
 	return nil
 }
 
-// CheckOwner allow owner
-func (req *DescribeAccountRequest) CheckOwner(account string) bool {
-	return req.Account == account
-}
-
 // NewNewQueryAccountRequestFromHTTP todo
 func NewNewQueryAccountRequestFromHTTP(r *http.Request) *QueryAccountRequest {
 	page := request.NewPageRequestFromHTTP(r)
