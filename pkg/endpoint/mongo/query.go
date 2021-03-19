@@ -59,14 +59,14 @@ func (r *queryEndpointRequest) FindOptions() *options.FindOptions {
 func (r *queryEndpointRequest) FindFilter() bson.M {
 	filter := bson.M{}
 
-	if r.ServiceId != "" {
-		filter["service_id"] = r.ServiceId
+	if len(r.ServiceIds) > 0 {
+		filter["service_id"] = bson.M{"$in": r.ServiceIds}
 	}
 	if r.Method != "" {
 		filter["entry.method"] = r.Method
 	}
-	if r.Resource != "" {
-		filter["entry.resource"] = r.Resource
+	if len(r.Resources) > 0 {
+		filter["entry.resource"] = bson.M{"$in": r.Resources}
 	}
 	if r.Path != "" {
 		filter["entry.path"] = bson.M{"$regex": r.Path, "$options": "im"}

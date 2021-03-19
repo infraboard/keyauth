@@ -68,14 +68,23 @@ func NewQueryEndpointRequestFromHTTP(r *http.Request) *QueryEndpointRequest {
 	page := request.NewPageRequestFromHTTP(r)
 	qs := r.URL.Query()
 
-	return &QueryEndpointRequest{
+	query := &QueryEndpointRequest{
 		Page:         &page.PageRequest,
-		ServiceId:    qs.Get("service_id"),
 		Path:         qs.Get("path"),
 		Method:       qs.Get("method"),
 		FunctionName: qs.Get("function_name"),
-		Resource:     qs.Get("resource"),
 	}
+
+	sids := qs.Get("service_ids")
+	if sids != "" {
+		query.ServiceIds = strings.Split(sids, ",")
+	}
+	rs := qs.Get("resources")
+	if rs != "" {
+		query.Resources = strings.Split(rs, ",")
+	}
+
+	return query
 }
 
 // NewQueryEndpointRequest 列表查询请求
@@ -108,7 +117,6 @@ func NewDeleteEndpointRequestWithServiceID(id string) *DeleteEndpointRequest {
 func NewQueryResourceRequestFromHTTP(r *http.Request) *QueryResourceRequest {
 	page := request.NewPageRequestFromHTTP(r)
 	qs := r.URL.Query()
-	strIds := qs.Get("service_ids")
 	pe, err := ParseBoolQueryFromString(qs.Get("permission_enable"))
 	if err != nil {
 		pe = BoolQuery_ALL
@@ -119,8 +127,13 @@ func NewQueryResourceRequestFromHTTP(r *http.Request) *QueryResourceRequest {
 		PermissionEnable: pe,
 	}
 
+	strIds := qs.Get("service_ids")
 	if strIds != "" {
 		query.ServiceIds = strings.Split(strIds, ",")
+	}
+	rs := qs.Get("resources")
+	if rs != "" {
+		query.Resources = strings.Split(rs, ",")
 	}
 
 	return query

@@ -38,8 +38,8 @@ message QueryEndpointRequest {
         page.PageRequest page = 1[
         (google.protobuf.field_tag) = {struct_tag: 'json:"page"'}
         ];
-	string service_id = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"service_id"'}
+	repeated string service_ids = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"service_ids"'}
         ];
 	string path = 3[
         (google.protobuf.field_tag) = {struct_tag: 'json:"path"'}
@@ -50,8 +50,8 @@ message QueryEndpointRequest {
 	string function_name = 5[
         (google.protobuf.field_tag) = {struct_tag: 'json:"function_name"'}
         ];
-        string resource = 6[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"resource"'}
+        repeated string resources = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"resources"'}
         ];
         map<string, string> labels = 7[
         (google.protobuf.field_tag) = {struct_tag: 'json:"labels"'}
@@ -76,7 +76,10 @@ message QueryResourceRequest {
 	repeated string service_ids = 2[
         (google.protobuf.field_tag) = {struct_tag: 'json:"service_ids"'}
         ];
-        BoolQuery permission_enable = 3[
+        repeated string resources = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"resources"'}
+        ];
+        BoolQuery permission_enable = 4[
         (google.protobuf.field_tag) = {struct_tag: 'json:"permission_enable"'}
-        ];     
+        ]; 
 }

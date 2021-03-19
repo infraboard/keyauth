@@ -9,7 +9,7 @@ import (
 
 const (
 	// MaxQueryEndpoints todo
-	MaxQueryEndpoints = 500
+	MaxQueryEndpoints = 1000
 )
 
 func (s *service) QueryResources(ctx context.Context, req *endpoint.QueryResourceRequest) (
@@ -21,18 +21,16 @@ func (s *service) QueryResources(ctx context.Context, req *endpoint.QueryResourc
 	rs := endpoint.NewResourceSet()
 	queryE := endpoint.NewQueryEndpointRequest(request.NewPageRequest(MaxQueryEndpoints, 1))
 	queryE.PermissionEnable = req.PermissionEnable
-	for _, id := range req.ServiceIds {
-		queryE.ServiceId = id
-		eps, err := s.QueryEndpoints(ctx, queryE)
-		if err != nil {
-			return nil, err
-		}
-		if eps.Total > MaxQueryEndpoints {
-			s.log.Warnf("service %s total endpoints > %d", id, eps.Total)
-		}
-
-		rs.AddEndpointSet(eps)
+	queryE.Resources = req.Resources
+	queryE.ServiceIds = req.ServiceIds
+	eps, err := s.QueryEndpoints(ctx, queryE)
+	if err != nil {
+		return nil, err
+	}
+	if eps.Total > MaxQueryEndpoints {
+		s.log.Warnf("service %s total endpoints > %d", req.ServiceIds, eps.Total)
 	}
 
+	rs.AddEndpointSet(eps)
 	return rs, nil
 }
