@@ -59,7 +59,10 @@ func (s *service) IssueCode(ctx context.Context, req *verifycode.IssueCodeReques
 			code, err)
 	}
 
-	msg, err := s.sendCode(ctx, code)
+	inctx := pkg.NewGrpcInCtx()
+	inctx.SetIsInternalCall(tk.Account, tk.Domain)
+
+	msg, err := s.sendCode(inctx.Context(), code)
 	if err != nil {
 		return nil, exception.NewInternalServerError("send verify code error, %s", err)
 	}
