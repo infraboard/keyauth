@@ -220,8 +220,6 @@ func (i *issuer) IssueToken(ctx context.Context, req *token.IssueTokenRequest) (
 		if !ok {
 			return nil, exception.NewUnauthorized("用户名或者密码不对")
 		}
-		// mockPrimary := i.mockBuildInToken(app, userName, ldapConf.Domain)
-		// ctx := session.WithTokenContext(context.Background(), mockPrimary)
 		u, err := i.syncLDAPUser(ctx, req.Username)
 		if err != nil {
 			return nil, err
