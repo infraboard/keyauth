@@ -259,7 +259,8 @@ func (i *issuer) genBaseDN(username string) (string, string, error) {
 
 func (i *issuer) syncLDAPUser(ctx context.Context, userName string) (*user.User, error) {
 	descUser := user.NewDescriptAccountRequestWithAccount(userName)
-	u, err := i.user.DescribeAccount(ctx, descUser)
+	inCtx := pkg.NewInternalMockGrpcCtx(userName).Context()
+	u, err := i.user.DescribeAccount(inCtx, descUser)
 
 	if u != nil && u.Type.IsIn(types.UserType_PRIMARY, types.UserType_SUPPER) {
 		return nil, exception.NewBadRequest("用户名和主账号用户名冲突, 请修改")
@@ -269,7 +270,7 @@ func (i *issuer) syncLDAPUser(ctx context.Context, userName string) (*user.User,
 		if exception.IsNotFoundError(err) {
 			req := user.NewCreateUserRequestWithLDAPSync(userName, i.randomPass())
 			req.UserType = types.UserType_SUB
-			u, err = i.user.CreateAccount(ctx, req)
+			u, err = i.user.CreateAccount(inCtx, req)
 			if err != nil {
 				return nil, err
 			}

@@ -38,7 +38,7 @@ func (s *service) CreateAccount(ctx context.Context, req *user.CreateAccountRequ
 	}
 
 	// 非管理员, 主账号 可以创建子账号
-	if !tk.UserType.IsIn(types.UserType_SUPPER, types.UserType_PRIMARY) {
+	if !tk.UserType.IsIn(types.UserType_SUPPER, types.UserType_INTERNAL, types.UserType_PRIMARY) {
 		return nil, exception.NewPermissionDeny("%s user can't create sub account", tk.UserType)
 	}
 
