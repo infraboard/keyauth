@@ -109,8 +109,8 @@ func NewProfile() *Profile {
 }
 
 // ValidateInitialized 判断初始化数据是否准备好了
-func (req *Profile) ValidateInitialized() error {
-	if req.Email != "" && req.Phone != "" {
+func (p *Profile) ValidateInitialized() error {
+	if p.Email != "" && p.Phone != "" {
 		return nil
 	}
 
@@ -118,9 +118,13 @@ func (req *Profile) ValidateInitialized() error {
 }
 
 // Patch todo
-func (req *Profile) Patch(data *Profile) {
+func (p *Profile) Patch(data *Profile) {
+	md := NewProfile()
 	patchData, _ := json.Marshal(data)
-	json.Unmarshal(patchData, req)
+	oldData, _ := json.Marshal(p)
+	json.Unmarshal(patchData, md)
+	json.Unmarshal(oldData, md)
+	*p = *md
 }
 
 // Validate 校验请求是否合法
