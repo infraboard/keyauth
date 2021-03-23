@@ -68,7 +68,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "department_apply",
 				AuthEnable:       true,
 				PermissionEnable: false,
-				Labels:           map[string]string{"allow": "org_admin"},
+				Labels:           map[string]string{"allow": "*"},
 			},
 			{
 				GrpcPath:         "/keyauth.department.DepartmentService/DescribeApplicationForm",
@@ -78,7 +78,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "department_apply",
 				AuthEnable:       true,
 				PermissionEnable: false,
-				Labels:           map[string]string{"allow": "org_admin"},
+				Labels:           map[string]string{"allow": "*"},
 			},
 			{
 				GrpcPath:         "/keyauth.department.DepartmentService/JoinDepartment",
@@ -88,7 +88,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "department_apply",
 				AuthEnable:       true,
 				PermissionEnable: false,
-				Labels:           map[string]string{"allow": "org_admin"},
+				Labels:           map[string]string{"allow": "*"},
 			},
 			{
 				GrpcPath:         "/keyauth.department.DepartmentService/DealApplicationForm",
@@ -98,7 +98,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "department_apply",
 				AuthEnable:       true,
 				PermissionEnable: false,
-				Labels:           map[string]string{"allow": "org_admin"},
+				Labels:           map[string]string{"allow": "*"},
 			},
 		},
 	}

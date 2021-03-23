@@ -11,6 +11,7 @@ import (
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/department"
 	"github.com/infraboard/keyauth/pkg/user"
+	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
 var (
@@ -91,7 +92,7 @@ func (s *service) DealApplicationForm(ctx context.Context, req *department.DealA
 	}
 
 	// 只有部门管理员才能处理成员加入申请
-	if dp.Manager != tk.Account {
+	if !(tk.UserType.IsIn(types.UserType_SUPPER, types.UserType_DOMAIN_ADMIN, types.UserType_ORG_ADMIN) || dp.Manager == tk.Account) {
 		return nil, exception.NewPermissionDeny("only department manger can deal join apply")
 	}
 
