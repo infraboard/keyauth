@@ -74,7 +74,8 @@ func (s *service) UpdateAccountProfile(ctx context.Context, req *user.UpdateAcco
 		return nil, exception.NewBadRequest("validate update department error, %s", err)
 	}
 
-	u, err := s.DescribeAccount(ctx, user.NewDescriptAccountRequestWithAccount(tk.Account))
+	s.log.Debugf("[%s] update %s profile", req.UpdateMode.String(), req.Account)
+	u, err := s.DescribeAccount(ctx, user.NewDescriptAccountRequestWithAccount(req.Account))
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +83,7 @@ func (s *service) UpdateAccountProfile(ctx context.Context, req *user.UpdateAcco
 
 	// 更新部门
 	if req.DepartmentId != "" {
-		if !tk.UserType.IsIn(types.UserType_SUPPER, types.UserType_DOMAIN_ADMIN, types.UserType_ORG_ADMIN) {
+		if !tk.UserType.IsIn(types.UserType_SUPPER, types.UserType_INTERNAL, types.UserType_DOMAIN_ADMIN, types.UserType_ORG_ADMIN) {
 			return nil, exception.NewBadRequest("组织管理员才能直接修改用户部门")
 		}
 		u.DepartmentId = req.DepartmentId

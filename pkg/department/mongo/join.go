@@ -110,7 +110,7 @@ func (s *service) DealApplicationForm(ctx context.Context, req *department.DealA
 	patchReq := user.NewPatchAccountRequest()
 	patchReq.DepartmentId = af.DepartmentId
 	patchReq.Account = af.Account
-	mockCtx := pkg.NewInternalMockGrpcCtx(tk.Account)
+	mockCtx := pkg.NewInternalMockGrpcCtx(af.Account)
 	_, err = s.user.UpdateAccountProfile(mockCtx.Context(), patchReq)
 	if err != nil {
 		return nil, err
