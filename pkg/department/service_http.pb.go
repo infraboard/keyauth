@@ -18,7 +18,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "department",
 				AuthEnable:       true,
 				PermissionEnable: false,
-				Labels:           map[string]string{"allow": "org_admin"},
+				Labels:           map[string]string{"allow": "*"},
 			},
 			{
 				GrpcPath:         "/keyauth.department.DepartmentService/DescribeDepartment",
@@ -28,7 +28,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "department",
 				AuthEnable:       true,
 				PermissionEnable: false,
-				Labels:           map[string]string{"allow": "org_admin"},
+				Labels:           map[string]string{"allow": "*"},
 			},
 			{
 				GrpcPath:         "/keyauth.department.DepartmentService/CreateDepartment",
