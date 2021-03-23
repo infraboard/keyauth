@@ -82,6 +82,9 @@ func (s *service) UpdateAccountProfile(ctx context.Context, req *user.UpdateAcco
 
 	// 更新部门
 	if req.DepartmentId != "" {
+		if !tk.UserType.IsIn(types.UserType_SUPPER, types.UserType_DOMAIN_ADMIN, types.UserType_ORG_ADMIN) {
+			return nil, exception.NewBadRequest("组织管理员才能直接修改用户部门")
+		}
 		u.DepartmentId = req.DepartmentId
 	}
 
