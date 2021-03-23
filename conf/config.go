@@ -93,6 +93,7 @@ type mongodb struct {
 	UserName  string   `toml:"username" env:"K_MONGO_USERNAME"`
 	Password  string   `toml:"password" env:"K_MONGO_PASSWORD"`
 	Database  string   `toml:"database" env:"K_MONGO_DATABASE"`
+	AuthDB    string   `toml:"auth_db" env:"K_MONGO_AUTHDB"`
 }
 
 func newDefaultMongoDB() *mongodb {
@@ -111,6 +112,14 @@ func (m *mongodb) Client() *mongo.Client {
 	return mgoclient
 }
 
+func (m *mongodb) authDB() string {
+	if m.AuthDB != "" {
+		return m.AuthDB
+	}
+
+	return m.Database
+}
+
 func (m *mongodb) GetDB() *mongo.Database {
 	return m.Client().Database(m.Database)
 }
@@ -119,7 +128,7 @@ func (m *mongodb) getClient() (*mongo.Client, error) {
 	opts := options.Client()
 
 	cred := options.Credential{
-		AuthSource: m.Database,
+		AuthSource: m.authDB(),
 	}
 
 	if m.UserName != "" && m.Password != "" {
