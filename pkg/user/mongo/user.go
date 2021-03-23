@@ -225,7 +225,7 @@ func (s *service) DeleteAccount(ctx context.Context, req *user.DeleteAccountRequ
 		s.log.Errorf("delete account policy error, %s", err)
 	}
 
-	return nil, nil
+	return user.NewDefaultUser(), nil
 }
 
 func (s *service) GeneratePassword(ctx context.Context, req *user.GeneratePasswordRequest) (*user.GeneratePasswordResponse, error) {
