@@ -140,10 +140,9 @@ func (a *grpcAuther) validatePermission(tk *token.Token, entry *http.Entry, req 
 
 	// 如果是owner 直接放行
 	if v, ok := req.(OwnerChecker); ok {
-		if !v.CheckOwner(tk.Account) {
-			return grpc.Errorf(codes.PermissionDenied, "only owner can operate")
+		if v.CheckOwner(tk.Account) {
+			return nil
 		}
-		return nil
 	}
 
 	// 如果是允许的用户类型 直接放行

@@ -230,10 +230,9 @@ func NewPatchAccountRequest() *UpdateAccountRequest {
 
 // Validate 更新请求校验
 func (req *UpdateAccountRequest) Validate() error {
-	// 用户初始化要判断初始化信息填写完整
-	// if err := req.ValidateInitialized(); req.IsInitialized && err != nil {
-	// 	return err
-	// }
-
 	return validate.Struct(req)
+}
+
+func (req *UpdateAccountRequest) CheckOwner(account string) bool {
+	return req.Account == account
 }
