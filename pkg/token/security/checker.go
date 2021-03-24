@@ -124,10 +124,12 @@ func (c *checker) OtherPlaceLoggedInChecK(ctx context.Context, tk *token.Token) 
 	c.log.Debugf("other place login check enabled, checking ...")
 
 	// 查询当前登陆IP地域
-	c.log.Debugf("query remote ip: %s location ...", tk.GetRemoteIP())
-	login, err := c.ip2Regoin.LookupIP(tk.GetRemoteIP())
+	rip := tk.GetRemoteIP()
+	c.log.Debugf("query remote ip: %s location ...", rip)
+	login, err := c.ip2Regoin.LookupIP(rip)
 	if err != nil {
-		return err
+		c.log.Errorf("lookup ip %s error, %s, skip OtherPlaceLoggedInChecK", rip, err)
+		return nil
 	}
 
 	// 查询出用户上次登陆的地域

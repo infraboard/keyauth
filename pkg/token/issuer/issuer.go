@@ -171,7 +171,9 @@ func (i *issuer) IssueToken(ctx context.Context, req *token.IssueTokenRequest) (
 			return nil, exception.NewPermissionDeny("refresh_token's access_tken not connrect")
 		}
 
-		u, err := i.getUser(ctx, tk.Account)
+		inctx := pkg.NewGrpcInCtx()
+		inctx.SetAccessToken(req.AccessToken)
+		u, err := i.getUser(inctx.Context(), tk.Account)
 		if err != nil {
 			return nil, err
 		}
@@ -183,7 +185,8 @@ func (i *issuer) IssueToken(ctx context.Context, req *token.IssueTokenRequest) (
 		revolkReq := token.NewRevolkTokenRequest(app.ClientId, app.ClientSecret)
 		revolkReq.AccessToken = req.AccessToken
 		revolkReq.LogoutSession = false
-		if _, err := i.token.RevolkToken(nil, revolkReq); err != nil {
+
+		if _, err := i.token.RevolkToken(inctx.Context(), revolkReq); err != nil {
 			return nil, err
 		}
 		return newTK, nil
