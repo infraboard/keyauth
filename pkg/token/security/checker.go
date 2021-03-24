@@ -144,7 +144,13 @@ func (c *checker) OtherPlaceLoggedInChecK(ctx context.Context, tk *token.Token) 
 		return err
 	}
 
+	if us.IpInfo == nil {
+		c.log.Debugf("last login session no ip info found, skip OtherPlaceLoggedInChecK")
+		return nil
+	}
+
 	// city为0 表示内网IP, 不错异地登录校验
+
 	if login.CityID == 0 || us.IpInfo.CityId == 0 {
 		c.log.Warnf("city id is 0, 内网IP skip OtherPlaceLoggedInChecK")
 		return nil
