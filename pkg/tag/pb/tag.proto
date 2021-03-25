@@ -49,7 +49,15 @@ message Tag {
     string key_desc = 10[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"key_desc" json:"key_desc"'}
         ];
-    TagValue values = 11[
+    // 值来源
+    ValueFrom value_from = 11[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"value_from" json:"value_from"'}
+        ];
+    // http 获取Tag 值的参数
+    HTTPFromOption http_from_option = 12[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"http_from_option" json:"http_from_option"'}
+        ];
+    repeated TagValue values = 13[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"values"'}
         ];
 }
@@ -75,17 +83,9 @@ message TagValue {
     string key_id = 5[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"key_id" json:"key_id"'}
         ];
-    // 值来源
-    ValueFrom value_from = 6[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"value_from" json:"value_from"'}
-        ];
-    // http 获取Tag 值的参数
-    HTTPFromOptions http_from_options = 7[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"http_from_options" json:"http_from_options"'}
-        ];
     // String 类型的值
-    repeated ValueOptions values = 8[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"string_value" json:"string_value"'}
+    ValueOption value = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"value" json:"value"'}
         ];
 }
 
