@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package keyauth.tag;
+option go_package = "github.com/infraboard/keyauth/pkg/tag";
+
+enum ScopeType {
+    // 范围现定在空间内
+    NAMESPACE = 0;
+    // 范围现定在域内
+    DOMAIN = 1;
+    // 全系统可用
+    GLOBAL = 2;
+}
+
+// ValueFrom 值来源
+enum ValueFrom {
+    // 手动录入
+    MANUAL = 0;
+    // 远程HTTP调用
+    HTTP = 1;
+}

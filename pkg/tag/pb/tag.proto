@@ -1,0 +1,99 @@
+syntax = "proto3";
+
+package keyauth.tag;
+option go_package = "github.com/infraboard/keyauth/pkg/tag";
+
+import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
+import "pkg/tag/pb/enum.proto";
+import "pkg/tag/pb/request.proto";
+
+// Tag is 标签
+message Tag {
+    // Tag ID
+    string id = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"_id" json:"id"'}
+        ];
+    // 创建时间`
+    int64 create_at = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"create_at" json:"create_at"'}
+        ];
+    // 更新时间
+    int64 update_at = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"update_at" json:"update_at"'}
+        ];
+    // Tag所属的域
+    string domain = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"domain" json:"domain"'}
+        ];
+    // 创建人
+    string creater = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"creater" json:"creater"'}
+        ];
+    // tag生效范围
+    ScopeType scope_type = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"scope_type" json:"scope_type"'}
+        ];
+    // tag属于哪个namespace
+    string namespace = 7[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"namespace" json:"namespace"'}
+        ];
+    // 建名称
+    string key_name = 8[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"key_name" json:"key_name"'}
+        ];
+    // 建标识
+    string key_label = 9[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"key_label" json:"key_label"'}
+        ];
+    // 建描述
+    string key_desc = 10[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"key_desc" json:"key_desc"'}
+        ];
+    TagValue values = 11[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"values"'}
+        ];
+}
+
+message TagValue {
+    // Tag Value ID
+    string id = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"_id" json:"id"'}
+        ];
+    // 创建时间`
+    int64 create_at = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"create_at" json:"create_at"'}
+        ];
+    // 更新时间
+    int64 update_at = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"update_at" json:"update_at"'}
+        ];
+    // 创建人
+    string creater = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"creater" json:"creater"'}
+        ];
+    // 关联的Tag key
+    string key_id = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"key_id" json:"key_id"'}
+        ];
+    // 值来源
+    ValueFrom value_from = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"value_from" json:"value_from"'}
+        ];
+    // http 获取Tag 值的参数
+    HTTPFromOptions http_from_options = 7[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"http_from_options" json:"http_from_options"'}
+        ];
+    // String 类型的值
+    repeated ValueOptions values = 8[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"string_value" json:"string_value"'}
+        ];
+}
+
+message TagSet {
+    int64 total = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"total" json:"total"'}
+        ];
+    repeated Tag items = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"items" json:"items"'}
+        ];
+}

@@ -1,0 +1,106 @@
+syntax = "proto3";
+
+package keyauth.tag;
+option go_package = "github.com/infraboard/keyauth/pkg/tag";
+
+import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
+import "github.com/infraboard/mcube/pb/page/page.proto";
+import "pkg/tag/pb/enum.proto";
+
+// CreateTagRequest todo
+message CreateTagRequest {
+    // tag生效范围
+    ScopeType scope_type = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"scope_type"'}
+        ];
+    // tag属于哪个namespace
+    string namespace = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"namespace"'}
+        ];
+    // 建名称
+    string key_name = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"key_name"'}
+        ];
+    // 建标识
+    string key_label = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"key_label"'}
+        ];
+    // 建描述
+    string key_desc = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"key_desc"'}
+        ];
+    // 值来源
+    ValueFrom value_from = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"value_from"'}
+        ];
+    // http 获取Tag 值的参数
+    HTTPFromOptions http_from_options = 7[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"http_from_options"'}
+        ];
+    // String 类型的值
+    repeated ValueOptions values = 8[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"string_value"'}
+        ];
+}
+
+// QueryTagRequest todo
+message QueryTagRequest {
+    page.PageRequest page = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"page"'}
+        ];
+    // tag生效范围
+    ScopeType scope_type = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"scope_type"'}
+        ];
+    // 关键字
+    string keywords = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"keywords"'}
+        ];
+    // 为了性能可能不需要查询出value
+    bool skip_values = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"skip_values"'}
+        ];
+}
+
+// DescribeTagRequest todo
+message DescribeTagRequest {
+    // Tag Value ID
+    string id = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"id"'}
+        ];
+}
+
+// ValueOptions 值描述
+message ValueOptions {
+    string Value = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"value" json:"value"'}
+        ];
+    string Label = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"label" json:"label"'}
+        ];
+    string Desc = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"desc" json:"desc"'}
+        ];
+}
+
+// HTTPFromOptions todo
+message HTTPFromOptions {
+    string url = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"url" json:"url"'}
+        ];
+    map<string, string> headers = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"headers" json:"headers"'}
+        ];
+    string search_key = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"search_key" json:"search_key"'}
+        ];
+    string value_key = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"value_key" json:"value_key"'}
+        ];
+    string label_key = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"label_key" json:"label_key"'}
+        ];
+    string desc_key = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"desc_key" json:"desc_key"'}
+        ];
+}
