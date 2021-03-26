@@ -88,7 +88,7 @@ func NewDefaultTagValue() *TagValue {
 // NewCreateTagRequest 实例化请求
 func NewCreateTagRequest() *CreateTagRequest {
 	return &CreateTagRequest{
-		Values:          []*ValueOption{},
-		HttpFromOptions: &HTTPFromOption{},
+		Values:         []*ValueOption{},
+		HttpFromOption: &HTTPFromOption{},
 	}
 }

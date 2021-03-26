@@ -34,12 +34,12 @@ message CreateTagRequest {
         (google.protobuf.field_tag) = {struct_tag: 'json:"value_from"'}
         ];
     // http 获取Tag 值的参数
-    HTTPFromOption http_from_options = 7[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"http_from_options"'}
+    HTTPFromOption http_from_option = 7[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"http_from_option"'}
         ];
     // String 类型的值
     repeated ValueOption values = 8[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"string_value"'}
+        (google.protobuf.field_tag) = {struct_tag: 'json:"values"'}
         ];
 }
 

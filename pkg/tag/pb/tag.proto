@@ -55,10 +55,10 @@ message TagKey {
         ];
     // http 获取Tag 值的参数
     HTTPFromOption http_from_option = 12[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"http_from_option" json:"http_from_option"'}
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"http_from_option" json:"http_from_option,omitempty"'}
         ];
     repeated TagValue values = 13[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"values"'}
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"values,omitempty"'}
         ];
 }
 

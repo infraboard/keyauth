@@ -86,7 +86,7 @@ func (s *service) QueryTagValue(ctx context.Context, req *tag.QueryTagValueReque
 		return nil, err
 	}
 
-	resp, err := s.key.Find(context.TODO(), query.FindFilter(), query.FindOptions())
+	resp, err := s.value.Find(context.TODO(), query.FindFilter(), query.FindOptions())
 	if err != nil {
 		return nil, exception.NewInternalServerError("find role error, error is %s", err)
 	}
@@ -102,7 +102,7 @@ func (s *service) QueryTagValue(ctx context.Context, req *tag.QueryTagValueReque
 	}
 
 	// count
-	count, err := s.key.CountDocuments(context.TODO(), query.FindFilter())
+	count, err := s.value.CountDocuments(context.TODO(), query.FindFilter())
 	if err != nil {
 		return nil, exception.NewInternalServerError("get tag key count error, error is %s", err)
 	}
