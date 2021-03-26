@@ -19,7 +19,7 @@ message CreateTagRequest {
         ];
     // 建名称
     string key_name = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"key_name"'}
+        (google.protobuf.field_tag) = {struct_tag: 'json:"key_name" validate:"lte=200"'}
         ];
     // 建标识
     string key_label = 4[
@@ -72,7 +72,7 @@ message QueryTagValueRequest {
 // ValueOptions 值描述
 message ValueOption {
     string Value = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"value" json:"value"'}
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"value" json:"value" validate:"lte=200"'}
         ];
     string Label = 2[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"label" json:"label"'}

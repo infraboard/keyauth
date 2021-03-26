@@ -3,19 +3,40 @@ package tag
 import (
 	"net/http"
 
+	"github.com/go-playground/validator/v10"
+
+	"github.com/infraboard/keyauth/common/tools"
 	"github.com/infraboard/mcube/http/request"
 )
 
+// use a single instance of Validate, it caches struct info
+var (
+	validate = validator.New()
+)
+
 func (req *CreateTagRequest) Validate() error {
-	return nil
+	return validate.Struct(req)
+}
+
+func (req *CreateTagRequest) GenUUID() string {
+	switch req.ScopeType {
+	case ScopeType_GLOBAL:
+		return "G." + req.KeyName
+	case ScopeType_DOMAIN:
+		return "D." + req.KeyName
+	case ScopeType_NAMESPACE:
+		return "N." + tools.GenHashID(req.Namespace+req.KeyName)
+	default:
+		return "O." + req.KeyName
+	}
 }
 
 func (req *QueryTagKeyRequest) Validate() error {
-	return nil
+	return validate.Struct(req)
 }
 
 func (req *QueryTagValueRequest) Validate() error {
-	return nil
+	return validate.Struct(req)
 }
 
 // NewQueryTageKeyRequestFromHTTP 列表查询请求

@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/infraboard/mcube/types/ftime"
-	"github.com/rs/xid"
 
+	"github.com/infraboard/keyauth/common/tools"
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user/types"
 )
@@ -28,7 +28,7 @@ func New(tk *token.Token, req *CreateTagRequest) (*TagKey, error) {
 	}
 
 	r := &TagKey{
-		Id:        xid.New().String(),
+		Id:        req.GenUUID(),
 		CreateAt:  ftime.Now().Timestamp(),
 		UpdateAt:  ftime.Now().Timestamp(),
 		Domain:    tk.Domain,
@@ -42,7 +42,7 @@ func New(tk *token.Token, req *CreateTagRequest) (*TagKey, error) {
 
 	for i := range req.Values {
 		r.Values = append(r.Values, &TagValue{
-			Id:       xid.New().String(),
+			Id:       tools.GenHashID(r.Id + req.Values[i].Value),
 			CreateAt: ftime.Now().Timestamp(),
 			UpdateAt: ftime.Now().Timestamp(),
 			Creater:  tk.Account,
