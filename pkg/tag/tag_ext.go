@@ -52,3 +52,19 @@ func New(tk *token.Token, req *CreateTagRequest) (*Tag, error) {
 	}
 	return r, nil
 }
+
+// NewTagSet 实例化make
+func NewTagSet() *TagSet {
+	return &TagSet{
+		Items: []*Tag{},
+	}
+}
+
+// Add todo
+func (s *TagSet) Add(item *Tag) {
+	s.Items = append(s.Items, item)
+}
+
+func NewDefaultTag() *Tag {
+	return &Tag{}
+}
