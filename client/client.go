@@ -15,6 +15,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/policy"
 	"github.com/infraboard/keyauth/pkg/role"
 	"github.com/infraboard/keyauth/pkg/session"
+	"github.com/infraboard/keyauth/pkg/tag"
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
 	"github.com/infraboard/keyauth/pkg/verifycode"
@@ -111,6 +112,11 @@ func (c *Client) Policy() policy.PolicyServiceClient {
 // Role todo
 func (c *Client) Role() role.RoleServiceClient {
 	return role.NewRoleServiceClient(c.conn)
+}
+
+// Tag todo
+func (c *Client) Tag() tag.TagServiceClient {
+	return tag.NewTagServiceClient(c.conn)
 }
 
 // SessionAdmin todo

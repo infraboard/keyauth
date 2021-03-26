@@ -9,7 +9,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/tag"
 )
 
-func (s *service) CreateTag(ctx context.Context, req *tag.CreateTagRequest) (*tag.Tag, error) {
+func (s *service) CreateTag(ctx context.Context, req *tag.CreateTagRequest) (*tag.TagKey, error) {
 	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
 	if err != nil {
 		return nil, err
@@ -39,13 +39,13 @@ func (s *service) CreateTag(ctx context.Context, req *tag.CreateTagRequest) (*ta
 	return t, nil
 }
 
-func (s *service) QueryTag(ctx context.Context, req *tag.QueryTagRequest) (*tag.TagSet, error) {
+func (s *service) QueryTagKey(ctx context.Context, req *tag.QueryTagKeyRequest) (*tag.TagKeySet, error) {
 	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	query, err := newQueryTagRequest(tk, req)
+	query, err := newQueryTagKeyRequest(tk, req)
 	if err != nil {
 		return nil, err
 	}
@@ -55,10 +55,10 @@ func (s *service) QueryTag(ctx context.Context, req *tag.QueryTagRequest) (*tag.
 		return nil, exception.NewInternalServerError("find role error, error is %s", err)
 	}
 
-	set := tag.NewTagSet()
+	set := tag.NewTagKeySet()
 	// 循环
 	for resp.Next(context.TODO()) {
-		ins := tag.NewDefaultTag()
+		ins := tag.NewDefaultTagKey()
 		if err := resp.Decode(ins); err != nil {
 			return nil, exception.NewInternalServerError("decode role error, error is %s", err)
 		}
@@ -75,6 +75,37 @@ func (s *service) QueryTag(ctx context.Context, req *tag.QueryTagRequest) (*tag.
 	return set, nil
 }
 
-func (s *service) DescribeTag(context.Context, *tag.DescribeTagRequest) (*tag.Tag, error) {
-	return nil, nil
+func (s *service) QueryTagValue(ctx context.Context, req *tag.QueryTagValueRequest) (*tag.TagValueSet, error) {
+	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	query, err := newQueryTagValueRequest(tk, req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := s.key.Find(context.TODO(), query.FindFilter(), query.FindOptions())
+	if err != nil {
+		return nil, exception.NewInternalServerError("find role error, error is %s", err)
+	}
+
+	set := tag.NewTagValueSet()
+	// 循环
+	for resp.Next(context.TODO()) {
+		ins := tag.NewDefaultTagValue()
+		if err := resp.Decode(ins); err != nil {
+			return nil, exception.NewInternalServerError("decode role error, error is %s", err)
+		}
+		set.Add(ins)
+	}
+
+	// count
+	count, err := s.key.CountDocuments(context.TODO(), query.FindFilter())
+	if err != nil {
+		return nil, exception.NewInternalServerError("get tag key count error, error is %s", err)
+	}
+	set.Total = count
+	return set, nil
 }

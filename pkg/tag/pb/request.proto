@@ -43,8 +43,8 @@ message CreateTagRequest {
         ];
 }
 
-// QueryTagRequest todo
-message QueryTagRequest {
+// QueryTagKeyRequest todo
+message QueryTagKeyRequest {
     page.PageRequest page = 1[
         (google.protobuf.field_tag) = {struct_tag: 'json:"page"'}
         ];
@@ -56,17 +56,16 @@ message QueryTagRequest {
     string keywords = 3[
         (google.protobuf.field_tag) = {struct_tag: 'json:"keywords"'}
         ];
-    // 为了性能可能不需要查询出value
-    bool skip_values = 4[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"skip_values"'}
-        ];
 }
 
-// DescribeTagRequest todo
-message DescribeTagRequest {
+// QueryTagValueRequest todo
+message QueryTagValueRequest {
+    page.PageRequest page = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"page"'}
+        ];
     // Tag Value ID
-    string id = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"id"'}
+    string tag_id = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"tag_id"'}
         ];
 }
 

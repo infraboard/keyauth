@@ -10,7 +10,7 @@ import "github.com/infraboard/mcube/pb/http/entry.proto";
 
 // Service Tag服务
 service TagService {
-	rpc CreateTag(CreateTagRequest) returns(Tag) {
+	rpc CreateTag(CreateTagRequest) returns(TagKey) {
 		option (mcube.http.rest_api) = {
 			auth_enable: true
 			labels: [{
@@ -19,7 +19,7 @@ service TagService {
 			}]
 		};
 	};
-	rpc QueryTag(QueryTagRequest) returns(TagSet) {
+	rpc QueryTagKey(QueryTagKeyRequest) returns(TagKeySet) {
 		option (mcube.http.rest_api) = {
 			auth_enable: true
 			labels: [{
@@ -28,7 +28,7 @@ service TagService {
 			}]
 		};
 	};
-	rpc DescribeTag(DescribeTagRequest) returns(Tag) {
+	rpc QueryTagValue(QueryTagValueRequest) returns(TagValueSet) {
 		option (mcube.http.rest_api) = {
 			auth_enable: true
 			labels: [{

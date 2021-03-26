@@ -21,8 +21,8 @@ func HttpEntry() *http.EntrySet {
 				Labels:           map[string]string{"allow": "perm_admin"},
 			},
 			{
-				GrpcPath:         "/keyauth.tag.TagService/QueryTag",
-				FunctionName:     "QueryTag",
+				GrpcPath:         "/keyauth.tag.TagService/QueryTagKey",
+				FunctionName:     "QueryTagKey",
 				Path:             "",
 				Method:           "",
 				Resource:         "",
@@ -31,8 +31,8 @@ func HttpEntry() *http.EntrySet {
 				Labels:           map[string]string{"allow": "perm_admin"},
 			},
 			{
-				GrpcPath:         "/keyauth.tag.TagService/DescribeTag",
-				FunctionName:     "DescribeTag",
+				GrpcPath:         "/keyauth.tag.TagService/QueryTagValue",
+				FunctionName:     "QueryTagValue",
 				Path:             "",
 				Method:           "",
 				Resource:         "",

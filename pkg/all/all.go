@@ -32,6 +32,8 @@ import (
 	_ "github.com/infraboard/keyauth/pkg/storage/mongo"
 	_ "github.com/infraboard/keyauth/pkg/system/http"
 	_ "github.com/infraboard/keyauth/pkg/system/mongo"
+	_ "github.com/infraboard/keyauth/pkg/tag/http"
+	_ "github.com/infraboard/keyauth/pkg/tag/mongo"
 	_ "github.com/infraboard/keyauth/pkg/token/http"
 	_ "github.com/infraboard/keyauth/pkg/token/mongo"
 	_ "github.com/infraboard/keyauth/pkg/user/http"

@@ -22,6 +22,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/session"
 	"github.com/infraboard/keyauth/pkg/storage"
 	"github.com/infraboard/keyauth/pkg/system"
+	"github.com/infraboard/keyauth/pkg/tag"
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
 	"github.com/infraboard/keyauth/pkg/verifycode"
@@ -46,6 +47,8 @@ var (
 	Endpoint endpoint.EndpointServiceServer
 	// Policy 厕所里
 	Policy policy.PolicyServiceServer
+	// Tag 标签服务
+	Tag tag.TagServiceServer
 	// Department 部分服务
 	Department department.DepartmentServiceServer
 	// Namespace todo
@@ -96,6 +99,7 @@ func InitV1GRPCAPI(server *grpc.Server) {
 	session.RegisterAdminServiceServer(server, SessionAdmin)
 	session.RegisterUserServiceServer(server, SessionUser)
 	verifycode.RegisterVerifyCodeServiceServer(server, VerifyCode)
+	tag.RegisterTagServiceServer(server, Tag)
 	return
 }
 
@@ -260,6 +264,12 @@ func RegistryService(name string, svr Service) {
 			registryError(name)
 		}
 		VerifyCode = value
+		addService(name, svr)
+	case tag.TagServiceServer:
+		if Tag != nil {
+			registryError(name)
+		}
+		Tag = value
 		addService(name, svr)
 	default:
 		panic(fmt.Sprintf("unknown service type %s", name))

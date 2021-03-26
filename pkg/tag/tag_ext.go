@@ -11,7 +11,7 @@ import (
 )
 
 // New 新创建一个Role
-func New(tk *token.Token, req *CreateTagRequest) (*Tag, error) {
+func New(tk *token.Token, req *CreateTagRequest) (*TagKey, error) {
 	if err := req.Validate(); err != nil {
 		return nil, err
 	}
@@ -27,7 +27,7 @@ func New(tk *token.Token, req *CreateTagRequest) (*Tag, error) {
 		}
 	}
 
-	r := &Tag{
+	r := &TagKey{
 		Id:        xid.New().String(),
 		CreateAt:  ftime.Now().Timestamp(),
 		UpdateAt:  ftime.Now().Timestamp(),
@@ -53,18 +53,42 @@ func New(tk *token.Token, req *CreateTagRequest) (*Tag, error) {
 	return r, nil
 }
 
-// NewTagSet 实例化make
-func NewTagSet() *TagSet {
-	return &TagSet{
-		Items: []*Tag{},
+// NewTagKeySet 实例化make
+func NewTagKeySet() *TagKeySet {
+	return &TagKeySet{
+		Items: []*TagKey{},
 	}
 }
 
 // Add todo
-func (s *TagSet) Add(item *Tag) {
+func (s *TagKeySet) Add(item *TagKey) {
 	s.Items = append(s.Items, item)
 }
 
-func NewDefaultTag() *Tag {
-	return &Tag{}
+func NewDefaultTagKey() *TagKey {
+	return &TagKey{}
+}
+
+// NewTagValueSet 实例化make
+func NewTagValueSet() *TagValueSet {
+	return &TagValueSet{
+		Items: []*TagValue{},
+	}
+}
+
+// Add todo
+func (s *TagValueSet) Add(item *TagValue) {
+	s.Items = append(s.Items, item)
+}
+
+func NewDefaultTagValue() *TagValue {
+	return &TagValue{}
+}
+
+// NewCreateTagRequest 实例化请求
+func NewCreateTagRequest() *CreateTagRequest {
+	return &CreateTagRequest{
+		Values:          []*ValueOption{},
+		HttpFromOptions: &HTTPFromOption{},
+	}
 }
