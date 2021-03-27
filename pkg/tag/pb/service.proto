@@ -19,6 +19,24 @@ service TagService {
 			}]
 		};
 	};
+	rpc DescribeTag(DescribeTagRequest) returns(TagKey) {
+		option (mcube.http.rest_api) = {
+			auth_enable: true
+			labels: [{
+				key: "allow"
+				value: "perm_admin"
+			}]
+		};
+	};
+	rpc DeleteTag(DeleteTagRequest) returns(TagKey) {
+		option (mcube.http.rest_api) = {
+			auth_enable: true
+			labels: [{
+				key: "allow"
+				value: "perm_admin"
+			}]
+		};	
+	}
 	rpc QueryTagKey(QueryTagKeyRequest) returns(TagKeySet) {
 		option (mcube.http.rest_api) = {
 			auth_enable: true

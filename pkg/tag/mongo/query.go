@@ -88,3 +88,27 @@ func (r *queryTagValueRequest) FindFilter() bson.M {
 
 	return filter
 }
+
+func newDescribeTagRequest(tk *token.Token, req *tag.DescribeTagRequest) (*describeTagRequest, error) {
+	if err := req.Validate(); err != nil {
+		return nil, err
+	}
+	return &describeTagRequest{
+		tk:                 tk,
+		DescribeTagRequest: req}, nil
+}
+
+type describeTagRequest struct {
+	tk *token.Token
+	*tag.DescribeTagRequest
+}
+
+func (r *describeTagRequest) FindFilter() bson.M {
+	filter := bson.M{}
+
+	if r.TagId != "" {
+		filter["_id"] = r.TagId
+	}
+
+	return filter
+}

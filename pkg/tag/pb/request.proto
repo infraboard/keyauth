@@ -69,6 +69,21 @@ message QueryTagValueRequest {
         ];
 }
 
+// DeleteTagRequest todo
+message DeleteTagRequest {
+    // Tag Value ID
+    string tag_id = 2[
+    (google.protobuf.field_tag) = {struct_tag: 'json:"tag_id" validate:"lte=200"'}
+    ]; 
+}
+
+message DescribeTagRequest {
+    // Tag Value ID
+    string tag_id = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"tag_id" validate:"lte=200"'}
+        ]; 
+}
+
 // ValueOptions 值描述
 message ValueOption {
     string Value = 1[

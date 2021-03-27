@@ -23,6 +23,8 @@ func (h *handler) Registry(router router.SubRouter) {
 	r := router.ResourceRouter("tag")
 	r.BasePath("tags")
 	r.Handle("POST", "/", h.CreateTag)
+	r.Handle("GET", "/:id", h.DescribeTag)
+	r.Handle("DELETE", "/:id", h.DeleteTag)
 	r.Handle("GET", "/", h.QueryTagKey)
 	r.Handle("GET", "/:id/values", h.QueryTagValue)
 }

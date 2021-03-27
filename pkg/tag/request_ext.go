@@ -39,6 +39,10 @@ func (req *QueryTagValueRequest) Validate() error {
 	return validate.Struct(req)
 }
 
+func (req *DescribeTagRequest) Validate() error {
+	return validate.Struct(req)
+}
+
 // NewQueryTageKeyRequestFromHTTP 列表查询请求
 func NewQueryTageKeyRequestFromHTTP(r *http.Request) *QueryTagKeyRequest {
 	page := request.NewPageRequestFromHTTP(r)
@@ -65,4 +69,14 @@ func NewQueryTagValueRequest(pageReq *request.PageRequest) *QueryTagValueRequest
 	return &QueryTagValueRequest{
 		Page: &pageReq.PageRequest,
 	}
+}
+
+// NewDescribeTagRequestWithID todo
+func NewDescribeTagRequestWithID(id string) *DescribeTagRequest {
+	return &DescribeTagRequest{TagId: id}
+}
+
+// NewDeleteTagRequestWithID todo
+func NewDeleteTagRequestWithID(id string) *DeleteTagRequest {
+	return &DeleteTagRequest{TagId: id}
 }

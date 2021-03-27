@@ -18,6 +18,8 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TagServiceClient interface {
 	CreateTag(ctx context.Context, in *CreateTagRequest, opts ...grpc.CallOption) (*TagKey, error)
+	DescribeTag(ctx context.Context, in *DescribeTagRequest, opts ...grpc.CallOption) (*TagKey, error)
+	DeleteTag(ctx context.Context, in *DeleteTagRequest, opts ...grpc.CallOption) (*TagKey, error)
 	QueryTagKey(ctx context.Context, in *QueryTagKeyRequest, opts ...grpc.CallOption) (*TagKeySet, error)
 	QueryTagValue(ctx context.Context, in *QueryTagValueRequest, opts ...grpc.CallOption) (*TagValueSet, error)
 }
@@ -33,6 +35,24 @@ func NewTagServiceClient(cc grpc.ClientConnInterface) TagServiceClient {
 func (c *tagServiceClient) CreateTag(ctx context.Context, in *CreateTagRequest, opts ...grpc.CallOption) (*TagKey, error) {
 	out := new(TagKey)
 	err := c.cc.Invoke(ctx, "/keyauth.tag.TagService/CreateTag", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tagServiceClient) DescribeTag(ctx context.Context, in *DescribeTagRequest, opts ...grpc.CallOption) (*TagKey, error) {
+	out := new(TagKey)
+	err := c.cc.Invoke(ctx, "/keyauth.tag.TagService/DescribeTag", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tagServiceClient) DeleteTag(ctx context.Context, in *DeleteTagRequest, opts ...grpc.CallOption) (*TagKey, error) {
+	out := new(TagKey)
+	err := c.cc.Invoke(ctx, "/keyauth.tag.TagService/DeleteTag", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -62,6 +82,8 @@ func (c *tagServiceClient) QueryTagValue(ctx context.Context, in *QueryTagValueR
 // for forward compatibility
 type TagServiceServer interface {
 	CreateTag(context.Context, *CreateTagRequest) (*TagKey, error)
+	DescribeTag(context.Context, *DescribeTagRequest) (*TagKey, error)
+	DeleteTag(context.Context, *DeleteTagRequest) (*TagKey, error)
 	QueryTagKey(context.Context, *QueryTagKeyRequest) (*TagKeySet, error)
 	QueryTagValue(context.Context, *QueryTagValueRequest) (*TagValueSet, error)
 	mustEmbedUnimplementedTagServiceServer()
@@ -73,6 +95,12 @@ type UnimplementedTagServiceServer struct {
 
 func (UnimplementedTagServiceServer) CreateTag(context.Context, *CreateTagRequest) (*TagKey, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateTag not implemented")
+}
+func (UnimplementedTagServiceServer) DescribeTag(context.Context, *DescribeTagRequest) (*TagKey, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DescribeTag not implemented")
+}
+func (UnimplementedTagServiceServer) DeleteTag(context.Context, *DeleteTagRequest) (*TagKey, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteTag not implemented")
 }
 func (UnimplementedTagServiceServer) QueryTagKey(context.Context, *QueryTagKeyRequest) (*TagKeySet, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryTagKey not implemented")
@@ -107,6 +135,42 @@ func _TagService_CreateTag_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TagServiceServer).CreateTag(ctx, req.(*CreateTagRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TagService_DescribeTag_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DescribeTagRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TagServiceServer).DescribeTag(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/keyauth.tag.TagService/DescribeTag",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TagServiceServer).DescribeTag(ctx, req.(*DescribeTagRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TagService_DeleteTag_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteTagRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TagServiceServer).DeleteTag(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/keyauth.tag.TagService/DeleteTag",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TagServiceServer).DeleteTag(ctx, req.(*DeleteTagRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -154,6 +218,14 @@ var _TagService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateTag",
 			Handler:    _TagService_CreateTag_Handler,
+		},
+		{
+			MethodName: "DescribeTag",
+			Handler:    _TagService_DescribeTag_Handler,
+		},
+		{
+			MethodName: "DeleteTag",
+			Handler:    _TagService_DeleteTag_Handler,
 		},
 		{
 			MethodName: "QueryTagKey",
