@@ -88,7 +88,7 @@ func (a *GrpcAuther) auth(
 		return nil, err
 	}
 
-	return resp, err
+	return handler(ctx, req)
 }
 
 func (a *GrpcAuther) validateServiceCredential(ctx *gcontext.GrpcInCtx) error {
