@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"hash/fnv"
+	"strings"
 
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/types/ftime"
@@ -155,4 +156,16 @@ func (s *Set) UserRoles(account string) []string {
 	}
 
 	return rns
+}
+
+// GetScope todo
+func (s *Set) GetScope(account string) string {
+	scopes := []string{}
+	for i := range s.Items {
+		item := s.Items[i]
+		if item.Account == account {
+			scopes = append(scopes, item.Scope)
+		}
+	}
+	return strings.Join(scopes, " ")
 }

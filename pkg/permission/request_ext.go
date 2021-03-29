@@ -23,7 +23,7 @@ func (req *QueryPermissionRequest) Validate() error {
 }
 
 // NewCheckPermissionrequest todo
-func NewCheckPermissionrequest() *CheckPermissionRequest {
+func NewCheckPermissionRequest() *CheckPermissionRequest {
 	return &CheckPermissionRequest{
 		Page: &request.NewPageRequest(100, 1).PageRequest,
 	}

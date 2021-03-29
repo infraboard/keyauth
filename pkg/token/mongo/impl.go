@@ -18,6 +18,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/application"
 	"github.com/infraboard/keyauth/pkg/domain"
 	"github.com/infraboard/keyauth/pkg/endpoint"
+	"github.com/infraboard/keyauth/pkg/policy"
 	"github.com/infraboard/keyauth/pkg/session"
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/token/issuer"
@@ -41,6 +42,7 @@ type service struct {
 	app      application.UserServiceServer
 	user     user.UserServiceServer
 	domain   domain.DomainServiceServer
+	policy   policy.PolicyServiceServer
 	issuer   issuer.Issuer
 	endpoint endpoint.EndpointServiceServer
 	session  session.UserServiceServer
@@ -63,6 +65,11 @@ func (s *service) Config() error {
 		return errors.New("denpence domain service is nil")
 	}
 	s.domain = pkg.Domain
+
+	if pkg.Policy == nil {
+		return errors.New("denpence policy service is nil")
+	}
+	s.policy = pkg.Policy
 
 	if pkg.Endpoint == nil {
 		return errors.New("denpence endpoint service is nil")

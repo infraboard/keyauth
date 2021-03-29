@@ -104,13 +104,14 @@ func (s *service) ValidateToken(ctx context.Context, req *token.ValidateTokenReq
 		return nil, s.makeBlockExcption(tk.BlockType, tk.BlockMessage())
 	}
 
-	// 校验Token是否过期
+	// 校验Access Token是否过期
 	if req.AccessToken != "" {
 		if tk.CheckAccessIsExpired() {
 			return nil, exception.NewAccessTokenExpired("access_token: %s has expired", tk.AccessToken)
 		}
 	}
 
+	// 校验RefreshToken
 	if req.RefreshToken != "" {
 		if tk.CheckRefreshIsExpired() {
 			return nil, exception.NewRefreshTokenExpired("refresh_token: %s expoired", tk.RefreshToken)

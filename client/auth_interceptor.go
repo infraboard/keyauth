@@ -9,6 +9,7 @@ import (
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
 	httpb "github.com/infraboard/mcube/pb/http"
+	"github.com/rs/xid"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -26,8 +27,9 @@ type PathEntryHandleFunc func(path string) *httpb.Entry
 // NewGrpcKeyauthAuther todo
 func NewGrpcKeyauthAuther(hf PathEntryHandleFunc, c *Client) *GrpcAuther {
 	return &GrpcAuther{
-		hf: hf,
-		c:  c,
+		hf:       hf,
+		c:        c,
+		sessions: map[string]*token.Token{},
 	}
 }
 
@@ -38,6 +40,7 @@ type GrpcAuther struct {
 	c  *Client
 
 	serviceId string
+	sessions  map[string]*token.Token
 }
 
 // AuthUnaryServerInterceptor returns a new unary server interceptor for auth.
@@ -48,6 +51,14 @@ func (a *GrpcAuther) AuthUnaryServerInterceptor() grpc.UnaryServerInterceptor {
 // SetLogger todo
 func (a *GrpcAuther) SetLogger(l logger.Logger) {
 	a.l = l
+}
+
+func (a *GrpcAuther) GetToken(requestID string) *token.Token {
+	if v, ok := a.sessions[requestID]; ok {
+		return v
+	}
+
+	return nil
 }
 
 // Auth impl interface
@@ -84,11 +95,18 @@ func (a *GrpcAuther) auth(
 	}
 
 	// 校验用户权限是否合法
-	if err := a.validatePermission(rctx, info.FullMethod); err != nil {
+	tk, err := a.validatePermission(rctx, info.FullMethod)
+	if err != nil {
 		return nil, err
 	}
 
-	return handler(ctx, req)
+	// 保存会话
+	rid := xid.New().String()
+	rctx.SetRequestID(rid)
+	a.addSession(rid, tk)
+	defer a.delSession(rid)
+
+	return handler(rctx.Context(), req)
 }
 
 func (a *GrpcAuther) validateServiceCredential(ctx *gcontext.GrpcInCtx) error {
@@ -108,7 +126,7 @@ func (a *GrpcAuther) validateServiceCredential(ctx *gcontext.GrpcInCtx) error {
 	return nil
 }
 
-func (a *GrpcAuther) validatePermission(ctx *gcontext.GrpcInCtx, path string) error {
+func (a *GrpcAuther) validatePermission(ctx *gcontext.GrpcInCtx, path string) (*token.Token, error) {
 	var (
 		tk  *token.Token
 		err error
@@ -116,7 +134,7 @@ func (a *GrpcAuther) validatePermission(ctx *gcontext.GrpcInCtx, path string) er
 
 	entry := a.hf(path)
 	if entry == nil {
-		return grpc.Errorf(codes.Internal, "entry not found, check is registry")
+		return nil, grpc.Errorf(codes.Internal, "entry not found, check is registry")
 	}
 
 	outCtx := gcontext.NewGrpcOutCtx()
@@ -127,37 +145,37 @@ func (a *GrpcAuther) validatePermission(ctx *gcontext.GrpcInCtx, path string) er
 		accessToken := ctx.GetAccessToKen()
 		req := token.NewValidateTokenRequest()
 		if accessToken == "" {
-			return grpc.Errorf(codes.Unauthenticated, "access_token meta required")
+			return nil, grpc.Errorf(codes.Unauthenticated, "access_token meta required")
 		}
 		req.AccessToken = accessToken
 
 		tk, err = a.c.Token().ValidateToken(outCtx.Context(), req)
 		if err != nil {
-			return err
+			return nil, err
 		}
 	}
 
 	if entry.PermissionEnable && tk != nil {
 		// 如果是超级管理员不做权限校验, 直接放行
 		if tk.UserType.IsIn(types.UserType_SUPPER) {
-			return nil
+			return tk, nil
 		}
 
 		eid, err := a.endpointHashID(outCtx, entry.GrpcPath)
 		if err != nil {
-			return err
+			return nil, err
 		}
 
-		req := permission.NewCheckPermissionrequest()
+		req := permission.NewCheckPermissionRequest()
 		req.EndpointId = eid
 		req.NamespaceId = ctx.GetNamespace()
 		_, err = a.c.Permission().CheckPermission(outCtx.Context(), req)
 		if err != nil {
-			return exception.NewPermissionDeny("no permission, %s", err)
+			return nil, exception.NewPermissionDeny("no permission, %s", err)
 		}
 	}
 
-	return nil
+	return tk, nil
 }
 
 func (a *GrpcAuther) endpointHashID(ctx *gcontext.GrpcOutCtx, grpcPath string) (string, error) {
@@ -171,6 +189,14 @@ func (a *GrpcAuther) endpointHashID(ctx *gcontext.GrpcOutCtx, grpcPath string) (
 	}
 
 	return endpoint.GenHashID(a.serviceId, grpcPath), nil
+}
+
+func (a *GrpcAuther) addSession(requestID string, tk *token.Token) {
+	a.sessions[requestID] = tk
+}
+
+func (a GrpcAuther) delSession(requestID string) {
+	delete(a.sessions, requestID)
 }
 
 func (a *GrpcAuther) log() logger.Logger {
