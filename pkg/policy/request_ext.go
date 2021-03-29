@@ -41,6 +41,10 @@ func (req *QueryPolicyRequest) Validate() error {
 	return validate.Struct(req)
 }
 
+func (req *QueryPolicyRequest) CheckOwner(account string) bool {
+	return req.Account == account
+}
+
 // NewDescriptPolicyRequest new实例
 func NewDescriptPolicyRequest() *DescribePolicyRequest {
 	return &DescribePolicyRequest{}
