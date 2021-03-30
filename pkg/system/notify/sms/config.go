@@ -64,12 +64,12 @@ func (c *Config) Validate() error {
 // TenCentConfig todo
 // 接口和相关文档请参考https://console.cloud.tencent.com/api/explorer?Product=sms&Version=2019-07-11&Action=SendSms&SignVersion=
 type TenCentConfig struct {
-	Endpoint   string `json:"endpoint" env:"K_SMS_TENCENT_ENDPOINT"`
-	SecretID   string `json:"secret_id" validate:"required,lte=64" env:"K_SMS_TENCENT_SECRET_ID"`
-	SecretKey  string `json:"secret_key" validate:"required,lte=64" env:"K_SMS_TENCENT_SECRET_KEY"`
-	AppID      string `json:"app_id" validate:"required,lte=64" env:"K_SMS_TENCENT_APPID"`
-	TemplateID string `json:"template_id" validate:"required,lte=64" env:"K_SMS_TENCENT_TEMPLATE_ID"`
-	Sign       string `json:"sign" validate:"required,lte=128" env:"K_SMS_TENCENT_SIGN"`
+	Endpoint   string `bson:"endpoint" json:"endpoint" env:"K_SMS_TENCENT_ENDPOINT"`
+	SecretID   string `bson:"secret_id" json:"secret_id" validate:"required,lte=64" env:"K_SMS_TENCENT_SECRET_ID"`
+	SecretKey  string `bson:"secret_key" json:"secret_key" validate:"required,lte=64" env:"K_SMS_TENCENT_SECRET_KEY"`
+	AppID      string `bson:"app_id" json:"app_id" validate:"required,lte=64" env:"K_SMS_TENCENT_APPID"`
+	TemplateID string `bson:"template_id" json:"template_id" validate:"required,lte=64" env:"K_SMS_TENCENT_TEMPLATE_ID"`
+	Sign       string `bson:"sign" json:"sign" validate:"required,lte=128" env:"K_SMS_TENCENT_SIGN"`
 }
 
 // Validate todo

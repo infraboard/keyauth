@@ -69,10 +69,10 @@ func NewDefaultConfig() *Config {
 
 // Config todo
 type Config struct {
-	NotifyType    NotifyType `json:"notify_type"`
-	ExpireMinutes uint       `json:"expire_minutes" validate:"required,gte=10,lte=600"` // 验证码默认过期时间
-	MailTemplate  string     `json:"mail_template"`                                     // 邮件通知时的模板
-	SmsTemplateID string     `json:"sms_template_id"`                                   // 短信通知时的云商模板ID
+	NotifyType    NotifyType `bson:"notify_type" json:"notify_type"`
+	ExpireMinutes uint       `bson:"expire_minutes" json:"expire_minutes" validate:"required,gte=10,lte=600"` // 验证码默认过期时间
+	MailTemplate  string     `bson:"mail_template" json:"mail_template"`                                      // 邮件通知时的模板
+	SmsTemplateID string     `bson:"sms_template_id" json:"sms_template_id"`                                  // 短信通知时的云商模板ID
 }
 
 // RenderMailTemplate todo
