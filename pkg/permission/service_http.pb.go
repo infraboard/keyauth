@@ -18,6 +18,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "permission",
 				AuthEnable:       true,
 				PermissionEnable: false,
+				AuditLog:         false,
 				Labels:           map[string]string{"allow": "perm_admin"},
 			},
 			{
@@ -28,6 +29,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "role",
 				AuthEnable:       true,
 				PermissionEnable: false,
+				AuditLog:         false,
 				Labels:           map[string]string{"allow": "perm_admin"},
 			},
 			{
@@ -38,6 +40,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "permission",
 				AuthEnable:       true,
 				PermissionEnable: false,
+				AuditLog:         false,
 				Labels:           map[string]string{"allow": "*"},
 			},
 		},

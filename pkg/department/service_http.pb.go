@@ -18,6 +18,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "department",
 				AuthEnable:       true,
 				PermissionEnable: false,
+				AuditLog:         false,
 				Labels:           map[string]string{"allow": "*"},
 			},
 			{
@@ -28,6 +29,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "department",
 				AuthEnable:       true,
 				PermissionEnable: false,
+				AuditLog:         false,
 				Labels:           map[string]string{"allow": "*"},
 			},
 			{
@@ -38,6 +40,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "department",
 				AuthEnable:       true,
 				PermissionEnable: false,
+				AuditLog:         false,
 				Labels:           map[string]string{"allow": "org_admin"},
 			},
 			{
@@ -48,6 +51,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "department",
 				AuthEnable:       true,
 				PermissionEnable: false,
+				AuditLog:         false,
 				Labels:           map[string]string{"allow": "org_admin"},
 			},
 			{
@@ -58,6 +62,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "department",
 				AuthEnable:       true,
 				PermissionEnable: false,
+				AuditLog:         false,
 				Labels:           map[string]string{"allow": "org_admin"},
 			},
 			{
@@ -68,6 +73,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "department_apply",
 				AuthEnable:       true,
 				PermissionEnable: false,
+				AuditLog:         false,
 				Labels:           map[string]string{"allow": "*"},
 			},
 			{
@@ -78,6 +84,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "department_apply",
 				AuthEnable:       true,
 				PermissionEnable: false,
+				AuditLog:         false,
 				Labels:           map[string]string{"allow": "*"},
 			},
 			{
@@ -88,6 +95,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "department_apply",
 				AuthEnable:       true,
 				PermissionEnable: false,
+				AuditLog:         false,
 				Labels:           map[string]string{"allow": "*"},
 			},
 			{
@@ -98,6 +106,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "department_apply",
 				AuthEnable:       true,
 				PermissionEnable: false,
+				AuditLog:         false,
 				Labels:           map[string]string{"allow": "*"},
 			},
 		},

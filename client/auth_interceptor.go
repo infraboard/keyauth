@@ -6,7 +6,6 @@ import (
 
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/grpc/gcontext"
-	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
 	httpb "github.com/infraboard/mcube/pb/http"
@@ -19,7 +18,6 @@ import (
 	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/micro"
 	"github.com/infraboard/keyauth/pkg/permission"
-	"github.com/infraboard/keyauth/pkg/policy"
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user/types"
 )
@@ -168,6 +166,7 @@ func (a *GrpcAuther) validatePermission(ctx *gcontext.GrpcInCtx, path string) (*
 			return nil, err
 		}
 
+		// 检测是由那条权限允许的
 		req := permission.NewCheckPermissionRequest()
 		req.EndpointId = eid
 		req.NamespaceId = ctx.GetNamespace()
@@ -175,16 +174,7 @@ func (a *GrpcAuther) validatePermission(ctx *gcontext.GrpcInCtx, path string) (*
 		if err != nil {
 			return nil, exception.NewPermissionDeny("no permission, %s", err)
 		}
-
-		queryP := policy.NewQueryPolicyRequest(request.NewPageRequest(500, 1))
-		queryP.Account = tk.Account
-		queryP.NamespaceId = ctx.GetNamespace()
-		queryP.RoleId = perm.RoleId
-		ps, err := a.c.Policy().QueryPolicy(outCtx.Context(), queryP)
-		if err != nil {
-			return nil, err
-		}
-		tk.Scope = ps.GetScope(tk.Account)
+		tk.Scope = perm.Scope
 	}
 
 	return tk, nil

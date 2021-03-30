@@ -47,7 +47,11 @@ message Role {
     // 读权限
     repeated Permission permissions = 9[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"permissions,omitempty"'}
-        ];  
+        ]; 
+    // 范围, 角色范围限制, 由策略引擎动态补充
+    string scope = 11 [
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"scope"'}
+        ];
 }
 
 // Permission 权限
@@ -92,6 +96,10 @@ message Permission {
     repeated string label_values = 10[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"label_values" json:"label_values"'}
         ]; 
+    // 范围, 角色范围限制, 由策略引擎动态补充
+    string scope = 11 [
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"scope"'}
+        ];
 }
 
 message Set {

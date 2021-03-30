@@ -18,6 +18,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "verify_code",
 				AuthEnable:       false,
 				PermissionEnable: false,
+				AuditLog:         false,
 				Labels:           map[string]string{},
 			},
 			{
@@ -28,6 +29,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "verify_code",
 				AuthEnable:       false,
 				PermissionEnable: false,
+				AuditLog:         false,
 				Labels:           map[string]string{},
 			},
 		},

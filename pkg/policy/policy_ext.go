@@ -136,6 +136,8 @@ func (s *Set) GetRoles(ctx context.Context, r role.RoleServiceServer) (*role.Set
 		if err != nil {
 			return nil, err
 		}
+		// 继承policy上的范围限制
+		ins.Scope = s.Items[i].Scope
 		set.Add(ins)
 	}
 	return set, nil

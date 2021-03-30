@@ -18,6 +18,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "domain",
 				AuthEnable:       true,
 				PermissionEnable: true,
+				AuditLog:         false,
 				Labels:           map[string]string{"action": "create"},
 			},
 			{
@@ -28,6 +29,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "domain",
 				AuthEnable:       true,
 				PermissionEnable: true,
+				AuditLog:         false,
 				Labels:           map[string]string{"action": "update"},
 			},
 			{
@@ -38,6 +40,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "domain",
 				AuthEnable:       true,
 				PermissionEnable: true,
+				AuditLog:         false,
 				Labels:           map[string]string{"action": "get"},
 			},
 			{
@@ -48,6 +51,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "domain",
 				AuthEnable:       true,
 				PermissionEnable: true,
+				AuditLog:         false,
 				Labels:           map[string]string{"action": "list"},
 			},
 			{
@@ -58,6 +62,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "domain",
 				AuthEnable:       true,
 				PermissionEnable: true,
+				AuditLog:         false,
 				Labels:           map[string]string{"action": "delete"},
 			},
 			{
@@ -68,6 +73,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "domain",
 				AuthEnable:       true,
 				PermissionEnable: true,
+				AuditLog:         false,
 				Labels:           map[string]string{"action": "update"},
 			},
 		},

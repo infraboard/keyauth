@@ -161,6 +161,8 @@ func (s *Set) HasPermission(ep *endpoint.Endpoint) (*Permission, bool, error) {
 		if err != nil {
 			return nil, false, err
 		}
+		// 补充权限访问范围
+		p.Scope = s.Items[i].Scope
 		if ok {
 			return p, ok, nil
 		}

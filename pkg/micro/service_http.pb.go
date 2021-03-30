@@ -18,6 +18,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "endpoint",
 				AuthEnable:       false,
 				PermissionEnable: false,
+				AuditLog:         false,
 				Labels:           map[string]string{},
 			},
 			{
@@ -28,6 +29,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "service",
 				AuthEnable:       true,
 				PermissionEnable: false,
+				AuditLog:         false,
 				Labels:           map[string]string{},
 			},
 			{
@@ -38,6 +40,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "service",
 				AuthEnable:       true,
 				PermissionEnable: false,
+				AuditLog:         false,
 				Labels:           map[string]string{},
 			},
 			{
@@ -48,6 +51,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "service",
 				AuthEnable:       true,
 				PermissionEnable: false,
+				AuditLog:         false,
 				Labels:           map[string]string{},
 			},
 			{
@@ -58,6 +62,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "service",
 				AuthEnable:       true,
 				PermissionEnable: false,
+				AuditLog:         false,
 				Labels:           map[string]string{},
 			},
 			{
@@ -68,6 +73,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "service",
 				AuthEnable:       true,
 				PermissionEnable: false,
+				AuditLog:         false,
 				Labels:           map[string]string{},
 			},
 		},
