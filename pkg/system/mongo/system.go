@@ -43,12 +43,14 @@ func (s *service) UpdateVerifyCode(vfconf *verifycode.Config) error {
 	switch vfconf.NotifyType {
 	case verifycode.NotifyType_MAIL:
 		if err := conf.Email.Validate(); err != nil {
-			return exception.NewBadRequest("系统邮件配置为设置, 请先配置, 详情: %s", err)
+			s.log.Infof("email setting validate error, %s", err)
+			return exception.NewBadRequest("系统邮件未配置, 或配置有误", err)
 		}
 	// 校验配置的通知方式是否已经配置
 	case verifycode.NotifyType_SMS:
 		if err := conf.SMS.Validate(); err != nil {
-			return exception.NewBadRequest("系统短信配置为设置, 请先配置, 详情: %s", err)
+			s.log.Infof("sms setting validate error, %s", err)
+			return exception.NewBadRequest("系统短信未配置, 或配置有误", err)
 		}
 	}
 
