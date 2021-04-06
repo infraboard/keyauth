@@ -8,6 +8,7 @@ import (
 	"github.com/infraboard/mcube/exception"
 	"go.mongodb.org/mongo-driver/mongo"
 
+	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/session"
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/verifycode"
@@ -34,11 +35,13 @@ func (s *service) IssueToken(ctx context.Context, req *token.IssueTokenRequest) 
 	}
 
 	// 登录会话
-	sess, err := s.session.Login(ctx, tk)
-	if err != nil {
-		return nil, err
+	if req.IsLoginRequest() {
+		sess, err := s.session.Login(ctx, tk)
+		if err != nil {
+			return nil, err
+		}
+		tk.SessionId = sess.Id
 	}
-	tk.SessionId = sess.Id
 
 	// 保存入库
 	if err := s.saveToken(tk); err != nil {
@@ -168,6 +171,12 @@ func (s *service) DescribeToken(ctx context.Context, req *token.DescribeTokenReq
 }
 
 func (s *service) QueryToken(ctx context.Context, req *token.QueryTokenRequest) (*token.Set, error) {
+	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	req.Account = tk.Account
+
 	query := newQueryRequest(req)
 	resp, err := s.col.Find(context.TODO(), query.FindFilter(), query.FindOptions())
 

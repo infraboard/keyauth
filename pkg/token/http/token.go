@@ -4,7 +4,6 @@ import (
 	"context"
 	"net/http"
 
-	httpCtx "github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 	"google.golang.org/grpc"
@@ -103,17 +102,23 @@ func (h *handler) RevolkToken(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-// QueryApplicationToken 获取应用访问凭证
-func (h *handler) QueryApplicationToken(w http.ResponseWriter, r *http.Request) {
-	rctx := httpCtx.GetContext(r)
+// QueryToken 获取应用访问凭证
+func (h *handler) QueryToken(w http.ResponseWriter, r *http.Request) {
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
 
-	page := request.NewPageRequestFromHTTP(r)
-	req := token.NewQueryTokenRequest(&page.PageRequest)
-	req.ApplicationId = rctx.PS.ByName("id")
+	req, err := token.NewQueryTokenRequestFromHTTP(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
 
 	var header, trailer metadata.MD
 	tkSet, err := h.service.QueryToken(
-		context.Background(),
+		ctx.Context(),
 		req,
 		grpc.Header(&header),
 		grpc.Trailer(&trailer),

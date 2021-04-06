@@ -59,9 +59,24 @@ func NewRevolkTokenRequest(clientID, clientSecret string) *RevolkTokenRequest {
 	}
 }
 
+// NewQueryDepartmentRequestFromHTTP 列表查询请求
+func NewQueryTokenRequestFromHTTP(r *http.Request) (*QueryTokenRequest, error) {
+	req := NewQueryTokenRequest(&request.NewPageRequestFromHTTP(r).PageRequest)
+
+	qs := r.URL.Query()
+	gt, err := ParseGrantTypeFromString(qs.Get("grant_type"))
+	if err != nil {
+		return nil, err
+	}
+	req.GrantType = gt
+	return req, err
+}
+
 // NewQueryTokenRequest 请求实例
 func NewQueryTokenRequest(page *page.PageRequest) *QueryTokenRequest {
-	return &QueryTokenRequest{}
+	return &QueryTokenRequest{
+		Page: page,
+	}
 }
 
 // Validate 校验参数
@@ -138,6 +153,14 @@ func (m *IssueTokenRequest) WithRemoteIPFromHTTP(r *http.Request) {
 // WithRemoteIP todo
 func (m *IssueTokenRequest) WithRemoteIP(ip string) {
 	m.RemoteIp = ip
+}
+
+func (m *IssueTokenRequest) IsLoginRequest() bool {
+	if m.GrantType.Equal(GrantType_ACCESS) {
+		return false
+	}
+
+	return true
 }
 
 // GetDomainNameFromAccount todo

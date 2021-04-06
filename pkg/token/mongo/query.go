@@ -79,5 +79,8 @@ func (r *queryRequest) FindFilter() bson.M {
 	if r.GrantType != token.GrantType_NULL {
 		filter["grant_type"] = r.GrantType
 	}
+	if r.Account != "" {
+		filter["account"] = r.Account
+	}
 	return filter
 }

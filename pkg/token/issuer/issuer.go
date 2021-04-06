@@ -197,7 +197,9 @@ func (i *issuer) IssueToken(ctx context.Context, req *token.IssueTokenRequest) (
 		if err != nil {
 			return nil, exception.NewUnauthorized(err.Error())
 		}
-		u, err := i.getUser(ctx, tk.Account)
+		inctx := pkg.NewGrpcInCtx()
+		inctx.SetAccessToken(req.AccessToken)
+		u, err := i.getUser(inctx.Context(), tk.Account)
 		if err != nil {
 			return nil, err
 		}
