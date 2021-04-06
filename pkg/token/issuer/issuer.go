@@ -203,6 +203,9 @@ func (i *issuer) IssueToken(ctx context.Context, req *token.IssueTokenRequest) (
 		}
 		newTK := i.issueUserToken(app, u, token.GrantType_ACCESS)
 		newTK.Domain = tk.Domain
+		newTK.AccessExpiredAt = req.AccessExpiredAt
+		newTK.RefreshExpiredAt = 4 * req.AccessExpiredAt
+		newTK.Description = req.Description
 		return newTK, nil
 	case token.GrantType_LDAP:
 		userName, dn, err := i.genBaseDN(req.Username)

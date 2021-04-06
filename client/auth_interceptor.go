@@ -166,7 +166,7 @@ func (a *GrpcAuther) validatePermission(ctx *gcontext.GrpcInCtx, path string) (*
 			return nil, err
 		}
 
-		// 检测是由那条权限允许的
+		// 权限检测
 		req := permission.NewCheckPermissionRequest()
 		req.EndpointId = eid
 		req.NamespaceId = ctx.GetNamespace()

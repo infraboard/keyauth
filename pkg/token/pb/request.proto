@@ -30,6 +30,8 @@ message IssueTokenRequest {
     string state = 9;
     GrantType grant_type = 10;
     TokenType type = 11;
+    int64 access_expired_at = 15;
+    string description = 16;
     string scope = 12;
     string user_agent = 13;
     string remote_ip = 14;
