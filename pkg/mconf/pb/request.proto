@@ -4,7 +4,6 @@ package keyauth.mconf;
 option go_package = "github.com/infraboard/keyauth/pkg/mconf";
 
 import "pkg/mconf/pb/enum.proto";
-import "pkg/mconf/pb/conf.proto";
 import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
 import "github.com/infraboard/mcube/pb/page/page.proto";
 
@@ -22,6 +21,26 @@ message CreateGroupRequest {
     string description = 3[
         (google.protobuf.field_tag) = {struct_tag: 'json:"description,omitempty"'}
         ];                  
+}
+
+// ItemRequest 健值项
+message ItemRequest {
+     // 建的名称
+    string key = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"_id" json:"key"'}
+        ];
+    // 关联的组
+    string group = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"group" json:"group"'}
+        ];
+    // 值对应的值
+    string value = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"value" json:"value"'}
+        ];
+    // 描述信息
+    string description = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"description" json:"description,omitempty"'}
+        ];
 }
 
 // QueryGroupRequest 查询组列表
@@ -58,7 +77,7 @@ message AddItemToGroupRequest {
     string group_name = 1[
         (google.protobuf.field_tag) = {struct_tag: 'json:"group_name"'}
         ];
-    repeated Item items = 2[
+    repeated ItemRequest items = 2[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"items" json:"items"'}
         ];
 }
@@ -68,7 +87,7 @@ message RemoveItemFromGroupRequest {
     string group_name = 1[
         (google.protobuf.field_tag) = {struct_tag: 'json:"group_name"'}
         ];
-    repeated Item items = 2[
+    repeated string items = 2[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"items" json:"items"'}
         ];
 }

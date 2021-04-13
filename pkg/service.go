@@ -13,6 +13,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/geoip"
 	"github.com/infraboard/keyauth/pkg/ip2region"
+	"github.com/infraboard/keyauth/pkg/mconf"
 	"github.com/infraboard/keyauth/pkg/micro"
 	"github.com/infraboard/keyauth/pkg/namespace"
 	"github.com/infraboard/keyauth/pkg/permission"
@@ -41,6 +42,8 @@ var (
 	Token token.TokenServiceServer
 	// Micro todo
 	Micro micro.MicroServiceServer
+	// Mconf 微服务配置
+	Mconf mconf.MicroConfigServiceServer
 	// Role 角色服务
 	Role role.RoleServiceServer
 	// Endpoint 端点服务
@@ -90,6 +93,7 @@ func InitV1GRPCAPI(server *grpc.Server) {
 	application.RegisterUserServiceServer(server, ApplicationUser)
 	token.RegisterTokenServiceServer(server, Token)
 	micro.RegisterMicroServiceServer(server, Micro)
+	mconf.RegisterMicroConfigServiceServer(server, Mconf)
 	role.RegisterRoleServiceServer(server, Role)
 	endpoint.RegisterEndpointServiceServer(server, Endpoint)
 	policy.RegisterPolicyServiceServer(server, Policy)
@@ -174,6 +178,12 @@ func RegistryService(name string, svr Service) {
 			registryError(name)
 		}
 		Micro = value
+		addService(name, svr)
+	case mconf.MicroConfigServiceServer:
+		if Mconf != nil {
+			registryError(name)
+		}
+		Mconf = value
 		addService(name, svr)
 	case role.RoleServiceServer:
 		if Role != nil {
