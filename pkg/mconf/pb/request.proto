@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+package keyauth.mconf;
+option go_package = "github.com/infraboard/keyauth/pkg/mconf";
+
+import "pkg/mconf/pb/enum.proto";
+import "pkg/mconf/pb/conf.proto";
+import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
+import "github.com/infraboard/mcube/pb/page/page.proto";
+
+// CreateGroupRequest 服务组请求
+message CreateGroupRequest {
+    // 组类型
+    Type type = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"type"'}
+        ];
+    // 名称
+    string name = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"name" validate:"required,lte=200"'}
+        ];
+    // 描述信息
+    string description = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"description,omitempty"'}
+        ];                  
+}
+
+// QueryGroupRequest 查询组列表
+message QueryGroupRequest {
+    page.PageRequest page = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"page"'}
+        ];
+    // 组类型
+    Type type = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"type"'}
+        ];
+}
+
+// DeleteGroupRequest todo
+message DeleteGroupRequest {
+    string name = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"name"'}
+        ];
+}
+
+// QueryItemRequest 查询值列表
+message QueryItemRequest {
+    page.PageRequest page = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"page"'}
+        ];
+    // 组名称
+    string group_name = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"group_name" validate:"required,lte=200"'}
+        ];
+}
+
+// AddItemToGroupRequest todo
+message AddItemToGroupRequest {
+    string group_name = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"group_name"'}
+        ];
+    repeated Item items = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"items" json:"items"'}
+        ];
+}
+
+// RemoveItemFromGroupRequest todo
+message RemoveItemFromGroupRequest {
+    string group_name = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"group_name"'}
+        ];
+    repeated Item items = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"items" json:"items"'}
+        ];
+}

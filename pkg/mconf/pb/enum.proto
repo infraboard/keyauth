@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package keyauth.mconf;
+option go_package = "github.com/infraboard/keyauth/pkg/mconf";
+
+enum Type {
+    // 全局配置, 所有服务可以读取
+    GLOBAL = 0;
+    // 组内配置, 组里面的服务可以读取
+	PRIVATE = 1;
+}

@@ -1,0 +1,89 @@
+syntax = "proto3";
+
+package keyauth.mconf;
+option go_package = "github.com/infraboard/keyauth/pkg/mconf";
+
+import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
+import "pkg/mconf/pb/enum.proto";
+
+// Micro is service provider
+message Group {
+    // 组名称
+   string name = 1[
+       (google.protobuf.field_tag) = {struct_tag: 'bson:"_id" json:"name"'}
+       ];
+    // 组类型
+    Type type = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"type" json:"type"'}
+        ];
+    // 创建人
+    string creater = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"creater" json:"creater"'}
+        ];
+    // 创建的时间
+    int64 create_at = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"create_at" json:"create_at"'}
+        ];
+    // 描述信息
+    string description = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"description" json:"description"'}
+        ];
+}
+
+// Item 健值项
+message Item {
+    // 项ID
+    string id = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"_id" json:"id"'}
+        ];
+     // 建的名称
+    string key = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"_id" json:"key"'}
+        ];
+    // 关联的组
+    string group = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"group" json:"group"'}
+        ];
+    // 创建人
+    string creater = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"creater" json:"creater"'}
+        ];
+    // 创建的时间
+    int64 create_at = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"create_at" json:"create_at"'}
+        ];
+    // 创建的时间
+    int64 updater = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"updater" json:"updater,omitempty"'}
+        ];
+    // 更新时间
+    int64 update_at = 7[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"update_at" json:"update_at,omitempty"'}
+        ];
+    // 值对应的值
+    string value = 8[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"value" json:"value"'}
+        ];
+    // 描述信息
+    string description = 9[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"description" json:"description,omitempty"'}
+        ];
+}
+
+message ItemSet {
+    int64 total = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"total" json:"total"'}
+        ];
+    repeated Item items = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"items" json:"items"'}
+        ];
+}
+
+message GroupSet {
+    int64 total = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"total" json:"total"'}
+        ];
+    repeated Group items = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"items" json:"items"'}
+        ];
+}
