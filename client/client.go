@@ -9,6 +9,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/department"
 	"github.com/infraboard/keyauth/pkg/domain"
 	"github.com/infraboard/keyauth/pkg/endpoint"
+	"github.com/infraboard/keyauth/pkg/mconf"
 	"github.com/infraboard/keyauth/pkg/micro"
 	"github.com/infraboard/keyauth/pkg/namespace"
 	"github.com/infraboard/keyauth/pkg/permission"
@@ -92,6 +93,11 @@ func (c *Client) Endpoint() endpoint.EndpointServiceClient {
 // Micro todo
 func (c *Client) Micro() micro.MicroServiceClient {
 	return micro.NewMicroServiceClient(c.conn)
+}
+
+// Micro todo
+func (c *Client) Mconf() mconf.MicroConfigServiceClient {
+	return mconf.NewMicroConfigServiceClient(c.conn)
 }
 
 // Namespace todo
