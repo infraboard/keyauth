@@ -40,6 +40,6 @@ func NewDescribeGroupRequestWithName(name string) *DescribeGroupRequest {
 	return &DescribeGroupRequest{Name: name}
 }
 
-func NewDeleteMicroRequestWithName(name string) *DeleteGroupRequest {
+func NewDeleteGroupRequestWithName(name string) *DeleteGroupRequest {
 	return &DeleteGroupRequest{Name: name}
 }
