@@ -3,6 +3,7 @@ package mconf
 import (
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/types/ftime"
+	"github.com/rs/xid"
 )
 
 // New 创建服务
@@ -31,4 +32,45 @@ func NewGroupSet() *GroupSet {
 // Add 添加
 func (s *GroupSet) Add(e *Group) {
 	s.Items = append(s.Items, e)
+}
+
+func NewItem(creater string, req *ItemRequest) *Item {
+	return &Item{
+		Id:          xid.New().String(),
+		Key:         req.Key,
+		Group:       req.Group,
+		Creater:     creater,
+		CreateAt:    ftime.Now().Timestamp(),
+		Value:       req.Value,
+		Description: req.Description,
+	}
+}
+
+func NewGroupItemSet(creater string, req *AddItemToGroupRequest) *ItemSet {
+	set := NewItemSet()
+	for i := range req.Items {
+		item := NewItem(creater, req.Items[i])
+		set.Add(item)
+	}
+	return set
+}
+
+// NewMicroSet 实例化
+func NewItemSet() *ItemSet {
+	return &ItemSet{
+		Items: []*Item{},
+	}
+}
+
+// Add 添加
+func (s *ItemSet) Add(e *Item) {
+	s.Items = append(s.Items, e)
+}
+
+func (s *ItemSet) Docs() []interface{} {
+	docs := make([]interface{}, len(s.Items))
+	for i := range s.Items {
+		docs = append(docs, s.Items[i])
+	}
+	return docs
 }

@@ -103,9 +103,19 @@ func (s *service) QueryItem(context.Context, *mconf.QueryItemRequest) (
 	return nil, nil
 }
 
-func (s *service) AddItemToGroup(context.Context, *mconf.AddItemToGroupRequest) (
+func (s *service) AddItemToGroup(ctx context.Context, req *mconf.AddItemToGroupRequest) (
 	*mconf.ItemSet, error) {
-	return nil, nil
+	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	set := mconf.NewGroupItemSet(tk.Account, req)
+
+	if _, err := s.group.InsertMany(context.TODO(), set.Docs()); err != nil {
+		return nil, exception.NewInternalServerError("inserted group document error, %s", err)
+	}
+	return set, nil
 }
 
 func (s *service) RemoveItemFromGroup(context.Context, *mconf.RemoveItemFromGroupRequest) (
