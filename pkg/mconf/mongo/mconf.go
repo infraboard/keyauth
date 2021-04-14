@@ -54,7 +54,7 @@ func (s *service) QueryGroup(ctx context.Context, req *mconf.QueryGroupRequest) 
 		return nil, exception.NewInternalServerError("get group count error, error is %s", err)
 	}
 	set.Total = count
-	return nil, nil
+	return set, nil
 }
 
 func (s *service) DeleteGroup(context.Context, *mconf.DeleteGroupRequest) (
