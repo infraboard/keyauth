@@ -27,3 +27,19 @@ func NewCreateGroupRequest() *CreateGroupRequest {
 func (req *CreateGroupRequest) Validate() error {
 	return validate.Struct(req)
 }
+
+func (req *DescribeGroupRequest) Validate() error {
+	return validate.Struct(req)
+}
+
+func (req *DeleteGroupRequest) Validate() error {
+	return validate.Struct(req)
+}
+
+func NewDescribeGroupRequestWithName(name string) *DescribeGroupRequest {
+	return &DescribeGroupRequest{Name: name}
+}
+
+func NewDeleteMicroRequestWithName(name string) *DeleteGroupRequest {
+	return &DeleteGroupRequest{Name: name}
+}

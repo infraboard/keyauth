@@ -5,6 +5,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/infraboard/keyauth/pkg/mconf"
+	"github.com/infraboard/mcube/exception"
 )
 
 func newGroupPaggingQuery(req *mconf.QueryGroupRequest) *queryGroupRequest {
@@ -30,6 +31,28 @@ func (r *queryGroupRequest) FindOptions() *options.FindOptions {
 
 func (r *queryGroupRequest) FindFilter() bson.M {
 	filter := bson.M{}
+
+	return filter
+}
+
+func newDescribeGroupQuery(req *mconf.DescribeGroupRequest) (*describeGroupRequest, error) {
+	if err := req.Validate(); err != nil {
+		return nil, exception.NewBadRequest(err.Error())
+	}
+
+	return &describeGroupRequest{req}, nil
+}
+
+type describeGroupRequest struct {
+	*mconf.DescribeGroupRequest
+}
+
+func (r *describeGroupRequest) FindFilter() bson.M {
+	filter := bson.M{}
+
+	if r.Name != "" {
+		filter["_id"] = r.Name
+	}
 
 	return filter
 }

@@ -3,6 +3,7 @@ package http
 import (
 	"net/http"
 
+	"github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 	"google.golang.org/grpc"
@@ -64,4 +65,31 @@ func (h *handler) CreateGroup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, d)
+}
+
+// DestroyService 销毁服务
+func (h *handler) DestroyGroup(w http.ResponseWriter, r *http.Request) {
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	rctx := context.GetContext(r)
+	req := mconf.NewDeleteGroupRequestWithName(rctx.PS.ByName("name"))
+
+	var header, trailer metadata.MD
+	_, err = h.service.DeleteGroup(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
+	if err != nil {
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		return
+	}
+
+	response.Success(w, "delete ok")
+	return
 }

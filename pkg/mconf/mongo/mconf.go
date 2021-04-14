@@ -6,6 +6,8 @@ import (
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/mconf"
 	"github.com/infraboard/mcube/exception"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func (s *service) CreateGroup(ctx context.Context, req *mconf.CreateGroupRequest) (
@@ -57,9 +59,43 @@ func (s *service) QueryGroup(ctx context.Context, req *mconf.QueryGroupRequest) 
 	return set, nil
 }
 
-func (s *service) DeleteGroup(context.Context, *mconf.DeleteGroupRequest) (
+func (s *service) DescribeGroup(ctx context.Context, req *mconf.DescribeGroupRequest) (
 	*mconf.Group, error) {
-	return nil, nil
+	r, err := newDescribeGroupQuery(req)
+	if err != nil {
+		return nil, err
+	}
+
+	ins := new(mconf.Group)
+	if err := s.group.FindOne(context.TODO(), r.FindFilter()).Decode(ins); err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, exception.NewNotFound("group %s not found", req)
+		}
+
+		return nil, exception.NewInternalServerError("find group %s error, %s", req, err)
+	}
+	return ins, nil
+}
+
+func (s *service) DeleteGroup(ctx context.Context, req *mconf.DeleteGroupRequest) (
+	*mconf.Group, error) {
+	if err := req.Validate(); err != nil {
+		return nil, exception.NewBadRequest("validate delete group error, %s", err)
+	}
+
+	descReq := mconf.NewDescribeGroupRequestWithName(req.Name)
+	ins, err := s.DescribeGroup(ctx, descReq)
+	if err != nil {
+		return nil, err
+	}
+
+	// 清除服务实体
+	_, err = s.group.DeleteOne(context.TODO(), bson.M{"_id": req.Name})
+	if err != nil {
+		return nil, exception.NewInternalServerError("delete group(%s) error, %s", req.Name, err)
+	}
+
+	return ins, nil
 }
 
 func (s *service) QueryItem(context.Context, *mconf.QueryItemRequest) (

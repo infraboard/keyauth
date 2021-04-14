@@ -54,6 +54,13 @@ message QueryGroupRequest {
         ];
 }
 
+// DescribeGroupRequest todo
+message DescribeGroupRequest {
+    string name = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"name"'}
+        ];
+}
+
 // DeleteGroupRequest todo
 message DeleteGroupRequest {
     string name = 1[
