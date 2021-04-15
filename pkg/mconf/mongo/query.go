@@ -56,3 +56,30 @@ func (r *describeGroupRequest) FindFilter() bson.M {
 
 	return filter
 }
+
+func newItemPaggingQuery(req *mconf.QueryItemRequest) *queryItemRequest {
+	return &queryItemRequest{req}
+}
+
+type queryItemRequest struct {
+	*mconf.QueryItemRequest
+}
+
+func (r *queryItemRequest) FindOptions() *options.FindOptions {
+	pageSize := int64(r.Page.PageSize)
+	skip := int64(r.Page.PageSize) * int64(r.Page.PageNumber-1)
+
+	opt := &options.FindOptions{
+		Sort:  bson.D{bson.E{Key: "create_at", Value: -1}},
+		Limit: &pageSize,
+		Skip:  &skip,
+	}
+
+	return opt
+}
+
+func (r *queryItemRequest) FindFilter() bson.M {
+	filter := bson.M{}
+
+	return filter
+}

@@ -43,3 +43,15 @@ func NewDescribeGroupRequestWithName(name string) *DescribeGroupRequest {
 func NewDeleteGroupRequestWithName(name string) *DeleteGroupRequest {
 	return &DeleteGroupRequest{Name: name}
 }
+
+// NewQueryItemRequest 列表查询请求
+func NewQueryItemRequest(pageReq *request.PageRequest) *QueryItemRequest {
+	return &QueryItemRequest{
+		Page: &pageReq.PageRequest,
+	}
+}
+
+// NewAddItemToGroupRequest todo
+func NewAddItemToGroupRequest() *AddItemToGroupRequest {
+	return &AddItemToGroupRequest{}
+}

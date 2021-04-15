@@ -3,11 +3,12 @@ package mongo
 import (
 	"context"
 
-	"github.com/infraboard/keyauth/pkg"
-	"github.com/infraboard/keyauth/pkg/mconf"
 	"github.com/infraboard/mcube/exception"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+
+	"github.com/infraboard/keyauth/pkg"
+	"github.com/infraboard/keyauth/pkg/mconf"
 )
 
 func (s *service) CreateGroup(ctx context.Context, req *mconf.CreateGroupRequest) (
@@ -98,9 +99,33 @@ func (s *service) DeleteGroup(ctx context.Context, req *mconf.DeleteGroupRequest
 	return ins, nil
 }
 
-func (s *service) QueryItem(context.Context, *mconf.QueryItemRequest) (
+func (s *service) QueryItem(ctx context.Context, req *mconf.QueryItemRequest) (
 	*mconf.ItemSet, error) {
-	return nil, nil
+	r := newItemPaggingQuery(req)
+	resp, err := s.group.Find(context.TODO(), r.FindFilter(), r.FindOptions())
+
+	if err != nil {
+		return nil, exception.NewInternalServerError("find group error, error is %s", err)
+	}
+
+	set := mconf.NewItemSet()
+	// 循环
+	for resp.Next(context.TODO()) {
+		ins := new(mconf.Item)
+		if err := resp.Decode(ins); err != nil {
+			return nil, exception.NewInternalServerError("decode group error, error is %s", err)
+		}
+
+		set.Add(ins)
+	}
+
+	// count
+	count, err := s.group.CountDocuments(context.TODO(), r.FindFilter())
+	if err != nil {
+		return nil, exception.NewInternalServerError("get group count error, error is %s", err)
+	}
+	set.Total = count
+	return set, nil
 }
 
 func (s *service) AddItemToGroup(ctx context.Context, req *mconf.AddItemToGroupRequest) (
@@ -111,7 +136,6 @@ func (s *service) AddItemToGroup(ctx context.Context, req *mconf.AddItemToGroupR
 	}
 
 	set := mconf.NewGroupItemSet(tk.Account, req)
-
 	if _, err := s.group.InsertMany(context.TODO(), set.Docs()); err != nil {
 		return nil, exception.NewInternalServerError("inserted group document error, %s", err)
 	}
