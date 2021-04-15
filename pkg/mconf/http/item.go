@@ -3,6 +3,7 @@ package http
 import (
 	"net/http"
 
+	"github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 	"google.golang.org/grpc"
@@ -15,6 +16,9 @@ import (
 func (h *handler) QueryItem(w http.ResponseWriter, r *http.Request) {
 	page := request.NewPageRequestFromHTTP(r)
 	req := mconf.NewQueryItemRequest(page)
+
+	rctx := context.GetContext(r)
+	req.GroupName = rctx.PS.ByName("name")
 
 	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
@@ -46,7 +50,9 @@ func (h *handler) AddItemToGroup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	req := mconf.NewAddItemToGroupRequest()
-	if err := request.GetDataFromRequest(r, req); err != nil {
+	rctx := context.GetContext(r)
+	req.GroupName = rctx.PS.ByName("name")
+	if err := request.GetDataFromRequest(r, &req.Items); err != nil {
 		response.Failed(w, err)
 		return
 	}

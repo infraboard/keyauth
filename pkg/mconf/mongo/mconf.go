@@ -102,7 +102,7 @@ func (s *service) DeleteGroup(ctx context.Context, req *mconf.DeleteGroupRequest
 func (s *service) QueryItem(ctx context.Context, req *mconf.QueryItemRequest) (
 	*mconf.ItemSet, error) {
 	r := newItemPaggingQuery(req)
-	resp, err := s.group.Find(context.TODO(), r.FindFilter(), r.FindOptions())
+	resp, err := s.item.Find(context.TODO(), r.FindFilter(), r.FindOptions())
 
 	if err != nil {
 		return nil, exception.NewInternalServerError("find group error, error is %s", err)
@@ -122,7 +122,7 @@ func (s *service) QueryItem(ctx context.Context, req *mconf.QueryItemRequest) (
 	// count
 	count, err := s.group.CountDocuments(context.TODO(), r.FindFilter())
 	if err != nil {
-		return nil, exception.NewInternalServerError("get group count error, error is %s", err)
+		return nil, exception.NewInternalServerError("get item count error, error is %s", err)
 	}
 	set.Total = count
 	return set, nil
@@ -136,8 +136,8 @@ func (s *service) AddItemToGroup(ctx context.Context, req *mconf.AddItemToGroupR
 	}
 
 	set := mconf.NewGroupItemSet(tk.Account, req)
-	if _, err := s.group.InsertMany(context.TODO(), set.Docs()); err != nil {
-		return nil, exception.NewInternalServerError("inserted group document error, %s", err)
+	if _, err := s.item.InsertMany(context.TODO(), set.Docs()); err != nil {
+		return nil, exception.NewInternalServerError("inserted item document error, %s", err)
 	}
 	return set, nil
 }

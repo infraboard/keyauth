@@ -38,7 +38,7 @@ message Item {
         ];
      // 建的名称
     string key = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"_id" json:"key"'}
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"key" json:"key"'}
         ];
     // 关联的组
     string group = 3[

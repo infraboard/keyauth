@@ -68,7 +68,7 @@ func (s *ItemSet) Add(e *Item) {
 }
 
 func (s *ItemSet) Docs() []interface{} {
-	docs := make([]interface{}, len(s.Items))
+	docs := []interface{}{}
 	for i := range s.Items {
 		docs = append(docs, s.Items[i])
 	}

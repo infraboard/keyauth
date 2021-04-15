@@ -26,8 +26,8 @@ func (h *handler) Registry(router router.SubRouter) {
 	r.Handle("POST", "/", h.CreateGroup)
 	r.Handle("DELETE", "/:name", h.DestroyGroup)
 	r.BasePath("config_item")
-	r.Handle("GET", "/", h.QueryItem)
-	r.Handle("POST", "/", h.AddItemToGroup)
+	r.Handle("GET", "/group/:name", h.QueryItem)
+	r.Handle("POST", "/group/:name", h.AddItemToGroup)
 }
 
 func (h *handler) Config() error {
