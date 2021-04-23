@@ -142,7 +142,24 @@ func (s *service) AddItemToGroup(ctx context.Context, req *mconf.AddItemToGroupR
 	return set, nil
 }
 
-func (s *service) RemoveItemFromGroup(context.Context, *mconf.RemoveItemFromGroupRequest) (
+func (s *service) RemoveItemFromGroup(ctx context.Context, req *mconf.RemoveItemFromGroupRequest) (
 	*mconf.ItemSet, error) {
+	// if err := req.Validate(); err != nil {
+	// 	return nil, exception.NewBadRequest("validate delete service error, %s", err)
+	// }
+
+	// describeReq := mconf.NewDescribeServiceRequest()
+	// describeReq.Id = req.Id
+	// svr, err := s.DescribeService(ctx, describeReq)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	// // 清除服务实体
+	// _, err = s.item.DeleteOne(context.TODO(), bson.M{"_id": req.Id})
+	// if err != nil {
+	// 	return nil, exception.NewInternalServerError("delete service(%s) error, %s", req.Id, err)
+	// }
+
 	return nil, nil
 }

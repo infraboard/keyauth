@@ -81,5 +81,9 @@ func (r *queryItemRequest) FindOptions() *options.FindOptions {
 func (r *queryItemRequest) FindFilter() bson.M {
 	filter := bson.M{}
 
+	if r.GroupName != "" {
+		filter["group"] = r.GroupName
+	}
+
 	return filter
 }

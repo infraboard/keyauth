@@ -30,6 +30,15 @@ func (s *service) CreateRole(ctx context.Context, req *role.CreateRoleRequest) (
 			r.Name, err)
 	}
 
+	// 添加权限条目
+	permReq := role.NewAddPermissionToRoleRequest()
+	permReq.Permissions = req.Permissions
+	permReq.RoleId = r.Id
+	ps, err := s.AddPermissionToRole(ctx, permReq)
+	if err != nil {
+		return nil, err
+	}
+	r.Permissions = ps.Items
 	return r, nil
 }
 

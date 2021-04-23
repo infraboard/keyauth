@@ -50,6 +50,7 @@ func NewGroupItemSet(creater string, req *AddItemToGroupRequest) *ItemSet {
 	set := NewItemSet()
 	for i := range req.Items {
 		item := NewItem(creater, req.Items[i])
+		item.Group = req.GroupName
 		set.Add(item)
 	}
 	return set

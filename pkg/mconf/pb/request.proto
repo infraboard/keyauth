@@ -94,7 +94,10 @@ message RemoveItemFromGroupRequest {
     string group_name = 1[
         (google.protobuf.field_tag) = {struct_tag: 'json:"group_name"'}
         ];
-    repeated string items = 2[
+    bool remove_all = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"remove_all"'}
+        ];
+    repeated string items = 3[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"items" json:"items"'}
         ];
 }
