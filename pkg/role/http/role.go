@@ -230,7 +230,6 @@ func (h *handler) UpdatePermission(w http.ResponseWriter, r *http.Request) {
 
 	// 查找出原来的domain
 	req := role.NewUpdatePermissionRequest()
-
 	if err := request.GetDataFromRequest(r, req); err != nil {
 		response.Failed(w, err)
 		return

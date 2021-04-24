@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/infraboard/mcube/logger"
+	"github.com/infraboard/mcube/logger/zap"
 	"github.com/infraboard/mcube/pb/http"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/x/bsonx"
@@ -22,6 +24,7 @@ var (
 )
 
 type service struct {
+	log           logger.Logger
 	col           *mongo.Collection
 	enableCache   bool
 	notifyCachPre string
@@ -64,6 +67,7 @@ func (s *service) Config() error {
 	}
 
 	s.col = col
+	s.log = zap.L().Named("Policy")
 	return nil
 }
 

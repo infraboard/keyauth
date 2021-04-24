@@ -51,6 +51,7 @@ func (s *service) QueryPolicy(ctx context.Context, req *policy.QueryPolicyReques
 		return nil, err
 	}
 
+	s.log.Debugf("query policy filter: %s", r.FindFilter())
 	resp, err := s.col.Find(context.TODO(), r.FindFilter(), r.FindOptions())
 	if err != nil {
 		return nil, exception.NewInternalServerError("find policy error, error is %s", err)

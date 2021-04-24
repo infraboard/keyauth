@@ -30,6 +30,7 @@ func (s *service) QueryPermission(ctx context.Context, req *role.QueryPermission
 		return nil, err
 	}
 
+	s.log.Debugf("query permission filter: %s", query.FindFilter())
 	resp, err := s.perm.Find(context.TODO(), query.FindFilter(), query.FindOptions())
 	if err != nil {
 		return nil, exception.NewInternalServerError("find permissionn error, error is %s", err)
