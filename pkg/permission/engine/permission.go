@@ -81,6 +81,12 @@ func (s *service) CheckPermission(ctx context.Context, req *permission.CheckPerm
 	if err != nil {
 		return nil, err
 	}
+	s.log.Debugf("check roles %s has permission access endpoint [%s]", roleSet.RoleNames(), ep.Entry)
+
+	// 不需要鉴权
+	if !ep.Entry.PermissionEnable {
+		return role.NewDeaultPermission(), nil
+	}
 
 	p, ok, err := roleSet.HasPermission(ep)
 	if err != nil {
@@ -88,7 +94,11 @@ func (s *service) CheckPermission(ctx context.Context, req *permission.CheckPerm
 	}
 
 	if !ok {
-		return nil, exception.NewNotFound("not perm for this enpind")
+		return nil, exception.NewPermissionDeny("in namespace %s, role %s has no permission access endpoint: %s",
+			req.NamespaceId,
+			roleSet.RoleNames(),
+			ep.Entry.GrpcPath,
+		)
 	}
 
 	return p, nil

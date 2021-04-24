@@ -161,14 +161,25 @@ func (s *Set) HasPermission(ep *endpoint.Endpoint) (*Permission, bool, error) {
 		if err != nil {
 			return nil, false, err
 		}
-		// 补充权限访问范围
-		p.Scope = s.Items[i].Scope
+
 		if ok {
+			// 补充权限访问范围
+			p.Scope = s.Items[i].Scope
 			return p, ok, nil
 		}
 	}
 
 	return nil, false, nil
+}
+
+func (s *Set) RoleNames() []string {
+	set := []string{}
+	for i := range s.Items {
+		set = append(set, s.Items[i].Name)
+
+	}
+
+	return set
 }
 
 // NewDefaultPermission todo
@@ -214,8 +225,10 @@ func (p *Permission) MatchResource(serviceID, resourceName string) bool {
 // MatchLabel 匹配Label
 func (p *Permission) MatchLabel(label map[string]string) bool {
 	for k, v := range label {
+		// 匹配key
 		if p.LabelKey == "*" || p.LabelKey == k {
-			if p.MatchAll {
+			// 匹配value
+			if p.isMatchAllValue() {
 				return true
 			}
 			for i := range p.LabelValues {
@@ -223,6 +236,20 @@ func (p *Permission) MatchLabel(label map[string]string) bool {
 					return true
 				}
 			}
+		}
+	}
+
+	return false
+}
+
+func (p *Permission) isMatchAllValue() bool {
+	if p.MatchAll {
+		return true
+	}
+
+	for i := range p.LabelValues {
+		if p.LabelValues[i] == "*" {
+			return true
 		}
 	}
 

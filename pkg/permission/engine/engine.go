@@ -3,6 +3,8 @@ package engine
 import (
 	"errors"
 
+	"github.com/infraboard/mcube/logger"
+	"github.com/infraboard/mcube/logger/zap"
 	"github.com/infraboard/mcube/pb/http"
 
 	"github.com/infraboard/keyauth/pkg"
@@ -18,6 +20,7 @@ var (
 )
 
 type service struct {
+	log      logger.Logger
 	policy   policy.PolicyServiceServer
 	role     role.RoleServiceServer
 	endpoint endpoint.EndpointServiceServer
@@ -40,7 +43,7 @@ func (s *service) Config() error {
 		return errors.New("denpence endpoint service is nil")
 	}
 	s.endpoint = pkg.Endpoint
-
+	s.log = zap.L().Named("Permission")
 	return nil
 }
 
