@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/pb/page"
 )
@@ -213,4 +214,20 @@ func (m *RevolkTokenRequest) MakeDescribeTokenRequest() *DescribeTokenRequest {
 	req.AccessToken = m.AccessToken
 	req.RefreshToken = m.RefreshToken
 	return req
+}
+
+func NewDeleteTokenRequest() *DeleteTokenRequest {
+	return &DeleteTokenRequest{}
+}
+
+func (req *DeleteTokenRequest) Validate() error {
+	if len(req.AccessToken) == 0 {
+		return exception.NewBadRequest("delete access token array need")
+	}
+
+	return nil
+}
+
+func NewDeleteTokenResponse() *DeleteTokenResponse {
+	return &DeleteTokenResponse{}
 }

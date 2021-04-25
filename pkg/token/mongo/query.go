@@ -84,3 +84,33 @@ func (r *queryRequest) FindFilter() bson.M {
 	}
 	return filter
 }
+
+func newDeleteTokenRequest(tk *token.Token, req *token.DeleteTokenRequest) *deleteTokenRequest {
+	return &deleteTokenRequest{
+		tk:                 tk,
+		DeleteTokenRequest: req,
+	}
+}
+
+type deleteTokenRequest struct {
+	tk *token.Token
+	*token.DeleteTokenRequest
+}
+
+func (req *deleteTokenRequest) String() string {
+	return fmt.Sprintf("access_token: %s",
+		req.AccessToken)
+}
+
+func (req *deleteTokenRequest) FindFilter() bson.M {
+	filter := bson.M{}
+
+	filter["domain"] = req.tk.Domain
+	filter["account"] = req.tk.Account
+
+	if len(req.AccessToken) > 0 {
+		filter["_id"] = bson.M{"$in": req.AccessToken}
+	}
+
+	return filter
+}

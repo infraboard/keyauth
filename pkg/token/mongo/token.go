@@ -264,3 +264,30 @@ func (s *service) describeToken(req *describeTokenRequest) (*token.Token, error)
 
 	return tk, nil
 }
+
+func (s *service) DeleteToken(ctx context.Context, req *token.DeleteTokenRequest) (
+	*token.DeleteTokenResponse, error) {
+	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := req.Validate(); err != nil {
+		return nil, err
+	}
+
+	deleteReq := newDeleteTokenRequest(tk, req)
+	s.log.Debugf("delete token filter: %s", deleteReq.FindFilter())
+	resp, err := s.col.DeleteOne(context.TODO(), deleteReq.FindFilter())
+	if err != nil {
+		return nil, exception.NewInternalServerError("delete token(%s) error, %s", req, err)
+	}
+
+	if resp.DeletedCount == 0 {
+		return nil, exception.NewNotFound("token %s not found", req.AccessToken)
+	}
+
+	dr := token.NewDeleteTokenResponse()
+	dr.Message = fmt.Sprintf("delete %d token", resp.DeletedCount)
+	return dr, nil
+}

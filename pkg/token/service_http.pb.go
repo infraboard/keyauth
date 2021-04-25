@@ -76,6 +76,17 @@ func HttpEntry() *http.EntrySet {
 				AuditLog:         false,
 				Labels:           map[string]string{},
 			},
+			{
+				GrpcPath:         "/keyauth.token.TokenService/DeleteToken",
+				FunctionName:     "DeleteToken",
+				Path:             "/applications/:id/tokens",
+				Method:           "GET",
+				Resource:         "token",
+				AuthEnable:       true,
+				PermissionEnable: false,
+				AuditLog:         false,
+				Labels:           map[string]string{},
+			},
 		},
 	}
 	return set

@@ -131,3 +131,34 @@ func (h *handler) QueryToken(w http.ResponseWriter, r *http.Request) {
 	response.Success(w, tkSet)
 	return
 }
+
+// RevolkToken 撤销资源访问令牌
+func (h *handler) DeleteToken(w http.ResponseWriter, r *http.Request) {
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	req := token.NewDeleteTokenRequest()
+	if err := request.GetDataFromRequest(r, req); err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	var header, trailer metadata.MD
+	resp, err := h.service.DeleteToken(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
+
+	if err != nil {
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		return
+	}
+
+	response.Success(w, resp)
+	return
+}

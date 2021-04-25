@@ -54,4 +54,12 @@ service TokenService {
 			auth_enable: true
 		};
 	};
+	rpc DeleteToken(DeleteTokenRequest) returns (DeleteTokenResponse) {
+		option (mcube.http.rest_api) = {
+			path: "/applications/:id/tokens"
+			method: "GET"
+			resource: "token"
+			auth_enable: true
+		};
+	};
 }

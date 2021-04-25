@@ -58,4 +58,14 @@ message BlockTokenRequest {
     BlockType block_type = 3;
 }
 
+message DeleteTokenRequest { 
+    repeated string access_token = 1;
+}
+
+message DeleteTokenResponse {
+    string message = 1;
+    repeated string success = 2;
+    repeated string failed = 3;
+}
+
    

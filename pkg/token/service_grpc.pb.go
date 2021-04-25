@@ -23,6 +23,7 @@ type TokenServiceClient interface {
 	RevolkToken(ctx context.Context, in *RevolkTokenRequest, opts ...grpc.CallOption) (*Token, error)
 	BlockToken(ctx context.Context, in *BlockTokenRequest, opts ...grpc.CallOption) (*Token, error)
 	QueryToken(ctx context.Context, in *QueryTokenRequest, opts ...grpc.CallOption) (*Set, error)
+	DeleteToken(ctx context.Context, in *DeleteTokenRequest, opts ...grpc.CallOption) (*DeleteTokenResponse, error)
 }
 
 type tokenServiceClient struct {
@@ -87,6 +88,15 @@ func (c *tokenServiceClient) QueryToken(ctx context.Context, in *QueryTokenReque
 	return out, nil
 }
 
+func (c *tokenServiceClient) DeleteToken(ctx context.Context, in *DeleteTokenRequest, opts ...grpc.CallOption) (*DeleteTokenResponse, error) {
+	out := new(DeleteTokenResponse)
+	err := c.cc.Invoke(ctx, "/keyauth.token.TokenService/DeleteToken", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TokenServiceServer is the server API for TokenService service.
 // All implementations must embed UnimplementedTokenServiceServer
 // for forward compatibility
@@ -97,6 +107,7 @@ type TokenServiceServer interface {
 	RevolkToken(context.Context, *RevolkTokenRequest) (*Token, error)
 	BlockToken(context.Context, *BlockTokenRequest) (*Token, error)
 	QueryToken(context.Context, *QueryTokenRequest) (*Set, error)
+	DeleteToken(context.Context, *DeleteTokenRequest) (*DeleteTokenResponse, error)
 	mustEmbedUnimplementedTokenServiceServer()
 }
 
@@ -121,6 +132,9 @@ func (UnimplementedTokenServiceServer) BlockToken(context.Context, *BlockTokenRe
 }
 func (UnimplementedTokenServiceServer) QueryToken(context.Context, *QueryTokenRequest) (*Set, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryToken not implemented")
+}
+func (UnimplementedTokenServiceServer) DeleteToken(context.Context, *DeleteTokenRequest) (*DeleteTokenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteToken not implemented")
 }
 func (UnimplementedTokenServiceServer) mustEmbedUnimplementedTokenServiceServer() {}
 
@@ -243,6 +257,24 @@ func _TokenService_QueryToken_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TokenService_DeleteToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteTokenRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TokenServiceServer).DeleteToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/keyauth.token.TokenService/DeleteToken",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TokenServiceServer).DeleteToken(ctx, req.(*DeleteTokenRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _TokenService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "keyauth.token.TokenService",
 	HandlerType: (*TokenServiceServer)(nil),
@@ -270,6 +302,10 @@ var _TokenService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "QueryToken",
 			Handler:    _TokenService_QueryToken_Handler,
+		},
+		{
+			MethodName: "DeleteToken",
+			Handler:    _TokenService_DeleteToken_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

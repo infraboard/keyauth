@@ -29,6 +29,7 @@ func (h *handler) Registry(router router.SubRouter) {
 
 	r.BasePath("/self/tokens")
 	r.Handle("GET", "/", h.QueryToken)
+	r.Handle("DELETE", "/", h.DeleteToken)
 }
 
 func (h *handler) Config() error {
