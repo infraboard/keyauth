@@ -28,9 +28,9 @@ demo访问地址: [Demo](http://keyauth.nbtuan.vip/) 用户: admin, 密码: 1234
 
 1. 依赖环境搭建:
 
-+ [MongoDB数据库安装](./mongodb/install.md) (必须)
-+ [OpenLDAP安装](./ldap/install.md) (开启LDAP认证时需要安装)
-+ [消息总线](./bus/install.md) (开始操作审计时需要安装)
++ [MongoDB数据库安装](./docs/mongodb/install.md) (必须)
++ [OpenLDAP安装](./docs/ldap/install.md) (开启LDAP认证时需要安装)
++ [消息总线](./docs/bus/install.md) (开始操作审计时需要安装)
 
 
 2. 快速运行
