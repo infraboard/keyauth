@@ -228,7 +228,7 @@ func (s *service) RevolkToken(ctx context.Context, req *token.RevolkTokenRequest
 	}
 
 	// 退出会话
-	if req.LogoutSession {
+	if req.LogoutSession && tk.SessionId != "" {
 		logoutReq := session.NewLogoutRequest(tk.SessionId)
 		if _, err := s.session.Logout(ctx, logoutReq); err != nil {
 			return nil, exception.NewInternalServerError("logout session error, %s", err)
