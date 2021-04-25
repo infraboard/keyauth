@@ -23,16 +23,29 @@ demo访问地址: [Demo](http://keyauth.nbtuan.vip/) 用户: admin, 密码: 1234
     + 权限模型: 基于工作空间的【RBAC】授权 
     + 角色管理: 基于标签的权限条目匹配, 灵活编辑角色
     + 服务目录: 服务将功能注册到keyauth, keyauth基于这些服务功能 提供RBAC鉴权机制
+
 ## 快速开发
+
+1. 依赖环境搭建:
+
++ [MongoDB数据库安装](./mongodb/install.md) (必须)
++ [OpenLDAP安装](./ldap/install.md) (开启LDAP认证时需要安装)
++ [消息总线](./bus/install.md) (开始操作审计时需要安装)
+
+
+2. 快速运行
 
 ```sh
 # 安装依赖
-make dep
+make install
+
 # 配置
 mv /etc/keyauth_sample.toml /etc/keyauth.toml
 vim /etc/keyauth.toml
+
 # 初始化服务
 make init
+
 # 启动服务
 make run
 ```

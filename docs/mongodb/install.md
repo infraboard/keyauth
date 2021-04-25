@@ -5,7 +5,7 @@
 
 参考官方按照文档 [官方按照文档](https://docs.mongodb.com/manual/installation/)
 
-如果按照较慢 则采用淘宝源进行安装
+如果安装较慢 则采用淘宝源进行安装
 编辑 /etc/yum.repos.d/mongodb-org-4.4.repo 添加如下内容
 ```
 [mongodb-org-4.4]

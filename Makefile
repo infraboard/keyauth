@@ -39,7 +39,7 @@ init: # Init Service
 clean: ## Remove previous build
 	@rm -f dist/*
 
-push: # Init Service
+push: # push git to multi repo
 	@git push -u gitee
 	@git push
 
@@ -48,7 +48,7 @@ codegen: # Init Service
 	@protoc -I=.  -I${GOPATH}/src --go-ext_out=. --go-ext_opt=module=${PKG} --go-grpc_out=. --go-grpc_opt=module=${PKG} --go-http_out=. --go-http_opt=module=${PKG} pkg/*/pb/*.proto
 	@go generate ./...
 
-install: # Install depence go package
+install: dep# Install depence go package
 	@go install github.com/golang/protobuf/protoc-gen-go
 	@go install google.golang.org/grpc/cmd/protoc-gen-go-grpc
 	@go install github.com/infraboard/protoc-gen-go-ext
