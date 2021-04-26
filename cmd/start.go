@@ -48,11 +48,6 @@ var serviceCmd = &cobra.Command{
 			return err
 		}
 
-		// 加载缓存
-		if err := loadCache(); err != nil {
-			return err
-		}
-
 		// 初始化服务层
 		if err := pkg.InitService(); err != nil {
 			return err
@@ -140,6 +135,11 @@ func loadGlobalComponent() error {
 		return err
 	}
 
+	// 加载缓存
+	if err := loadCache(); err != nil {
+		return err
+	}
+
 	// 初始化总线
 	if err := loadBus(); err != nil {
 		return err
@@ -190,13 +190,17 @@ func loadGlobalLogger() error {
 }
 
 func loadBus() error {
+	l := zap.L().Named("Bus")
 	nconf := nats.NewDefaultConfig()
 	ins, err := nats.NewBroker(nconf)
 	if err != nil {
-		return err
+		l.Errorf("new broker error, %s", err)
+		return nil
 	}
+	ins.Debug(l)
 	if err := ins.Connect(); err != nil {
-		return err
+		l.Error(err)
+		return nil
 	}
 	bus.SetPublisher(ins)
 	return nil

@@ -122,8 +122,8 @@ func (p *Profile) Patch(data *Profile) {
 	md := NewProfile()
 	patchData, _ := json.Marshal(data)
 	oldData, _ := json.Marshal(p)
-	json.Unmarshal(patchData, md)
 	json.Unmarshal(oldData, md)
+	json.Unmarshal(patchData, md)
 	*p = *md
 }
 
