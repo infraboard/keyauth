@@ -9,6 +9,8 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/infraboard/mcube/bus"
+	"github.com/infraboard/mcube/bus/broker/nats"
 	"github.com/infraboard/mcube/cache"
 	"github.com/infraboard/mcube/cache/memory"
 	"github.com/infraboard/mcube/cache/redis"
@@ -41,8 +43,8 @@ var serviceCmd = &cobra.Command{
 			return err
 		}
 
-		// 初始化全局日志配置
-		if err := loadGlobalLogger(); err != nil {
+		// 初始化全局组件
+		if err := loadGlobalComponent(); err != nil {
 			return err
 		}
 
@@ -132,6 +134,19 @@ func loadGlobalConfig(configType string) error {
 	return nil
 }
 
+func loadGlobalComponent() error {
+	// 初始化全局日志配置
+	if err := loadGlobalLogger(); err != nil {
+		return err
+	}
+
+	// 初始化总线
+	if err := loadBus(); err != nil {
+		return err
+	}
+	return nil
+}
+
 // log 为全局变量, 只需要load 即可全局可用户, 依赖全局配置先初始化
 func loadGlobalLogger() error {
 	var (
@@ -171,6 +186,19 @@ func loadGlobalLogger() error {
 	}
 
 	zap.L().Named("INIT").Info(logInitMsg)
+	return nil
+}
+
+func loadBus() error {
+	nconf := nats.NewDefaultConfig()
+	ins, err := nats.NewBroker(nconf)
+	if err != nil {
+		return err
+	}
+	if err := ins.Connect(); err != nil {
+		return err
+	}
+	bus.SetPublisher(ins)
 	return nil
 }
 

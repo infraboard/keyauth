@@ -29,7 +29,7 @@ func HttpEntry() *http.EntrySet {
 				Resource:         "namespace",
 				AuthEnable:       true,
 				PermissionEnable: false,
-				AuditLog:         false,
+				AuditLog:         true,
 				Labels:           map[string]string{"allow": "perm_admin"},
 			},
 			{

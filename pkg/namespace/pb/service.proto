@@ -27,6 +27,7 @@ service NamespaceService {
 			method: "GET"
 			resource: "namespace"
 			auth_enable: true
+			audit_log: true
 			labels: [{
 				key: "allow"
 				value: "perm_admin"

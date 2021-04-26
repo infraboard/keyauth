@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/infraboard/mcube/bus"
+	"github.com/infraboard/mcube/bus/event"
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
@@ -83,11 +85,28 @@ func (a *grpcAuther) Auth(
 		return nil, grpc.Errorf(codes.Internal, "entry gprc path: %s not found, check is registry", info.FullMethod)
 	}
 
+	// 审计日志
+	od := newOperateEventData(entry)
+	hd := event.NewHeader()
+	if entry.AuditLog {
+		defer a.sendOperateEvent(hd, od)
+	}
+
+	// 权限校验
 	if entry.AuthEnable {
 		tk, err := a.checkToken(rctx)
 		if err != nil {
 			return nil, err
 		}
+
+		// 补充审计的用户信息
+		od.Account = tk.Account
+		od.UserDomain = tk.Domain
+		od.Session = tk.SessionId
+		od.UserType = tk.UserType.String()
+		hd.IpAddress = tk.GetRemoteIP()
+		hd.UserAgent = tk.UserAgent
+		hd.Source = version.ServiceName
 
 		// 权限校验
 		if err := a.validatePermission(tk, entry, req); err != nil {
@@ -98,6 +117,22 @@ func (a *grpcAuther) Auth(
 	rctx.ClearInternl()
 	resp, err = handler(rctx.ClearInternl().Context(), req)
 	return resp, err
+}
+
+func (a *grpcAuther) sendOperateEvent(hd *event.Header, od *event.OperateEventData) {
+	if od == nil {
+		return
+	}
+
+	oe, err := event.NewOperateEvent(od)
+	if err != nil {
+		a.log().Errorf("new operate event error, %s", err)
+	}
+	oe.Header = hd
+
+	if err := bus.Pub(oe); err != nil {
+		a.log().Warnf("pub audit log error, %s", err)
+	}
 }
 
 func (a *grpcAuther) validateServiceCredential(ctx *GrpcInCtx) error {
@@ -197,5 +232,13 @@ func transferToUserType(allows string) []types.UserType {
 	}
 
 	return set
+}
 
+func newOperateEventData(entry *http.Entry) *event.OperateEventData {
+	return &event.OperateEventData{
+		Action:       entry.GetLableValue("action"),
+		FeaturePath:  entry.GrpcPath,
+		ResourceType: entry.Resource,
+		ServiceName:  version.ServiceName,
+	}
 }
