@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/infraboard/mcube/http/request"
+	"github.com/rs/xid"
 	"google.golang.org/grpc/metadata"
 
 	"github.com/infraboard/keyauth/pkg/domain"
@@ -25,7 +26,9 @@ const (
 	// RealIPHeader todo
 	RealIPHeader = "x-real-ip"
 	// UserAgentHeader todo
-	UserAgentHeader = "user-agent"
+	UserAgentHeader = "x-user-agent"
+	// RequestIDHeader todo
+	RequestIDHeader = "x-request-id"
 )
 
 // NewGrpcInCtx todo
@@ -73,6 +76,21 @@ func (c *GrpcInCtx) GetClientSecret() string {
 // GetAccessToKen todo
 func (c *GrpcInCtx) GetAccessToKen() string {
 	return c.get(OauthTokenHeader)
+}
+
+// GetAccessToKen todo
+func (c *GrpcInCtx) GetUserAgent() string {
+	return c.get(UserAgentHeader)
+}
+
+// GetAccessToKen todo
+func (c *GrpcInCtx) GetRemoteIP() string {
+	return c.get(RealIPHeader)
+}
+
+// GetAccessToKen todo
+func (c *GrpcInCtx) GetRequestID() string {
+	return c.get(RequestIDHeader)
 }
 
 // SetIsInternalCall 内部调用不需要认证, 直接传给server端的接口
@@ -128,6 +146,11 @@ func (c *GrpcOutCtx) Context() context.Context {
 // SetRemoteIP todo
 func (c *GrpcOutCtx) SetRemoteIP(ip string) {
 	c.set(RealIPHeader, ip)
+}
+
+// SetRemoteIP todo
+func (c *GrpcOutCtx) SetRequestID(rid string) {
+	c.set(RequestIDHeader, rid)
 }
 
 // SetUserAgent todo
@@ -201,8 +224,13 @@ func GetTokenFromGrpcInCtx(ctx context.Context) (*token.Token, error) {
 // NewGrpcOutCtxFromHTTPRequest 从上下文中获取Token
 func NewGrpcOutCtxFromHTTPRequest(r *http.Request) (*GrpcOutCtx, error) {
 	rc := NewGrpcOutCtx()
-	rc.SetAccessToken(r.Header.Get("X-OAUTH-TOKEN"))
+	rc.SetAccessToken(r.Header.Get(OauthTokenHeader))
 	rc.SetRemoteIP(request.GetRemoteIP(r))
 	rc.SetUserAgent(r.UserAgent())
+	rid := r.Header.Get(RequestIDHeader)
+	if rid == "" {
+		rid = xid.New().String()
+	}
+	rc.SetRequestID(rid)
 	return rc, nil
 }

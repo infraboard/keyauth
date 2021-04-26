@@ -41,6 +41,15 @@ func newGrpcAuther() *grpcAuther {
 	return &grpcAuther{}
 }
 
+func newEventHeaderFromCtx(ctx *GrpcInCtx) *event.Header {
+	hd := event.NewHeader()
+	hd.IpAddress = ctx.GetRemoteIP()
+	hd.UserAgent = ctx.GetUserAgent()
+	hd.RequestId = ctx.GetRequestID()
+	hd.Source = version.ServiceName
+	return hd
+}
+
 // internal todo
 type grpcAuther struct {
 	l logger.Logger
@@ -87,7 +96,7 @@ func (a *grpcAuther) Auth(
 
 	// 审计日志
 	od := newOperateEventData(entry)
-	hd := event.NewHeader()
+	hd := newEventHeaderFromCtx(rctx)
 	if entry.AuditLog {
 		defer a.sendOperateEvent(hd, od)
 	}
@@ -104,9 +113,6 @@ func (a *grpcAuther) Auth(
 		od.UserDomain = tk.Domain
 		od.Session = tk.SessionId
 		od.UserType = tk.UserType.String()
-		hd.IpAddress = tk.GetRemoteIP()
-		hd.UserAgent = tk.UserAgent
-		hd.Source = version.ServiceName
 
 		// 权限校验
 		if err := a.validatePermission(tk, entry, req); err != nil {
