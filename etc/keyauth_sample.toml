@@ -11,6 +11,11 @@ username = "xxx"
 password = "xxxx"
 database = "keyauth"
 
+[nats]
+servers = ["nats://127.0.0.1:4222"]
+user_name = ""
+password = ""
+
 [log]
 level = "debug"
 path = "logs"

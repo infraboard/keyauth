@@ -41,7 +41,7 @@ clean: ## Remove previous build
 
 push: # push git to multi repo
 	@git push -u gitee
-	@git push
+	@git push -u origin
 
 codegen: # Init Service
 	@protoc -I=.  -I${GOPATH}/src --go-ext_out=. --go-ext_opt=module=${PKG} --go-grpc_out=. --go-grpc_opt=module=${PKG} common/types/*.proto

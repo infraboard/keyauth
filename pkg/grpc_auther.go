@@ -2,6 +2,8 @@ package pkg
 
 import (
 	"context"
+	"encoding/json"
+	"os"
 	"strconv"
 	"strings"
 
@@ -11,6 +13,7 @@ import (
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
 	"github.com/infraboard/mcube/pb/http"
+	"github.com/infraboard/mcube/types/ftime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -47,6 +50,7 @@ func newEventHeaderFromCtx(ctx *GrpcInCtx) *event.Header {
 	hd.UserAgent = ctx.GetUserAgent()
 	hd.RequestId = ctx.GetRequestID()
 	hd.Source = version.ServiceName
+	hd.Meta["host"], _ = os.Hostname()
 	return hd
 }
 
@@ -98,7 +102,7 @@ func (a *grpcAuther) Auth(
 	od := newOperateEventData(entry)
 	hd := newEventHeaderFromCtx(rctx)
 	if entry.AuditLog {
-		defer a.sendOperateEvent(hd, od)
+		defer a.sendOperateEvent(req, resp, hd, od)
 	}
 
 	// 权限校验
@@ -125,11 +129,24 @@ func (a *grpcAuther) Auth(
 	return resp, err
 }
 
-func (a *grpcAuther) sendOperateEvent(hd *event.Header, od *event.OperateEventData) {
+func (a *grpcAuther) sendOperateEvent(req, resp interface{}, hd *event.Header, od *event.OperateEventData) {
 	if od == nil {
 		return
 	}
 
+	reqd, err := json.Marshal(req)
+	if err != nil {
+		a.log().Warnf("marshal req for event error, %s", err)
+	}
+
+	respd, err := json.Marshal(resp)
+	if err != nil {
+		a.log().Warnf("marshal resp for event error, %s", err)
+	}
+
+	od.Request = string(reqd)
+	od.Response = string(respd)
+	od.Cost = ftime.Now().Timestamp() - hd.Time
 	oe, err := event.NewOperateEvent(od)
 	if err != nil {
 		a.log().Errorf("new operate event error, %s", err)

@@ -10,6 +10,7 @@ import (
 	"syscall"
 
 	"github.com/infraboard/mcube/bus"
+	"github.com/infraboard/mcube/bus/broker/kafka"
 	"github.com/infraboard/mcube/bus/broker/nats"
 	"github.com/infraboard/mcube/cache"
 	"github.com/infraboard/mcube/cache/memory"
@@ -79,13 +80,21 @@ var serviceCmd = &cobra.Command{
 }
 
 func newService(cnf *conf.Config) (*service, error) {
+	log := zap.L().Named("CLI")
 	http := api.NewHTTPService()
 	grpc := api.NewGRPCService()
+
+	// 初始化总线
+	bm, err := newBus()
+	if err != nil {
+		log.Errorf("new bus error, %s", err)
+	}
 
 	svr := &service{
 		http: http,
 		grpc: grpc,
-		log:  zap.L().Named("CLI"),
+		bm:   bm,
+		log:  log,
 	}
 
 	return svr, nil
@@ -94,6 +103,7 @@ func newService(cnf *conf.Config) (*service, error) {
 type service struct {
 	http *api.HTTPService
 	grpc *api.GRPCService
+	bm   bus.Manager
 
 	log  logger.Logger
 	stop context.CancelFunc
@@ -102,6 +112,12 @@ type service struct {
 func (s *service) start() error {
 	s.log.Infof("loaded domain pkg: %v", pkg.LoadedService())
 	s.log.Infof("loaded http service: %s", pkg.LoadedHTTP())
+
+	if s.bm != nil {
+		if err := s.bm.Connect(); err != nil {
+			s.log.Errorf("connect bus error, %s", err)
+		}
+	}
 
 	go s.grpc.Start()
 	return s.http.Start()
@@ -137,11 +153,6 @@ func loadGlobalComponent() error {
 
 	// 加载缓存
 	if err := loadCache(); err != nil {
-		return err
-	}
-
-	// 初始化总线
-	if err := loadBus(); err != nil {
 		return err
 	}
 	return nil
@@ -189,23 +200,6 @@ func loadGlobalLogger() error {
 	return nil
 }
 
-func loadBus() error {
-	l := zap.L().Named("Bus")
-	nconf := nats.NewDefaultConfig()
-	ins, err := nats.NewBroker(nconf)
-	if err != nil {
-		l.Errorf("new broker error, %s", err)
-		return nil
-	}
-	ins.Debug(l)
-	if err := ins.Connect(); err != nil {
-		l.Error(err)
-		return nil
-	}
-	bus.SetPublisher(ins)
-	return nil
-}
-
 func loadCache() error {
 	l := zap.L().Named("INIT")
 	c := conf.C()
@@ -224,6 +218,29 @@ func loadCache() error {
 	}
 
 	return nil
+}
+
+func newBus() (bus.Manager, error) {
+	c := conf.C()
+	if c.Nats != nil {
+		ns, err := nats.NewBroker(c.Nats)
+		if err != nil {
+			return nil, err
+		}
+		bus.SetPublisher(ns)
+		return ns, nil
+	}
+
+	if c.Kafka != nil {
+		ks, err := kafka.NewPublisher(c.Kafka)
+		if err != nil {
+			return nil, err
+		}
+		bus.SetPublisher(ks)
+		return ks, nil
+	}
+
+	return nil, fmt.Errorf("bus not config, nats or kafka required")
 }
 
 func (s *service) waitSign(sign chan os.Signal) {
