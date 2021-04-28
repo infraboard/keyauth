@@ -28,10 +28,15 @@ service NamespaceService {
 			resource: "namespace"
 			auth_enable: true
 			audit_log: true
-			labels: [{
-				key: "allow"
-				value: "perm_admin"
-			}]
+			labels: [
+				{
+					key: "allow"
+					value: "perm_admin"
+				},{
+					key: "action"
+					value: "list"				
+				}
+			]
 		};
 	};
 	rpc DescribeNamespace(DescriptNamespaceRequest) returns(Namespace) {

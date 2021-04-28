@@ -43,6 +43,7 @@ func (s *service) CreateAccount(ctx context.Context, req *user.CreateAccountRequ
 	}
 
 	u, err := user.New(req)
+	u.Type = types.UserType(user.CreateType_DOMAIN_CREATED)
 	if err != nil {
 		return nil, err
 	}
