@@ -12,71 +12,127 @@ service UserService {
 	// 查询用户
 	rpc QueryAccount(QueryAccountRequest) returns(Set) {
 		option (mcube.http.rest_api) = {
+			resource: "account"
 			auth_enable: true
-			labels: [{
-				key: "allow"
-				value: "org_admin"
-			}]
+			audit_log: true
+			labels: [
+				{
+					key: "allow"
+					value: "org_admin"
+				},
+				{
+					key: "action"
+					value: "list"
+				}
+			]
 		};
 	};
 	// 获取账号Profile
 	rpc DescribeAccount(DescribeAccountRequest) returns(User) {
 		option (mcube.http.rest_api) = {
+			resource: "account"
 			auth_enable: true
-			labels: [{
-				key: "allow"
-				value: "*"
-			}]
+			audit_log: true
+			labels: [
+				{
+					key: "allow"
+					value: "*"
+				},
+				{
+					key: "action"
+					value: "get"
+				}
+			]
 		};
 	};
 	// 创建用户
 	rpc CreateAccount(CreateAccountRequest) returns(User) {
 		option (mcube.http.rest_api) = {
+			resource: "account"
 			auth_enable: true
-			labels: [{
-				key: "allow"
-				value: "org_admin"
-			}]
+			audit_log: true
+			labels: [
+				{
+					key: "allow"
+					value: "org_admin"
+				},
+				{
+					key: "action"
+					value: "create"
+				}
+			]
 		};
 	};
 	// 警用账号
 	rpc BlockAccount(BlockAccountRequest) returns(User) {
 		option (mcube.http.rest_api) = {
+			resource: "account"
 			auth_enable: true
-			labels: [{
-				key: "allow"
-				value: "org_admin"
-			}]
+			audit_log: true
+			labels: [
+				{
+					key: "allow"
+					value: "org_admin"
+				},
+				{
+					key: "action"
+					value: "update"
+				}
+			]
 		};
 	};
 	// DeleteAccount 删除用户
 	rpc DeleteAccount(DeleteAccountRequest) returns(User) {
 		option (mcube.http.rest_api) = {
+			resource: "account"
 			auth_enable: true
-			labels: [{
-				key: "allow"
-				value: "org_admin"
-			}]
+			audit_log: true
+			labels: [
+				{
+					key: "allow"
+					value: "org_admin"
+				},
+				{
+					key: "action"
+					value: "delete"
+				}
+			]
 		};
 	};
 	// 更新用户
     rpc UpdateAccountProfile(UpdateAccountRequest) returns(User) {
 		option (mcube.http.rest_api) = {
+			resource: "account"
 			auth_enable: true
-			labels: [{
-				key: "allow"
-				value: "org_admin"
-			}]
+			audit_log: true
+			labels: [
+				{
+					key: "allow"
+					value: "org_admin"
+				},
+				{
+					key: "action"
+					value: "update"
+				}
+			]
 		};
 	};
     // 修改用户密码
 	rpc UpdateAccountPassword(UpdatePasswordRequest) returns(Password) {
 		option (mcube.http.rest_api) = {
+			resource: "account"
 			auth_enable: true
-			labels: [{
-				key: "allow"
-				value: "org_admin"
-			}]
+			audit_log: true
+			labels: [
+				{
+					key: "allow"
+					value: "org_admin"
+				},
+				{
+					key: "action"
+					value: "update"
+				}
+			]
 		};
 	};
 	// GeneratePassword 生成符合检测强度的随机密码

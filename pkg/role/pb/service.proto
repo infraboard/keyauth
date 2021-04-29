@@ -11,83 +11,155 @@ import "github.com/infraboard/mcube/pb/http/entry.proto";
 service RoleService {
 	rpc CreateRole(CreateRoleRequest) returns(Role) {
 		option (mcube.http.rest_api) = {
+			resource: "role"
 			auth_enable: true
-			labels: [{
-				key: "allow"
-				value: "perm_admin"
-			}]
+			audit_log: true
+			labels: [
+				{
+					key: "allow"
+					value: "perm_admin"
+				},
+				{
+					key: "action"
+					value: "create"				
+				}
+			]
 		};
 	};
 	rpc QueryRole(QueryRoleRequest) returns(Set) {
 		option (mcube.http.rest_api) = {
+			resource: "role"
 			auth_enable: true
-			labels: [{
-				key: "allow"
-				value: "perm_admin"
-			}]
+			audit_log: true
+			labels: [
+				{
+					key: "allow"
+					value: "perm_admin"
+				},
+				{
+					key: "action"
+					value: "list"				
+				}				
+			]
 		};
 	};
 	rpc DescribeRole(DescribeRoleRequest) returns(Role) {
 		option (mcube.http.rest_api) = {
+			resource: "role"
 			auth_enable: true
-			labels: [{
-				key: "allow"
-				value: "perm_admin"
-			}]
+			audit_log: true
+			labels: [
+				{
+					key: "allow"
+					value: "perm_admin"
+				},
+				{
+					key: "action"
+					value: "get"				
+				}					
+			]
 		};
 	};
 	rpc DeleteRole(DeleteRoleRequest) returns(Role) {
 		option (mcube.http.rest_api) = {
+			resource: "role"
 			auth_enable: true
-			labels: [{
-				key: "allow"
-				value: "perm_admin"
-			}]
+			audit_log: true
+			labels: [
+				{
+					key: "allow"
+					value: "perm_admin"
+				},
+				{
+					key: "action"
+					value: "delete"				
+				}				
+			]
 		};
 	};
 	rpc QueryPermission(QueryPermissionRequest) returns(PermissionSet) {
 		option (mcube.http.rest_api) = {
+			resource: "permission"
 			auth_enable: true
-			labels: [{
-				key: "allow"
-				value: "perm_admin"
-			}]
+			audit_log: true
+			labels: [
+				{
+					key: "allow"
+					value: "perm_admin"
+				},
+				{
+					key: "action"
+					value: "list"				
+				}					
+			]
 		};		
 	};
 	rpc DescribePermission(DescribePermissionRequest) returns(Permission) {
 		option (mcube.http.rest_api) = {
+			resource: "permission"
 			auth_enable: true
-			labels: [{
-				key: "allow"
-				value: "perm_admin"
-			}]
+			audit_log: true
+			labels: [
+				{
+					key: "allow"
+					value: "perm_admin"
+				},
+				{
+					key: "action"
+					value: "get"				
+				}				
+			]
 		};			
 	}
 	rpc AddPermissionToRole(AddPermissionToRoleRequest) returns(PermissionSet) {
 		option (mcube.http.rest_api) = {
+			resource: "permission"
 			auth_enable: true
-			labels: [{
-				key: "allow"
-				value: "perm_admin"
-			}]
+			audit_log: true
+			labels: [
+				{
+					key: "allow"
+					value: "perm_admin"
+				},
+				{
+					key: "action"
+					value: "update"				
+				}				
+			]
 		};		
 	};
 	rpc RemovePermissionFromRole(RemovePermissionFromRoleRequest) returns(PermissionSet) {
 		option (mcube.http.rest_api) = {
+			resource: "permission"
 			auth_enable: true
-			labels: [{
-				key: "allow"
-				value: "perm_admin"
-			}]
+			audit_log: true
+			labels: [
+				{
+					key: "allow"
+					value: "perm_admin"
+				},
+				{
+					key: "action"
+					value: "update"				
+				}
+			]
 		};	
 	};
 	rpc UpdatePermission(UpdatePermissionRequest) returns(Permission) {
 		option (mcube.http.rest_api) = {
+			resource: "permission"
 			auth_enable: true
-			labels: [{
-				key: "allow"
-				value: "perm_admin"
-			}]
+			audit_log: true
+			labels: [
+				{
+					key: "allow"
+					value: "perm_admin"
+				},
+				{
+					key: "action"
+					value: "update"				
+				}				
+			]
 		};		
 	}
 }

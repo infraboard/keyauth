@@ -14,10 +14,16 @@ service UserService {
 			method: "POST"
 			resource: "application"
 			auth_enable: true
-			labels: [{
-				key: "allow"
-				value: "domain_admin"
-			}]
+			labels: [
+				{
+					key: "allow"
+					value: "domain_admin"
+				},
+				{
+					key: "action"
+					value: "create"
+				}
+			]
 		};
 	};
 	rpc DescribeApplication(DescribeApplicationRequest) returns(Application) {
@@ -26,10 +32,16 @@ service UserService {
 			method: "GET"
 			resource: "application"
 			auth_enable: true
-			labels: [{
-				key: "allow"
-				value: "domain_admin"
-			}]
+			labels: [
+				{
+					key: "allow"
+					value: "domain_admin"
+				},
+				{
+					key: "action"
+					value: "get"
+				}
+			]
 		};
 	};
 	rpc QueryApplication(QueryApplicationRequest) returns(Set) {
@@ -38,10 +50,16 @@ service UserService {
 			method: "GET"
 			resource: "application"
 			auth_enable: true
-			labels: [{
-				key: "allow"
-				value: "domain_admin"
-			}]
+			labels: [
+				{
+					key: "allow"
+					value: "domain_admin"
+				},
+				{
+					key: "action"
+					value: "list"
+				}				
+			]
 		};
 	};
 	rpc DeleteApplication(DeleteApplicationRequest) returns(Application) {
@@ -50,10 +68,16 @@ service UserService {
 			method: "DELETE"
 			resource: "application"
 			auth_enable: true
-			labels: [{
-				key: "allow"
-				value: "domain_admin"
-			}]
+			labels: [
+				{
+					key: "allow"
+					value: "domain_admin"
+				},
+				{
+					key: "action"
+					value: "delete"
+				}					
+			]
 		};
 	};
 }

@@ -11,20 +11,6 @@ import "github.com/infraboard/mcube/pb/http/entry.proto";
 service NamespaceService {
 	rpc CreateNamespace(CreateNamespaceRequest) returns(Namespace) {
 		option (mcube.http.rest_api) = {
-			path: "/namespaces"
-			method: "POST"
-			resource: "namespace"
-			auth_enable: true
-			labels: [{
-				key: "allow"
-				value: "perm_admin"
-			}]
-		};
-	};
-	rpc QueryNamespace(QueryNamespaceRequest) returns(Set) {
-		option (mcube.http.rest_api) = {
-			path: "/namespaces"
-			method: "GET"
 			resource: "namespace"
 			auth_enable: true
 			audit_log: true
@@ -32,7 +18,25 @@ service NamespaceService {
 				{
 					key: "allow"
 					value: "perm_admin"
-				},{
+				},
+				{
+					key: "action"
+					value: "create"				
+				}
+			]
+		};
+	};
+	rpc QueryNamespace(QueryNamespaceRequest) returns(Set) {
+		option (mcube.http.rest_api) = {
+			resource: "namespace"
+			auth_enable: true
+			audit_log: true
+			labels: [
+				{
+					key: "allow"
+					value: "perm_admin"
+				},
+				{
 					key: "action"
 					value: "list"				
 				}
@@ -41,14 +45,19 @@ service NamespaceService {
 	};
 	rpc DescribeNamespace(DescriptNamespaceRequest) returns(Namespace) {
 		option (mcube.http.rest_api) = {
-			path: "/namespaces/:id"
-			method: "GET"
 			resource: "namespace"
 			auth_enable: true
-			labels: [{
-				key: "allow"
-				value: "perm_admin"
-			}]
+			audit_log: true
+			labels: [
+				{
+					key: "allow"
+					value: "perm_admin"
+				},
+				{
+					key: "action"
+					value: "get"				
+				}
+			]
 		};
 	};
 	rpc DeleteNamespace(DeleteNamespaceRequest) returns(Namespace) {
@@ -57,10 +66,16 @@ service NamespaceService {
 			method: "GET"
 			resource: "namespace"
 			auth_enable: true
-			labels: [{
-				key: "allow"
-				value: "perm_admin"
-			}]
+			labels: [
+				{
+					key: "allow"
+					value: "perm_admin"
+				},
+				{
+					key: "action"
+					value: "delete"				
+				}
+			]
 		};
 	};
 }
