@@ -14,17 +14,22 @@ import (
 	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/micro"
 	"github.com/infraboard/keyauth/version"
+	"github.com/infraboard/mcube/grpc/middleware/recovery"
 )
 
 // NewGRPCService todo
 func NewGRPCService() *GRPCService {
+	log := zap.L().Named("GRPC Service")
+
+	rc := recovery.NewInterceptor(recovery.NewZapRecoveryHandler())
 	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
+		rc.UnaryServerInterceptor(),
 		pkg.AuthUnaryServerInterceptor(),
 	)))
 
 	return &GRPCService{
 		svr: grpcServer,
-		l:   zap.L().Named("GRPC Service"),
+		l:   log,
 		c:   conf.C(),
 	}
 }
