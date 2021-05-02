@@ -15,11 +15,8 @@ import (
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 
-	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/micro"
-	"github.com/infraboard/keyauth/pkg/permission"
 	"github.com/infraboard/keyauth/pkg/token"
-	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
 type PathEntryHandleFunc func(path string) *httpb.Entry
@@ -94,10 +91,23 @@ func (a *GrpcAuther) auth(
 		return nil, err
 	}
 
+	entry := a.hf(info.FullMethod)
+	if entry == nil {
+		return nil, grpc.Errorf(codes.Internal, "entry not found, check is registry")
+	}
+	engine := newEntryEngine(a.c, entry, a.log())
+
 	// 校验用户权限是否合法
-	tk, err := a.validatePermission(rctx, info.FullMethod)
+	tk, err := engine.ValidatePermission(rctx)
 	if err != nil {
 		return nil, err
+	}
+
+	// 审计日志
+	od := newOperateEventData(entry, tk)
+	hd := newEventHeaderFromCtx(rctx)
+	if entry.AuditLog {
+		defer engine.SendOperateEvent(req, resp, hd, od)
 	}
 
 	// 保存会话
@@ -124,73 +134,6 @@ func (a *GrpcAuther) validateServiceCredential(ctx *gcontext.GrpcInCtx) error {
 	}
 
 	return nil
-}
-
-func (a *GrpcAuther) validatePermission(ctx *gcontext.GrpcInCtx, path string) (*token.Token, error) {
-	var (
-		tk  *token.Token
-		err error
-	)
-
-	entry := a.hf(path)
-	if entry == nil {
-		return nil, grpc.Errorf(codes.Internal, "entry not found, check is registry")
-	}
-
-	outCtx := gcontext.NewGrpcOutCtx()
-	outCtx.SetAccessToken(ctx.GetAccessToKen())
-
-	if entry.AuthEnable {
-		// 获取需要校验的access token(用户的身份凭证)
-		accessToken := ctx.GetAccessToKen()
-		req := token.NewValidateTokenRequest()
-		if accessToken == "" {
-			return nil, grpc.Errorf(codes.Unauthenticated, "access_token meta required")
-		}
-		req.AccessToken = accessToken
-
-		tk, err = a.c.Token().ValidateToken(outCtx.Context(), req)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	if entry.PermissionEnable && tk != nil {
-		// 如果是超级管理员不做权限校验, 直接放行
-		if tk.UserType.IsIn(types.UserType_SUPPER) {
-			return tk, nil
-		}
-
-		eid, err := a.endpointHashID(outCtx, entry.GrpcPath)
-		if err != nil {
-			return nil, err
-		}
-
-		// 权限检测
-		req := permission.NewCheckPermissionRequest()
-		req.EndpointId = eid
-		req.NamespaceId = ctx.GetNamespace()
-		perm, err := a.c.Permission().CheckPermission(outCtx.Context(), req)
-		if err != nil {
-			return nil, exception.NewPermissionDeny("no permission, %s", err)
-		}
-		tk.Scope = perm.Scope
-	}
-
-	return tk, nil
-}
-
-func (a *GrpcAuther) endpointHashID(ctx *gcontext.GrpcOutCtx, grpcPath string) (string, error) {
-	if a.serviceId == "" {
-		descReq := micro.NewDescribeServiceRequestWithClientID(a.c.GetClientID())
-		svr, err := a.c.Micro().DescribeService(ctx.Context(), descReq)
-		if err != nil {
-			return "", err
-		}
-		a.serviceId = svr.Id
-	}
-
-	return endpoint.GenHashID(a.serviceId, grpcPath), nil
 }
 
 func (a *GrpcAuther) addSession(requestID string, tk *token.Token) {
