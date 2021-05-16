@@ -54,7 +54,7 @@ func (r *describeLDAPRequest) FindFilter() bson.M {
 		filter["_id"] = r.Domain
 	}
 	if r.BaseDN != "" {
-		filter["base_dn"] = r.BaseDN
+		filter["base_dn"] = bson.M{"$regex": r.BaseDN + "$", "$options": "im"}
 	}
 
 	return filter
