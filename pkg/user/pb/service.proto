@@ -81,6 +81,24 @@ service UserService {
 			]
 		};
 	};
+	// 警用账号
+	rpc UnBlockAccount(UnBlockAccountRequest) returns(User) {
+		option (mcube.http.rest_api) = {
+			resource: "account"
+			auth_enable: true
+			audit_log: true
+			labels: [
+				{
+					key: "allow"
+					value: "org_admin"
+				},
+				{
+					key: "action"
+					value: "update"
+				}
+			]
+		};
+	};
 	// DeleteAccount 删除用户
 	rpc DeleteAccount(DeleteAccountRequest) returns(User) {
 		option (mcube.http.rest_api) = {

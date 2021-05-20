@@ -3,10 +3,10 @@ package ldap_test
 import (
 	"testing"
 
+	"github.com/infraboard/mcube/logger/zap"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/infraboard/keyauth/pkg/provider/ldap"
-	"github.com/infraboard/mcube/logger/zap"
+	"github.com/infraboard/keyauth/pkg/provider/auth/ldap"
 )
 
 func TestConn(t *testing.T) {

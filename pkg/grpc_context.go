@@ -57,12 +57,6 @@ func (c *GrpcInCtx) Context() context.Context {
 	return metadata.NewIncomingContext(context.Background(), c.md)
 }
 
-// SetClientCredentials todo
-func (c *GrpcInCtx) SetClientCredentials(clientID, clientSecret string) {
-	c.set(ClientIDHeader, clientID)
-	c.set(ClientSecretHeader, clientSecret)
-}
-
 // GetClientID todo
 func (c *GrpcInCtx) GetClientID() string {
 	return c.get(ClientIDHeader)
@@ -143,21 +137,6 @@ func (c *GrpcOutCtx) Context() context.Context {
 	return metadata.NewOutgoingContext(context.Background(), c.md)
 }
 
-// SetRemoteIP todo
-func (c *GrpcOutCtx) SetRemoteIP(ip string) {
-	c.set(RealIPHeader, ip)
-}
-
-// SetRemoteIP todo
-func (c *GrpcOutCtx) SetRequestID(rid string) {
-	c.set(RequestIDHeader, rid)
-}
-
-// SetUserAgent todo
-func (c *GrpcOutCtx) SetUserAgent(ua string) {
-	c.set(UserAgentHeader, ua)
-}
-
 // GetToken todo
 func (c *GrpcOutCtx) GetToken() (*token.Token, error) {
 	req := token.NewDescribeTokenRequestWithAccessToken(c.get(OauthTokenHeader))
@@ -199,6 +178,27 @@ func (c *grpcCtx) SetAccessToken(ak string) {
 	c.set(OauthTokenHeader, ak)
 }
 
+// SetClientCredentials todo
+func (c *grpcCtx) SetClientCredentials(clientID, clientSecret string) {
+	c.set(ClientIDHeader, clientID)
+	c.set(ClientSecretHeader, clientSecret)
+}
+
+// SetRemoteIP todo
+func (c *grpcCtx) SetRemoteIP(ip string) {
+	c.set(RealIPHeader, ip)
+}
+
+// SetRemoteIP todo
+func (c *grpcCtx) SetRequestID(rid string) {
+	c.set(RequestIDHeader, rid)
+}
+
+// SetUserAgent todo
+func (c *grpcCtx) SetUserAgent(ua string) {
+	c.set(UserAgentHeader, ua)
+}
+
 // NewInternalMockGrpcCtx todo
 func NewInternalMockGrpcCtx(account string) *GrpcInCtx {
 	ctx := NewGrpcInCtx()
@@ -222,6 +222,21 @@ func GetTokenFromGrpcInCtx(ctx context.Context) (*token.Token, error) {
 }
 
 // NewGrpcOutCtxFromHTTPRequest 从上下文中获取Token
+func NewGrpcInCtxFromHTTPRequest(r *http.Request) (*GrpcInCtx, error) {
+	rc := NewGrpcInCtx()
+	rc.SetAccessToken(r.Header.Get(OauthTokenHeader))
+	rc.SetRemoteIP(request.GetRemoteIP(r))
+	rc.SetUserAgent(r.UserAgent())
+	rid := r.Header.Get(RequestIDHeader)
+	if rid == "" {
+		rid = xid.New().String()
+	}
+	rc.SetRequestID(rid)
+
+	return rc, nil
+}
+
+// NewGrpcOutCtxFromHTTPRequest 从上下文中获取Token
 func NewGrpcOutCtxFromHTTPRequest(r *http.Request) (*GrpcOutCtx, error) {
 	rc := NewGrpcOutCtx()
 	rc.SetAccessToken(r.Header.Get(OauthTokenHeader))
@@ -232,5 +247,11 @@ func NewGrpcOutCtxFromHTTPRequest(r *http.Request) (*GrpcOutCtx, error) {
 		rid = xid.New().String()
 	}
 	rc.SetRequestID(rid)
+
 	return rc, nil
+}
+
+func GetClientCredentialsFromHTTPRequest(r *http.Request) (cid, cs string) {
+	cid, cs = r.Header.Get(ClientIDHeader), r.Header.Get(ClientSecretHeader)
+	return
 }

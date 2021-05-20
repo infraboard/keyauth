@@ -6,7 +6,7 @@ import (
 	"github.com/infraboard/mcube/http/request"
 
 	"github.com/infraboard/keyauth/common/dryrun"
-	"github.com/infraboard/keyauth/pkg/provider/ldap"
+	"github.com/infraboard/keyauth/pkg/provider/auth/ldap"
 	"github.com/infraboard/keyauth/pkg/token/session"
 )
 

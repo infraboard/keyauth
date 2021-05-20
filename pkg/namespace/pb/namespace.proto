@@ -6,6 +6,13 @@ option go_package = "github.com/infraboard/keyauth/pkg/namespace";
 import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
 import "pkg/department/pb/department.proto";
 
+enum Visible {
+    // 默认空间是私有的
+    PRIVATE = 0;
+	// PUBLIC  公开的空间
+	PUBLIC = 1;
+}
+
 // Namespace tenant resource container
 message Namespace {
     // 项目唯一ID
@@ -55,6 +62,10 @@ message Namespace {
     // 补充的部门
     department.Department department = 12[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"department,omitempty"'}
+        ];
+    // 空间可见性, 默认是私有空间
+    Visible visible = 13[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"visible" json:"visible"'}
         ];
 }
 

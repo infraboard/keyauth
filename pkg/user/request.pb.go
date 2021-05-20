@@ -727,6 +727,54 @@ func (x *BlockAccountRequest) GetReason() string {
 	return ""
 }
 
+// UnBlockAccountRequest 解冻用户
+type UnBlockAccountRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Account string `protobuf:"bytes,1,opt,name=account,proto3" json:"account"`
+}
+
+func (x *UnBlockAccountRequest) Reset() {
+	*x = UnBlockAccountRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_user_pb_request_proto_msgTypes[9]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UnBlockAccountRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UnBlockAccountRequest) ProtoMessage() {}
+
+func (x *UnBlockAccountRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_user_pb_request_proto_msgTypes[9]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UnBlockAccountRequest.ProtoReflect.Descriptor instead.
+func (*UnBlockAccountRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_user_pb_request_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *UnBlockAccountRequest) GetAccount() string {
+	if x != nil {
+		return x.Account
+	}
+	return ""
+}
+
 // DeleteAccountRequest 删除账户
 type DeleteAccountRequest struct {
 	state         protoimpl.MessageState
@@ -739,7 +787,7 @@ type DeleteAccountRequest struct {
 func (x *DeleteAccountRequest) Reset() {
 	*x = DeleteAccountRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_user_pb_request_proto_msgTypes[9]
+		mi := &file_pkg_user_pb_request_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -752,7 +800,7 @@ func (x *DeleteAccountRequest) String() string {
 func (*DeleteAccountRequest) ProtoMessage() {}
 
 func (x *DeleteAccountRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_user_pb_request_proto_msgTypes[9]
+	mi := &file_pkg_user_pb_request_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -765,7 +813,7 @@ func (x *DeleteAccountRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteAccountRequest.ProtoReflect.Descriptor instead.
 func (*DeleteAccountRequest) Descriptor() ([]byte, []int) {
-	return file_pkg_user_pb_request_proto_rawDescGZIP(), []int{9}
+	return file_pkg_user_pb_request_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *DeleteAccountRequest) GetAccount() string {
@@ -973,14 +1021,19 @@ var file_pkg_user_pb_request_proto_rawDesc = []byte{
 	0x52, 0x07, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x12, 0x2b, 0x0a, 0x06, 0x72, 0x65, 0x61,
 	0x73, 0x6f, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x42, 0x13, 0xc2, 0xde, 0x1f, 0x0f, 0x0a,
 	0x0d, 0x6a, 0x73, 0x6f, 0x6e, 0x3a, 0x22, 0x72, 0x65, 0x61, 0x73, 0x6f, 0x6e, 0x22, 0x52, 0x06,
-	0x72, 0x65, 0x61, 0x73, 0x6f, 0x6e, 0x22, 0x46, 0x0a, 0x14, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65,
-	0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x2e,
-	0x0a, 0x07, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42,
-	0x14, 0xc2, 0xde, 0x1f, 0x10, 0x0a, 0x0e, 0x6a, 0x73, 0x6f, 0x6e, 0x3a, 0x22, 0x61, 0x63, 0x63,
-	0x6f, 0x75, 0x6e, 0x74, 0x22, 0x52, 0x07, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x42, 0x28,
-	0x5a, 0x26, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x69, 0x6e, 0x66,
-	0x72, 0x61, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x2f, 0x6b, 0x65, 0x79, 0x61, 0x75, 0x74, 0x68, 0x2f,
-	0x70, 0x6b, 0x67, 0x2f, 0x75, 0x73, 0x65, 0x72, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x72, 0x65, 0x61, 0x73, 0x6f, 0x6e, 0x22, 0x47, 0x0a, 0x15, 0x55, 0x6e, 0x42, 0x6c, 0x6f, 0x63,
+	0x6b, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12,
+	0x2e, 0x0a, 0x07, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
+	0x42, 0x14, 0xc2, 0xde, 0x1f, 0x10, 0x0a, 0x0e, 0x6a, 0x73, 0x6f, 0x6e, 0x3a, 0x22, 0x61, 0x63,
+	0x63, 0x6f, 0x75, 0x6e, 0x74, 0x22, 0x52, 0x07, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x22,
+	0x46, 0x0a, 0x14, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x41, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74,
+	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x2e, 0x0a, 0x07, 0x61, 0x63, 0x63, 0x6f, 0x75,
+	0x6e, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x14, 0xc2, 0xde, 0x1f, 0x10, 0x0a, 0x0e,
+	0x6a, 0x73, 0x6f, 0x6e, 0x3a, 0x22, 0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x22, 0x52, 0x07,
+	0x61, 0x63, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x42, 0x28, 0x5a, 0x26, 0x67, 0x69, 0x74, 0x68, 0x75,
+	0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x69, 0x6e, 0x66, 0x72, 0x61, 0x62, 0x6f, 0x61, 0x72, 0x64,
+	0x2f, 0x6b, 0x65, 0x79, 0x61, 0x75, 0x74, 0x68, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x75, 0x73, 0x65,
+	0x72, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -995,7 +1048,7 @@ func file_pkg_user_pb_request_proto_rawDescGZIP() []byte {
 	return file_pkg_user_pb_request_proto_rawDescData
 }
 
-var file_pkg_user_pb_request_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_pkg_user_pb_request_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_pkg_user_pb_request_proto_goTypes = []interface{}{
 	(*Profile)(nil),                  // 0: keyauth.user.Profile
 	(*CreateAccountRequest)(nil),     // 1: keyauth.user.CreateAccountRequest
@@ -1006,21 +1059,22 @@ var file_pkg_user_pb_request_proto_goTypes = []interface{}{
 	(*GeneratePasswordRequest)(nil),  // 6: keyauth.user.GeneratePasswordRequest
 	(*GeneratePasswordResponse)(nil), // 7: keyauth.user.GeneratePasswordResponse
 	(*BlockAccountRequest)(nil),      // 8: keyauth.user.BlockAccountRequest
-	(*DeleteAccountRequest)(nil),     // 9: keyauth.user.DeleteAccountRequest
-	(Gender)(0),                      // 10: keyauth.user.Gender
-	(CreateType)(0),                  // 11: keyauth.user.CreateType
-	(types.UserType)(0),              // 12: keyauth.user.UserType
-	(*page.PageRequest)(nil),         // 13: page.PageRequest
-	(types1.UpdateMode)(0),           // 14: keyauth.common.types.UpdateMode
+	(*UnBlockAccountRequest)(nil),    // 9: keyauth.user.UnBlockAccountRequest
+	(*DeleteAccountRequest)(nil),     // 10: keyauth.user.DeleteAccountRequest
+	(Gender)(0),                      // 11: keyauth.user.Gender
+	(CreateType)(0),                  // 12: keyauth.user.CreateType
+	(types.UserType)(0),              // 13: keyauth.user.UserType
+	(*page.PageRequest)(nil),         // 14: page.PageRequest
+	(types1.UpdateMode)(0),           // 15: keyauth.common.types.UpdateMode
 }
 var file_pkg_user_pb_request_proto_depIdxs = []int32{
-	10, // 0: keyauth.user.Profile.gender:type_name -> keyauth.user.Gender
-	11, // 1: keyauth.user.CreateAccountRequest.create_type:type_name -> keyauth.user.CreateType
-	12, // 2: keyauth.user.CreateAccountRequest.user_type:type_name -> keyauth.user.UserType
+	11, // 0: keyauth.user.Profile.gender:type_name -> keyauth.user.Gender
+	12, // 1: keyauth.user.CreateAccountRequest.create_type:type_name -> keyauth.user.CreateType
+	13, // 2: keyauth.user.CreateAccountRequest.user_type:type_name -> keyauth.user.UserType
 	0,  // 3: keyauth.user.CreateAccountRequest.profile:type_name -> keyauth.user.Profile
-	13, // 4: keyauth.user.QueryAccountRequest.page:type_name -> page.PageRequest
-	12, // 5: keyauth.user.QueryAccountRequest.user_type:type_name -> keyauth.user.UserType
-	14, // 6: keyauth.user.UpdateAccountRequest.update_mode:type_name -> keyauth.common.types.UpdateMode
+	14, // 4: keyauth.user.QueryAccountRequest.page:type_name -> page.PageRequest
+	13, // 5: keyauth.user.QueryAccountRequest.user_type:type_name -> keyauth.user.UserType
+	15, // 6: keyauth.user.UpdateAccountRequest.update_mode:type_name -> keyauth.common.types.UpdateMode
 	0,  // 7: keyauth.user.UpdateAccountRequest.profile:type_name -> keyauth.user.Profile
 	8,  // [8:8] is the sub-list for method output_type
 	8,  // [8:8] is the sub-list for method input_type
@@ -1145,6 +1199,18 @@ func file_pkg_user_pb_request_proto_init() {
 			}
 		}
 		file_pkg_user_pb_request_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*UnBlockAccountRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_user_pb_request_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteAccountRequest); i {
 			case 0:
 				return &v.state
@@ -1163,7 +1229,7 @@ func file_pkg_user_pb_request_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_pkg_user_pb_request_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   10,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

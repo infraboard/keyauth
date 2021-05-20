@@ -25,6 +25,8 @@ type UserServiceClient interface {
 	CreateAccount(ctx context.Context, in *CreateAccountRequest, opts ...grpc.CallOption) (*User, error)
 	// 警用账号
 	BlockAccount(ctx context.Context, in *BlockAccountRequest, opts ...grpc.CallOption) (*User, error)
+	// 警用账号
+	UnBlockAccount(ctx context.Context, in *UnBlockAccountRequest, opts ...grpc.CallOption) (*User, error)
 	// DeleteAccount 删除用户
 	DeleteAccount(ctx context.Context, in *DeleteAccountRequest, opts ...grpc.CallOption) (*User, error)
 	// 更新用户
@@ -79,6 +81,15 @@ func (c *userServiceClient) BlockAccount(ctx context.Context, in *BlockAccountRe
 	return out, nil
 }
 
+func (c *userServiceClient) UnBlockAccount(ctx context.Context, in *UnBlockAccountRequest, opts ...grpc.CallOption) (*User, error) {
+	out := new(User)
+	err := c.cc.Invoke(ctx, "/keyauth.user.UserService/UnBlockAccount", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *userServiceClient) DeleteAccount(ctx context.Context, in *DeleteAccountRequest, opts ...grpc.CallOption) (*User, error) {
 	out := new(User)
 	err := c.cc.Invoke(ctx, "/keyauth.user.UserService/DeleteAccount", in, out, opts...)
@@ -127,6 +138,8 @@ type UserServiceServer interface {
 	CreateAccount(context.Context, *CreateAccountRequest) (*User, error)
 	// 警用账号
 	BlockAccount(context.Context, *BlockAccountRequest) (*User, error)
+	// 警用账号
+	UnBlockAccount(context.Context, *UnBlockAccountRequest) (*User, error)
 	// DeleteAccount 删除用户
 	DeleteAccount(context.Context, *DeleteAccountRequest) (*User, error)
 	// 更新用户
@@ -153,6 +166,9 @@ func (UnimplementedUserServiceServer) CreateAccount(context.Context, *CreateAcco
 }
 func (UnimplementedUserServiceServer) BlockAccount(context.Context, *BlockAccountRequest) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BlockAccount not implemented")
+}
+func (UnimplementedUserServiceServer) UnBlockAccount(context.Context, *UnBlockAccountRequest) (*User, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnBlockAccount not implemented")
 }
 func (UnimplementedUserServiceServer) DeleteAccount(context.Context, *DeleteAccountRequest) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteAccount not implemented")
@@ -251,6 +267,24 @@ func _UserService_BlockAccount_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_UnBlockAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UnBlockAccountRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).UnBlockAccount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/keyauth.user.UserService/UnBlockAccount",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).UnBlockAccount(ctx, req.(*UnBlockAccountRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _UserService_DeleteAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteAccountRequest)
 	if err := dec(in); err != nil {
@@ -342,6 +376,10 @@ var _UserService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "BlockAccount",
 			Handler:    _UserService_BlockAccount_Handler,
+		},
+		{
+			MethodName: "UnBlockAccount",
+			Handler:    _UserService_UnBlockAccount_Handler,
 		},
 		{
 			MethodName: "DeleteAccount",

@@ -3,6 +3,7 @@ package http
 import (
 	"net/http"
 
+	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
@@ -15,27 +16,31 @@ import (
 
 // CreateApplication 创建自定义角色
 func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
+	cid, cs := pkg.GetClientCredentialsFromHTTPRequest(r)
+	if cid == "" && cs == "" {
+		response.Failed(w, exception.NewBadRequest("service client credentials in header missed"))
+		return
+	}
+
+	ctx, err := pkg.NewGrpcInCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
 
+	ctx.SetClientCredentials(cid, cs)
 	req := endpoint.NewDefaultRegistryRequest()
 	if err := request.GetDataFromRequest(r, req); err != nil {
 		response.Failed(w, err)
 		return
 	}
 
-	var header, trailer metadata.MD
-	_, err = h.endpoint.Registry(
+	_, err = pkg.Endpoint.Registry(
 		ctx.Context(),
 		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
 	)
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 

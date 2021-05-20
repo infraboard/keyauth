@@ -206,6 +206,10 @@ func (s *service) DescribeAccount(ctx context.Context, req *user.DescribeAccount
 }
 
 func (s *service) BlockAccount(ctx context.Context, req *user.BlockAccountRequest) (*user.User, error) {
+	if err := req.Validate(); err != nil {
+		return nil, err
+	}
+
 	desc := user.NewDescriptAccountRequestWithAccount(req.Account)
 	user, err := s.DescribeAccount(ctx, desc)
 	if err != nil {
@@ -213,7 +217,40 @@ func (s *service) BlockAccount(ctx context.Context, req *user.BlockAccountReques
 	}
 
 	user.Block(req.Reason)
-	return nil, s.saveAccount(user)
+	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": user.Account}, bson.M{"$set": bson.M{
+		"status": user.Status,
+	}})
+	if err != nil {
+		return nil, fmt.Errorf("update user status error, %s", err)
+	}
+
+	return user, nil
+}
+
+func (s *service) UnBlockAccount(ctx context.Context, req *user.UnBlockAccountRequest) (*user.User, error) {
+	if err := req.Validate(); err != nil {
+		return nil, err
+	}
+
+	desc := user.NewDescriptAccountRequestWithAccount(req.Account)
+	user, err := s.DescribeAccount(ctx, desc)
+	if err != nil {
+		return nil, fmt.Errorf("describe user error, %s", err)
+	}
+
+	err = user.UnBlock()
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": user.Account}, bson.M{"$set": bson.M{
+		"status": user.Status,
+	}})
+	if err != nil {
+		return nil, fmt.Errorf("update user status error, %s", err)
+	}
+
+	return user, nil
 }
 
 func (s *service) DeleteAccount(ctx context.Context, req *user.DeleteAccountRequest) (*user.User, error) {

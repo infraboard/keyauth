@@ -7,7 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/infraboard/keyauth/pkg/provider"
-	"github.com/infraboard/keyauth/pkg/provider/ldap"
+	"github.com/infraboard/keyauth/pkg/provider/auth/ldap"
 )
 
 func (s *service) SaveConfig(req *provider.SaveLDAPConfigRequest) (

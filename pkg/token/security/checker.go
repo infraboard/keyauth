@@ -150,7 +150,6 @@ func (c *checker) OtherPlaceLoggedInChecK(ctx context.Context, tk *token.Token) 
 	}
 
 	// city为0 表示内网IP, 不错异地登录校验
-
 	if login.CityID == 0 || us.IpInfo.CityId == 0 {
 		c.log.Warnf("city id is 0, 内网IP skip OtherPlaceLoggedInChecK")
 		return nil
@@ -162,7 +161,6 @@ func (c *checker) OtherPlaceLoggedInChecK(ctx context.Context, tk *token.Token) 
 			return fmt.Errorf("异地登录, 请输入验证码后再次提交")
 		}
 	}
-
 	return nil
 }
 

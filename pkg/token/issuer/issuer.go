@@ -18,7 +18,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/application"
 	"github.com/infraboard/keyauth/pkg/domain"
 	"github.com/infraboard/keyauth/pkg/provider"
-	"github.com/infraboard/keyauth/pkg/provider/ldap"
+	"github.com/infraboard/keyauth/pkg/provider/auth/ldap"
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
 	"github.com/infraboard/keyauth/pkg/user/types"

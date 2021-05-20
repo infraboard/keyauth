@@ -73,6 +73,16 @@ func (u *User) Block(reason string) {
 	u.Status.LockedTime = ftime.Now().Timestamp()
 }
 
+func (u *User) UnBlock() error {
+	if !u.Status.Locked {
+		return exception.NewBadRequest("user %s not block, don't unblock", u.Account)
+	}
+
+	u.Status.Locked = false
+	u.Status.UnlockTime = ftime.Now().Timestamp()
+	return nil
+}
+
 // Desensitize 关键数据脱敏
 func (u *User) Desensitize() {
 	if u.HashedPassword != nil {

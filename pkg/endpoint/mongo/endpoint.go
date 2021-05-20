@@ -76,6 +76,7 @@ func (s *service) Registry(ctx context.Context, req *endpoint.RegistryRequest) (
 	if err != nil {
 		return nil, err
 	}
+	s.log.Debugf("service %s registry endpoints", svr.Name)
 
 	if err := svr.ValiateClientCredential(rctx.GetClientSecret()); err != nil {
 		return nil, err

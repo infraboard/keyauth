@@ -157,6 +157,66 @@ func (h *handler) DestroySubAccount(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+func (h *handler) BlockSubAccount(w http.ResponseWriter, r *http.Request) {
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	req := user.NewBlockAccountRequest("", "")
+	if err := request.GetDataFromRequest(r, req); err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	var header, trailer metadata.MD
+	ins, err := h.service.BlockAccount(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
+	if err != nil {
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		return
+	}
+	ins.Desensitize()
+
+	response.Success(w, ins)
+	return
+}
+
+func (h *handler) UnBlockSubAccount(w http.ResponseWriter, r *http.Request) {
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	req := user.NewBlockAccountRequest("", "")
+	if err := request.GetDataFromRequest(r, req); err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	var header, trailer metadata.MD
+	ins, err := h.service.BlockAccount(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
+	if err != nil {
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		return
+	}
+	ins.Desensitize()
+
+	response.Success(w, ins)
+	return
+}
+
 func (h *handler) UpdateSubAccountDepartment(w http.ResponseWriter, r *http.Request) {
 	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {

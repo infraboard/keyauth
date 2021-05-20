@@ -185,6 +185,13 @@ message BlockAccountRequest {
         ];
 }
 
+// UnBlockAccountRequest 解冻用户
+message UnBlockAccountRequest {
+    string account = 1[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"account"'}
+        ];
+}
+
 // DeleteAccountRequest 删除账户
 message DeleteAccountRequest {
     string account = 1[

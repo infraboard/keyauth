@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/request"
 )
 
@@ -132,4 +133,28 @@ func NewGeneratePasswordResponse(password string) *GeneratePasswordResponse {
 	return &GeneratePasswordResponse{
 		Password: password,
 	}
+}
+
+// NewBlockAccountRequest todo
+func NewBlockAccountRequest(account, reason string) *BlockAccountRequest {
+	return &BlockAccountRequest{
+		Account: account,
+		Reason:  reason,
+	}
+}
+
+func (req *BlockAccountRequest) Validate() error {
+	if req.Account == "" {
+		return exception.NewBadRequest("block account required!")
+	}
+
+	return nil
+}
+
+func (req *UnBlockAccountRequest) Validate() error {
+	if req.Account == "" {
+		return exception.NewBadRequest("unblock account required!")
+	}
+
+	return nil
 }
