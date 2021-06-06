@@ -32,6 +32,10 @@ func (h *handler) ListResource(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if len(set.Items) == 0 {
+		set.Items = []*endpoint.Resource{}
+	}
+
 	response.Success(w, set)
 	return
 }
