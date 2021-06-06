@@ -57,7 +57,7 @@ func (m *Micro) ValiateClientCredential(clientSecret string) error {
 func NewCreateMicroRequest() *CreateMicroRequest {
 	return &CreateMicroRequest{
 		Label: map[string]string{},
-		Type:  Type_BUILD_IN,
+		Type:  Type_CUSTOM,
 	}
 }
 

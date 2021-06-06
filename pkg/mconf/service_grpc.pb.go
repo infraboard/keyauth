@@ -11,6 +11,7 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
+// Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
 // MicroConfigServiceClient is the client API for MicroConfigService service.
@@ -131,8 +132,8 @@ type UnsafeMicroConfigServiceServer interface {
 	mustEmbedUnimplementedMicroConfigServiceServer()
 }
 
-func RegisterMicroConfigServiceServer(s *grpc.Server, srv MicroConfigServiceServer) {
-	s.RegisterService(&_MicroConfigService_serviceDesc, srv)
+func RegisterMicroConfigServiceServer(s grpc.ServiceRegistrar, srv MicroConfigServiceServer) {
+	s.RegisterService(&MicroConfigService_ServiceDesc, srv)
 }
 
 func _MicroConfigService_CreateGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -243,7 +244,10 @@ func _MicroConfigService_RemoveItemFromGroup_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
-var _MicroConfigService_serviceDesc = grpc.ServiceDesc{
+// MicroConfigService_ServiceDesc is the grpc.ServiceDesc for MicroConfigService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var MicroConfigService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "keyauth.mconf.MicroConfigService",
 	HandlerType: (*MicroConfigServiceServer)(nil),
 	Methods: []grpc.MethodDesc{

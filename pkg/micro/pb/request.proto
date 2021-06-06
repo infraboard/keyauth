@@ -44,6 +44,10 @@ message QueryMicroRequest {
     page.PageRequest page = 1[
         (google.protobuf.field_tag) = {struct_tag: 'json:"page"'}
         ];
+    // 服务类型
+    Type type = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"type"'}
+        ];
 }
 
 // DescribeMicroRequest 查询应用详情

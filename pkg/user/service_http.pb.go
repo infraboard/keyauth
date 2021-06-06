@@ -30,7 +30,7 @@ func HttpEntry() *http.EntrySet {
 				AuthEnable:       true,
 				PermissionEnable: false,
 				AuditLog:         true,
-				Labels:           map[string]string{"action": "get", "allow": "*"},
+				Labels:           map[string]string{"allow": "*", "action": "get"},
 			},
 			{
 				GrpcPath:         "/keyauth.user.UserService/CreateAccount",
@@ -41,7 +41,7 @@ func HttpEntry() *http.EntrySet {
 				AuthEnable:       true,
 				PermissionEnable: false,
 				AuditLog:         true,
-				Labels:           map[string]string{"action": "create", "allow": "org_admin"},
+				Labels:           map[string]string{"allow": "org_admin", "action": "create"},
 			},
 			{
 				GrpcPath:         "/keyauth.user.UserService/BlockAccount",
@@ -63,7 +63,7 @@ func HttpEntry() *http.EntrySet {
 				AuthEnable:       true,
 				PermissionEnable: false,
 				AuditLog:         true,
-				Labels:           map[string]string{"allow": "org_admin", "action": "update"},
+				Labels:           map[string]string{"action": "update", "allow": "org_admin"},
 			},
 			{
 				GrpcPath:         "/keyauth.user.UserService/DeleteAccount",

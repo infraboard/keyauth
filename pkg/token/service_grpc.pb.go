@@ -11,6 +11,7 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
+// Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
 // TokenServiceClient is the client API for TokenService service.
@@ -145,8 +146,8 @@ type UnsafeTokenServiceServer interface {
 	mustEmbedUnimplementedTokenServiceServer()
 }
 
-func RegisterTokenServiceServer(s *grpc.Server, srv TokenServiceServer) {
-	s.RegisterService(&_TokenService_serviceDesc, srv)
+func RegisterTokenServiceServer(s grpc.ServiceRegistrar, srv TokenServiceServer) {
+	s.RegisterService(&TokenService_ServiceDesc, srv)
 }
 
 func _TokenService_IssueToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -275,7 +276,10 @@ func _TokenService_DeleteToken_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-var _TokenService_serviceDesc = grpc.ServiceDesc{
+// TokenService_ServiceDesc is the grpc.ServiceDesc for TokenService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var TokenService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "keyauth.token.TokenService",
 	HandlerType: (*TokenServiceServer)(nil),
 	Methods: []grpc.MethodDesc{

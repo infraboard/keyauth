@@ -16,6 +16,7 @@ import (
 func (h *handler) QueryService(w http.ResponseWriter, r *http.Request) {
 	page := request.NewPageRequestFromHTTP(r)
 	req := micro.NewQueryMicroRequest(page)
+	req.Type = micro.Type_CUSTOM
 
 	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {

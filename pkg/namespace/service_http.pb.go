@@ -30,7 +30,7 @@ func HttpEntry() *http.EntrySet {
 				AuthEnable:       true,
 				PermissionEnable: false,
 				AuditLog:         true,
-				Labels:           map[string]string{"action": "list", "allow": "perm_admin"},
+				Labels:           map[string]string{"allow": "perm_admin", "action": "list"},
 			},
 			{
 				GrpcPath:         "/keyauth.namespace.NamespaceService/DescribeNamespace",

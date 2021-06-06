@@ -31,6 +31,10 @@ func (r *queryRequest) FindOptions() *options.FindOptions {
 func (r *queryRequest) FindFilter() bson.M {
 	filter := bson.M{}
 
+	if r.Type != micro.Type_NULL {
+		filter["type"] = r.Type
+	}
+
 	return filter
 }
 

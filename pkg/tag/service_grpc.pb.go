@@ -11,6 +11,7 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
+// Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
 // TagServiceClient is the client API for TagService service.
@@ -117,8 +118,8 @@ type UnsafeTagServiceServer interface {
 	mustEmbedUnimplementedTagServiceServer()
 }
 
-func RegisterTagServiceServer(s *grpc.Server, srv TagServiceServer) {
-	s.RegisterService(&_TagService_serviceDesc, srv)
+func RegisterTagServiceServer(s grpc.ServiceRegistrar, srv TagServiceServer) {
+	s.RegisterService(&TagService_ServiceDesc, srv)
 }
 
 func _TagService_CreateTag_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -211,7 +212,10 @@ func _TagService_QueryTagValue_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-var _TagService_serviceDesc = grpc.ServiceDesc{
+// TagService_ServiceDesc is the grpc.ServiceDesc for TagService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var TagService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "keyauth.tag.TagService",
 	HandlerType: (*TagServiceServer)(nil),
 	Methods: []grpc.MethodDesc{

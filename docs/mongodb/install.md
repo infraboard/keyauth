@@ -3,6 +3,7 @@
 
 # 如何安装
 
+##  repo安装
 参考官方按照文档 [官方按照文档](https://docs.mongodb.com/manual/installation/)
 
 如果安装较慢 则采用淘宝源进行安装
@@ -29,6 +30,13 @@ systemctl status mongod
 开机启动
 ```
 systemctl enable mongod
+```
+
+## docker 安装
+
+```
+docker pull mongo
+docker run -itd -p 27017:27017 mongo
 ```
 
 # 创建管理用户

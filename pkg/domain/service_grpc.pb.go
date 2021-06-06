@@ -11,6 +11,7 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
+// Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
 // DomainServiceClient is the client API for DomainService service.
@@ -131,8 +132,8 @@ type UnsafeDomainServiceServer interface {
 	mustEmbedUnimplementedDomainServiceServer()
 }
 
-func RegisterDomainServiceServer(s *grpc.Server, srv DomainServiceServer) {
-	s.RegisterService(&_DomainService_serviceDesc, srv)
+func RegisterDomainServiceServer(s grpc.ServiceRegistrar, srv DomainServiceServer) {
+	s.RegisterService(&DomainService_ServiceDesc, srv)
 }
 
 func _DomainService_CreateDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -243,7 +244,10 @@ func _DomainService_UpdateDomainSecurity_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
-var _DomainService_serviceDesc = grpc.ServiceDesc{
+// DomainService_ServiceDesc is the grpc.ServiceDesc for DomainService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var DomainService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "keyauth.domain.DomainService",
 	HandlerType: (*DomainServiceServer)(nil),
 	Methods: []grpc.MethodDesc{

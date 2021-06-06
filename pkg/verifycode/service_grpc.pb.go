@@ -11,6 +11,7 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
+// Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
 // VerifyCodeServiceClient is the client API for VerifyCodeService service.
@@ -75,8 +76,8 @@ type UnsafeVerifyCodeServiceServer interface {
 	mustEmbedUnimplementedVerifyCodeServiceServer()
 }
 
-func RegisterVerifyCodeServiceServer(s *grpc.Server, srv VerifyCodeServiceServer) {
-	s.RegisterService(&_VerifyCodeService_serviceDesc, srv)
+func RegisterVerifyCodeServiceServer(s grpc.ServiceRegistrar, srv VerifyCodeServiceServer) {
+	s.RegisterService(&VerifyCodeService_ServiceDesc, srv)
 }
 
 func _VerifyCodeService_IssueCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -115,7 +116,10 @@ func _VerifyCodeService_CheckCode_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
-var _VerifyCodeService_serviceDesc = grpc.ServiceDesc{
+// VerifyCodeService_ServiceDesc is the grpc.ServiceDesc for VerifyCodeService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var VerifyCodeService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "keyauth.verifycode.VerifyCodeService",
 	HandlerType: (*VerifyCodeServiceServer)(nil),
 	Methods: []grpc.MethodDesc{

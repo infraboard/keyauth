@@ -19,7 +19,7 @@ func HttpEntry() *http.EntrySet {
 				AuthEnable:       true,
 				PermissionEnable: false,
 				AuditLog:         false,
-				Labels:           map[string]string{"action": "create", "allow": "domain_admin"},
+				Labels:           map[string]string{"allow": "domain_admin", "action": "create"},
 			},
 			{
 				GrpcPath:         "/keyauth.application.UserService/DescribeApplication",
