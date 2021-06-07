@@ -52,7 +52,7 @@ func HttpEntry() *http.EntrySet {
 				AuthEnable:       true,
 				PermissionEnable: false,
 				AuditLog:         false,
-				Labels:           map[string]string{"allow": "perm_admin", "action": "delete"},
+				Labels:           map[string]string{"action": "delete", "allow": "perm_admin"},
 			},
 		},
 	}

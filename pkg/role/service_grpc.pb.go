@@ -11,7 +11,6 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
-// Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
 // RoleServiceClient is the client API for RoleService service.
@@ -174,8 +173,8 @@ type UnsafeRoleServiceServer interface {
 	mustEmbedUnimplementedRoleServiceServer()
 }
 
-func RegisterRoleServiceServer(s grpc.ServiceRegistrar, srv RoleServiceServer) {
-	s.RegisterService(&RoleService_ServiceDesc, srv)
+func RegisterRoleServiceServer(s *grpc.Server, srv RoleServiceServer) {
+	s.RegisterService(&_RoleService_serviceDesc, srv)
 }
 
 func _RoleService_CreateRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -340,10 +339,7 @@ func _RoleService_UpdatePermission_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-// RoleService_ServiceDesc is the grpc.ServiceDesc for RoleService service.
-// It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
-var RoleService_ServiceDesc = grpc.ServiceDesc{
+var _RoleService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "keyauth.role.RoleService",
 	HandlerType: (*RoleServiceServer)(nil),
 	Methods: []grpc.MethodDesc{

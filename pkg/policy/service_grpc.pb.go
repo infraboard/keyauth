@@ -11,7 +11,6 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
-// Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
 // PolicyServiceClient is the client API for PolicyService service.
@@ -104,8 +103,8 @@ type UnsafePolicyServiceServer interface {
 	mustEmbedUnimplementedPolicyServiceServer()
 }
 
-func RegisterPolicyServiceServer(s grpc.ServiceRegistrar, srv PolicyServiceServer) {
-	s.RegisterService(&PolicyService_ServiceDesc, srv)
+func RegisterPolicyServiceServer(s *grpc.Server, srv PolicyServiceServer) {
+	s.RegisterService(&_PolicyService_serviceDesc, srv)
 }
 
 func _PolicyService_CreatePolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -180,10 +179,7 @@ func _PolicyService_DeletePolicy_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-// PolicyService_ServiceDesc is the grpc.ServiceDesc for PolicyService service.
-// It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
-var PolicyService_ServiceDesc = grpc.ServiceDesc{
+var _PolicyService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "keyauth.policy.PolicyService",
 	HandlerType: (*PolicyServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
