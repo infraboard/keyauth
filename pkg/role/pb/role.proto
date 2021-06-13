@@ -100,6 +100,10 @@ message Permission {
     string scope = 11 [
         (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"scope"'}
         ];
+    // 权限描述
+    string desc = 12 [
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"desc" json:"desc"'}
+        ];
 }
 
 message Set {

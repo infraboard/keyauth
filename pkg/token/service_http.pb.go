@@ -66,6 +66,17 @@ func HttpEntry() *http.EntrySet {
 				Labels:           map[string]string{},
 			},
 			{
+				GrpcPath:         "/keyauth.token.TokenService/ChangeNamespace",
+				FunctionName:     "ChangeNamespace",
+				Path:             "/applications/:id/tokens",
+				Method:           "PUT",
+				Resource:         "token",
+				AuthEnable:       true,
+				PermissionEnable: false,
+				AuditLog:         false,
+				Labels:           map[string]string{},
+			},
+			{
 				GrpcPath:         "/keyauth.token.TokenService/QueryToken",
 				FunctionName:     "QueryToken",
 				Path:             "/applications/:id/tokens",

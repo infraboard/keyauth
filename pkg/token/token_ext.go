@@ -10,6 +10,16 @@ func NewDefaultToken() *Token {
 	return &Token{}
 }
 
+func (t *Token) HasNamespace(ns string) bool {
+	for _, v := range t.AvailableNamespace {
+		if v == ns {
+			return true
+		}
+	}
+
+	return false
+}
+
 // IsRefresh todo
 func (t *Token) IsRefresh() bool {
 	return t.GrantType == GrantType_REFRESH

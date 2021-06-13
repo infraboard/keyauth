@@ -231,3 +231,7 @@ func (req *DeleteTokenRequest) Validate() error {
 func NewDeleteTokenResponse() *DeleteTokenResponse {
 	return &DeleteTokenResponse{}
 }
+
+func NewChangeNamespaceRequest() *ChangeNamespaceRequest {
+	return &ChangeNamespaceRequest{}
+}

@@ -85,7 +85,7 @@ func HttpEntry() *http.EntrySet {
 				AuthEnable:       true,
 				PermissionEnable: false,
 				AuditLog:         true,
-				Labels:           map[string]string{"allow": "org_admin", "action": "update"},
+				Labels:           map[string]string{"action": "update", "allow": "org_admin"},
 			},
 			{
 				GrpcPath:         "/keyauth.user.UserService/UpdateAccountPassword",

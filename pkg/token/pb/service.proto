@@ -46,6 +46,14 @@ service TokenService {
 			auth_enable: true
 		};
 	};
+    rpc ChangeNamespace(ChangeNamespaceRequest) returns (Token) {
+		option (mcube.http.rest_api) = {
+			path: "/applications/:id/tokens"
+			method: "PUT"
+			resource: "token"
+			auth_enable: true
+		};
+	};
 	rpc QueryToken(QueryTokenRequest) returns (Set) {
 		option (mcube.http.rest_api) = {
 			path: "/applications/:id/tokens"

@@ -6,11 +6,15 @@ import (
 	"time"
 
 	"github.com/infraboard/mcube/exception"
+	"github.com/infraboard/mcube/http/request"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/infraboard/keyauth/pkg"
+	"github.com/infraboard/keyauth/pkg/namespace"
+	"github.com/infraboard/keyauth/pkg/policy"
 	"github.com/infraboard/keyauth/pkg/session"
 	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/user/types"
 	"github.com/infraboard/keyauth/pkg/verifycode"
 )
 
@@ -157,6 +161,29 @@ func (s *service) BlockToken(ctx context.Context, req *token.BlockTokenRequest) 
 	return tk, nil
 }
 
+func (s *service) ChangeNamespace(ctx context.Context, req *token.ChangeNamespaceRequest) (*token.Token, error) {
+	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = s.ns.DescribeNamespace(ctx, namespace.NewNewDescriptNamespaceRequestWithID(req.Namespace))
+	if err != nil {
+		return nil, err
+	}
+
+	if !tk.UserType.IsIn(types.UserType_DOMAIN_ADMIN, types.UserType_SUPPER) && !tk.HasNamespace(req.Namespace) {
+		return nil, exception.NewPermissionDeny("your has no permission to access namespace %s", req.Namespace)
+	}
+
+	tk.Namespace = req.Namespace
+	if err := s.updateToken(tk); err != nil {
+		return nil, err
+	}
+
+	return tk, nil
+}
+
 func (s *service) DescribeToken(ctx context.Context, req *token.DescribeTokenRequest) (*token.Token, error) {
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest(err.Error())
@@ -166,6 +193,18 @@ func (s *service) DescribeToken(ctx context.Context, req *token.DescribeTokenReq
 	if err != nil {
 		return nil, exception.NewUnauthorized(err.Error())
 	}
+
+	// 查询用户可以访问的空间
+	query := policy.NewQueryPolicyRequest(request.NewPageRequest(policy.MaxUserPolicy, 1))
+	query.Account = tk.Account
+	ps, err := s.policy.QueryPolicy(pkg.NewInternalMockGrpcCtx(tk.Account).Context(), query)
+	if err != nil {
+		return nil, err
+	}
+	if ps.Total > policy.MaxUserPolicy {
+		s.log.Warnf("user policy large than max policy count %d, total: %d", policy.MaxUserPolicy, ps.Total)
+	}
+	tk.AvailableNamespace = ps.GetNamespace()
 
 	return tk, nil
 }

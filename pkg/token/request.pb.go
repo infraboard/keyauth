@@ -530,6 +530,53 @@ func (x *BlockTokenRequest) GetBlockType() BlockType {
 	return BlockType_SESSION_TERMINATED
 }
 
+type ChangeNamespaceRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Namespace string `protobuf:"bytes,1,opt,name=namespace,proto3" json:"namespace,omitempty"`
+}
+
+func (x *ChangeNamespaceRequest) Reset() {
+	*x = ChangeNamespaceRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_token_pb_request_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ChangeNamespaceRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ChangeNamespaceRequest) ProtoMessage() {}
+
+func (x *ChangeNamespaceRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_token_pb_request_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ChangeNamespaceRequest.ProtoReflect.Descriptor instead.
+func (*ChangeNamespaceRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_token_pb_request_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *ChangeNamespaceRequest) GetNamespace() string {
+	if x != nil {
+		return x.Namespace
+	}
+	return ""
+}
+
 type DeleteTokenRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -541,7 +588,7 @@ type DeleteTokenRequest struct {
 func (x *DeleteTokenRequest) Reset() {
 	*x = DeleteTokenRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_token_pb_request_proto_msgTypes[6]
+		mi := &file_pkg_token_pb_request_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -554,7 +601,7 @@ func (x *DeleteTokenRequest) String() string {
 func (*DeleteTokenRequest) ProtoMessage() {}
 
 func (x *DeleteTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_token_pb_request_proto_msgTypes[6]
+	mi := &file_pkg_token_pb_request_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -567,7 +614,7 @@ func (x *DeleteTokenRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteTokenRequest.ProtoReflect.Descriptor instead.
 func (*DeleteTokenRequest) Descriptor() ([]byte, []int) {
-	return file_pkg_token_pb_request_proto_rawDescGZIP(), []int{6}
+	return file_pkg_token_pb_request_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *DeleteTokenRequest) GetAccessToken() []string {
@@ -590,7 +637,7 @@ type DeleteTokenResponse struct {
 func (x *DeleteTokenResponse) Reset() {
 	*x = DeleteTokenResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_token_pb_request_proto_msgTypes[7]
+		mi := &file_pkg_token_pb_request_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -603,7 +650,7 @@ func (x *DeleteTokenResponse) String() string {
 func (*DeleteTokenResponse) ProtoMessage() {}
 
 func (x *DeleteTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_token_pb_request_proto_msgTypes[7]
+	mi := &file_pkg_token_pb_request_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -616,7 +663,7 @@ func (x *DeleteTokenResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteTokenResponse.ProtoReflect.Descriptor instead.
 func (*DeleteTokenResponse) Descriptor() ([]byte, []int) {
-	return file_pkg_token_pb_request_proto_rawDescGZIP(), []int{7}
+	return file_pkg_token_pb_request_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *DeleteTokenResponse) GetMessage() string {
@@ -735,19 +782,23 @@ var file_pkg_token_pb_request_proto_rawDesc = []byte{
 	0x6b, 0x5f, 0x74, 0x79, 0x70, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x18, 0x2e, 0x6b,
 	0x65, 0x79, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x2e, 0x42, 0x6c, 0x6f,
 	0x63, 0x6b, 0x54, 0x79, 0x70, 0x65, 0x52, 0x09, 0x62, 0x6c, 0x6f, 0x63, 0x6b, 0x54, 0x79, 0x70,
-	0x65, 0x22, 0x37, 0x0a, 0x12, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x54, 0x6f, 0x6b, 0x65, 0x6e,
-	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x21, 0x0a, 0x0c, 0x61, 0x63, 0x63, 0x65, 0x73,
-	0x73, 0x5f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x01, 0x20, 0x03, 0x28, 0x09, 0x52, 0x0b, 0x61,
-	0x63, 0x63, 0x65, 0x73, 0x73, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x22, 0x61, 0x0a, 0x13, 0x44, 0x65,
-	0x6c, 0x65, 0x74, 0x65, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
-	0x65, 0x12, 0x18, 0x0a, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x18, 0x01, 0x20, 0x01,
-	0x28, 0x09, 0x52, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x73,
-	0x75, 0x63, 0x63, 0x65, 0x73, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x09, 0x52, 0x07, 0x73, 0x75,
-	0x63, 0x63, 0x65, 0x73, 0x73, 0x12, 0x16, 0x0a, 0x06, 0x66, 0x61, 0x69, 0x6c, 0x65, 0x64, 0x18,
-	0x03, 0x20, 0x03, 0x28, 0x09, 0x52, 0x06, 0x66, 0x61, 0x69, 0x6c, 0x65, 0x64, 0x42, 0x29, 0x5a,
-	0x27, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x69, 0x6e, 0x66, 0x72,
-	0x61, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x2f, 0x6b, 0x65, 0x79, 0x61, 0x75, 0x74, 0x68, 0x2f, 0x70,
-	0x6b, 0x67, 0x2f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x65, 0x22, 0x36, 0x0a, 0x16, 0x43, 0x68, 0x61, 0x6e, 0x67, 0x65, 0x4e, 0x61, 0x6d, 0x65, 0x73,
+	0x70, 0x61, 0x63, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1c, 0x0a, 0x09, 0x6e,
+	0x61, 0x6d, 0x65, 0x73, 0x70, 0x61, 0x63, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09,
+	0x6e, 0x61, 0x6d, 0x65, 0x73, 0x70, 0x61, 0x63, 0x65, 0x22, 0x37, 0x0a, 0x12, 0x44, 0x65, 0x6c,
+	0x65, 0x74, 0x65, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12,
+	0x21, 0x0a, 0x0c, 0x61, 0x63, 0x63, 0x65, 0x73, 0x73, 0x5f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x18,
+	0x01, 0x20, 0x03, 0x28, 0x09, 0x52, 0x0b, 0x61, 0x63, 0x63, 0x65, 0x73, 0x73, 0x54, 0x6f, 0x6b,
+	0x65, 0x6e, 0x22, 0x61, 0x0a, 0x13, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x54, 0x6f, 0x6b, 0x65,
+	0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x6d, 0x65, 0x73,
+	0x73, 0x61, 0x67, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x6d, 0x65, 0x73, 0x73,
+	0x61, 0x67, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x73, 0x75, 0x63, 0x63, 0x65, 0x73, 0x73, 0x18, 0x02,
+	0x20, 0x03, 0x28, 0x09, 0x52, 0x07, 0x73, 0x75, 0x63, 0x63, 0x65, 0x73, 0x73, 0x12, 0x16, 0x0a,
+	0x06, 0x66, 0x61, 0x69, 0x6c, 0x65, 0x64, 0x18, 0x03, 0x20, 0x03, 0x28, 0x09, 0x52, 0x06, 0x66,
+	0x61, 0x69, 0x6c, 0x65, 0x64, 0x42, 0x29, 0x5a, 0x27, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e,
+	0x63, 0x6f, 0x6d, 0x2f, 0x69, 0x6e, 0x66, 0x72, 0x61, 0x62, 0x6f, 0x61, 0x72, 0x64, 0x2f, 0x6b,
+	0x65, 0x79, 0x61, 0x75, 0x74, 0x68, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x74, 0x6f, 0x6b, 0x65, 0x6e,
+	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -762,27 +813,28 @@ func file_pkg_token_pb_request_proto_rawDescGZIP() []byte {
 	return file_pkg_token_pb_request_proto_rawDescData
 }
 
-var file_pkg_token_pb_request_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_pkg_token_pb_request_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_pkg_token_pb_request_proto_goTypes = []interface{}{
-	(*DescribeTokenRequest)(nil), // 0: keyauth.token.DescribeTokenRequest
-	(*ValidateTokenRequest)(nil), // 1: keyauth.token.ValidateTokenRequest
-	(*IssueTokenRequest)(nil),    // 2: keyauth.token.IssueTokenRequest
-	(*RevolkTokenRequest)(nil),   // 3: keyauth.token.RevolkTokenRequest
-	(*QueryTokenRequest)(nil),    // 4: keyauth.token.QueryTokenRequest
-	(*BlockTokenRequest)(nil),    // 5: keyauth.token.BlockTokenRequest
-	(*DeleteTokenRequest)(nil),   // 6: keyauth.token.DeleteTokenRequest
-	(*DeleteTokenResponse)(nil),  // 7: keyauth.token.DeleteTokenResponse
-	(GrantType)(0),               // 8: keyauth.token.GrantType
-	(TokenType)(0),               // 9: keyauth.token.TokenType
-	(*page.PageRequest)(nil),     // 10: page.PageRequest
-	(BlockType)(0),               // 11: keyauth.token.BlockType
+	(*DescribeTokenRequest)(nil),   // 0: keyauth.token.DescribeTokenRequest
+	(*ValidateTokenRequest)(nil),   // 1: keyauth.token.ValidateTokenRequest
+	(*IssueTokenRequest)(nil),      // 2: keyauth.token.IssueTokenRequest
+	(*RevolkTokenRequest)(nil),     // 3: keyauth.token.RevolkTokenRequest
+	(*QueryTokenRequest)(nil),      // 4: keyauth.token.QueryTokenRequest
+	(*BlockTokenRequest)(nil),      // 5: keyauth.token.BlockTokenRequest
+	(*ChangeNamespaceRequest)(nil), // 6: keyauth.token.ChangeNamespaceRequest
+	(*DeleteTokenRequest)(nil),     // 7: keyauth.token.DeleteTokenRequest
+	(*DeleteTokenResponse)(nil),    // 8: keyauth.token.DeleteTokenResponse
+	(GrantType)(0),                 // 9: keyauth.token.GrantType
+	(TokenType)(0),                 // 10: keyauth.token.TokenType
+	(*page.PageRequest)(nil),       // 11: page.PageRequest
+	(BlockType)(0),                 // 12: keyauth.token.BlockType
 }
 var file_pkg_token_pb_request_proto_depIdxs = []int32{
-	8,  // 0: keyauth.token.IssueTokenRequest.grant_type:type_name -> keyauth.token.GrantType
-	9,  // 1: keyauth.token.IssueTokenRequest.type:type_name -> keyauth.token.TokenType
-	10, // 2: keyauth.token.QueryTokenRequest.page:type_name -> page.PageRequest
-	8,  // 3: keyauth.token.QueryTokenRequest.grant_type:type_name -> keyauth.token.GrantType
-	11, // 4: keyauth.token.BlockTokenRequest.block_type:type_name -> keyauth.token.BlockType
+	9,  // 0: keyauth.token.IssueTokenRequest.grant_type:type_name -> keyauth.token.GrantType
+	10, // 1: keyauth.token.IssueTokenRequest.type:type_name -> keyauth.token.TokenType
+	11, // 2: keyauth.token.QueryTokenRequest.page:type_name -> page.PageRequest
+	9,  // 3: keyauth.token.QueryTokenRequest.grant_type:type_name -> keyauth.token.GrantType
+	12, // 4: keyauth.token.BlockTokenRequest.block_type:type_name -> keyauth.token.BlockType
 	5,  // [5:5] is the sub-list for method output_type
 	5,  // [5:5] is the sub-list for method input_type
 	5,  // [5:5] is the sub-list for extension type_name
@@ -870,7 +922,7 @@ func file_pkg_token_pb_request_proto_init() {
 			}
 		}
 		file_pkg_token_pb_request_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DeleteTokenRequest); i {
+			switch v := v.(*ChangeNamespaceRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -882,6 +934,18 @@ func file_pkg_token_pb_request_proto_init() {
 			}
 		}
 		file_pkg_token_pb_request_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DeleteTokenRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_token_pb_request_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*DeleteTokenResponse); i {
 			case 0:
 				return &v.state
@@ -900,7 +964,7 @@ func file_pkg_token_pb_request_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_pkg_token_pb_request_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

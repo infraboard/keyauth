@@ -18,6 +18,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/application"
 	"github.com/infraboard/keyauth/pkg/domain"
 	"github.com/infraboard/keyauth/pkg/endpoint"
+	"github.com/infraboard/keyauth/pkg/namespace"
 	"github.com/infraboard/keyauth/pkg/policy"
 	"github.com/infraboard/keyauth/pkg/session"
 	"github.com/infraboard/keyauth/pkg/token"
@@ -48,6 +49,7 @@ type service struct {
 	session  session.UserServiceServer
 	checker  security.Checker
 	code     verifycode.VerifyCodeServiceServer
+	ns       namespace.NamespaceServiceServer
 }
 
 func (s *service) Config() error {
@@ -85,6 +87,11 @@ func (s *service) Config() error {
 		return errors.New("denpence verify code service is nil")
 	}
 	s.code = pkg.VerifyCode
+
+	if pkg.Namespace == nil {
+		return errors.New("denpence namespace service is nil")
+	}
+	s.ns = pkg.Namespace
 
 	issuer, err := issuer.NewTokenIssuer()
 	if err != nil {

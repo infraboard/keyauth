@@ -58,6 +58,10 @@ message BlockTokenRequest {
     BlockType block_type = 3;
 }
 
+message ChangeNamespaceRequest {
+    string namespace = 1;
+}
+
 message DeleteTokenRequest { 
     repeated string access_token = 1;
 }

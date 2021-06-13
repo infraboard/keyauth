@@ -8,6 +8,10 @@ import (
 	"github.com/infraboard/mcube/http/request"
 )
 
+const (
+	MaxUserPolicy = 2048
+)
+
 // use a single instance of Validate, it caches struct info
 var (
 	validate = validator.New()

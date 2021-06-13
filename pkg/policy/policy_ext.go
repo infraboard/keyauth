@@ -171,3 +171,16 @@ func (s *Set) GetScope(account string) string {
 	}
 	return strings.Join(scopes, " ")
 }
+
+func (s *Set) GetNamespace() (nss []string) {
+	nmap := map[string]struct{}{}
+	for i := range s.Items {
+		nmap[s.Items[i].NamespaceId] = struct{}{}
+	}
+
+	for k := range nmap {
+		nss = append(nss, k)
+	}
+
+	return
+}

@@ -22,6 +22,7 @@ type TokenServiceClient interface {
 	DescribeToken(ctx context.Context, in *DescribeTokenRequest, opts ...grpc.CallOption) (*Token, error)
 	RevolkToken(ctx context.Context, in *RevolkTokenRequest, opts ...grpc.CallOption) (*Token, error)
 	BlockToken(ctx context.Context, in *BlockTokenRequest, opts ...grpc.CallOption) (*Token, error)
+	ChangeNamespace(ctx context.Context, in *ChangeNamespaceRequest, opts ...grpc.CallOption) (*Token, error)
 	QueryToken(ctx context.Context, in *QueryTokenRequest, opts ...grpc.CallOption) (*Set, error)
 	DeleteToken(ctx context.Context, in *DeleteTokenRequest, opts ...grpc.CallOption) (*DeleteTokenResponse, error)
 }
@@ -79,6 +80,15 @@ func (c *tokenServiceClient) BlockToken(ctx context.Context, in *BlockTokenReque
 	return out, nil
 }
 
+func (c *tokenServiceClient) ChangeNamespace(ctx context.Context, in *ChangeNamespaceRequest, opts ...grpc.CallOption) (*Token, error) {
+	out := new(Token)
+	err := c.cc.Invoke(ctx, "/keyauth.token.TokenService/ChangeNamespace", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *tokenServiceClient) QueryToken(ctx context.Context, in *QueryTokenRequest, opts ...grpc.CallOption) (*Set, error) {
 	out := new(Set)
 	err := c.cc.Invoke(ctx, "/keyauth.token.TokenService/QueryToken", in, out, opts...)
@@ -106,6 +116,7 @@ type TokenServiceServer interface {
 	DescribeToken(context.Context, *DescribeTokenRequest) (*Token, error)
 	RevolkToken(context.Context, *RevolkTokenRequest) (*Token, error)
 	BlockToken(context.Context, *BlockTokenRequest) (*Token, error)
+	ChangeNamespace(context.Context, *ChangeNamespaceRequest) (*Token, error)
 	QueryToken(context.Context, *QueryTokenRequest) (*Set, error)
 	DeleteToken(context.Context, *DeleteTokenRequest) (*DeleteTokenResponse, error)
 	mustEmbedUnimplementedTokenServiceServer()
@@ -129,6 +140,9 @@ func (UnimplementedTokenServiceServer) RevolkToken(context.Context, *RevolkToken
 }
 func (UnimplementedTokenServiceServer) BlockToken(context.Context, *BlockTokenRequest) (*Token, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BlockToken not implemented")
+}
+func (UnimplementedTokenServiceServer) ChangeNamespace(context.Context, *ChangeNamespaceRequest) (*Token, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChangeNamespace not implemented")
 }
 func (UnimplementedTokenServiceServer) QueryToken(context.Context, *QueryTokenRequest) (*Set, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryToken not implemented")
@@ -239,6 +253,24 @@ func _TokenService_BlockToken_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TokenService_ChangeNamespace_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChangeNamespaceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TokenServiceServer).ChangeNamespace(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/keyauth.token.TokenService/ChangeNamespace",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TokenServiceServer).ChangeNamespace(ctx, req.(*ChangeNamespaceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _TokenService_QueryToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueryTokenRequest)
 	if err := dec(in); err != nil {
@@ -298,6 +330,10 @@ var _TokenService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "BlockToken",
 			Handler:    _TokenService_BlockToken_Handler,
+		},
+		{
+			MethodName: "ChangeNamespace",
+			Handler:    _TokenService_ChangeNamespace_Handler,
 		},
 		{
 			MethodName: "QueryToken",

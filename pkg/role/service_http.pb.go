@@ -74,7 +74,7 @@ func HttpEntry() *http.EntrySet {
 				AuthEnable:       true,
 				PermissionEnable: false,
 				AuditLog:         true,
-				Labels:           map[string]string{"action": "get", "allow": "perm_admin"},
+				Labels:           map[string]string{"allow": "perm_admin", "action": "get"},
 			},
 			{
 				GrpcPath:         "/keyauth.role.RoleService/AddPermissionToRole",
