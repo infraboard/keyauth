@@ -9,8 +9,8 @@ require (
 	github.com/go-ldap/ldap/v3 v3.2.4
 	github.com/go-playground/validator/v10 v10.4.1
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
-	github.com/infraboard/mcube v1.0.5
-	github.com/infraboard/protoc-gen-go-ext v0.0.2
+	github.com/infraboard/mcube v1.0.7
+	github.com/infraboard/protoc-gen-go-ext v0.0.3
 	github.com/mattn/go-colorable v0.1.8 // indirect
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d // indirect
 	github.com/mssola/user_agent v0.5.2
@@ -25,6 +25,6 @@ require (
 	golang.org/x/term v0.0.0-20201210144234-2321bbc49cbf // indirect
 	golang.org/x/text v0.3.5 // indirect
 	google.golang.org/genproto v0.0.0-20210106152847-07624b53cd92 // indirect
-	google.golang.org/grpc v1.37.1
+	google.golang.org/grpc v1.38.0
 	google.golang.org/protobuf v1.26.0
 )

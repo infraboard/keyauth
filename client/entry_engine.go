@@ -61,6 +61,12 @@ func (e *entryEngine) ValidatePermission(ctx *gcontext.GrpcInCtx) (*token.Token,
 		}
 	}
 
+	if e.RequiredNamespace && tk != nil {
+		if tk.Namespace == "" {
+			return nil, exception.NewBadRequest("namespace required!")
+		}
+	}
+
 	if e.PermissionEnable && tk != nil {
 		// 如果是超级管理员不做权限校验, 直接放行
 		if tk.UserType.IsIn(types.UserType_SUPPER) {
