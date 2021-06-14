@@ -3,7 +3,7 @@ syntax = "proto3";
 package keyauth.endpoint;
 option go_package = "github.com/infraboard/keyauth/pkg/endpoint";
 
-import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
+import "github.com/infraboard/mcube/cmd/protoc-gen-go-ext/extension/tag/tag.proto";
 
 // Resource todo
 message Resource {

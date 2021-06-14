@@ -3,7 +3,7 @@ syntax = "proto3";
 package keyauth.token;
 option go_package = "github.com/infraboard/keyauth/pkg/token";
 
-import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
+import "github.com/infraboard/mcube/cmd/protoc-gen-go-ext/extension/tag/tag.proto";
 import "pkg/user/pb/types.proto";
 
 enum GrantType {

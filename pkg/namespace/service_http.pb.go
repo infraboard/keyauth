@@ -33,7 +33,7 @@ func HttpEntry() *http.EntrySet {
 				PermissionEnable:  false,
 				AuditLog:          true,
 				RequiredNamespace: false,
-				Labels:            map[string]string{"allow": "perm_admin", "action": "list"},
+				Labels:            map[string]string{"action": "list", "allow": "perm_admin"},
 				Extension:         map[string]string{},
 			},
 			{
@@ -46,7 +46,7 @@ func HttpEntry() *http.EntrySet {
 				PermissionEnable:  false,
 				AuditLog:          true,
 				RequiredNamespace: false,
-				Labels:            map[string]string{"action": "get", "allow": "perm_admin"},
+				Labels:            map[string]string{"allow": "perm_admin", "action": "get"},
 				Extension:         map[string]string{},
 			},
 			{

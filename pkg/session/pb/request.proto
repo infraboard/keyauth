@@ -4,7 +4,7 @@ package keyauth.session;
 option go_package = "github.com/infraboard/keyauth/pkg/session";
 
 import "pkg/token/pb/token.proto";
-import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
+import "github.com/infraboard/mcube/cmd/protoc-gen-go-ext/extension/tag/tag.proto";
 import "github.com/infraboard/mcube/pb/page/page.proto";
 
 // LogoutRequest 登出请求

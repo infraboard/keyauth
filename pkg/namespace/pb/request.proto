@@ -3,7 +3,7 @@ syntax = "proto3";
 package keyauth.namespace;
 option go_package = "github.com/infraboard/keyauth/pkg/namespace";
 
-import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
+import "github.com/infraboard/mcube/cmd/protoc-gen-go-ext/extension/tag/tag.proto";
 import "github.com/infraboard/mcube/pb/page/page.proto";
                                
 // CreateNamespaceRequest 创建项目请求

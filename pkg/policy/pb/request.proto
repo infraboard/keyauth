@@ -4,7 +4,7 @@ package keyauth.policy;
 option go_package = "github.com/infraboard/keyauth/pkg/policy";
 
 import "pkg/policy/pb/enum.proto";
-import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
+import "github.com/infraboard/mcube/cmd/protoc-gen-go-ext/extension/tag/tag.proto";
 import "github.com/infraboard/mcube/pb/page/page.proto";
 
 // CreatePolicyRequest 创建策略的请求

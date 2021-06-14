@@ -6,7 +6,7 @@ option go_package = "github.com/infraboard/keyauth/pkg/domain";
 import "pkg/domain/pb/setting.proto";
 import "common/types/types.proto";
 import "github.com/infraboard/mcube/pb/page/page.proto";
-import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
+import "github.com/infraboard/mcube/cmd/protoc-gen-go-ext/extension/tag/tag.proto";
 
 message CreateDomainRequest  {
     // 公司或者组织名称

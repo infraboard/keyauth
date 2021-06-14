@@ -4,7 +4,7 @@ package keyauth.domain;
 option go_package = "github.com/infraboard/keyauth/pkg/domain";
 
 import "pkg/domain/pb/request.proto";
-import "github.com/infraboard/protoc-gen-go-ext/extension/tag/tag.proto";
+import "github.com/infraboard/mcube/cmd/protoc-gen-go-ext/extension/tag/tag.proto";
 
 message Domain  {
     // 公司或者组织名称
