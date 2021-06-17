@@ -51,9 +51,9 @@ codegen: # Init Service
 
 install: dep# Install depence go package
 	@go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-	@go install github.com/infraboard/mcube/cmd/mcube@v1.1.1
-	@go install github.com/infraboard/mcube/cmd/protoc-gen-go-ext@v1.1.1
-	@go install github.com/infraboard/mcube/cmd/protoc-gen-go-http@v1.1.1
+	@go install github.com/infraboard/mcube/cmd/mcube@v1.1.2
+	@go install github.com/infraboard/mcube/cmd/protoc-gen-go-ext@v1.1.2
+	@go install github.com/infraboard/mcube/cmd/protoc-gen-go-http@v1.1.2
 
 help: ## Display this help screen
 	@grep -h -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'

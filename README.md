@@ -31,7 +31,7 @@ demo访问地址: [Demo](http://keyauth.nbtuan.vip/) 用户: admin, 密码: 1234
 + [MongoDB数据库安装](./docs/mongodb/install.md) (必须)
 + [OpenLDAP安装](./docs/ldap/install.md) (开启LDAP认证时需要安装)
 + [消息总线](./docs/bus/install.md) (开始操作审计时需要安装)
-
++ [安装protobuf](./docs/protobuf/install.md)(keyauth开发者)
 
 2. 快速运行
 
