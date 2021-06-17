@@ -50,7 +50,7 @@ func (h *handler) CheckPermission(w http.ResponseWriter, r *http.Request) {
 
 	rctx := context.GetContext(r)
 
-	req := permission.NewCheckPermissionRequest()
+	req := permission.NewCheckPermissionRequestFromHTTP(r)
 	req.NamespaceId = rctx.PS.ByName("id")
 	req.EndpointId = rctx.PS.ByName("eid")
 

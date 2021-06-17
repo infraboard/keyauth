@@ -68,6 +68,10 @@ func (s *service) QueryRoles(ctx context.Context, req *permission.QueryRoleReque
 }
 
 func (s *service) CheckPermission(ctx context.Context, req *permission.CheckPermissionRequest) (*role.Permission, error) {
+	if req.EndpointId == "" {
+		req.EndpointId = endpoint.GenHashID(req.ServiceId, req.Path)
+	}
+
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest("validate param error, %s", err)
 	}

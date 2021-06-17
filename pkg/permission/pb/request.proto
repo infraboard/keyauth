@@ -37,4 +37,10 @@ message CheckPermissionRequest {
     string endpoint_id = 3[
         (google.protobuf.field_tag) = {struct_tag: 'json:"endpoint_id"'}
         ];
+    string service_id = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"service_id"'}
+        ];
+    string path = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"path"'}
+        ];
 }
