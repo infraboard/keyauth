@@ -11,6 +11,7 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
+// Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
 // UserServiceClient is the client API for UserService service.
@@ -103,8 +104,8 @@ type UnsafeUserServiceServer interface {
 	mustEmbedUnimplementedUserServiceServer()
 }
 
-func RegisterUserServiceServer(s *grpc.Server, srv UserServiceServer) {
-	s.RegisterService(&_UserService_serviceDesc, srv)
+func RegisterUserServiceServer(s grpc.ServiceRegistrar, srv UserServiceServer) {
+	s.RegisterService(&UserService_ServiceDesc, srv)
 }
 
 func _UserService_CreateUserApplication_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -179,7 +180,10 @@ func _UserService_DeleteApplication_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
-var _UserService_serviceDesc = grpc.ServiceDesc{
+// UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var UserService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "keyauth.application.UserService",
 	HandlerType: (*UserServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
@@ -266,8 +270,8 @@ type UnsafeAdminServiceServer interface {
 	mustEmbedUnimplementedAdminServiceServer()
 }
 
-func RegisterAdminServiceServer(s *grpc.Server, srv AdminServiceServer) {
-	s.RegisterService(&_AdminService_serviceDesc, srv)
+func RegisterAdminServiceServer(s grpc.ServiceRegistrar, srv AdminServiceServer) {
+	s.RegisterService(&AdminService_ServiceDesc, srv)
 }
 
 func _AdminService_CreateBuildInApplication_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -306,7 +310,10 @@ func _AdminService_GetBuildInApplication_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
-var _AdminService_serviceDesc = grpc.ServiceDesc{
+// AdminService_ServiceDesc is the grpc.ServiceDesc for AdminService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var AdminService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "keyauth.application.AdminService",
 	HandlerType: (*AdminServiceServer)(nil),
 	Methods: []grpc.MethodDesc{

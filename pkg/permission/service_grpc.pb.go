@@ -12,6 +12,7 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
+// Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
 // PermissionServiceClient is the client API for PermissionService service.
@@ -90,8 +91,8 @@ type UnsafePermissionServiceServer interface {
 	mustEmbedUnimplementedPermissionServiceServer()
 }
 
-func RegisterPermissionServiceServer(s *grpc.Server, srv PermissionServiceServer) {
-	s.RegisterService(&_PermissionService_serviceDesc, srv)
+func RegisterPermissionServiceServer(s grpc.ServiceRegistrar, srv PermissionServiceServer) {
+	s.RegisterService(&PermissionService_ServiceDesc, srv)
 }
 
 func _PermissionService_QueryPermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -148,7 +149,10 @@ func _PermissionService_CheckPermission_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
-var _PermissionService_serviceDesc = grpc.ServiceDesc{
+// PermissionService_ServiceDesc is the grpc.ServiceDesc for PermissionService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var PermissionService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "keyauth.permission.PermissionService",
 	HandlerType: (*PermissionServiceServer)(nil),
 	Methods: []grpc.MethodDesc{

@@ -17,7 +17,7 @@ service PermissionService {
 			auth_enable: true
 			labels: [{
 				key: "allow"
-				value: "perm_admin"
+				value: "*"
 			}]
 		};
 	};
@@ -29,7 +29,7 @@ service PermissionService {
 			auth_enable: true
 			labels: [{
 				key: "allow"
-				value: "perm_admin"
+				value: "*"
 			}]
 		};
 	};

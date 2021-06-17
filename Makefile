@@ -1,6 +1,7 @@
 PROJECT_NAME=keyauth
 MAIN_FILE=main.go
 PKG := "github.com/infraboard/$(PROJECT_NAME)"
+MOD_DIR := $(shell go env GOMODCACHE)
 PKG_LIST := $(shell go list ${PKG}/... | grep -v /vendor/)
 GO_FILES := $(shell find . -name '*.go' | grep -v /vendor/ | grep -v _test.go)
 
@@ -44,15 +45,15 @@ push: # push git to multi repo
 	@git push -u origin
 
 codegen: # Init Service
-	@protoc -I=. -I${GOPATH}/src --go-ext_out=. --go-ext_opt=module=${PKG} --go-grpc_out=. --go-grpc_opt=module=${PKG} common/types/*.proto
-	@protoc -I=. -I${GOPATH}/src --go-ext_out=. --go-ext_opt=module=${PKG} --go-grpc_out=. --go-grpc_opt=module=${PKG} --go-http_out=. --go-http_opt=module=${PKG} pkg/*/pb/*.proto
+	@protoc -I=. -I${MOD_DIR} --go-ext_out=. --go-ext_opt=module=${PKG} --go-grpc_out=. --go-grpc_opt=module=${PKG} common/types/*.proto
+	@protoc -I=. -I${MOD_DIR} --go-ext_out=. --go-ext_opt=module=${PKG} --go-grpc_out=. --go-grpc_opt=module=${PKG} --go-http_out=. --go-http_opt=module=${PKG} pkg/*/pb/*.proto
 	@go generate ./...
 
 install: dep# Install depence go package
-	@go install github.com/golang/protobuf/protoc-gen-go@latest
 	@go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-	@go install github.com/infraboard/mcube/cmd/protoc-gen-go-ext@v1.1.0
-	@go install github.com/infraboard/mcube/cmd/protoc-gen-go-http@v1.1.0
+	@go install github.com/infraboard/mcube/cmd/mcube@v1.1.1
+	@go install github.com/infraboard/mcube/cmd/protoc-gen-go-ext@v1.1.1
+	@go install github.com/infraboard/mcube/cmd/protoc-gen-go-http@v1.1.1
 
 help: ## Display this help screen
 	@grep -h -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'

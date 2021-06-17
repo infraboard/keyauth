@@ -11,6 +11,7 @@ import (
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
+// Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
 // EndpointServiceClient is the client API for EndpointService service.
@@ -117,8 +118,8 @@ type UnsafeEndpointServiceServer interface {
 	mustEmbedUnimplementedEndpointServiceServer()
 }
 
-func RegisterEndpointServiceServer(s *grpc.Server, srv EndpointServiceServer) {
-	s.RegisterService(&_EndpointService_serviceDesc, srv)
+func RegisterEndpointServiceServer(s grpc.ServiceRegistrar, srv EndpointServiceServer) {
+	s.RegisterService(&EndpointService_ServiceDesc, srv)
 }
 
 func _EndpointService_DescribeEndpoint_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -211,7 +212,10 @@ func _EndpointService_QueryResources_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
-var _EndpointService_serviceDesc = grpc.ServiceDesc{
+// EndpointService_ServiceDesc is the grpc.ServiceDesc for EndpointService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var EndpointService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "keyauth.endpoint.EndpointService",
 	HandlerType: (*EndpointServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
