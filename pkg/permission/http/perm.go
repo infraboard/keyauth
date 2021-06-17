@@ -50,9 +50,12 @@ func (h *handler) CheckPermission(w http.ResponseWriter, r *http.Request) {
 
 	rctx := context.GetContext(r)
 
-	req := permission.NewCheckPermissionRequestFromHTTP(r)
+	req := permission.NewCheckPermissionRequest()
+	if err := request.GetDataFromRequest(r, req); err != nil {
+		response.Failed(w, err)
+		return
+	}
 	req.NamespaceId = rctx.PS.ByName("id")
-	req.EndpointId = rctx.PS.ByName("eid")
 
 	var header, trailer metadata.MD
 	d, err := h.service.CheckPermission(

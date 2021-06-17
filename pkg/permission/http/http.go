@@ -23,7 +23,7 @@ func (h *handler) Registry(router router.SubRouter) {
 	r := router.ResourceRouter("permission")
 	r.BasePath("namespaces")
 	r.Handle("GET", "/:id/permissions", h.List)
-	r.Handle("GET", "/:id/permissions/endpoints/:eid", h.CheckPermission)
+	r.Handle("POST", "/:id/permissions", h.CheckPermission)
 }
 
 func (h *handler) Config() error {

@@ -2,7 +2,6 @@ package permission
 
 import (
 	"fmt"
-	"net/http"
 
 	"github.com/infraboard/mcube/http/request"
 )
@@ -36,7 +35,7 @@ func (req *CheckPermissionRequest) Validate() error {
 		return fmt.Errorf("namespace required")
 	}
 
-	if req.EndpointId == "" || (req.ServiceId == "" && req.Path == "") {
+	if req.EndpointId == "" && (req.ServiceId == "" || req.Path == "") {
 		return fmt.Errorf("endpoint_id or (service_id and path) required when check")
 	}
 
@@ -58,15 +57,4 @@ func (req *QueryRoleRequest) Validate() error {
 	}
 
 	return nil
-}
-
-// NewCheckPermissionRequestFromHTTP 从HTTP请求中加载分页请求
-func NewCheckPermissionRequestFromHTTP(req *http.Request) *CheckPermissionRequest {
-	qs := req.URL.Query()
-	r := NewCheckPermissionRequest()
-
-	r.ServiceId = qs.Get("service_id")
-	r.Path = qs.Get("path")
-
-	return r
 }
