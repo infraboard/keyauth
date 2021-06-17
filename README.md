@@ -33,6 +33,12 @@ demo访问地址: [Demo](http://keyauth.nbtuan.vip/) 用户: admin, 密码: 1234
 + [消息总线](./docs/bus/install.md) (开始操作审计时需要安装)
 + [安装protobuf](./docs/protobuf/install.md)(keyauth开发者)
 
+2. 依赖的mcube protobuf文件处理
+```
+cd GOPATH/pkg/mod/github/infraboard
+ln -s mcube@v1.1.2 mcube            // 每次更新版本都需要手动建立最新版本的link
+```
+
 2. 快速运行
 
 ```sh
