@@ -3,6 +3,7 @@ package client
 import (
 	"net/http"
 
+	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/grpc/gcontext"
 	"github.com/infraboard/mcube/http/router"
@@ -12,8 +13,10 @@ import (
 )
 
 // NewInternalAuther 内部使用的auther
-func NewHTTPAuther() router.Auther {
-	return &HTTPAuther{}
+func NewHTTPAuther(c *Client) router.Auther {
+	return &HTTPAuther{
+		keyauth: c,
+	}
 }
 
 // internal todo
@@ -30,9 +33,9 @@ func (a *HTTPAuther) Auth(r *http.Request, entry httpb.Entry) (
 	}
 
 	// 获取需要校验的access token(用户的身份凭证)
-	accessToken := r.Header.Get("x-oauth-token")
+	accessToken := r.Header.Get(pkg.OauthTokenHeader)
 	if accessToken == "" {
-		return nil, exception.NewUnauthorized("x-oauth-token header required")
+		return nil, exception.NewUnauthorized("auth header: %s required", pkg.OauthTokenHeader)
 	}
 
 	engine := newEntryEngine(a.keyauth, &entry, a.log())
@@ -48,7 +51,7 @@ func (a *HTTPAuther) Auth(r *http.Request, entry httpb.Entry) (
 	od := newOperateEventData(&entry, tk)
 	hd := newEventHeaderFromCtx(ctx)
 	if entry.AuditLog {
-		defer engine.SendOperateEvent(r, nil, hd, od)
+		defer engine.SendOperateEvent(r.URL, nil, hd, od)
 	}
 
 	return tk, nil

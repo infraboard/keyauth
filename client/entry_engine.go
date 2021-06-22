@@ -11,8 +11,8 @@ import (
 	"github.com/infraboard/mcube/logger"
 	httpb "github.com/infraboard/mcube/pb/http"
 	"github.com/infraboard/mcube/types/ftime"
-	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/micro"
@@ -46,12 +46,12 @@ func (e *entryEngine) ValidatePermission(ctx *gcontext.GrpcInCtx) (*token.Token,
 	outCtx := gcontext.NewGrpcOutCtx()
 	outCtx.SetAccessToken(ctx.GetAccessToKen())
 
-	if e.AuthEnable {
-		// 获取需要校验的access token(用户的身份凭证)
-		accessToken := ctx.GetAccessToKen()
+	// 获取需要校验的access token(用户的身份凭证)
+	accessToken := ctx.GetAccessToKen()
+	if accessToken != "" {
 		req := token.NewValidateTokenRequest()
 		if accessToken == "" {
-			return nil, grpc.Errorf(codes.Unauthenticated, "access_token meta required")
+			return nil, status.Errorf(codes.Unauthenticated, "access_token meta required")
 		}
 		req.AccessToken = accessToken
 
