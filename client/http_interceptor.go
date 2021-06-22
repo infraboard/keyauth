@@ -1,0 +1,63 @@
+package client
+
+import (
+	"net/http"
+
+	"github.com/infraboard/mcube/exception"
+	"github.com/infraboard/mcube/grpc/gcontext"
+	"github.com/infraboard/mcube/http/router"
+	"github.com/infraboard/mcube/logger"
+	"github.com/infraboard/mcube/logger/zap"
+	httpb "github.com/infraboard/mcube/pb/http"
+)
+
+// NewInternalAuther 内部使用的auther
+func NewHTTPAuther() router.Auther {
+	return &HTTPAuther{}
+}
+
+// internal todo
+type HTTPAuther struct {
+	l       logger.Logger
+	keyauth *Client
+}
+
+func (a *HTTPAuther) Auth(r *http.Request, entry httpb.Entry) (
+	authInfo interface{}, err error) {
+	ctx, err := gcontext.NewGrpcInCtxFromHTTPRequest(r)
+	if err != nil {
+		return nil, err
+	}
+
+	// 获取需要校验的access token(用户的身份凭证)
+	accessToken := r.Header.Get("x-oauth-token")
+	if accessToken == "" {
+		return nil, exception.NewUnauthorized("x-oauth-token header required")
+	}
+
+	engine := newEntryEngine(a.keyauth, &entry, a.log())
+
+	// 校验用户权限是否合法
+	ctx.Context()
+	tk, err := engine.ValidatePermission(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// 审计日志
+	od := newOperateEventData(&entry, tk)
+	hd := newEventHeaderFromCtx(ctx)
+	if entry.AuditLog {
+		defer engine.SendOperateEvent(r, nil, hd, od)
+	}
+
+	return tk, nil
+}
+
+func (a *HTTPAuther) log() logger.Logger {
+	if a == nil {
+		a.l = zap.L().Named("GRPC Auther")
+	}
+
+	return a.l
+}

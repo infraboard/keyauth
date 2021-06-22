@@ -36,8 +36,7 @@ type GrpcAuther struct {
 	l  logger.Logger
 	c  *Client
 
-	serviceId string
-	sessions  map[string]*token.Token
+	sessions map[string]*token.Token
 }
 
 // AuthUnaryServerInterceptor returns a new unary server interceptor for auth.
@@ -93,7 +92,7 @@ func (a *GrpcAuther) auth(
 
 	entry := a.hf(info.FullMethod)
 	if entry == nil {
-		return nil, grpc.Errorf(codes.Internal, "entry not found, check is registry")
+		return nil, status.Errorf(codes.Internal, "entry not found, check is registry")
 	}
 	engine := newEntryEngine(a.c, entry, a.log())
 
@@ -124,13 +123,13 @@ func (a *GrpcAuther) validateServiceCredential(ctx *gcontext.GrpcInCtx) error {
 	clientSecret := ctx.GetClientSecret()
 
 	if clientID == "" && clientSecret == "" {
-		return grpc.Errorf(codes.Unauthenticated, "client_id or client_secret is \"\"")
+		return status.Errorf(codes.Unauthenticated, "client_id or client_secret is \"\"")
 	}
 
 	vsReq := micro.NewValidateClientCredentialRequest(clientID, clientSecret)
 	_, err := a.c.Micro().ValidateClientCredential(context.Background(), vsReq)
 	if err != nil {
-		return grpc.Errorf(codes.Unauthenticated, "service auth error, %s", err)
+		return status.Errorf(codes.Unauthenticated, "service auth error, %s", err)
 	}
 
 	return nil

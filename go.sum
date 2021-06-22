@@ -424,8 +424,8 @@ github.com/imdario/mergo v0.3.5/go.mod h1:2EnlNZ0deacrJVfApfmtdGgDfMuh/nq6Ok1EcJ
 github.com/imdario/mergo v0.3.6/go.mod h1:2EnlNZ0deacrJVfApfmtdGgDfMuh/nq6Ok1EcJh5FfA=
 github.com/inconshreveable/mousetrap v1.0.0 h1:Z8tu5sraLXCXIcARxBp/8cbvlwVa7Z1NHg9XEKhtSvM=
 github.com/inconshreveable/mousetrap v1.0.0/go.mod h1:PxqpIevigyE2G7u3NXJIT2ANytuPF1OarO4DADm73n8=
-github.com/infraboard/mcube v1.1.4 h1:kuLmzXpXAG4DDOjtZpwSbbCkefiD420zZwC3kYmBpcs=
-github.com/infraboard/mcube v1.1.4/go.mod h1:MoweXyplhn6YpLO4Yh9ufFHFO+u5a29xfFj2wVWZouc=
+github.com/infraboard/mcube v1.1.7 h1:3lYsyu+NHUusA1v/4fPDwxabed9XGEETmgalruEQoJk=
+github.com/infraboard/mcube v1.1.7/go.mod h1:MoweXyplhn6YpLO4Yh9ufFHFO+u5a29xfFj2wVWZouc=
 github.com/jcmturner/gofork v1.0.0 h1:J7uCkflzTEhUZ64xqKnkDxq3kzc96ajM1Gli5ktUem8=
 github.com/jcmturner/gofork v1.0.0/go.mod h1:MK8+TM0La+2rjBD4jE12Kj1pCCxK7d2LK/UM3ncEo0o=
 github.com/jehiah/go-strftime v0.0.0-20171201141054-1d33003b3869/go.mod h1:cJ6Cj7dQo+O6GJNiMx+Pa94qKj+TG8ONdKHgMNIyyag=

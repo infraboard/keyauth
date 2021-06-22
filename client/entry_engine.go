@@ -92,7 +92,7 @@ func (e *entryEngine) ValidatePermission(ctx *gcontext.GrpcInCtx) (*token.Token,
 	return tk, nil
 }
 
-func (e *entryEngine) endpointHashID(ctx *gcontext.GrpcOutCtx, grpcPath string) (string, error) {
+func (e *entryEngine) endpointHashID(ctx *gcontext.GrpcOutCtx, path string) (string, error) {
 	if e.serviceId == "" {
 		descReq := micro.NewDescribeServiceRequestWithClientID(e.client.GetClientID())
 		svr, err := e.client.Micro().DescribeService(ctx.Context(), descReq)
@@ -102,7 +102,7 @@ func (e *entryEngine) endpointHashID(ctx *gcontext.GrpcOutCtx, grpcPath string) 
 		e.serviceId = svr.Id
 	}
 
-	return endpoint.GenHashID(e.serviceId, grpcPath), nil
+	return endpoint.GenHashID(e.serviceId, path), nil
 }
 
 func (e *entryEngine) SendOperateEvent(req, resp interface{}, hd *event.Header, od *event.OperateEventData) {
