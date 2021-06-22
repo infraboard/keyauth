@@ -11,9 +11,8 @@ func HttpEntry() *http.EntrySet {
 	set := &http.EntrySet{
 		Items: []*http.Entry{
 			{
-				GrpcPath:          "/keyauth.permission.PermissionService/QueryPermission",
+				Path:              "/keyauth.permission.PermissionService/QueryPermission",
 				FunctionName:      "QueryPermission",
-				Path:              "/namespaces/:id/permissions",
 				Method:            "GET",
 				Resource:          "permission",
 				AuthEnable:        true,
@@ -24,9 +23,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.permission.PermissionService/QueryRoles",
+				Path:              "/keyauth.permission.PermissionService/QueryRoles",
 				FunctionName:      "QueryRoles",
-				Path:              "/namespaces/:id/roles",
 				Method:            "POST",
 				Resource:          "role",
 				AuthEnable:        true,
@@ -37,9 +35,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.permission.PermissionService/CheckPermission",
+				Path:              "/keyauth.permission.PermissionService/CheckPermission",
 				FunctionName:      "CheckPermission",
-				Path:              "/namespaces/:id/permissions/endpoints/:eid",
 				Method:            "GET",
 				Resource:          "permission",
 				AuthEnable:        true,

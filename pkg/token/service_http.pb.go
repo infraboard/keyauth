@@ -11,9 +11,8 @@ func HttpEntry() *http.EntrySet {
 	set := &http.EntrySet{
 		Items: []*http.Entry{
 			{
-				GrpcPath:          "/keyauth.token.TokenService/IssueToken",
+				Path:              "/keyauth.token.TokenService/IssueToken",
 				FunctionName:      "IssueToken",
-				Path:              "/oauth2/tokens",
 				Method:            "POST",
 				Resource:          "token",
 				AuthEnable:        false,
@@ -24,9 +23,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.token.TokenService/ValidateToken",
+				Path:              "/keyauth.token.TokenService/ValidateToken",
 				FunctionName:      "ValidateToken",
-				Path:              "/oauth2/tokens",
 				Method:            "GET",
 				Resource:          "token",
 				AuthEnable:        false,
@@ -37,9 +35,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.token.TokenService/DescribeToken",
+				Path:              "/keyauth.token.TokenService/DescribeToken",
 				FunctionName:      "DescribeToken",
-				Path:              "/applications/:id/tokens",
 				Method:            "GET",
 				Resource:          "token",
 				AuthEnable:        true,
@@ -50,9 +47,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.token.TokenService/RevolkToken",
+				Path:              "/keyauth.token.TokenService/RevolkToken",
 				FunctionName:      "RevolkToken",
-				Path:              "/applications/:id/tokens",
 				Method:            "DELETE",
 				Resource:          "token",
 				AuthEnable:        true,
@@ -63,9 +59,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.token.TokenService/BlockToken",
+				Path:              "/keyauth.token.TokenService/BlockToken",
 				FunctionName:      "BlockToken",
-				Path:              "/applications/:id/tokens",
 				Method:            "PUT",
 				Resource:          "token",
 				AuthEnable:        true,
@@ -76,9 +71,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.token.TokenService/ChangeNamespace",
+				Path:              "/keyauth.token.TokenService/ChangeNamespace",
 				FunctionName:      "ChangeNamespace",
-				Path:              "/applications/:id/tokens",
 				Method:            "PUT",
 				Resource:          "token",
 				AuthEnable:        true,
@@ -89,9 +83,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.token.TokenService/QueryToken",
+				Path:              "/keyauth.token.TokenService/QueryToken",
 				FunctionName:      "QueryToken",
-				Path:              "/applications/:id/tokens",
 				Method:            "GET",
 				Resource:          "token",
 				AuthEnable:        true,
@@ -102,9 +95,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.token.TokenService/DeleteToken",
+				Path:              "/keyauth.token.TokenService/DeleteToken",
 				FunctionName:      "DeleteToken",
-				Path:              "/applications/:id/tokens",
 				Method:            "GET",
 				Resource:          "token",
 				AuthEnable:        true,

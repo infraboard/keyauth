@@ -11,9 +11,8 @@ func HttpEntry() *http.EntrySet {
 	set := &http.EntrySet{
 		Items: []*http.Entry{
 			{
-				GrpcPath:          "/keyauth.endpoint.EndpointService/DescribeEndpoint",
+				Path:              "/keyauth.endpoint.EndpointService/DescribeEndpoint",
 				FunctionName:      "DescribeEndpoint",
-				Path:              "/endpoints/:id",
 				Method:            "GET",
 				Resource:          "endpoint",
 				AuthEnable:        true,
@@ -24,9 +23,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.endpoint.EndpointService/QueryEndpoints",
+				Path:              "/keyauth.endpoint.EndpointService/QueryEndpoints",
 				FunctionName:      "QueryEndpoints",
-				Path:              "/endpoints",
 				Method:            "GET",
 				Resource:          "endpoint",
 				AuthEnable:        true,
@@ -37,9 +35,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.endpoint.EndpointService/Registry",
+				Path:              "/keyauth.endpoint.EndpointService/Registry",
 				FunctionName:      "Registry",
-				Path:              "/endpoints",
 				Method:            "POST",
 				Resource:          "endpoint",
 				AuthEnable:        false,
@@ -50,9 +47,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.endpoint.EndpointService/DeleteEndpoint",
+				Path:              "/keyauth.endpoint.EndpointService/DeleteEndpoint",
 				FunctionName:      "DeleteEndpoint",
-				Path:              "/endpoints",
 				Method:            "DELETE",
 				Resource:          "endpoint",
 				AuthEnable:        true,
@@ -63,9 +59,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.endpoint.EndpointService/QueryResources",
+				Path:              "/keyauth.endpoint.EndpointService/QueryResources",
 				FunctionName:      "QueryResources",
-				Path:              "/resources",
 				Method:            "GET",
 				Resource:          "resource",
 				AuthEnable:        true,

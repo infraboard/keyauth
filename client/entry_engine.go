@@ -73,7 +73,7 @@ func (e *entryEngine) ValidatePermission(ctx *gcontext.GrpcInCtx) (*token.Token,
 			return tk, nil
 		}
 
-		eid, err := e.endpointHashID(outCtx, e.GrpcPath)
+		eid, err := e.endpointHashID(outCtx, e.Path)
 		if err != nil {
 			return nil, err
 		}
@@ -137,7 +137,7 @@ func (e *entryEngine) SendOperateEvent(req, resp interface{}, hd *event.Header, 
 func newOperateEventData(e *httpb.Entry, tk *token.Token) *event.OperateEventData {
 	od := &event.OperateEventData{
 		Action:       e.GetLableValue("action"),
-		FeaturePath:  e.GrpcPath,
+		FeaturePath:  e.Path,
 		ResourceType: e.Resource,
 		ServiceName:  version.ServiceName,
 	}

@@ -11,9 +11,8 @@ func HttpEntry() *http.EntrySet {
 	set := &http.EntrySet{
 		Items: []*http.Entry{
 			{
-				GrpcPath:          "/keyauth.department.DepartmentService/QueryDepartment",
+				Path:              "/keyauth.department.DepartmentService/QueryDepartment",
 				FunctionName:      "QueryDepartment",
-				Path:              "/departments",
 				Method:            "GET",
 				Resource:          "department",
 				AuthEnable:        true,
@@ -24,9 +23,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.department.DepartmentService/DescribeDepartment",
+				Path:              "/keyauth.department.DepartmentService/DescribeDepartment",
 				FunctionName:      "DescribeDepartment",
-				Path:              "/departments/:id",
 				Method:            "POST",
 				Resource:          "department",
 				AuthEnable:        true,
@@ -37,9 +35,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.department.DepartmentService/CreateDepartment",
+				Path:              "/keyauth.department.DepartmentService/CreateDepartment",
 				FunctionName:      "CreateDepartment",
-				Path:              "/departments",
 				Method:            "POST",
 				Resource:          "department",
 				AuthEnable:        true,
@@ -50,9 +47,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.department.DepartmentService/UpdateDepartment",
+				Path:              "/keyauth.department.DepartmentService/UpdateDepartment",
 				FunctionName:      "UpdateDepartment",
-				Path:              "/departments/:id",
 				Method:            "PUT",
 				Resource:          "department",
 				AuthEnable:        true,
@@ -63,9 +59,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.department.DepartmentService/DeleteDepartment",
+				Path:              "/keyauth.department.DepartmentService/DeleteDepartment",
 				FunctionName:      "DeleteDepartment",
-				Path:              "/departments/:id",
 				Method:            "DELETE",
 				Resource:          "department",
 				AuthEnable:        true,
@@ -76,9 +71,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.department.DepartmentService/QueryApplicationForm",
+				Path:              "/keyauth.department.DepartmentService/QueryApplicationForm",
 				FunctionName:      "QueryApplicationForm",
-				Path:              "/join_apply",
 				Method:            "GET",
 				Resource:          "department_apply",
 				AuthEnable:        true,
@@ -89,9 +83,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.department.DepartmentService/DescribeApplicationForm",
+				Path:              "/keyauth.department.DepartmentService/DescribeApplicationForm",
 				FunctionName:      "DescribeApplicationForm",
-				Path:              "/join_apply/:id",
 				Method:            "GET",
 				Resource:          "department_apply",
 				AuthEnable:        true,
@@ -102,9 +95,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.department.DepartmentService/JoinDepartment",
+				Path:              "/keyauth.department.DepartmentService/JoinDepartment",
 				FunctionName:      "JoinDepartment",
-				Path:              "/join_apply/:id",
 				Method:            "POST",
 				Resource:          "department_apply",
 				AuthEnable:        true,
@@ -115,9 +107,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.department.DepartmentService/DealApplicationForm",
+				Path:              "/keyauth.department.DepartmentService/DealApplicationForm",
 				FunctionName:      "DealApplicationForm",
-				Path:              "/join_apply/:id",
 				Method:            "PUT",
 				Resource:          "department_apply",
 				AuthEnable:        true,

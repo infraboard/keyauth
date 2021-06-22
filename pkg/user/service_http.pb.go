@@ -11,9 +11,8 @@ func HttpEntry() *http.EntrySet {
 	set := &http.EntrySet{
 		Items: []*http.Entry{
 			{
-				GrpcPath:          "/keyauth.user.UserService/QueryAccount",
+				Path:              "/keyauth.user.UserService/QueryAccount",
 				FunctionName:      "QueryAccount",
-				Path:              "",
 				Method:            "",
 				Resource:          "account",
 				AuthEnable:        true,
@@ -24,9 +23,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.user.UserService/DescribeAccount",
+				Path:              "/keyauth.user.UserService/DescribeAccount",
 				FunctionName:      "DescribeAccount",
-				Path:              "",
 				Method:            "",
 				Resource:          "account",
 				AuthEnable:        true,
@@ -37,9 +35,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.user.UserService/CreateAccount",
+				Path:              "/keyauth.user.UserService/CreateAccount",
 				FunctionName:      "CreateAccount",
-				Path:              "",
 				Method:            "",
 				Resource:          "account",
 				AuthEnable:        true,
@@ -50,9 +47,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.user.UserService/BlockAccount",
+				Path:              "/keyauth.user.UserService/BlockAccount",
 				FunctionName:      "BlockAccount",
-				Path:              "",
 				Method:            "",
 				Resource:          "account",
 				AuthEnable:        true,
@@ -63,9 +59,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.user.UserService/UnBlockAccount",
+				Path:              "/keyauth.user.UserService/UnBlockAccount",
 				FunctionName:      "UnBlockAccount",
-				Path:              "",
 				Method:            "",
 				Resource:          "account",
 				AuthEnable:        true,
@@ -76,9 +71,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.user.UserService/DeleteAccount",
+				Path:              "/keyauth.user.UserService/DeleteAccount",
 				FunctionName:      "DeleteAccount",
-				Path:              "",
 				Method:            "",
 				Resource:          "account",
 				AuthEnable:        true,
@@ -89,9 +83,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.user.UserService/UpdateAccountProfile",
+				Path:              "/keyauth.user.UserService/UpdateAccountProfile",
 				FunctionName:      "UpdateAccountProfile",
-				Path:              "",
 				Method:            "",
 				Resource:          "account",
 				AuthEnable:        true,
@@ -102,9 +95,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.user.UserService/UpdateAccountPassword",
+				Path:              "/keyauth.user.UserService/UpdateAccountPassword",
 				FunctionName:      "UpdateAccountPassword",
-				Path:              "",
 				Method:            "",
 				Resource:          "account",
 				AuthEnable:        true,
@@ -115,9 +107,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.user.UserService/GeneratePassword",
+				Path:              "/keyauth.user.UserService/GeneratePassword",
 				FunctionName:      "GeneratePassword",
-				Path:              "",
 				Method:            "",
 				Resource:          "",
 				AuthEnable:        true,

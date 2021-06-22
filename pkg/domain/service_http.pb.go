@@ -11,9 +11,8 @@ func HttpEntry() *http.EntrySet {
 	set := &http.EntrySet{
 		Items: []*http.Entry{
 			{
-				GrpcPath:          "/keyauth.domain.DomainService/CreateDomain",
+				Path:              "/keyauth.domain.DomainService/CreateDomain",
 				FunctionName:      "CreateDomain",
-				Path:              "/domains",
 				Method:            "POST",
 				Resource:          "domain",
 				AuthEnable:        true,
@@ -24,9 +23,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.domain.DomainService/UpdateDomain",
+				Path:              "/keyauth.domain.DomainService/UpdateDomain",
 				FunctionName:      "UpdateDomain",
-				Path:              "/domains/:name",
 				Method:            "GET",
 				Resource:          "domain",
 				AuthEnable:        true,
@@ -37,9 +35,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.domain.DomainService/DescribeDomain",
+				Path:              "/keyauth.domain.DomainService/DescribeDomain",
 				FunctionName:      "DescribeDomain",
-				Path:              "/domains/:name",
 				Method:            "GET",
 				Resource:          "domain",
 				AuthEnable:        true,
@@ -50,9 +47,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.domain.DomainService/QueryDomain",
+				Path:              "/keyauth.domain.DomainService/QueryDomain",
 				FunctionName:      "QueryDomain",
-				Path:              "/domains",
 				Method:            "GET",
 				Resource:          "domain",
 				AuthEnable:        true,
@@ -63,9 +59,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.domain.DomainService/DeleteDomain",
+				Path:              "/keyauth.domain.DomainService/DeleteDomain",
 				FunctionName:      "DeleteDomain",
-				Path:              "/domains",
 				Method:            "DELETE",
 				Resource:          "domain",
 				AuthEnable:        true,
@@ -76,9 +71,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.domain.DomainService/UpdateDomainSecurity",
+				Path:              "/keyauth.domain.DomainService/UpdateDomainSecurity",
 				FunctionName:      "UpdateDomainSecurity",
-				Path:              "/domains/:name/security",
 				Method:            "PUT",
 				Resource:          "domain",
 				AuthEnable:        true,

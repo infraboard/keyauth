@@ -11,9 +11,8 @@ func HttpEntry() *http.EntrySet {
 	set := &http.EntrySet{
 		Items: []*http.Entry{
 			{
-				GrpcPath:          "/keyauth.role.RoleService/CreateRole",
+				Path:              "/keyauth.role.RoleService/CreateRole",
 				FunctionName:      "CreateRole",
-				Path:              "",
 				Method:            "",
 				Resource:          "role",
 				AuthEnable:        true,
@@ -24,9 +23,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.role.RoleService/QueryRole",
+				Path:              "/keyauth.role.RoleService/QueryRole",
 				FunctionName:      "QueryRole",
-				Path:              "",
 				Method:            "",
 				Resource:          "role",
 				AuthEnable:        true,
@@ -37,9 +35,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.role.RoleService/DescribeRole",
+				Path:              "/keyauth.role.RoleService/DescribeRole",
 				FunctionName:      "DescribeRole",
-				Path:              "",
 				Method:            "",
 				Resource:          "role",
 				AuthEnable:        true,
@@ -50,9 +47,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.role.RoleService/DeleteRole",
+				Path:              "/keyauth.role.RoleService/DeleteRole",
 				FunctionName:      "DeleteRole",
-				Path:              "",
 				Method:            "",
 				Resource:          "role",
 				AuthEnable:        true,
@@ -63,9 +59,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.role.RoleService/QueryPermission",
+				Path:              "/keyauth.role.RoleService/QueryPermission",
 				FunctionName:      "QueryPermission",
-				Path:              "",
 				Method:            "",
 				Resource:          "permission",
 				AuthEnable:        true,
@@ -76,9 +71,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.role.RoleService/DescribePermission",
+				Path:              "/keyauth.role.RoleService/DescribePermission",
 				FunctionName:      "DescribePermission",
-				Path:              "",
 				Method:            "",
 				Resource:          "permission",
 				AuthEnable:        true,
@@ -89,9 +83,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.role.RoleService/AddPermissionToRole",
+				Path:              "/keyauth.role.RoleService/AddPermissionToRole",
 				FunctionName:      "AddPermissionToRole",
-				Path:              "",
 				Method:            "",
 				Resource:          "permission",
 				AuthEnable:        true,
@@ -102,9 +95,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.role.RoleService/RemovePermissionFromRole",
+				Path:              "/keyauth.role.RoleService/RemovePermissionFromRole",
 				FunctionName:      "RemovePermissionFromRole",
-				Path:              "",
 				Method:            "",
 				Resource:          "permission",
 				AuthEnable:        true,
@@ -115,9 +107,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.role.RoleService/UpdatePermission",
+				Path:              "/keyauth.role.RoleService/UpdatePermission",
 				FunctionName:      "UpdatePermission",
-				Path:              "",
 				Method:            "",
 				Resource:          "permission",
 				AuthEnable:        true,

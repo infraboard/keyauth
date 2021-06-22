@@ -11,9 +11,8 @@ func HttpEntry() *http.EntrySet {
 	set := &http.EntrySet{
 		Items: []*http.Entry{
 			{
-				GrpcPath:          "/keyauth.tag.TagService/CreateTag",
+				Path:              "/keyauth.tag.TagService/CreateTag",
 				FunctionName:      "CreateTag",
-				Path:              "",
 				Method:            "",
 				Resource:          "",
 				AuthEnable:        true,
@@ -24,9 +23,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.tag.TagService/DescribeTag",
+				Path:              "/keyauth.tag.TagService/DescribeTag",
 				FunctionName:      "DescribeTag",
-				Path:              "",
 				Method:            "",
 				Resource:          "",
 				AuthEnable:        true,
@@ -37,9 +35,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.tag.TagService/DeleteTag",
+				Path:              "/keyauth.tag.TagService/DeleteTag",
 				FunctionName:      "DeleteTag",
-				Path:              "",
 				Method:            "",
 				Resource:          "",
 				AuthEnable:        true,
@@ -50,9 +47,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.tag.TagService/QueryTagKey",
+				Path:              "/keyauth.tag.TagService/QueryTagKey",
 				FunctionName:      "QueryTagKey",
-				Path:              "",
 				Method:            "",
 				Resource:          "",
 				AuthEnable:        true,
@@ -63,9 +59,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.tag.TagService/QueryTagValue",
+				Path:              "/keyauth.tag.TagService/QueryTagValue",
 				FunctionName:      "QueryTagValue",
-				Path:              "",
 				Method:            "",
 				Resource:          "",
 				AuthEnable:        true,

@@ -93,7 +93,7 @@ func (a *grpcAuther) Auth(
 		return nil, err
 	}
 
-	entry := GetGrpcPathEntry(info.FullMethod)
+	entry := GetPathEntry(info.FullMethod)
 	if entry == nil {
 		return nil, grpc.Errorf(codes.Internal, "entry gprc path: %s not found, check is registry", info.FullMethod)
 	}
@@ -208,7 +208,7 @@ func (a *grpcAuther) validatePermission(tk *token.Token, entry *http.Entry, req 
 		if v != "*" {
 			a.log().Debugf("allows: %s", v)
 			if !tk.UserType.IsIn(transferToUserType(v)...) {
-				return grpc.Errorf(codes.PermissionDenied, "access grpc path %s permission deny, allow types: %s", entry.GrpcPath, v)
+				return grpc.Errorf(codes.PermissionDenied, "access grpc path %s permission deny, allow types: %s", entry.Path, v)
 			}
 		}
 		return nil
@@ -218,7 +218,7 @@ func (a *grpcAuther) validatePermission(tk *token.Token, entry *http.Entry, req 
 }
 
 func (a *grpcAuther) endpointHashID(entry *http.Entry) string {
-	return endpoint.GenHashID(version.ServiceName, entry.GrpcPath)
+	return endpoint.GenHashID(version.ServiceName, entry.Path)
 }
 
 func (a *grpcAuther) log() logger.Logger {
@@ -260,7 +260,7 @@ func transferToUserType(allows string) []types.UserType {
 func newOperateEventData(entry *http.Entry) *event.OperateEventData {
 	return &event.OperateEventData{
 		Action:       entry.GetLableValue("action"),
-		FeaturePath:  entry.GrpcPath,
+		FeaturePath:  entry.Path,
 		ResourceType: entry.Resource,
 		ServiceName:  version.ServiceName,
 	}

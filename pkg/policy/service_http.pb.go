@@ -11,9 +11,8 @@ func HttpEntry() *http.EntrySet {
 	set := &http.EntrySet{
 		Items: []*http.Entry{
 			{
-				GrpcPath:          "/keyauth.policy.PolicyService/CreatePolicy",
+				Path:              "/keyauth.policy.PolicyService/CreatePolicy",
 				FunctionName:      "CreatePolicy",
-				Path:              "/policies",
 				Method:            "POST",
 				Resource:          "policy",
 				AuthEnable:        true,
@@ -24,9 +23,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.policy.PolicyService/QueryPolicy",
+				Path:              "/keyauth.policy.PolicyService/QueryPolicy",
 				FunctionName:      "QueryPolicy",
-				Path:              "/policies",
 				Method:            "GET",
 				Resource:          "policy",
 				AuthEnable:        true,
@@ -37,9 +35,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.policy.PolicyService/DescribePolicy",
+				Path:              "/keyauth.policy.PolicyService/DescribePolicy",
 				FunctionName:      "DescribePolicy",
-				Path:              "/policies/:id",
 				Method:            "GET",
 				Resource:          "policy",
 				AuthEnable:        true,
@@ -50,9 +47,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.policy.PolicyService/DeletePolicy",
+				Path:              "/keyauth.policy.PolicyService/DeletePolicy",
 				FunctionName:      "DeletePolicy",
-				Path:              "/policies/:id",
 				Method:            "DELETE",
 				Resource:          "policy",
 				AuthEnable:        true,

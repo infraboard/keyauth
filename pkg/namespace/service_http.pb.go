@@ -11,9 +11,8 @@ func HttpEntry() *http.EntrySet {
 	set := &http.EntrySet{
 		Items: []*http.Entry{
 			{
-				GrpcPath:          "/keyauth.namespace.NamespaceService/CreateNamespace",
+				Path:              "/keyauth.namespace.NamespaceService/CreateNamespace",
 				FunctionName:      "CreateNamespace",
-				Path:              "",
 				Method:            "",
 				Resource:          "namespace",
 				AuthEnable:        true,
@@ -24,9 +23,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.namespace.NamespaceService/QueryNamespace",
+				Path:              "/keyauth.namespace.NamespaceService/QueryNamespace",
 				FunctionName:      "QueryNamespace",
-				Path:              "",
 				Method:            "",
 				Resource:          "namespace",
 				AuthEnable:        true,
@@ -37,9 +35,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.namespace.NamespaceService/DescribeNamespace",
+				Path:              "/keyauth.namespace.NamespaceService/DescribeNamespace",
 				FunctionName:      "DescribeNamespace",
-				Path:              "",
 				Method:            "",
 				Resource:          "namespace",
 				AuthEnable:        true,
@@ -50,9 +47,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.namespace.NamespaceService/DeleteNamespace",
+				Path:              "/keyauth.namespace.NamespaceService/DeleteNamespace",
 				FunctionName:      "DeleteNamespace",
-				Path:              "/namespaces/:id",
 				Method:            "GET",
 				Resource:          "namespace",
 				AuthEnable:        true,

@@ -17,7 +17,7 @@ func NewDefaultEndpoint() *Endpoint {
 // NewEndpoint todo
 func NewEndpoint(serviceID, version string, entry http.Entry) *Endpoint {
 	return &Endpoint{
-		Id:        GenHashID(serviceID, entry.GrpcPath),
+		Id:        GenHashID(serviceID, entry.Path),
 		CreateAt:  ftime.Now().Timestamp(),
 		UpdateAt:  ftime.Now().Timestamp(),
 		ServiceId: serviceID,

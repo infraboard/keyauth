@@ -101,7 +101,7 @@ func (s *service) CheckPermission(ctx context.Context, req *permission.CheckPerm
 		return nil, exception.NewPermissionDeny("in namespace %s, role %s has no permission access endpoint: %s",
 			req.NamespaceId,
 			roleSet.RoleNames(),
-			ep.Entry.GrpcPath,
+			ep.Entry.Path,
 		)
 	}
 

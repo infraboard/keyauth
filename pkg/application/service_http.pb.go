@@ -11,9 +11,8 @@ func HttpEntry() *http.EntrySet {
 	set := &http.EntrySet{
 		Items: []*http.Entry{
 			{
-				GrpcPath:          "/keyauth.application.UserService/CreateUserApplication",
+				Path:              "/keyauth.application.UserService/CreateUserApplication",
 				FunctionName:      "CreateUserApplication",
-				Path:              "/applications/",
 				Method:            "POST",
 				Resource:          "application",
 				AuthEnable:        true,
@@ -24,9 +23,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.application.UserService/DescribeApplication",
+				Path:              "/keyauth.application.UserService/DescribeApplication",
 				FunctionName:      "DescribeApplication",
-				Path:              "/applications/:id",
 				Method:            "GET",
 				Resource:          "application",
 				AuthEnable:        true,
@@ -37,9 +35,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.application.UserService/QueryApplication",
+				Path:              "/keyauth.application.UserService/QueryApplication",
 				FunctionName:      "QueryApplication",
-				Path:              "/applications/",
 				Method:            "GET",
 				Resource:          "application",
 				AuthEnable:        true,
@@ -50,9 +47,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.application.UserService/DeleteApplication",
+				Path:              "/keyauth.application.UserService/DeleteApplication",
 				FunctionName:      "DeleteApplication",
-				Path:              "/applications/:id",
 				Method:            "DELETE",
 				Resource:          "application",
 				AuthEnable:        true,
@@ -63,11 +59,11 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:     "/keyauth.application.AdminService/CreateBuildInApplication",
+				Path:         "/keyauth.application.AdminService/CreateBuildInApplication",
 				FunctionName: "CreateBuildInApplication",
 			},
 			{
-				GrpcPath:     "/keyauth.application.AdminService/GetBuildInApplication",
+				Path:         "/keyauth.application.AdminService/GetBuildInApplication",
 				FunctionName: "GetBuildInApplication",
 			},
 		},

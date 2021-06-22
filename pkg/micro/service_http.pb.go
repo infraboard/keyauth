@@ -11,9 +11,8 @@ func HttpEntry() *http.EntrySet {
 	set := &http.EntrySet{
 		Items: []*http.Entry{
 			{
-				GrpcPath:          "/keyauth.micro.MicroService/ValidateClientCredential",
+				Path:              "/keyauth.micro.MicroService/ValidateClientCredential",
 				FunctionName:      "ValidateClientCredential",
-				Path:              "/services/:id/validate",
 				Method:            "POST",
 				Resource:          "endpoint",
 				AuthEnable:        false,
@@ -24,9 +23,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.micro.MicroService/CreateService",
+				Path:              "/keyauth.micro.MicroService/CreateService",
 				FunctionName:      "CreateService",
-				Path:              "/services",
 				Method:            "POST",
 				Resource:          "service",
 				AuthEnable:        true,
@@ -37,9 +35,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.micro.MicroService/QueryService",
+				Path:              "/keyauth.micro.MicroService/QueryService",
 				FunctionName:      "QueryService",
-				Path:              "/services",
 				Method:            "GET",
 				Resource:          "service",
 				AuthEnable:        true,
@@ -50,9 +47,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.micro.MicroService/DescribeService",
+				Path:              "/keyauth.micro.MicroService/DescribeService",
 				FunctionName:      "DescribeService",
-				Path:              "/services/:id",
 				Method:            "GET",
 				Resource:          "service",
 				AuthEnable:        true,
@@ -63,9 +59,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.micro.MicroService/DeleteService",
+				Path:              "/keyauth.micro.MicroService/DeleteService",
 				FunctionName:      "DeleteService",
-				Path:              "/services/:id",
 				Method:            "DELETE",
 				Resource:          "service",
 				AuthEnable:        true,
@@ -76,9 +71,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.micro.MicroService/RefreshServiceClientSecret",
+				Path:              "/keyauth.micro.MicroService/RefreshServiceClientSecret",
 				FunctionName:      "RefreshServiceClientSecret",
-				Path:              "/services/:id/refresh_client_secret",
 				Method:            "POST",
 				Resource:          "service",
 				AuthEnable:        true,

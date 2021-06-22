@@ -11,9 +11,8 @@ func HttpEntry() *http.EntrySet {
 	set := &http.EntrySet{
 		Items: []*http.Entry{
 			{
-				GrpcPath:          "/keyauth.mconf.MicroConfigService/CreateGroup",
+				Path:              "/keyauth.mconf.MicroConfigService/CreateGroup",
 				FunctionName:      "CreateGroup",
-				Path:              "/services",
 				Method:            "POST",
 				Resource:          "service",
 				AuthEnable:        true,
@@ -24,9 +23,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.mconf.MicroConfigService/QueryGroup",
+				Path:              "/keyauth.mconf.MicroConfigService/QueryGroup",
 				FunctionName:      "QueryGroup",
-				Path:              "/services",
 				Method:            "GET",
 				Resource:          "service",
 				AuthEnable:        true,
@@ -37,9 +35,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.mconf.MicroConfigService/DeleteGroup",
+				Path:              "/keyauth.mconf.MicroConfigService/DeleteGroup",
 				FunctionName:      "DeleteGroup",
-				Path:              "/services/:id",
 				Method:            "DELETE",
 				Resource:          "service",
 				AuthEnable:        true,
@@ -50,9 +47,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.mconf.MicroConfigService/QueryItem",
+				Path:              "/keyauth.mconf.MicroConfigService/QueryItem",
 				FunctionName:      "QueryItem",
-				Path:              "/services",
 				Method:            "GET",
 				Resource:          "service",
 				AuthEnable:        true,
@@ -63,9 +59,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.mconf.MicroConfigService/AddItemToGroup",
+				Path:              "/keyauth.mconf.MicroConfigService/AddItemToGroup",
 				FunctionName:      "AddItemToGroup",
-				Path:              "/services",
 				Method:            "GET",
 				Resource:          "service",
 				AuthEnable:        true,
@@ -76,9 +71,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.mconf.MicroConfigService/RemoveItemFromGroup",
+				Path:              "/keyauth.mconf.MicroConfigService/RemoveItemFromGroup",
 				FunctionName:      "RemoveItemFromGroup",
-				Path:              "/services",
 				Method:            "GET",
 				Resource:          "service",
 				AuthEnable:        true,

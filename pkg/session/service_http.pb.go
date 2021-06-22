@@ -11,17 +11,16 @@ func HttpEntry() *http.EntrySet {
 	set := &http.EntrySet{
 		Items: []*http.Entry{
 			{
-				GrpcPath:     "/keyauth.session.UserService/Login",
+				Path:         "/keyauth.session.UserService/Login",
 				FunctionName: "Login",
 			},
 			{
-				GrpcPath:     "/keyauth.session.UserService/Logout",
+				Path:         "/keyauth.session.UserService/Logout",
 				FunctionName: "Logout",
 			},
 			{
-				GrpcPath:          "/keyauth.session.UserService/DescribeSession",
+				Path:              "/keyauth.session.UserService/DescribeSession",
 				FunctionName:      "DescribeSession",
-				Path:              "/sessions",
 				Method:            "GET",
 				Resource:          "session",
 				AuthEnable:        true,
@@ -32,9 +31,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:          "/keyauth.session.UserService/QuerySession",
+				Path:              "/keyauth.session.UserService/QuerySession",
 				FunctionName:      "QuerySession",
-				Path:              "/sessions",
 				Method:            "GET",
 				Resource:          "session",
 				AuthEnable:        true,
@@ -45,7 +43,7 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				GrpcPath:     "/keyauth.session.AdminService/QueryUserLastSession",
+				Path:         "/keyauth.session.AdminService/QueryUserLastSession",
 				FunctionName: "QueryUserLastSession",
 			},
 		},
