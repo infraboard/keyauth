@@ -81,7 +81,7 @@ func (e *entryEngine) ValidatePermission(ctx *gcontext.GrpcInCtx) (*token.Token,
 		// 权限检测
 		req := permission.NewCheckPermissionRequest()
 		req.EndpointId = eid
-		req.NamespaceId = ctx.GetNamespace()
+		req.NamespaceId = tk.Namespace
 		perm, err := e.client.Permission().CheckPermission(outCtx.Context(), req)
 		if err != nil {
 			return nil, exception.NewPermissionDeny("no permission, %s", err)
