@@ -24,9 +24,10 @@ import (
 
 func newEntryEngine(client *Client, entry *httpb.Entry, log logger.Logger) *entryEngine {
 	return &entryEngine{
-		client: client,
-		Entry:  entry,
-		log:    log,
+		client:  client,
+		Entry:   entry,
+		log:     log,
+		uniPath: false,
 	}
 }
 
@@ -35,6 +36,11 @@ type entryEngine struct {
 	client    *Client
 	serviceId string
 	log       logger.Logger
+	uniPath   bool
+}
+
+func (e *entryEngine) UseUniPath() {
+	e.uniPath = true
 }
 
 func (e *entryEngine) ValidatePermission(ctx *gcontext.GrpcInCtx) (*token.Token, error) {
@@ -73,7 +79,13 @@ func (e *entryEngine) ValidatePermission(ctx *gcontext.GrpcInCtx) (*token.Token,
 			return tk, nil
 		}
 
-		eid, err := e.endpointHashID(outCtx, e.Path)
+		// http 使用Unique Path, grpc path本身具有唯一性
+		path := e.Path
+		if e.uniPath {
+			path = e.UniquePath()
+		}
+
+		eid, err := e.endpointHashID(outCtx, path)
 		if err != nil {
 			return nil, err
 		}

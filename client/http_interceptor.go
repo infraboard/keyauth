@@ -39,6 +39,7 @@ func (a *HTTPAuther) Auth(r *http.Request, entry httpb.Entry) (
 	}
 
 	engine := newEntryEngine(a.keyauth, &entry, a.log())
+	engine.UseUniPath()
 
 	// 校验用户权限是否合法
 	ctx.Context()
