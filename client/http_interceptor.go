@@ -4,12 +4,14 @@ import (
 	"net/http"
 
 	"github.com/infraboard/keyauth/pkg"
+	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/grpc/gcontext"
 	"github.com/infraboard/mcube/http/router"
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
 	httpb "github.com/infraboard/mcube/pb/http"
+	"github.com/rs/xid"
 )
 
 // NewInternalAuther 内部使用的auther
@@ -23,6 +25,8 @@ func NewHTTPAuther(c *Client) router.Auther {
 type HTTPAuther struct {
 	l       logger.Logger
 	keyauth *Client
+
+	sessions map[string]*token.Token
 }
 
 func (a *HTTPAuther) Auth(r *http.Request, entry httpb.Entry) (
@@ -55,13 +59,35 @@ func (a *HTTPAuther) Auth(r *http.Request, entry httpb.Entry) (
 		defer engine.SendOperateEvent(r.URL, nil, hd, od)
 	}
 
+	// 保存会话
+	rid := xid.New().String()
+	r.Header.Set(gcontext.RequestID, rid)
+	a.addSession(rid, tk)
+	defer a.delSession(rid)
+
 	return tk, nil
 }
 
 func (a *HTTPAuther) log() logger.Logger {
 	if a == nil {
-		a.l = zap.L().Named("GRPC Auther")
+		a.l = zap.L().Named("HTTP Auther")
 	}
 
 	return a.l
+}
+
+func (a *HTTPAuther) GetToken(requestID string) *token.Token {
+	if v, ok := a.sessions[requestID]; ok {
+		return v
+	}
+
+	return nil
+}
+
+func (a *HTTPAuther) addSession(requestID string, tk *token.Token) {
+	a.sessions[requestID] = tk
+}
+
+func (a HTTPAuther) delSession(requestID string) {
+	delete(a.sessions, requestID)
 }
