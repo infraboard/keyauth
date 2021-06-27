@@ -7,7 +7,6 @@ import (
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/grpc/gcontext"
-	"github.com/infraboard/mcube/http/router"
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
 	httpb "github.com/infraboard/mcube/pb/http"
@@ -15,9 +14,10 @@ import (
 )
 
 // NewInternalAuther 内部使用的auther
-func NewHTTPAuther(c *Client) router.Auther {
+func NewHTTPAuther(c *Client) *HTTPAuther {
 	return &HTTPAuther{
-		keyauth: c,
+		keyauth:  c,
+		sessions: make(map[string]*token.Token),
 	}
 }
 
