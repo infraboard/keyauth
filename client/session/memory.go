@@ -4,17 +4,25 @@ import (
 	"sync"
 
 	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/mcube/logger"
+	"github.com/infraboard/mcube/logger/zap"
 )
 
 func NewMemoryStore() *MemoryStore {
 	return &MemoryStore{
 		store: make(map[string]*session),
+		l:     zap.L().Named("Memory Session"),
 	}
 }
 
 type MemoryStore struct {
 	store map[string]*session
 	m     sync.Mutex
+	l     logger.Logger
+}
+
+func (s *MemoryStore) Debug(l logger.Logger) {
+	s.l = l
 }
 
 func (s *MemoryStore) GetToken(token string) *token.Token {
@@ -29,6 +37,7 @@ func (s *MemoryStore) SetToken(tk *token.Token) error {
 		return nil
 	}
 
+	s.l.Debugf("set token: %s", tk.AccessToken[:8])
 	s.m.Lock()
 	defer s.m.Unlock()
 
@@ -47,6 +56,7 @@ func (s *MemoryStore) LeaseToken(token string) *token.Token {
 
 	if v, ok := s.store[token]; ok {
 		v.Inc()
+		s.l.Debugf("lease token: %s %d", token[:8], v.refCount)
 		return s.store[token].tk
 	}
 
@@ -66,6 +76,7 @@ func (s *MemoryStore) ReturnToken(tk *token.Token) {
 		if v.Dec() == 0 {
 			delete(s.store, tk.AccessToken)
 		}
+		s.l.Debugf("return token: %s %d", tk.AccessToken[:8], v.refCount)
 	}
 }
 

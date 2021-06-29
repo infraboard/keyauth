@@ -111,9 +111,9 @@ func (a *GrpcAuther) auth(
 	}
 
 	// 审计日志
-	od := newOperateEventData(entry, tk)
-	hd := newEventHeaderFromCtx(rctx)
 	if entry.AuditLog {
+		od := newOperateEventData(entry, tk)
+		hd := newEventHeaderFromCtx(rctx)
 		defer func() {
 			a.log().Debugf("[%s] start send operate event ...")
 			err := SendOperateEvent(req, resp, hd, od)
