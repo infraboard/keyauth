@@ -43,6 +43,8 @@ func (e *entryEngine) UseUniPath() {
 }
 
 func (e *entryEngine) ValidateIdentity(ctx *gcontext.GrpcInCtx) (*token.Token, error) {
+	e.log.Debug("start token identity check ...")
+
 	// 获取需要校验的access token(用户的身份凭证)
 	accessToken := ctx.GetAccessToKen()
 	if accessToken == "" {
@@ -54,11 +56,18 @@ func (e *entryEngine) ValidateIdentity(ctx *gcontext.GrpcInCtx) (*token.Token, e
 
 	outCtx := gcontext.NewGrpcOutCtx()
 	outCtx.SetAccessToken(ctx.GetAccessToKen())
-	return e.client.Token().ValidateToken(outCtx.Context(), req)
+	tk, err := e.client.Token().ValidateToken(outCtx.Context(), req)
+	if err != nil {
+		return nil, err
+	}
+
+	e.log.Debugf("token check ok, username: %s", tk.Account)
+	return tk, nil
 }
 
 func (e *entryEngine) ValidatePermission(tk *token.Token, ctx *gcontext.GrpcInCtx) error {
 	if !e.PermissionEnable {
+		e.log.Debugf("[%s] permission disabled skip check!", tk.Account)
 		return nil
 	}
 
@@ -72,6 +81,7 @@ func (e *entryEngine) ValidatePermission(tk *token.Token, ctx *gcontext.GrpcInCt
 
 	// 如果是超级管理员不做权限校验, 直接放行
 	if tk.UserType.IsIn(types.UserType_SUPPER) {
+		e.log.Debugf("[%s] supper admin skip permission check!", tk.Account)
 		return nil
 	}
 
@@ -89,6 +99,7 @@ func (e *entryEngine) ValidatePermission(tk *token.Token, ctx *gcontext.GrpcInCt
 	}
 
 	// 权限检测
+	e.log.Debugf("[%s] start check permission to keyauth ...", tk.Account)
 	req := permission.NewCheckPermissionRequest()
 	req.EndpointId = eid
 	req.NamespaceId = tk.Namespace
@@ -97,6 +108,7 @@ func (e *entryEngine) ValidatePermission(tk *token.Token, ctx *gcontext.GrpcInCt
 		return exception.NewPermissionDeny("no permission, %s", err)
 	}
 	tk.Scope = perm.Scope
+	e.log.Debugf("[%s] permission check passed", tk.Account)
 	return nil
 }
 

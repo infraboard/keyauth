@@ -103,18 +103,26 @@ func (a *GrpcAuther) auth(
 		return nil, err
 	}
 
-	// 审计日志
-	od := newOperateEventData(entry, tk)
-	hd := newEventHeaderFromCtx(rctx)
-	if entry.AuditLog {
-		defer SendOperateEvent(req, resp, hd, od)
-	}
-
 	// 保存会话
 	rid := rctx.GetRequestID()
 	if rid == "" {
 		rid = xid.New().String()
 		rctx.SetRequestID(rid)
+	}
+
+	// 审计日志
+	od := newOperateEventData(entry, tk)
+	hd := newEventHeaderFromCtx(rctx)
+	if entry.AuditLog {
+		defer func() {
+			a.log().Debugf("[%s] start send operate event ...")
+			err := SendOperateEvent(req, resp, hd, od)
+			if err != nil {
+				a.log().Warnf("[%s] send operate event failed, %s", err)
+				return
+			}
+			a.log().Warnf("[%s] send operate event ok", err)
+		}()
 	}
 
 	return handler(rctx.Context(), req)
@@ -123,6 +131,7 @@ func (a *GrpcAuther) auth(
 func (a *GrpcAuther) validateServiceCredential(ctx *gcontext.GrpcInCtx) error {
 	clientID := ctx.GetClientID()
 	clientSecret := ctx.GetClientSecret()
+	a.log().Debugf("start check client[%s] credential ...", clientID)
 
 	if clientID == "" && clientSecret == "" {
 		return status.Errorf(codes.Unauthenticated, "client_id or client_secret is \"\"")
@@ -134,6 +143,7 @@ func (a *GrpcAuther) validateServiceCredential(ctx *gcontext.GrpcInCtx) error {
 		return status.Errorf(codes.Unauthenticated, "service auth error, %s", err)
 	}
 
+	a.log().Debugf("check client[%s] credential ok", clientID)
 	return nil
 }
 
