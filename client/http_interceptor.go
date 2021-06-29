@@ -2,6 +2,7 @@ package client
 
 import (
 	"net/http"
+	"reflect"
 
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/token"
@@ -62,7 +63,7 @@ func (a *HTTPAuther) Auth(r *http.Request, entry httpb.Entry) (
 	return tk, nil
 }
 
-func (a *HTTPAuther) ReponseHook(w http.ResponseWriter, r *http.Request, entry httpb.Entry) {
+func (a *HTTPAuther) ResponseHook(w http.ResponseWriter, r *http.Request, entry httpb.Entry) {
 	ctx, err := gcontext.NewGrpcInCtxFromHTTPRequest(r)
 	if err != nil {
 		a.log().Errorf("reponse hook NewGrpcInCtxFromHTTPRequest error, %s", err)
@@ -71,7 +72,7 @@ func (a *HTTPAuther) ReponseHook(w http.ResponseWriter, r *http.Request, entry h
 
 	tk, ok := context.GetContext(r).AuthInfo.(*token.Token)
 	if !ok {
-		a.log().Errorf("context AuthInfo is not *token.Token")
+		a.log().Errorf("context AuthInfo is not *token.Token, is %s", reflect.TypeOf(context.GetContext(r).AuthInfo))
 		return
 	}
 

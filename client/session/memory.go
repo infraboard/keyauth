@@ -1,7 +1,6 @@
 package session
 
 import (
-	"fmt"
 	"sync"
 
 	"github.com/infraboard/keyauth/pkg/token"
@@ -84,12 +83,10 @@ type session struct {
 
 func (s *session) Inc() uint {
 	s.refCount++
-	fmt.Println("inc", s.refCount)
 	return s.refCount
 }
 
 func (s *session) Dec() uint {
 	s.refCount--
-	fmt.Println("dec", s.refCount)
 	return s.refCount
 }
