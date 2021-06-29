@@ -7,6 +7,7 @@ import (
 	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/grpc/gcontext"
+	"github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
 	httpb "github.com/infraboard/mcube/pb/http"
@@ -16,8 +17,7 @@ import (
 // NewInternalAuther 内部使用的auther
 func NewHTTPAuther(c *Client) *HTTPAuther {
 	return &HTTPAuther{
-		keyauth:  c,
-		sessions: make(map[string]*token.Token),
+		keyauth: c,
 	}
 }
 
@@ -25,8 +25,6 @@ func NewHTTPAuther(c *Client) *HTTPAuther {
 type HTTPAuther struct {
 	l       logger.Logger
 	keyauth *Client
-
-	sessions map[string]*token.Token
 }
 
 func (a *HTTPAuther) Auth(r *http.Request, entry httpb.Entry) (
@@ -45,27 +43,44 @@ func (a *HTTPAuther) Auth(r *http.Request, entry httpb.Entry) (
 	engine := newEntryEngine(a.keyauth, &entry, a.log())
 	engine.UseUniPath()
 
-	// 校验用户权限是否合法
-	ctx.Context()
-	tk, err := engine.ValidatePermission(ctx)
+	// 校验身份
+	tk, err := engine.ValidateIdentity(ctx)
 	if err != nil {
 		return nil, err
+	}
+
+	// 校验权限
+	if err := engine.ValidatePermission(tk, ctx); err != nil {
+		return nil, err
+	}
+
+	// 设置RequestID
+	if r.Header.Get(gcontext.RequestID) == "" {
+		r.Header.Set(gcontext.RequestID, xid.New().String())
+	}
+
+	return tk, nil
+}
+
+func (a *HTTPAuther) ReponseHook(w http.ResponseWriter, r *http.Request, entry httpb.Entry) {
+	ctx, err := gcontext.NewGrpcInCtxFromHTTPRequest(r)
+	if err != nil {
+		a.log().Errorf("reponse hook NewGrpcInCtxFromHTTPRequest error, %s", err)
+		return
+	}
+
+	tk, ok := context.GetContext(r).AuthInfo.(*token.Token)
+	if !ok {
+		a.log().Errorf("context AuthInfo is not *token.Token")
+		return
 	}
 
 	// 审计日志
 	od := newOperateEventData(&entry, tk)
 	hd := newEventHeaderFromCtx(ctx)
 	if entry.AuditLog {
-		defer engine.SendOperateEvent(r.URL, nil, hd, od)
+		SendOperateEvent(r.URL, nil, hd, od)
 	}
-
-	// 保存会话
-	rid := xid.New().String()
-	r.Header.Set(gcontext.RequestID, rid)
-	a.addSession(rid, tk)
-	defer a.delSession(rid)
-
-	return tk, nil
 }
 
 func (a *HTTPAuther) log() logger.Logger {
@@ -76,18 +91,7 @@ func (a *HTTPAuther) log() logger.Logger {
 	return a.l
 }
 
-func (a *HTTPAuther) GetToken(requestID string) *token.Token {
-	if v, ok := a.sessions[requestID]; ok {
-		return v
-	}
-
-	return nil
-}
-
-func (a *HTTPAuther) addSession(requestID string, tk *token.Token) {
-	a.sessions[requestID] = tk
-}
-
-func (a HTTPAuther) delSession(requestID string) {
-	delete(a.sessions, requestID)
+// SetLogger todo
+func (a *HTTPAuther) SetLogger(l logger.Logger) {
+	a.l = l
 }

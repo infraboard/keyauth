@@ -15,8 +15,8 @@ import (
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 
+	"github.com/infraboard/keyauth/client/session"
 	"github.com/infraboard/keyauth/pkg/micro"
-	"github.com/infraboard/keyauth/pkg/token"
 )
 
 type PathEntryHandleFunc func(path string) *httpb.Entry
@@ -24,19 +24,22 @@ type PathEntryHandleFunc func(path string) *httpb.Entry
 // NewGrpcKeyauthAuther todo
 func NewGrpcKeyauthAuther(hf PathEntryHandleFunc, c *Client) *GrpcAuther {
 	return &GrpcAuther{
-		hf:       hf,
-		c:        c,
-		sessions: map[string]*token.Token{},
+		hf:    hf,
+		c:     c,
+		store: session.NewMemoryStore(),
 	}
 }
 
 // GrpcAuther todo
 type GrpcAuther struct {
-	hf PathEntryHandleFunc
-	l  logger.Logger
-	c  *Client
+	hf    PathEntryHandleFunc
+	l     logger.Logger
+	c     *Client
+	store session.Store
+}
 
-	sessions map[string]*token.Token
+func (a *GrpcAuther) SetSessionStroe(s session.Store) {
+	a.store = s
 }
 
 // AuthUnaryServerInterceptor returns a new unary server interceptor for auth.
@@ -47,14 +50,6 @@ func (a *GrpcAuther) AuthUnaryServerInterceptor() grpc.UnaryServerInterceptor {
 // SetLogger todo
 func (a *GrpcAuther) SetLogger(l logger.Logger) {
 	a.l = l
-}
-
-func (a *GrpcAuther) GetToken(requestID string) *token.Token {
-	if v, ok := a.sessions[requestID]; ok {
-		return v
-	}
-
-	return nil
 }
 
 // Auth impl interface
@@ -96,9 +91,19 @@ func (a *GrpcAuther) auth(
 	}
 	engine := newEntryEngine(a.c, entry, a.log())
 
-	// 校验用户权限是否合法
-	tk, err := engine.ValidatePermission(rctx)
-	if err != nil {
+	// 校验身份
+	tk := a.store.LeaseToken(rctx.GetAccessToKen())
+	if tk == nil {
+		tk, err = engine.ValidateIdentity(rctx)
+		if err != nil {
+			return nil, err
+		}
+		a.store.SetToken(tk)
+	}
+	defer a.store.ReturnToken(tk)
+
+	// 校验权限
+	if err := engine.ValidatePermission(tk, rctx); err != nil {
 		return nil, err
 	}
 
@@ -106,14 +111,15 @@ func (a *GrpcAuther) auth(
 	od := newOperateEventData(entry, tk)
 	hd := newEventHeaderFromCtx(rctx)
 	if entry.AuditLog {
-		defer engine.SendOperateEvent(req, resp, hd, od)
+		defer SendOperateEvent(req, resp, hd, od)
 	}
 
 	// 保存会话
-	rid := xid.New().String()
-	rctx.SetRequestID(rid)
-	a.addSession(rid, tk)
-	defer a.delSession(rid)
+	rid := rctx.GetRequestID()
+	if rid == "" {
+		rid = xid.New().String()
+		rctx.SetRequestID(rid)
+	}
 
 	return handler(rctx.Context(), req)
 }
@@ -133,14 +139,6 @@ func (a *GrpcAuther) validateServiceCredential(ctx *gcontext.GrpcInCtx) error {
 	}
 
 	return nil
-}
-
-func (a *GrpcAuther) addSession(requestID string, tk *token.Token) {
-	a.sessions[requestID] = tk
-}
-
-func (a GrpcAuther) delSession(requestID string) {
-	delete(a.sessions, requestID)
 }
 
 func (a *GrpcAuther) log() logger.Logger {

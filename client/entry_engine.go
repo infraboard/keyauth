@@ -2,6 +2,7 @@ package client
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 
 	"github.com/infraboard/mcube/bus"
@@ -11,8 +12,6 @@ import (
 	"github.com/infraboard/mcube/logger"
 	httpb "github.com/infraboard/mcube/pb/http"
 	"github.com/infraboard/mcube/types/ftime"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 
 	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/micro"
@@ -43,65 +42,62 @@ func (e *entryEngine) UseUniPath() {
 	e.uniPath = true
 }
 
-func (e *entryEngine) ValidatePermission(ctx *gcontext.GrpcInCtx) (*token.Token, error) {
-	var (
-		tk  *token.Token
-		err error
-	)
+func (e *entryEngine) ValidateIdentity(ctx *gcontext.GrpcInCtx) (*token.Token, error) {
+	// 获取需要校验的access token(用户的身份凭证)
+	accessToken := ctx.GetAccessToKen()
+	if accessToken == "" {
+		return nil, nil
+	}
+
+	req := token.NewValidateTokenRequest()
+	req.AccessToken = accessToken
 
 	outCtx := gcontext.NewGrpcOutCtx()
 	outCtx.SetAccessToken(ctx.GetAccessToKen())
+	return e.client.Token().ValidateToken(outCtx.Context(), req)
+}
 
-	// 获取需要校验的access token(用户的身份凭证)
-	accessToken := ctx.GetAccessToKen()
-	if accessToken != "" {
-		req := token.NewValidateTokenRequest()
-		if accessToken == "" {
-			return nil, status.Errorf(codes.Unauthenticated, "access_token meta required")
-		}
-		req.AccessToken = accessToken
-
-		tk, err = e.client.Token().ValidateToken(outCtx.Context(), req)
-		if err != nil {
-			return nil, err
-		}
+func (e *entryEngine) ValidatePermission(tk *token.Token, ctx *gcontext.GrpcInCtx) error {
+	if !e.PermissionEnable {
+		return nil
 	}
 
-	if e.RequiredNamespace && tk != nil {
-		if tk.Namespace == "" {
-			return nil, exception.NewBadRequest("namespace required!")
-		}
+	if tk == nil {
+		return exception.NewUnauthorized("validate permission need token")
 	}
 
-	if e.PermissionEnable && tk != nil {
-		// 如果是超级管理员不做权限校验, 直接放行
-		if tk.UserType.IsIn(types.UserType_SUPPER) {
-			return tk, nil
-		}
-
-		// http 使用Unique Path, grpc path本身具有唯一性
-		path := e.Path
-		if e.uniPath {
-			path = e.UniquePath()
-		}
-
-		eid, err := e.endpointHashID(outCtx, path)
-		if err != nil {
-			return nil, err
-		}
-
-		// 权限检测
-		req := permission.NewCheckPermissionRequest()
-		req.EndpointId = eid
-		req.NamespaceId = tk.Namespace
-		perm, err := e.client.Permission().CheckPermission(outCtx.Context(), req)
-		if err != nil {
-			return nil, exception.NewPermissionDeny("no permission, %s", err)
-		}
-		tk.Scope = perm.Scope
+	if e.RequiredNamespace && tk.Namespace == "" {
+		return exception.NewBadRequest("namespace required!")
 	}
 
-	return tk, nil
+	// 如果是超级管理员不做权限校验, 直接放行
+	if tk.UserType.IsIn(types.UserType_SUPPER) {
+		return nil
+	}
+
+	// http 使用Unique Path, grpc path本身具有唯一性
+	path := e.Path
+	if e.uniPath {
+		path = e.UniquePath()
+	}
+
+	outCtx := gcontext.NewGrpcOutCtx()
+	outCtx.SetAccessToken(ctx.GetAccessToKen())
+	eid, err := e.endpointHashID(outCtx, path)
+	if err != nil {
+		return err
+	}
+
+	// 权限检测
+	req := permission.NewCheckPermissionRequest()
+	req.EndpointId = eid
+	req.NamespaceId = tk.Namespace
+	perm, err := e.client.Permission().CheckPermission(outCtx.Context(), req)
+	if err != nil {
+		return exception.NewPermissionDeny("no permission, %s", err)
+	}
+	tk.Scope = perm.Scope
+	return nil
 }
 
 func (e *entryEngine) endpointHashID(ctx *gcontext.GrpcOutCtx, path string) (string, error) {
@@ -117,19 +113,19 @@ func (e *entryEngine) endpointHashID(ctx *gcontext.GrpcOutCtx, path string) (str
 	return endpoint.GenHashID(e.serviceId, path), nil
 }
 
-func (e *entryEngine) SendOperateEvent(req, resp interface{}, hd *event.Header, od *event.OperateEventData) {
+func SendOperateEvent(req, resp interface{}, hd *event.Header, od *event.OperateEventData) error {
 	if od == nil {
-		return
+		return nil
 	}
 
 	reqd, err := json.Marshal(req)
 	if err != nil {
-		e.log.Warnf("marshal req for event error, %s", err)
+		return fmt.Errorf("marshal req for event error, %s", err)
 	}
 
 	respd, err := json.Marshal(resp)
 	if err != nil {
-		e.log.Warnf("marshal resp for event error, %s", err)
+		return fmt.Errorf("marshal resp for event error, %s", err)
 	}
 
 	od.Request = string(reqd)
@@ -137,13 +133,15 @@ func (e *entryEngine) SendOperateEvent(req, resp interface{}, hd *event.Header, 
 	od.Cost = ftime.Now().Timestamp() - hd.Time
 	oe, err := event.NewOperateEvent(od)
 	if err != nil {
-		e.log.Errorf("new operate event error, %s", err)
+		return fmt.Errorf("new operate event error, %s", err)
 	}
 	oe.Header = hd
 
 	if err := bus.Pub(oe); err != nil {
-		e.log.Warnf("pub audit log error, %s", err)
+		return fmt.Errorf("pub audit log error, %s", err)
 	}
+
+	return nil
 }
 
 func newOperateEventData(e *httpb.Entry, tk *token.Token) *event.OperateEventData {

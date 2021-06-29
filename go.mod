@@ -9,7 +9,7 @@ require (
 	github.com/go-ldap/ldap/v3 v3.2.4
 	github.com/go-playground/validator/v10 v10.4.1
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
-	github.com/infraboard/mcube v1.2.1
+	github.com/infraboard/mcube v1.2.4
 	github.com/mattn/go-colorable v0.1.8 // indirect
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d // indirect
 	github.com/mssola/user_agent v0.5.2

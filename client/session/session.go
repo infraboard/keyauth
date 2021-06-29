@@ -5,17 +5,28 @@ import (
 )
 
 var (
-	sess SessionGetter
+	sess Store
 )
 
-type SessionGetter interface {
-	GetToken(requestID string) *token.Token
+func S() Getter {
+	return sess
 }
 
-func SetSessionGetter(s SessionGetter) {
+func SetStroe(s Store) {
 	sess = s
 }
 
-func S() SessionGetter {
-	return sess
+type Store interface {
+	Getter
+	Setter
+}
+
+type Getter interface {
+	GetToken(token string) *token.Token
+}
+
+type Setter interface {
+	SetToken(*token.Token) error
+	LeaseToken(token string) *token.Token
+	ReturnToken(*token.Token)
 }
