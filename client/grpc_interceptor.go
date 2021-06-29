@@ -22,11 +22,11 @@ import (
 type PathEntryHandleFunc func(path string) *httpb.Entry
 
 // NewGrpcKeyauthAuther todo
-func NewGrpcKeyauthAuther(hf PathEntryHandleFunc, c *Client) *GrpcAuther {
+func NewGrpcKeyauthAuther(hf PathEntryHandleFunc, c *Client, store session.Store) *GrpcAuther {
 	return &GrpcAuther{
 		hf:    hf,
 		c:     c,
-		store: session.NewMemoryStore(),
+		store: store,
 	}
 }
 
@@ -36,10 +36,6 @@ type GrpcAuther struct {
 	l     logger.Logger
 	c     *Client
 	store session.Store
-}
-
-func (a *GrpcAuther) SetSessionStroe(s session.Store) {
-	a.store = s
 }
 
 // AuthUnaryServerInterceptor returns a new unary server interceptor for auth.
