@@ -80,7 +80,7 @@ func (a *HTTPAuther) ResponseHook(w http.ResponseWriter, r *http.Request, entry 
 	od := newOperateEventData(&entry, tk)
 	hd := newEventHeaderFromCtx(ctx)
 	if entry.AuditLog {
-		if err := SendOperateEvent(r.URL, nil, hd, od); err != nil {
+		if err := SendOperateEvent(r.URL.String(), nil, hd, od); err != nil {
 			a.log().Errorf("send operate event error, %s", err)
 		}
 	}
