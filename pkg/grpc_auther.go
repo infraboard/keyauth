@@ -147,7 +147,7 @@ func (a *grpcAuther) sendOperateEvent(req, resp interface{}, hd *event.Header, o
 	od.Request = string(reqd)
 	od.Response = string(respd)
 	od.Cost = ftime.Now().Timestamp() - hd.Time
-	oe, err := event.NewOperateEvent(od)
+	oe, err := event.NewProtoOperateEvent(od)
 	if err != nil {
 		a.log().Errorf("new operate event error, %s", err)
 	}
@@ -163,17 +163,17 @@ func (a *grpcAuther) validateServiceCredential(ctx *GrpcInCtx) error {
 	clientSecret := ctx.GetClientSecret()
 
 	if clientID == "" && clientSecret == "" {
-		return grpc.Errorf(codes.Unauthenticated, "client_id or client_secret is \"\"")
+		return status.Errorf(codes.Unauthenticated, "client_id or client_secret is \"\"")
 	}
 
 	if Micro == nil {
-		return grpc.Errorf(codes.Internal, "micro service is not initial")
+		return status.Errorf(codes.Internal, "micro service is not initial")
 	}
 
 	vsReq := micro.NewValidateClientCredentialRequest(clientID, clientSecret)
 	_, err := Micro.ValidateClientCredential(context.Background(), vsReq)
 	if err != nil {
-		return grpc.Errorf(codes.Unauthenticated, "service auth error, %s", err)
+		return status.Errorf(codes.Unauthenticated, "service auth error, %s", err)
 	}
 
 	return nil
@@ -184,7 +184,7 @@ func (a *grpcAuther) checkToken(ctx *GrpcInCtx) (*token.Token, error) {
 	accessToken := ctx.GetAccessToKen()
 	req := token.NewValidateTokenRequest()
 	if accessToken == "" {
-		return nil, grpc.Errorf(codes.Unauthenticated, "access_token meta required")
+		return nil, status.Errorf(codes.Unauthenticated, "access_token meta required")
 	}
 	req.AccessToken = accessToken
 	return Token.ValidateToken(context.Background(), req)
@@ -208,7 +208,7 @@ func (a *grpcAuther) validatePermission(tk *token.Token, entry *http.Entry, req 
 		if v != "*" {
 			a.log().Debugf("allows: %s", v)
 			if !tk.UserType.IsIn(transferToUserType(v)...) {
-				return grpc.Errorf(codes.PermissionDenied, "access grpc path %s permission deny, allow types: %s", entry.Path, v)
+				return status.Errorf(codes.PermissionDenied, "access grpc path %s permission deny, allow types: %s", entry.Path, v)
 			}
 		}
 		return nil
