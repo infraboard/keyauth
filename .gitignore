@@ -17,7 +17,8 @@ keyauthd
 main
 log/
 .idea/
-.vscode/
+
+
 .DS_Store
 keyauth.env
 keyauth.toml
