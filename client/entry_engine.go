@@ -143,7 +143,7 @@ func SendOperateEvent(req, resp interface{}, hd *event.Header, od *event.Operate
 	od.Request = string(reqd)
 	od.Response = string(respd)
 	od.Cost = ftime.Now().Timestamp() - hd.Time
-	oe, err := event.NewOperateEvent(od)
+	oe, err := event.NewProtoOperateEvent(od)
 	if err != nil {
 		return fmt.Errorf("new operate event error, %s", err)
 	}
