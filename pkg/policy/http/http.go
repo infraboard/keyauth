@@ -26,6 +26,7 @@ func (h *handler) Registry(router router.SubRouter) {
 	r.Handle("POST", "/", h.Create)
 	r.Handle("GET", "/", h.List)
 	r.Handle("GET", "/:id", h.Get)
+	r.Handle("DELETE", "/:id", h.Delete)
 }
 
 func (h *handler) Config() error {

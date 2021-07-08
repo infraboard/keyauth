@@ -29,9 +29,8 @@ func (req *describePolicyRequest) String() string {
 func (req *describePolicyRequest) FindFilter() bson.M {
 	filter := bson.M{}
 	if req.Id != "" {
-		filter["id"] = req.Id
+		filter["_id"] = req.Id
 	}
-
 	return filter
 }
 

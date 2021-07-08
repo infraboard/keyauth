@@ -2,7 +2,6 @@ package mongo
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/infraboard/mcube/exception"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -104,6 +103,7 @@ func (s *service) DescribePolicy(ctx context.Context, req *policy.DescribePolicy
 	}
 
 	ins := policy.NewDefaultPolicy()
+	s.log.Debugf("describe policy filter: %s", r.FindFilter())
 	if err := s.col.FindOne(context.TODO(), r.FindFilter()).Decode(ins); err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, exception.NewNotFound("policy %s not found", req)
@@ -121,19 +121,22 @@ func (s *service) DeletePolicy(ctx context.Context, req *policy.DeletePolicyRequ
 		return nil, err
 	}
 
+	descReq := policy.NewDescriptPolicyRequest()
+	descReq.Id = req.Id
+	p, err := s.DescribePolicy(ctx, descReq)
+	if err != nil {
+		return nil, err
+	}
+
 	r, err := newDeletePolicyRequest(tk, req)
 	if err != nil {
 		return nil, err
 	}
 
-	result, err := s.col.DeleteOne(context.TODO(), r.FindFilter())
+	_, err = s.col.DeleteOne(context.TODO(), r.FindFilter())
 	if err != nil {
 		return nil, exception.NewInternalServerError("delete policy(%s) error, %s", req.Id, err)
 	}
 
-	if result.DeletedCount == 0 {
-		return nil, fmt.Errorf("policy %s not found", req.Id)
-	}
-
-	return nil, nil
+	return p, nil
 }
