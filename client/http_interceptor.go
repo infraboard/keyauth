@@ -4,9 +4,7 @@ import (
 	"net/http"
 	"reflect"
 
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/token"
-	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/grpc/gcontext"
 	"github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/logger"
@@ -33,12 +31,6 @@ func (a *HTTPAuther) Auth(r *http.Request, entry httpb.Entry) (
 	ctx, err := gcontext.NewGrpcInCtxFromHTTPRequest(r)
 	if err != nil {
 		return nil, err
-	}
-
-	// 获取需要校验的access token(用户的身份凭证)
-	accessToken := r.Header.Get(pkg.OauthTokenHeader)
-	if accessToken == "" {
-		return nil, exception.NewUnauthorized("auth header: %s required", pkg.OauthTokenHeader)
 	}
 
 	engine := newEntryEngine(a.keyauth, &entry, a.log())

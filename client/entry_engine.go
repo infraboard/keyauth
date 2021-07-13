@@ -45,6 +45,11 @@ func (e *entryEngine) UseUniPath() {
 func (e *entryEngine) ValidateIdentity(ctx *gcontext.GrpcInCtx) (*token.Token, error) {
 	e.log.Debug("start token identity check ...")
 
+	if !e.AuthEnable {
+		e.log.Debugf("[%s] auth disabled", e.Path)
+		return nil, nil
+	}
+
 	// 获取需要校验的access token(用户的身份凭证)
 	accessToken := ctx.GetAccessToKen()
 	if accessToken == "" {
@@ -66,6 +71,10 @@ func (e *entryEngine) ValidateIdentity(ctx *gcontext.GrpcInCtx) (*token.Token, e
 }
 
 func (e *entryEngine) ValidatePermission(tk *token.Token, ctx *gcontext.GrpcInCtx) error {
+	if !e.AuthEnable {
+		return nil
+	}
+
 	if !e.PermissionEnable {
 		e.log.Debugf("[%s] permission disabled skip check!", tk.Account)
 		return nil
