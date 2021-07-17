@@ -45,14 +45,16 @@ func (e *entryEngine) UseUniPath() {
 func (e *entryEngine) ValidateIdentity(ctx *gcontext.GrpcInCtx) (*token.Token, error) {
 	e.log.Debug("start token identity check ...")
 
-	if !e.AuthEnable {
-		e.log.Debugf("[%s] auth disabled", e.Path)
-		return nil, nil
-	}
-
 	// 获取需要校验的access token(用户的身份凭证)
 	accessToken := ctx.GetAccessToKen()
+
+	if e.AuthEnable && accessToken == "" {
+		e.log.Debugf("[%s] auth enabled, but not get access token", e.Path)
+		return nil, exception.NewBadRequest("token required")
+	}
+
 	if accessToken == "" {
+		e.log.Debugf("[%s] no access token", e.Path)
 		return nil, nil
 	}
 
