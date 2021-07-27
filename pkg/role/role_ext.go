@@ -31,7 +31,7 @@ func New(tk *token.Token, req *CreateRoleRequest) (*Role, error) {
 		Creater:     tk.Account,
 		Type:        req.Type,
 		Name:        req.Name,
-		PageMarked:  req.PageMarked,
+		Meta:        req.Meta,
 		Description: req.Description,
 	}
 	r.Permissions = NewPermission(r.Id, tk.Account, req.Permissions)
@@ -43,6 +43,7 @@ func NewDefaultRole() *Role {
 	return &Role{
 		Permissions: []*Permission{},
 		Type:        RoleType_CUSTOM,
+		Meta:        map[string]string{},
 	}
 }
 

@@ -21,9 +21,9 @@ message CreateRoleRequest {
     string description =3[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"description" json:"description" validate:"lte=400"'}
         ];
-    // 角色关联的page
-    string page_marked =4[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"page_marked" json:"page_marked" validate:"lte=400"'}
+    // 角色关联的其他信息，比如展示的视图
+    map<string,string> meta =4[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"meta" json:"meta" validate:"lte=400"'}
         ];
     // 读权限
     repeated CreatePermssionRequest permissions = 9[

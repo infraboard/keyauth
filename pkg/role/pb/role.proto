@@ -40,9 +40,9 @@ message Role {
     string description =8[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"description" json:"description"'}
         ];
-    // 角色关联的page
-    string page_marked =10[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"page_marked" json:"page_marked"'}
+    // 角色关联的一些额外的meta信息, 比如前端视图
+    map<string, string> meta =10[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"meta" json:"meta"'}
         ];
     // 读权限
     repeated Permission permissions = 9[
