@@ -24,6 +24,9 @@ message QueryRoleRequest {
     string namespace_id = 2[
         (google.protobuf.field_tag) = {struct_tag: 'json:"namespace_id"'}
         ];
+    bool with_permission = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"with_permission"'}
+        ];
 }
 
 // CheckPermissionRequest todo

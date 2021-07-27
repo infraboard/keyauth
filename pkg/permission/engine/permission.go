@@ -35,7 +35,7 @@ func (s *service) QueryPermission(ctx context.Context, req *permission.QueryPerm
 	}
 
 	// 获取用户的角色列表
-	rset, err := policySet.GetRoles(ctx, s.role)
+	rset, err := policySet.GetRoles(ctx, s.role, true)
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +64,7 @@ func (s *service) QueryRole(ctx context.Context, req *permission.QueryRoleReques
 		return nil, err
 	}
 
-	return policySet.GetRoles(ctx, s.role)
+	return policySet.GetRoles(ctx, s.role, req.WithPermission)
 }
 
 func (s *service) CheckPermission(ctx context.Context, req *permission.CheckPermissionRequest) (*role.Permission, error) {
@@ -76,7 +76,9 @@ func (s *service) CheckPermission(ctx context.Context, req *permission.CheckPerm
 		return nil, exception.NewBadRequest("validate param error, %s", err)
 	}
 
-	roleSet, err := s.QueryRole(ctx, permission.NewQueryRoleRequest(req.NamespaceId))
+	roleReq := permission.NewQueryRoleRequest(req.NamespaceId)
+	roleReq.WithPermission = true
+	roleSet, err := s.QueryRole(ctx, roleReq)
 	if err != nil {
 		return nil, err
 	}

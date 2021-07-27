@@ -126,11 +126,11 @@ func (s *Set) Length() int {
 }
 
 // GetRoles todo
-func (s *Set) GetRoles(ctx context.Context, r role.RoleServiceServer) (*role.Set, error) {
+func (s *Set) GetRoles(ctx context.Context, r role.RoleServiceServer, withPermission bool) (*role.Set, error) {
 	set := role.NewRoleSet()
 	for i := range s.Items {
 		req := role.NewDescribeRoleRequestWithID(s.Items[i].RoleId)
-		req.WithPermissions = true
+		req.WithPermissions = withPermission
 
 		ins, err := r.DescribeRole(ctx, req)
 		if err != nil {
