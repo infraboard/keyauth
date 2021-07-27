@@ -61,7 +61,7 @@ func (t DBFileContentType) String() string {
 // MarshalJSON todo
 func (t DBFileContentType) MarshalJSON() ([]byte, error) {
 	b := bytes.NewBufferString(`"`)
-	b.WriteString(t.String())
+	b.WriteString(strings.ToUpper(t.String()))
 	b.WriteString(`"`)
 	return b.Bytes(), nil
 }

@@ -39,7 +39,7 @@ func (t ScopeType) IsIn(targets ...ScopeType) bool {
 // MarshalJSON todo
 func (t ScopeType) MarshalJSON() ([]byte, error) {
 	b := bytes.NewBufferString(`"`)
-	b.WriteString(t.String())
+	b.WriteString(strings.ToUpper(t.String()))
 	b.WriteString(`"`)
 	return b.Bytes(), nil
 }
@@ -84,7 +84,7 @@ func (t ValueFrom) IsIn(targets ...ValueFrom) bool {
 // MarshalJSON todo
 func (t ValueFrom) MarshalJSON() ([]byte, error) {
 	b := bytes.NewBufferString(`"`)
-	b.WriteString(t.String())
+	b.WriteString(strings.ToUpper(t.String()))
 	b.WriteString(`"`)
 	return b.Bytes(), nil
 }

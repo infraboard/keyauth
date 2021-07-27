@@ -39,7 +39,7 @@ func (t GrantType) IsIn(targets ...GrantType) bool {
 // MarshalJSON todo
 func (t GrantType) MarshalJSON() ([]byte, error) {
 	b := bytes.NewBufferString(`"`)
-	b.WriteString(t.String())
+	b.WriteString(strings.ToUpper(t.String()))
 	b.WriteString(`"`)
 	return b.Bytes(), nil
 }
@@ -84,7 +84,7 @@ func (t TokenType) IsIn(targets ...TokenType) bool {
 // MarshalJSON todo
 func (t TokenType) MarshalJSON() ([]byte, error) {
 	b := bytes.NewBufferString(`"`)
-	b.WriteString(t.String())
+	b.WriteString(strings.ToUpper(t.String()))
 	b.WriteString(`"`)
 	return b.Bytes(), nil
 }
@@ -129,7 +129,7 @@ func (t BlockType) IsIn(targets ...BlockType) bool {
 // MarshalJSON todo
 func (t BlockType) MarshalJSON() ([]byte, error) {
 	b := bytes.NewBufferString(`"`)
-	b.WriteString(t.String())
+	b.WriteString(strings.ToUpper(t.String()))
 	b.WriteString(`"`)
 	return b.Bytes(), nil
 }

@@ -23,8 +23,8 @@ func HttpEntry() *http.EntrySet {
 				Extension:         map[string]string{},
 			},
 			{
-				Path:              "/keyauth.permission.PermissionService/QueryRoles",
-				FunctionName:      "QueryRoles",
+				Path:              "/keyauth.permission.PermissionService/QueryRole",
+				FunctionName:      "QueryRole",
 				Method:            "POST",
 				Resource:          "role",
 				AuthEnable:        true,

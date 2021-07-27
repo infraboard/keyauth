@@ -39,7 +39,7 @@ func (t Gender) IsIn(targets ...Gender) bool {
 // MarshalJSON todo
 func (t Gender) MarshalJSON() ([]byte, error) {
 	b := bytes.NewBufferString(`"`)
-	b.WriteString(t.String())
+	b.WriteString(strings.ToUpper(t.String()))
 	b.WriteString(`"`)
 	return b.Bytes(), nil
 }
@@ -84,7 +84,7 @@ func (t CreateType) IsIn(targets ...CreateType) bool {
 // MarshalJSON todo
 func (t CreateType) MarshalJSON() ([]byte, error) {
 	b := bytes.NewBufferString(`"`)
-	b.WriteString(t.String())
+	b.WriteString(strings.ToUpper(t.String()))
 	b.WriteString(`"`)
 	return b.Bytes(), nil
 }

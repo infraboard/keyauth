@@ -13,7 +13,32 @@ import (
 	"github.com/infraboard/keyauth/pkg/permission"
 )
 
-func (h *handler) List(w http.ResponseWriter, r *http.Request) {
+func (h *handler) ListRole(w http.ResponseWriter, r *http.Request) {
+	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
+	rctx := context.GetContext(r)
+	req := permission.NewQueryRoleRequest(rctx.PS.ByName("id"))
+
+	var header, trailer metadata.MD
+	set, err := h.service.QueryRole(
+		ctx.Context(),
+		req,
+		grpc.Header(&header),
+		grpc.Trailer(&trailer),
+	)
+	if err != nil {
+		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		return
+	}
+
+	response.Success(w, set)
+}
+
+func (h *handler) ListPermission(w http.ResponseWriter, r *http.Request) {
 	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
 	if err != nil {
 		response.Failed(w, err)
@@ -38,7 +63,6 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, set)
-	return
 }
 
 func (h *handler) CheckPermission(w http.ResponseWriter, r *http.Request) {
@@ -70,5 +94,4 @@ func (h *handler) CheckPermission(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, d)
-	return
 }

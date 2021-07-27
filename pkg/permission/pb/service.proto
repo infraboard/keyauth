@@ -21,7 +21,7 @@ service PermissionService {
 			}]
 		};
 	};
-	rpc QueryRoles(QueryRoleRequest) returns(role.Set) {
+	rpc QueryRole(QueryRoleRequest) returns(role.Set) {
 		option (mcube.http.rest_api) = {
 			path: "/namespaces/:id/roles"
 			method: "POST"

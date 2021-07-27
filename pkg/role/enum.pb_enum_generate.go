@@ -39,7 +39,7 @@ func (t RoleType) IsIn(targets ...RoleType) bool {
 // MarshalJSON todo
 func (t RoleType) MarshalJSON() ([]byte, error) {
 	b := bytes.NewBufferString(`"`)
-	b.WriteString(t.String())
+	b.WriteString(strings.ToUpper(t.String()))
 	b.WriteString(`"`)
 	return b.Bytes(), nil
 }
@@ -84,7 +84,7 @@ func (t EffectType) IsIn(targets ...EffectType) bool {
 // MarshalJSON todo
 func (t EffectType) MarshalJSON() ([]byte, error) {
 	b := bytes.NewBufferString(`"`)
-	b.WriteString(t.String())
+	b.WriteString(strings.ToUpper(t.String()))
 	b.WriteString(`"`)
 	return b.Bytes(), nil
 }

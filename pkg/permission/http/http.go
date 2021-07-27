@@ -22,7 +22,8 @@ type handler struct {
 func (h *handler) Registry(router router.SubRouter) {
 	r := router.ResourceRouter("permission")
 	r.BasePath("namespaces")
-	r.Handle("GET", "/:id/permissions", h.List)
+	r.Handle("GET", "/:id/permissions", h.ListPermission)
+	r.Handle("GET", "/:id/roles", h.ListRole)
 	r.Handle("POST", "/:id/permissions", h.CheckPermission)
 }
 

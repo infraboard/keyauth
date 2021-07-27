@@ -39,7 +39,7 @@ func (t ClientType) IsIn(targets ...ClientType) bool {
 // MarshalJSON todo
 func (t ClientType) MarshalJSON() ([]byte, error) {
 	b := bytes.NewBufferString(`"`)
-	b.WriteString(t.String())
+	b.WriteString(strings.ToUpper(t.String()))
 	b.WriteString(`"`)
 	return b.Bytes(), nil
 }

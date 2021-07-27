@@ -20,7 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PermissionServiceClient interface {
 	QueryPermission(ctx context.Context, in *QueryPermissionRequest, opts ...grpc.CallOption) (*role.PermissionSet, error)
-	QueryRoles(ctx context.Context, in *QueryRoleRequest, opts ...grpc.CallOption) (*role.Set, error)
+	QueryRole(ctx context.Context, in *QueryRoleRequest, opts ...grpc.CallOption) (*role.Set, error)
 	CheckPermission(ctx context.Context, in *CheckPermissionRequest, opts ...grpc.CallOption) (*role.Permission, error)
 }
 
@@ -41,9 +41,9 @@ func (c *permissionServiceClient) QueryPermission(ctx context.Context, in *Query
 	return out, nil
 }
 
-func (c *permissionServiceClient) QueryRoles(ctx context.Context, in *QueryRoleRequest, opts ...grpc.CallOption) (*role.Set, error) {
+func (c *permissionServiceClient) QueryRole(ctx context.Context, in *QueryRoleRequest, opts ...grpc.CallOption) (*role.Set, error) {
 	out := new(role.Set)
-	err := c.cc.Invoke(ctx, "/keyauth.permission.PermissionService/QueryRoles", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/keyauth.permission.PermissionService/QueryRole", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +64,7 @@ func (c *permissionServiceClient) CheckPermission(ctx context.Context, in *Check
 // for forward compatibility
 type PermissionServiceServer interface {
 	QueryPermission(context.Context, *QueryPermissionRequest) (*role.PermissionSet, error)
-	QueryRoles(context.Context, *QueryRoleRequest) (*role.Set, error)
+	QueryRole(context.Context, *QueryRoleRequest) (*role.Set, error)
 	CheckPermission(context.Context, *CheckPermissionRequest) (*role.Permission, error)
 	mustEmbedUnimplementedPermissionServiceServer()
 }
@@ -76,8 +76,8 @@ type UnimplementedPermissionServiceServer struct {
 func (UnimplementedPermissionServiceServer) QueryPermission(context.Context, *QueryPermissionRequest) (*role.PermissionSet, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryPermission not implemented")
 }
-func (UnimplementedPermissionServiceServer) QueryRoles(context.Context, *QueryRoleRequest) (*role.Set, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method QueryRoles not implemented")
+func (UnimplementedPermissionServiceServer) QueryRole(context.Context, *QueryRoleRequest) (*role.Set, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method QueryRole not implemented")
 }
 func (UnimplementedPermissionServiceServer) CheckPermission(context.Context, *CheckPermissionRequest) (*role.Permission, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckPermission not implemented")
@@ -113,20 +113,20 @@ func _PermissionService_QueryPermission_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PermissionService_QueryRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _PermissionService_QueryRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueryRoleRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PermissionServiceServer).QueryRoles(ctx, in)
+		return srv.(PermissionServiceServer).QueryRole(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.permission.PermissionService/QueryRoles",
+		FullMethod: "/keyauth.permission.PermissionService/QueryRole",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PermissionServiceServer).QueryRoles(ctx, req.(*QueryRoleRequest))
+		return srv.(PermissionServiceServer).QueryRole(ctx, req.(*QueryRoleRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -161,8 +161,8 @@ var PermissionService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _PermissionService_QueryPermission_Handler,
 		},
 		{
-			MethodName: "QueryRoles",
-			Handler:    _PermissionService_QueryRoles_Handler,
+			MethodName: "QueryRole",
+			Handler:    _PermissionService_QueryRole_Handler,
 		},
 		{
 			MethodName: "CheckPermission",

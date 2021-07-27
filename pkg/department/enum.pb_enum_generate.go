@@ -39,7 +39,7 @@ func (t ApplicationFormStatus) IsIn(targets ...ApplicationFormStatus) bool {
 // MarshalJSON todo
 func (t ApplicationFormStatus) MarshalJSON() ([]byte, error) {
 	b := bytes.NewBufferString(`"`)
-	b.WriteString(t.String())
+	b.WriteString(strings.ToUpper(t.String()))
 	b.WriteString(`"`)
 	return b.Bytes(), nil
 }
