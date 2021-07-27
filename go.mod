@@ -17,12 +17,11 @@ require (
 	github.com/spf13/cobra v1.1.1
 	github.com/stretchr/testify v1.6.1
 	github.com/tencentcloud/tencentcloud-sdk-go v1.0.57
-	go.mongodb.org/mongo-driver v1.4.3
+	go.mongodb.org/mongo-driver v1.7.0
 	golang.org/x/crypto v0.0.0-20201221181555-eec23a3978ad
 	golang.org/x/net v0.0.0-20201224014010-6772e930b67b // indirect
 	golang.org/x/sys v0.0.0-20210124154548-22da62e12c0c // indirect
 	golang.org/x/term v0.0.0-20201210144234-2321bbc49cbf // indirect
-	golang.org/x/text v0.3.5 // indirect
 	google.golang.org/genproto v0.0.0-20210106152847-07624b53cd92 // indirect
 	google.golang.org/grpc v1.38.0
 	google.golang.org/protobuf v1.26.0
