@@ -152,6 +152,7 @@ func (s *Set) Permissions() *PermissionSet {
 
 // Add todo
 func (s *Set) Add(item *Role) {
+	s.Total++
 	s.Items = append(s.Items, item)
 }
 
