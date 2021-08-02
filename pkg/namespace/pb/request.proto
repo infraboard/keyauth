@@ -35,6 +35,9 @@ message QueryNamespaceRequest {
     page.PageRequest page = 1[
         (google.protobuf.field_tag) = {struct_tag: 'json:"page"'}
         ];
+    string name = 5[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"page"'}
+        ];
     string department_id = 2[
         (google.protobuf.field_tag) = {struct_tag: 'json:"department_id"'}
         ];

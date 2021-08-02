@@ -41,6 +41,10 @@ func (r *queryNamespaceRequest) FindFilter() bson.M {
 		}
 	}
 
+	if r.Name != "" {
+		filter["name"] = r.Name
+	}
+
 	return filter
 }
 

@@ -14,6 +14,7 @@ func NewQueryNamespaceRequestFromHTTP(r *http.Request) *QueryNamespaceRequest {
 	return &QueryNamespaceRequest{
 		Page:              &request.NewPageRequestFromHTTP(r).PageRequest,
 		DepartmentId:      qs.Get("department_id"),
+		Name:              qs.Get("name"),
 		WithDepartment:    qs.Get("with_department") == "true",
 		WithSubDepartment: qs.Get("with_sub_department") == "true",
 	}
