@@ -77,13 +77,13 @@ func (e *entryEngine) ValidatePermission(tk *token.Token, ctx *gcontext.GrpcInCt
 		return nil
 	}
 
+	if tk == nil {
+		return exception.NewUnauthorized("validate permission need token")
+	}
+
 	if !e.PermissionEnable {
 		e.log.Debugf("[%s] permission disabled skip check!", tk.Account)
 		return nil
-	}
-
-	if tk == nil {
-		return exception.NewUnauthorized("validate permission need token")
 	}
 
 	if e.RequiredNamespace && tk.Namespace == "" {

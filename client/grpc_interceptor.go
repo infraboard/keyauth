@@ -27,6 +27,7 @@ func NewGrpcKeyauthAuther(hf PathEntryHandleFunc, c *Client, store session.Store
 		hf:    hf,
 		c:     c,
 		store: store,
+		l:     zap.L().Named("Grpc Interceptor"),
 	}
 }
 

@@ -17,6 +17,7 @@ import (
 func NewHTTPAuther(c *Client) *HTTPAuther {
 	return &HTTPAuther{
 		keyauth: c,
+		l:       zap.L().Named("Http Interceptor"),
 	}
 }
 
