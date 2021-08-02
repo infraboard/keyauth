@@ -90,6 +90,8 @@ func (s *service) QueryNamespace(ctx context.Context, req *namespace.QueryNamesp
 	}
 	set.Total = count
 
+	fmt.Println(count)
+
 	return set, nil
 }
 

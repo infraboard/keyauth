@@ -49,11 +49,12 @@ func (s *service) QueryPermission(ctx context.Context, req *role.QueryPermission
 	}
 
 	// count
-	count, err := s.col.CountDocuments(context.TODO(), query.FindFilter())
+	count, err := s.perm.CountDocuments(context.TODO(), query.FindFilter())
 	if err != nil {
 		return nil, exception.NewInternalServerError("get permission count error, error is %s", err)
 	}
 	set.Total = count
+
 	return set, nil
 }
 
