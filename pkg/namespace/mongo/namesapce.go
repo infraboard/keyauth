@@ -130,18 +130,19 @@ func (s *service) DeleteNamespace(ctx context.Context, req *namespace.DeleteName
 		return nil, err
 	}
 
+	ns, err := s.DescribeNamespace(ctx, namespace.NewNewDescriptNamespaceRequestWithID(req.Id))
+	if err != nil {
+		return nil, err
+	}
+
 	r, err := newDeleteRequest(tk, req)
 	if err != nil {
 		return nil, err
 	}
 
-	result, err := s.col.DeleteOne(context.TODO(), r.FindFilter())
+	_, err = s.col.DeleteOne(context.TODO(), r.FindFilter())
 	if err != nil {
 		return nil, exception.NewInternalServerError("delete namespace(%s) error, %s", req.Id, err)
-	}
-
-	if result.DeletedCount == 0 {
-		return nil, fmt.Errorf("namespace %s not found", req.Id)
 	}
 
 	// 清除空间管理的所有策略
@@ -150,7 +151,7 @@ func (s *service) DeleteNamespace(ctx context.Context, req *namespace.DeleteName
 		s.log.Errorf("delete namespace policy error, %s", err)
 	}
 
-	return nil, nil
+	return ns, nil
 }
 
 // NewNamespace todo
