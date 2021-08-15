@@ -75,7 +75,9 @@ func (h *handler) QueryTagValue(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	rctx := context.GetContext(r)
 	req := tag.NewQueryTageValueRequestFromHTTP(r)
+	req.TagId = rctx.PS.ByName("id")
 
 	var header, trailer metadata.MD
 	apps, err := h.service.QueryTagValue(
