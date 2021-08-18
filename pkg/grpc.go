@@ -104,7 +104,6 @@ func InitV1GRPCAPI(server *grpc.Server) {
 	session.RegisterUserServiceServer(server, SessionUser)
 	verifycode.RegisterVerifyCodeServiceServer(server, VerifyCode)
 	tag.RegisterTagServiceServer(server, Tag)
-	return
 }
 
 // HTTPEntry todo

@@ -19,9 +19,9 @@ import (
 	"github.com/infraboard/mcube/logger/zap"
 	"github.com/spf13/cobra"
 
-	"github.com/infraboard/keyauth/api"
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
+	"github.com/infraboard/keyauth/protocol"
 
 	// 加载所有服务
 	_ "github.com/infraboard/keyauth/pkg/all"
@@ -81,8 +81,8 @@ var serviceCmd = &cobra.Command{
 
 func newService(cnf *conf.Config) (*service, error) {
 	log := zap.L().Named("CLI")
-	http := api.NewHTTPService()
-	grpc := api.NewGRPCService()
+	http := protocol.NewHTTPService()
+	grpc := protocol.NewGRPCService()
 
 	// 初始化总线
 	bm, err := newBus()
@@ -101,8 +101,8 @@ func newService(cnf *conf.Config) (*service, error) {
 }
 
 type service struct {
-	http *api.HTTPService
-	grpc *api.GRPCService
+	http *protocol.HTTPService
+	grpc *protocol.GRPCService
 	bm   bus.Manager
 
 	log  logger.Logger

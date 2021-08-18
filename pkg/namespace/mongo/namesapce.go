@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/infraboard/mcube/exception"
+	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/types/ftime"
 	"github.com/rs/xid"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -56,6 +57,17 @@ func (s *service) updateNamespacePolicy(ctx context.Context, ns *namespace.Names
 func (s *service) QueryNamespace(ctx context.Context, req *namespace.QueryNamespaceRequest) (
 	*namespace.Set, error) {
 	r := newPaggingQuery(req)
+
+	if req.Account != "" {
+		qp := policy.NewQueryPolicyRequest(request.NewPageRequest(policy.MaxUserPolicy, 1))
+		qp.Account = req.Account
+		ps, err := s.policy.QueryPolicy(ctx, qp)
+		if err != nil {
+			return nil, err
+		}
+		r.AddNamespace(ps.GetNamespaceWithPage(req.Page))
+	}
+
 	resp, err := s.col.Find(context.TODO(), r.FindFilter(), r.FindOptions())
 
 	if err != nil {

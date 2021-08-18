@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/infraboard/mcube/exception"
+	page "github.com/infraboard/mcube/pb/page"
 	"github.com/infraboard/mcube/types/ftime"
 
 	"github.com/infraboard/keyauth/pkg/namespace"
@@ -180,6 +181,32 @@ func (s *Set) GetNamespace() (nss []string) {
 
 	for k := range nmap {
 		nss = append(nss, k)
+	}
+
+	return
+}
+
+func (s *Set) GetNamespaceWithPage(page *page.PageRequest) (nss []string) {
+	nmap := map[string]struct{}{}
+	for i := range s.Items {
+		// 如果policy的namespace为* , 表示所有namespace
+		if s.Items[i].NamespaceId == "*" {
+			return []string{"*"}
+		}
+
+		nmap[s.Items[i].NamespaceId] = struct{}{}
+	}
+
+	offset := page.PageSize*page.PageNumber - 1
+	end := offset + page.PageSize
+
+	var count uint64 = 0
+	for k := range nmap {
+		if count >= offset && count < end {
+			nss = append(nss, k)
+		}
+
+		count++
 	}
 
 	return

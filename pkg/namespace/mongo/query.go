@@ -10,11 +10,25 @@ import (
 )
 
 func newPaggingQuery(req *namespace.QueryNamespaceRequest) *queryNamespaceRequest {
-	return &queryNamespaceRequest{req}
+	return &queryNamespaceRequest{
+		QueryNamespaceRequest: req,
+	}
 }
 
 type queryNamespaceRequest struct {
 	*namespace.QueryNamespaceRequest
+	namespaces []string
+}
+
+func (r *queryNamespaceRequest) AddNamespace(ns []string) {
+	// 如果是*表示无需过滤
+	for _, v := range ns {
+		if v == "*" {
+			return
+		}
+	}
+
+	r.namespaces = ns
 }
 
 func (r *queryNamespaceRequest) FindOptions() *options.FindOptions {
@@ -39,6 +53,10 @@ func (r *queryNamespaceRequest) FindFilter() bson.M {
 		} else {
 			filter["department_id"] = r.DepartmentId
 		}
+	}
+
+	if len(r.namespaces) > 0 {
+		filter["name"] = bson.M{"$in": r.namespaces}
 	}
 
 	if r.Name != "" {

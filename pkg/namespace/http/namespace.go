@@ -35,7 +35,6 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, apps)
-	return
 }
 
 func (h *handler) ListSelfNamespace(w http.ResponseWriter, r *http.Request) {
@@ -60,7 +59,6 @@ func (h *handler) ListSelfNamespace(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, apps)
-	return
 }
 
 // CreateApplication 创建主账号
@@ -90,7 +88,6 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, d)
-	return
 }
 
 func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
@@ -120,7 +117,6 @@ func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, d)
-	return
 }
 
 func (h *handler) Delete(w http.ResponseWriter, r *http.Request) {
@@ -146,5 +142,4 @@ func (h *handler) Delete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, "delete ok")
-	return
 }

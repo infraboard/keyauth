@@ -32,18 +32,27 @@ message CreateNamespaceRequest {
 
 // QueryNamespaceRequest 查询应用列表
 message QueryNamespaceRequest {
+    // 分页请求
     page.PageRequest page = 1[
         (google.protobuf.field_tag) = {struct_tag: 'json:"page"'}
         ];
+    // 空间的名称
     string name = 5[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"page"'}
+        (google.protobuf.field_tag) = {struct_tag: 'json:"name"'}
         ];
+    // 该用户加入的空间
+    string account = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"account"'}
+        ];
+    // 该部门下的空间
     string department_id = 2[
         (google.protobuf.field_tag) = {struct_tag: 'json:"department_id"'}
         ];
+    // 是否返回子部门的信息
     bool with_sub_department = 3[
         (google.protobuf.field_tag) = {struct_tag: 'json:"with_sub_department"'}
         ];
+    // 是否返回部门的信息
     bool with_department = 4[
         (google.protobuf.field_tag) = {struct_tag: 'json:"with_department"'}
         ];
