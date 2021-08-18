@@ -6,48 +6,12 @@ option go_package = "github.com/infraboard/keyauth/pkg/endpoint";
 import "pkg/endpoint/pb/request.proto";
 import "pkg/endpoint/pb/endpoint.proto";
 import "pkg/endpoint/pb/resource.proto";
-import "github.com/infraboard/mcube/pb/http/entry.proto";
 
 // Service token管理服务
 service EndpointService {
-	rpc DescribeEndpoint(DescribeEndpointRequest) returns(Endpoint) {
-		option (mcube.http.rest_api) = {
-			path: "/endpoints/:id"
-			method: "GET"
-			resource: "endpoint"
-			auth_enable: true
-		};
-	};
-	rpc QueryEndpoints(QueryEndpointRequest) returns(Set) {
-		option (mcube.http.rest_api) = {
-			path: "/endpoints"
-			method: "GET"
-			resource: "endpoint"
-			auth_enable: true
-		};
-	};
-	rpc Registry(RegistryRequest) returns(RegistryResponse) {
-		option (mcube.http.rest_api) = {
-			path: "/endpoints"
-			method: "POST"
-			resource: "endpoint"
-			auth_enable: false
-		};
-	};
-	rpc DeleteEndpoint(DeleteEndpointRequest) returns(Endpoint) {
-		option (mcube.http.rest_api) = {
-			path: "/endpoints"
-			method: "DELETE"
-			resource: "endpoint"
-			auth_enable: true
-		};
-	};
-	rpc QueryResources(QueryResourceRequest) returns(ResourceSet) {
-		option (mcube.http.rest_api) = {
-			path: "/resources"
-			method: "GET"
-			resource: "resource"
-			auth_enable: true
-		};
-	};
+	rpc DescribeEndpoint(DescribeEndpointRequest) returns(Endpoint);
+	rpc QueryEndpoints(QueryEndpointRequest) returns(Set);
+	rpc Registry(RegistryRequest) returns(RegistryResponse);
+	rpc DeleteEndpoint(DeleteEndpointRequest) returns(Endpoint);
+	rpc QueryResources(QueryResourceRequest) returns(ResourceSet);
 }

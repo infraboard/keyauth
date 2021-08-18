@@ -5,162 +5,25 @@ option go_package = "github.com/infraboard/keyauth/pkg/user";
 
 import "pkg/user/pb/request.proto";
 import "pkg/user/pb/user.proto";
-import "github.com/infraboard/mcube/pb/http/entry.proto";
 
 // Service 用户服务
 service UserService {
 	// 查询用户
-	rpc QueryAccount(QueryAccountRequest) returns(Set) {
-		option (mcube.http.rest_api) = {
-			resource: "account"
-			auth_enable: true
-			audit_log: true
-			labels: [
-				{
-					key: "allow"
-					value: "org_admin"
-				},
-				{
-					key: "action"
-					value: "list"
-				}
-			]
-		};
-	};
+	rpc QueryAccount(QueryAccountRequest) returns(Set);
 	// 获取账号Profile
-	rpc DescribeAccount(DescribeAccountRequest) returns(User) {
-		option (mcube.http.rest_api) = {
-			resource: "account"
-			auth_enable: true
-			audit_log: true
-			labels: [
-				{
-					key: "allow"
-					value: "*"
-				},
-				{
-					key: "action"
-					value: "get"
-				}
-			]
-		};
-	};
+	rpc DescribeAccount(DescribeAccountRequest) returns(User);
 	// 创建用户
-	rpc CreateAccount(CreateAccountRequest) returns(User) {
-		option (mcube.http.rest_api) = {
-			resource: "account"
-			auth_enable: true
-			audit_log: true
-			labels: [
-				{
-					key: "allow"
-					value: "org_admin"
-				},
-				{
-					key: "action"
-					value: "create"
-				}
-			]
-		};
-	};
+	rpc CreateAccount(CreateAccountRequest) returns(User);
 	// 警用账号
-	rpc BlockAccount(BlockAccountRequest) returns(User) {
-		option (mcube.http.rest_api) = {
-			resource: "account"
-			auth_enable: true
-			audit_log: true
-			labels: [
-				{
-					key: "allow"
-					value: "org_admin"
-				},
-				{
-					key: "action"
-					value: "update"
-				}
-			]
-		};
-	};
+	rpc BlockAccount(BlockAccountRequest) returns(User);
 	// 警用账号
-	rpc UnBlockAccount(UnBlockAccountRequest) returns(User) {
-		option (mcube.http.rest_api) = {
-			resource: "account"
-			auth_enable: true
-			audit_log: true
-			labels: [
-				{
-					key: "allow"
-					value: "org_admin"
-				},
-				{
-					key: "action"
-					value: "update"
-				}
-			]
-		};
-	};
+	rpc UnBlockAccount(UnBlockAccountRequest) returns(User);
 	// DeleteAccount 删除用户
-	rpc DeleteAccount(DeleteAccountRequest) returns(User) {
-		option (mcube.http.rest_api) = {
-			resource: "account"
-			auth_enable: true
-			audit_log: true
-			labels: [
-				{
-					key: "allow"
-					value: "org_admin"
-				},
-				{
-					key: "action"
-					value: "delete"
-				}
-			]
-		};
-	};
+	rpc DeleteAccount(DeleteAccountRequest) returns(User);
 	// 更新用户
-    rpc UpdateAccountProfile(UpdateAccountRequest) returns(User) {
-		option (mcube.http.rest_api) = {
-			resource: "account"
-			auth_enable: true
-			audit_log: true
-			labels: [
-				{
-					key: "allow"
-					value: "org_admin"
-				},
-				{
-					key: "action"
-					value: "update"
-				}
-			]
-		};
-	};
+    rpc UpdateAccountProfile(UpdateAccountRequest) returns(User);
     // 修改用户密码
-	rpc UpdateAccountPassword(UpdatePasswordRequest) returns(Password) {
-		option (mcube.http.rest_api) = {
-			resource: "account"
-			auth_enable: true
-			audit_log: true
-			labels: [
-				{
-					key: "allow"
-					value: "org_admin"
-				},
-				{
-					key: "action"
-					value: "update"
-				}
-			]
-		};
-	};
+	rpc UpdateAccountPassword(UpdatePasswordRequest) returns(Password);
 	// GeneratePassword 生成符合检测强度的随机密码
-	rpc GeneratePassword(GeneratePasswordRequest) returns(GeneratePasswordResponse) {
-		option (mcube.http.rest_api) = {
-			auth_enable: true
-			labels: [{
-				key: "allow"
-				value: "*"
-			}]
-		};
-	};
+	rpc GeneratePassword(GeneratePasswordRequest) returns(GeneratePasswordResponse);
 }

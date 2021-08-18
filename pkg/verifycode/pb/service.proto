@@ -5,22 +5,9 @@ option go_package = "github.com/infraboard/keyauth/pkg/verifycode";
 
 import "pkg/verifycode/pb/request.proto";
 import "pkg/verifycode/pb/verifycode.proto";
-import "github.com/infraboard/mcube/pb/http/entry.proto";
 
 // VerifyCodeService 验证码服务
 service VerifyCodeService {
-	rpc IssueCode(IssueCodeRequest) returns(IssueCodeResponse) {
-		option (mcube.http.rest_api) = {
-			path: "/verify_code/issue"
-			method: "POST"
-			resource: "verify_code"
-		};
-	};
-	rpc CheckCode(CheckCodeRequest) returns(Code) {
-		option (mcube.http.rest_api) = {
-			path: "/verify_code/check"
-			method: "POST"
-			resource: "verify_code"
-		};
-	};
+	rpc IssueCode(IssueCodeRequest) returns(IssueCodeResponse);
+	rpc CheckCode(CheckCodeRequest) returns(Code);
 }

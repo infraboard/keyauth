@@ -2,7 +2,6 @@ package mongo
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/request"
@@ -101,8 +100,6 @@ func (s *service) QueryNamespace(ctx context.Context, req *namespace.QueryNamesp
 		return nil, exception.NewInternalServerError("get namespace count error, error is %s", err)
 	}
 	set.Total = count
-
-	fmt.Println(count)
 
 	return set, nil
 }

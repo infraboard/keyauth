@@ -15,6 +15,7 @@ import (
 	"github.com/infraboard/mcube/logger/zap"
 
 	"github.com/infraboard/keyauth/client"
+	"github.com/infraboard/keyauth/common/auther"
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/micro"
@@ -28,6 +29,9 @@ func NewHTTPService() *HTTPService {
 	r.Use(accesslog.NewWithLogger(zap.L().Named("AccessLog")))
 	r.Use(cors.AllowAll())
 	r.EnableAPIRoot()
+	r.SetAuther(auther.NewHTTPAuther())
+	r.Auth(true)
+
 	server := &http.Server{
 		ReadHeaderTimeout: 20 * time.Second,
 		// ReadTimeout:       20 * time.Second,

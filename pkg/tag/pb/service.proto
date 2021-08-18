@@ -5,54 +5,13 @@ option go_package = "github.com/infraboard/keyauth/pkg/tag";
 
 import "pkg/tag/pb/request.proto";
 import "pkg/tag/pb/tag.proto";
-import "github.com/infraboard/mcube/pb/http/entry.proto";
 
 
 // Service Tag服务
 service TagService {
-	rpc CreateTag(CreateTagRequest) returns(TagKey) {
-		option (mcube.http.rest_api) = {
-			auth_enable: true
-			labels: [{
-				key: "allow"
-				value: "perm_admin"
-			}]
-		};
-	};
-	rpc DescribeTag(DescribeTagRequest) returns(TagKey) {
-		option (mcube.http.rest_api) = {
-			auth_enable: true
-			labels: [{
-				key: "allow"
-				value: "perm_admin"
-			}]
-		};
-	};
-	rpc DeleteTag(DeleteTagRequest) returns(TagKey) {
-		option (mcube.http.rest_api) = {
-			auth_enable: true
-			labels: [{
-				key: "allow"
-				value: "perm_admin"
-			}]
-		};	
-	}
-	rpc QueryTagKey(QueryTagKeyRequest) returns(TagKeySet) {
-		option (mcube.http.rest_api) = {
-			auth_enable: true
-			labels: [{
-				key: "allow"
-				value: "perm_admin"
-			}]
-		};
-	};
-	rpc QueryTagValue(QueryTagValueRequest) returns(TagValueSet) {
-		option (mcube.http.rest_api) = {
-			auth_enable: true
-			labels: [{
-				key: "allow"
-				value: "perm_admin"
-			}]
-		};
-	};
+	rpc CreateTag(CreateTagRequest) returns(TagKey);
+	rpc DescribeTag(DescribeTagRequest) returns(TagKey);
+	rpc DeleteTag(DeleteTagRequest) returns(TagKey);
+	rpc QueryTagKey(QueryTagKeyRequest) returns(TagKeySet);
+	rpc QueryTagValue(QueryTagValueRequest) returns(TagValueSet);
 }

@@ -5,44 +5,10 @@ option go_package = "github.com/infraboard/keyauth/pkg/permission";
 
 import "pkg/role/pb/role.proto";
 import "pkg/permission/pb/request.proto";
-import "github.com/infraboard/mcube/pb/http/entry.proto";
 
 // Service 权限查询API
 service PermissionService {
-	rpc QueryPermission(QueryPermissionRequest) returns(role.PermissionSet) {
-		option (mcube.http.rest_api) = {
-			path: "/namespaces/:id/permissions"
-			method: "GET"
-			resource: "permission"
-			auth_enable: true
-			labels: [{
-				key: "allow"
-				value: "*"
-			}]
-		};
-	};
-	rpc QueryRole(QueryRoleRequest) returns(role.Set) {
-		option (mcube.http.rest_api) = {
-			path: "/namespaces/:id/roles"
-			method: "POST"
-			resource: "role"
-			auth_enable: true
-			labels: [{
-				key: "allow"
-				value: "*"
-			}]
-		};
-	};
-	rpc CheckPermission(CheckPermissionRequest) returns(role.Permission) {
-		option (mcube.http.rest_api) = {
-			path: "/namespaces/:id/permissions/endpoints/:eid"
-			method: "GET"
-			resource: "permission"
-			auth_enable: true
-			labels: [{
-				key: "allow"
-				value: "*"
-			}]
-		};
-	};
+	rpc QueryPermission(QueryPermissionRequest) returns(role.PermissionSet);
+	rpc QueryRole(QueryRoleRequest) returns(role.Set);
+	rpc CheckPermission(CheckPermissionRequest) returns(role.Permission);
 }

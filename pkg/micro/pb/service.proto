@@ -5,56 +5,13 @@ option go_package = "github.com/infraboard/keyauth/pkg/micro";
 
 import "pkg/micro/pb/request.proto";
 import "pkg/micro/pb/micro.proto";
-import "github.com/infraboard/mcube/pb/http/entry.proto";
 
 // MicroService 服务
 service MicroService {
-	rpc ValidateClientCredential(ValidateClientCredentialRequest) returns(Micro) {
-		option (mcube.http.rest_api) = {
-			path: "/services/:id/validate"
-			method: "POST"
-			resource: "endpoint"
-			auth_enable: false
-		};
-	};
-	rpc CreateService(CreateMicroRequest) returns(Micro) {
-		option (mcube.http.rest_api) = {
-			path: "/services"
-			method: "POST"
-			resource: "service"
-			auth_enable: true
-		};
-	};
-	rpc QueryService(QueryMicroRequest) returns(Set) {
-		option (mcube.http.rest_api) = {
-			path: "/services"
-			method: "GET"
-			resource: "service"
-			auth_enable: true
-		};
-	};
-	rpc DescribeService(DescribeMicroRequest) returns(Micro) {
-		option (mcube.http.rest_api) = {
-			path: "/services/:id"
-			method: "GET"
-			resource: "service"
-			auth_enable: true
-		};
-	};
-	rpc DeleteService(DeleteMicroRequest) returns(Micro) {
-		option (mcube.http.rest_api) = {
-			path: "/services/:id"
-			method: "DELETE"
-			resource: "service"
-			auth_enable: true
-		};
-	};
-	rpc RefreshServiceClientSecret(DescribeMicroRequest) returns(Micro) {
-		option (mcube.http.rest_api) = {
-			path: "/services/:id/refresh_client_secret"
-			method: "POST"
-			resource: "service"
-			auth_enable: true
-		};
-	};
+	rpc ValidateClientCredential(ValidateClientCredentialRequest) returns(Micro);
+	rpc CreateService(CreateMicroRequest) returns(Micro);
+	rpc QueryService(QueryMicroRequest) returns(Set);
+	rpc DescribeService(DescribeMicroRequest) returns(Micro);
+	rpc DeleteService(DeleteMicroRequest) returns(Micro);
+	rpc RefreshServiceClientSecret(DescribeMicroRequest) returns(Micro);
 }

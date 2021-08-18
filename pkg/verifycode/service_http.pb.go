@@ -11,28 +11,12 @@ func HttpEntry() *http.EntrySet {
 	set := &http.EntrySet{
 		Items: []*http.Entry{
 			{
-				Path:              "/keyauth.verifycode.VerifyCodeService/IssueCode",
-				FunctionName:      "IssueCode",
-				Method:            "POST",
-				Resource:          "verify_code",
-				AuthEnable:        false,
-				PermissionEnable:  false,
-				AuditLog:          false,
-				RequiredNamespace: false,
-				Labels:            map[string]string{},
-				Extension:         map[string]string{},
+				Path:         "/keyauth.verifycode.VerifyCodeService/IssueCode",
+				FunctionName: "IssueCode",
 			},
 			{
-				Path:              "/keyauth.verifycode.VerifyCodeService/CheckCode",
-				FunctionName:      "CheckCode",
-				Method:            "POST",
-				Resource:          "verify_code",
-				AuthEnable:        false,
-				PermissionEnable:  false,
-				AuditLog:          false,
-				RequiredNamespace: false,
-				Labels:            map[string]string{},
-				Extension:         map[string]string{},
+				Path:         "/keyauth.verifycode.VerifyCodeService/CheckCode",
+				FunctionName: "CheckCode",
 			},
 		},
 	}

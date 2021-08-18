@@ -106,33 +106,15 @@ func (e *entryEngine) ValidatePermission(tk *token.Token, ctx *gcontext.GrpcInCt
 		return nil
 	}
 
-
-	// 
-
-	// http 使用Unique Path, grpc path本身具有唯一性
-	path := e.Path
-	if e.uniPath {
-		path = e.UniquePath()
+	// 检查是否是允许的类型
+	if len(e.Allow) > 0 {
+		e.log.Debugf("[%s] start check permission to keyauth ...", tk.Account)
+		if !e.IsAllow(tk.UserType) {
+			return exception.NewPermissionDeny("no permission, allow: %s, but current: %s", e.Allow, tk.UserType)
+		}
+		e.log.Debugf("[%s] permission check passed", tk.Account)
 	}
 
-	outCtx := gcontext.NewGrpcOutCtx()
-	outCtx.SetAccessToken(ctx.GetAccessToKen())
-	eid, err := e.endpointHashID(outCtx, path)
-	if err != nil {
-		return err
-	}
-
-	// 权限检测
-	e.log.Debugf("[%s] start check permission to keyauth ...", tk.Account)
-	req := permission.NewCheckPermissionRequest()
-	req.EndpointId = eid
-	req.NamespaceId = tk.Namespace
-	perm, err := e.permission.CheckPermission(outCtx.Context(), req)
-	if err != nil {
-		return exception.NewPermissionDeny("no permission, %s", err)
-	}
-	tk.Scope = perm.Scope
-	e.log.Debugf("[%s] permission check passed", tk.Account)
 	return nil
 }
 

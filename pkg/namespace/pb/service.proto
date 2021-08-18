@@ -5,77 +5,11 @@ option go_package = "github.com/infraboard/keyauth/pkg/namespace";
 
 import "pkg/namespace/pb/namespace.proto";
 import "pkg/namespace/pb/request.proto";
-import "github.com/infraboard/mcube/pb/http/entry.proto";
 
 // NamespaceService todo
 service NamespaceService {
-	rpc CreateNamespace(CreateNamespaceRequest) returns(Namespace) {
-		option (mcube.http.rest_api) = {
-			resource: "namespace"
-			auth_enable: true
-			audit_log: true
-			labels: [
-				{
-					key: "allow"
-					value: "perm_admin"
-				},
-				{
-					key: "action"
-					value: "create"				
-				}
-			]
-		};
-	};
-	rpc QueryNamespace(QueryNamespaceRequest) returns(Set) {
-		option (mcube.http.rest_api) = {
-			resource: "namespace"
-			auth_enable: true
-			audit_log: true
-			labels: [
-				{
-					key: "allow"
-					value: "perm_admin"
-				},
-				{
-					key: "action"
-					value: "list"				
-				}
-			]
-		};
-	};
-	rpc DescribeNamespace(DescriptNamespaceRequest) returns(Namespace) {
-		option (mcube.http.rest_api) = {
-			resource: "namespace"
-			auth_enable: true
-			audit_log: true
-			labels: [
-				{
-					key: "allow"
-					value: "perm_admin"
-				},
-				{
-					key: "action"
-					value: "get"				
-				}
-			]
-		};
-	};
-	rpc DeleteNamespace(DeleteNamespaceRequest) returns(Namespace) {
-		option (mcube.http.rest_api) = {
-			path: "/namespaces/:id"
-			method: "GET"
-			resource: "namespace"
-			auth_enable: true
-			labels: [
-				{
-					key: "allow"
-					value: "perm_admin"
-				},
-				{
-					key: "action"
-					value: "delete"				
-				}
-			]
-		};
-	};
+	rpc CreateNamespace(CreateNamespaceRequest) returns(Namespace);
+	rpc QueryNamespace(QueryNamespaceRequest) returns(Set);
+	rpc DescribeNamespace(DescriptNamespaceRequest) returns(Namespace);
+	rpc DeleteNamespace(DeleteNamespaceRequest) returns(Namespace);
 }
