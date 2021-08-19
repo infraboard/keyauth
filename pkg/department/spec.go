@@ -126,11 +126,15 @@ func NewQueryApplicationFormRequestFromHTTP(r *http.Request) (*QueryApplicationF
 	req.DepartmentId = qs.Get("department_id")
 	req.SkipItems = qs.Get("skip_items") == "true"
 
-	status, err := ParseApplicationFormStatusFromString(qs.Get("status"))
-	if err != nil {
-		return nil, exception.NewBadRequest("parse status error, %s", err)
+	status := qs.Get("status")
+	if status != "" {
+		status, err := ParseApplicationFormStatusFromString(status)
+		if err != nil {
+			return nil, exception.NewBadRequest("parse status error, %s", err)
+		}
+		req.Status = status
 	}
-	req.Status = status
+
 	return req, nil
 }
 

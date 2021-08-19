@@ -20,7 +20,14 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	tk, err := ctx.GetToken()
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
 	req := department.NewQueryDepartmentRequestFromHTTP(r)
+	req.Domain = tk.Domain
 
 	var header, trailer metadata.MD
 	apps, err := h.service.QueryDepartment(
