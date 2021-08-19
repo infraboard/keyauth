@@ -2,6 +2,8 @@ package namespace
 
 import (
 	"github.com/go-playground/validator/v10"
+
+	"github.com/infraboard/keyauth/pkg/token"
 )
 
 // use a single instance of Validate, it caches struct info
@@ -19,6 +21,11 @@ func NewDefaultNamespace() *Namespace {
 // NewCreateNamespaceRequest todo
 func NewCreateNamespaceRequest() *CreateNamespaceRequest {
 	return &CreateNamespaceRequest{}
+}
+
+func (req *CreateNamespaceRequest) UpdateOwner(tk *token.Token) {
+	req.CreateBy = tk.Account
+	req.Domain = tk.Domain
 }
 
 // Validate todo

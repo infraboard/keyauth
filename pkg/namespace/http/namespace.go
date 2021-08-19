@@ -69,11 +69,18 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	tk, err := ctx.GetToken()
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
 	req := namespace.NewCreateNamespaceRequest()
 	if err := request.GetDataFromRequest(r, req); err != nil {
 		response.Failed(w, err)
 		return
 	}
+	req.UpdateOwner(tk)
 
 	var header, trailer metadata.MD
 	d, err := h.service.CreateNamespace(

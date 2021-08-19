@@ -6,7 +6,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/infraboard/keyauth/pkg/namespace"
-	"github.com/infraboard/keyauth/pkg/token"
 )
 
 func newPaggingQuery(req *namespace.QueryNamespaceRequest) *queryNamespaceRequest {
@@ -88,25 +87,23 @@ func (r *describeNamespaceRequest) FindFilter() bson.M {
 	return filter
 }
 
-func newDeleteRequest(tk *token.Token, req *namespace.DeleteNamespaceRequest) (*deleteNamespaceRequest, error) {
+func newDeleteRequest(req *namespace.DeleteNamespaceRequest) (*deleteNamespaceRequest, error) {
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest(err.Error())
 	}
 
 	return &deleteNamespaceRequest{
-		tk:                     tk,
 		DeleteNamespaceRequest: req,
 	}, nil
 }
 
 type deleteNamespaceRequest struct {
-	tk *token.Token
 	*namespace.DeleteNamespaceRequest
 }
 
 func (r *deleteNamespaceRequest) FindFilter() bson.M {
 	filter := bson.M{
-		"domain": r.tk.Domain,
+		"domain": r.Domain,
 		"_id":    r.Id,
 	}
 

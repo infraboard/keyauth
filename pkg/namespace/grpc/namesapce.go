@@ -9,7 +9,6 @@ import (
 	"github.com/rs/xid"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/department"
 	"github.com/infraboard/keyauth/pkg/namespace"
 	"github.com/infraboard/keyauth/pkg/policy"
@@ -134,17 +133,12 @@ func (s *service) DescribeNamespace(ctx context.Context, req *namespace.Descript
 }
 
 func (s *service) DeleteNamespace(ctx context.Context, req *namespace.DeleteNamespaceRequest) (*namespace.Namespace, error) {
-	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	ns, err := s.DescribeNamespace(ctx, namespace.NewNewDescriptNamespaceRequestWithID(req.Id))
 	if err != nil {
 		return nil, err
 	}
 
-	r, err := newDeleteRequest(tk, req)
+	r, err := newDeleteRequest(req)
 	if err != nil {
 		return nil, err
 	}
@@ -169,15 +163,10 @@ func (s *service) newNamespace(ctx context.Context, req *namespace.CreateNamespa
 		return nil, exception.NewBadRequest(err.Error())
 	}
 
-	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	ins := &namespace.Namespace{
 		Id:           xid.New().String(),
-		Domain:       tk.Domain,
-		Creater:      tk.Account,
+		Domain:       req.Domain,
+		CreateBy:     req.CreateBy,
 		CreateAt:     ftime.Now().Timestamp(),
 		UpdateAt:     ftime.Now().Timestamp(),
 		DepartmentId: req.DepartmentId,

@@ -24,8 +24,8 @@ message Namespace {
         (google.protobuf.field_tag) = {struct_tag: 'bson:"domain" json:"domain"'}
         ];
     // 创建人
-    string creater = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"creater" json:"creater"'}
+    string create_by = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"create_by" json:"create_by"'}
         ];
     // 创建时间
     int64 create_at = 4[
