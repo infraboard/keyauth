@@ -51,7 +51,14 @@ func (h *handler) QueryRole(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	tk, err := ctx.GetToken()
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
 	req := role.NewQueryRoleRequestFromHTTP(r)
+	req.Domain = tk.Domain
 
 	var header, trailer metadata.MD
 	apps, err := h.service.QueryRole(
@@ -66,7 +73,6 @@ func (h *handler) QueryRole(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, apps)
-	return
 }
 
 func (h *handler) DescribeRole(w http.ResponseWriter, r *http.Request) {

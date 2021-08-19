@@ -9,19 +9,17 @@ import (
 	"github.com/infraboard/mcube/exception"
 )
 
-func newQueryLoginLogRequest(tk *token.Token, req *session.QuerySessionRequest) (*querySessionRequest, error) {
+func newQueryLoginLogRequest(req *session.QuerySessionRequest) (*querySessionRequest, error) {
 	if err := req.Validate(); err != nil {
 		return nil, err
 	}
 
 	return &querySessionRequest{
 		QuerySessionRequest: req,
-		token:               tk,
 	}, nil
 }
 
 type querySessionRequest struct {
-	token *token.Token
 	*session.QuerySessionRequest
 }
 
@@ -40,7 +38,7 @@ func (r *querySessionRequest) FindOptions() *options.FindOptions {
 
 func (r *querySessionRequest) FindFilter() bson.M {
 	filter := bson.M{
-		"domain": r.token.Domain,
+		"domain": r.Domain,
 	}
 
 	if r.Account != "" {

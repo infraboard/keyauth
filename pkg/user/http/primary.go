@@ -41,7 +41,6 @@ func (h *handler) CreatePrimayAccount(w http.ResponseWriter, r *http.Request) {
 	req.UserType = types.UserType_PRIMARY
 
 	response.Success(w, d)
-	return
 }
 
 // DestroyPrimaryAccount 注销账号
@@ -65,5 +64,4 @@ func (h *handler) DestroyPrimaryAccount(w http.ResponseWriter, r *http.Request) 
 	}
 
 	response.Success(w, "delete ok")
-	return
 }

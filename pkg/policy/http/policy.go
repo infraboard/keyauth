@@ -102,8 +102,14 @@ func (h *handler) Delete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	rctx := context.GetContext(r)
+	tk, err := ctx.GetToken()
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
 
 	req := policy.NewDeletePolicyRequestWithID(rctx.PS.ByName("id"))
+	req.Domain = tk.Domain
 
 	var header, trailer metadata.MD
 	_, err = h.service.DeletePolicy(

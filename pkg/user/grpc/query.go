@@ -5,23 +5,20 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
-	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
 )
 
-func newQueryUserRequest(tk *token.Token, req *user.QueryAccountRequest) (*queryUserRequest, error) {
+func newQueryUserRequest(req *user.QueryAccountRequest) (*queryUserRequest, error) {
 	if err := req.Validate(); err != nil {
 		return nil, err
 	}
 
 	return &queryUserRequest{
-		tk:                  tk,
 		QueryAccountRequest: req,
 	}, nil
 }
 
 type queryUserRequest struct {
-	tk *token.Token
 	*user.QueryAccountRequest
 }
 
@@ -39,10 +36,9 @@ func (r *queryUserRequest) FindOptions() *options.FindOptions {
 }
 
 func (r *queryUserRequest) FindFilter() bson.M {
-	tk := r.tk
 	filter := bson.M{
 		"type":   r.UserType,
-		"domain": tk.Domain,
+		"domain": r.Domain,
 	}
 
 	if len(r.Accounts) > 0 {
@@ -69,11 +65,7 @@ func (r *queryUserRequest) FindFilter() bson.M {
 	return filter
 }
 
-func newDescribeRequest(tk *token.Token, req *user.DescribeAccountRequest) (*describeUserRequest, error) {
-	if req.Account == "" {
-		req.Account = tk.Account
-	}
-
+func newDescribeRequest(req *user.DescribeAccountRequest) (*describeUserRequest, error) {
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest(err.Error())
 	}

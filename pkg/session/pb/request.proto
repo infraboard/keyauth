@@ -31,6 +31,7 @@ message QuerySessionRequest {
     keyauth.token.GrantType grant_type = 6;
     int64 start_login_time = 7;
     int64 end_login_time = 8;
+    string domain = 9;
 }
 
 // QueryUserLastSessionRequest todo

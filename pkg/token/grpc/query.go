@@ -85,15 +85,13 @@ func (r *queryRequest) FindFilter() bson.M {
 	return filter
 }
 
-func newDeleteTokenRequest(tk *token.Token, req *token.DeleteTokenRequest) *deleteTokenRequest {
+func newDeleteTokenRequest(req *token.DeleteTokenRequest) *deleteTokenRequest {
 	return &deleteTokenRequest{
-		tk:                 tk,
 		DeleteTokenRequest: req,
 	}
 }
 
 type deleteTokenRequest struct {
-	tk *token.Token
 	*token.DeleteTokenRequest
 }
 
@@ -105,8 +103,8 @@ func (req *deleteTokenRequest) String() string {
 func (req *deleteTokenRequest) FindFilter() bson.M {
 	filter := bson.M{}
 
-	filter["domain"] = req.tk.Domain
-	filter["account"] = req.tk.Account
+	filter["domain"] = req.Domain
+	filter["account"] = req.Account
 
 	if len(req.AccessToken) > 0 {
 		filter["_id"] = bson.M{"$in": req.AccessToken}

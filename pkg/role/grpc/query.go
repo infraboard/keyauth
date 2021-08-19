@@ -7,7 +7,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/infraboard/keyauth/pkg/role"
-	"github.com/infraboard/keyauth/pkg/token"
 )
 
 func newDescribeRoleRequest(req *role.DescribeRoleRequest) (*describeRoleRequest, error) {
@@ -46,17 +45,15 @@ func (req *describeRoleRequest) FindOptions() *options.FindOneOptions {
 	return opt
 }
 
-func newQueryRoleRequest(tk *token.Token, req *role.QueryRoleRequest) (*queryRoleRequest, error) {
+func newQueryRoleRequest(req *role.QueryRoleRequest) (*queryRoleRequest, error) {
 	if err := req.Validate(); err != nil {
 		return nil, err
 	}
 	return &queryRoleRequest{
-		tk:               tk,
 		QueryRoleRequest: req}, nil
 }
 
 type queryRoleRequest struct {
-	tk *token.Token
 	*role.QueryRoleRequest
 }
 
@@ -83,24 +80,22 @@ func (r *queryRoleRequest) FindFilter() bson.M {
 		filter["$or"] = bson.A{
 			bson.M{"type": role.RoleType_BUILDIN},
 			bson.M{"type": role.RoleType_GLOBAL},
-			bson.M{"type": role.RoleType_CUSTOM, "domain": r.tk.Domain},
+			bson.M{"type": role.RoleType_CUSTOM, "domain": r.Domain},
 		}
 	}
 
 	return filter
 }
 
-func newQueryPermissionRequest(tk *token.Token, req *role.QueryPermissionRequest) (*queryPermissionRequest, error) {
+func newQueryPermissionRequest(req *role.QueryPermissionRequest) (*queryPermissionRequest, error) {
 	if err := req.Validate(); err != nil {
 		return nil, err
 	}
 	return &queryPermissionRequest{
-		tk:                     tk,
 		QueryPermissionRequest: req}, nil
 }
 
 type queryPermissionRequest struct {
-	tk *token.Token
 	*role.QueryPermissionRequest
 }
 
@@ -127,17 +122,15 @@ func (r *queryPermissionRequest) FindFilter() bson.M {
 	return filter
 }
 
-func newDeletePermissionRequest(tk *token.Token, req *role.RemovePermissionFromRoleRequest) (*deletePermissionRequest, error) {
+func newDeletePermissionRequest(req *role.RemovePermissionFromRoleRequest) (*deletePermissionRequest, error) {
 	if err := req.Validate(); err != nil {
 		return nil, err
 	}
 	return &deletePermissionRequest{
-		tk:                              tk,
 		RemovePermissionFromRoleRequest: req}, nil
 }
 
 type deletePermissionRequest struct {
-	tk *token.Token
 	*role.RemovePermissionFromRoleRequest
 }
 

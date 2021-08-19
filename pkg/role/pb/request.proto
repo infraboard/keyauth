@@ -66,6 +66,9 @@ message QueryRoleRequest {
     RoleType type = 2[
         (google.protobuf.field_tag) = {struct_tag: 'bson:"type" json:"type"'}
         ];
+    string domain = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"domain"'}
+        ];  
 }
 
 // DescribeRoleRequest role详情

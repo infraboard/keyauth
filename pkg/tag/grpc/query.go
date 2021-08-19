@@ -8,17 +8,15 @@ import (
 	"github.com/infraboard/keyauth/pkg/token"
 )
 
-func newQueryTagKeyRequest(tk *token.Token, req *tag.QueryTagKeyRequest) (*queryTagKeyRequest, error) {
+func newQueryTagKeyRequest(req *tag.QueryTagKeyRequest) (*queryTagKeyRequest, error) {
 	if err := req.Validate(); err != nil {
 		return nil, err
 	}
 	return &queryTagKeyRequest{
-		tk:                 tk,
 		QueryTagKeyRequest: req}, nil
 }
 
 type queryTagKeyRequest struct {
-	tk *token.Token
 	*tag.QueryTagKeyRequest
 }
 
@@ -52,17 +50,15 @@ func (r *queryTagKeyRequest) FindFilter() bson.M {
 	return filter
 }
 
-func newQueryTagValueRequest(tk *token.Token, req *tag.QueryTagValueRequest) (*queryTagValueRequest, error) {
+func newQueryTagValueRequest(req *tag.QueryTagValueRequest) (*queryTagValueRequest, error) {
 	if err := req.Validate(); err != nil {
 		return nil, err
 	}
 	return &queryTagValueRequest{
-		tk:                   tk,
 		QueryTagValueRequest: req}, nil
 }
 
 type queryTagValueRequest struct {
-	tk *token.Token
 	*tag.QueryTagValueRequest
 }
 
@@ -94,12 +90,10 @@ func newDescribeTagRequest(tk *token.Token, req *tag.DescribeTagRequest) (*descr
 		return nil, err
 	}
 	return &describeTagRequest{
-		tk:                 tk,
 		DescribeTagRequest: req}, nil
 }
 
 type describeTagRequest struct {
-	tk *token.Token
 	*tag.DescribeTagRequest
 }
 

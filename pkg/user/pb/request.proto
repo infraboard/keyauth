@@ -126,6 +126,9 @@ message QueryAccountRequest {
     string keywords = 9[
         (google.protobuf.field_tag) = {struct_tag: 'json:"keywords"'}
         ];
+    string domain = 10[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"domain"'}
+        ];
 }
 
 // UpdateAccountRequest todo

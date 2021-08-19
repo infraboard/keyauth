@@ -19,12 +19,7 @@ import (
 )
 
 func (s *service) QueryAccount(ctx context.Context, req *user.QueryAccountRequest) (*user.Set, error) {
-	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	r, err := newQueryUserRequest(tk, req)
+	r, err := newQueryUserRequest(req)
 	if err != nil {
 		return nil, err
 	}
@@ -177,12 +172,7 @@ func (s *service) changePass(ctx context.Context, account, old, new string) (*us
 }
 
 func (s *service) DescribeAccount(ctx context.Context, req *user.DescribeAccountRequest) (*user.User, error) {
-	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	r, err := newDescribeRequest(tk, req)
+	r, err := newDescribeRequest(req)
 	if err != nil {
 		return nil, err
 	}

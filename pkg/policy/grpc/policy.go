@@ -40,12 +40,7 @@ func (s *service) CreatePolicy(ctx context.Context, req *policy.CreatePolicyRequ
 
 func (s *service) QueryPolicy(ctx context.Context, req *policy.QueryPolicyRequest) (
 	*policy.Set, error) {
-	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	r, err := newQueryPolicyRequest(tk, req)
+	r, err := newQueryPolicyRequest(req)
 	if err != nil {
 		return nil, err
 	}
@@ -116,11 +111,6 @@ func (s *service) DescribePolicy(ctx context.Context, req *policy.DescribePolicy
 }
 
 func (s *service) DeletePolicy(ctx context.Context, req *policy.DeletePolicyRequest) (*policy.Policy, error) {
-	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	descReq := policy.NewDescriptPolicyRequest()
 	descReq.Id = req.Id
 	p, err := s.DescribePolicy(ctx, descReq)
@@ -128,7 +118,7 @@ func (s *service) DeletePolicy(ctx context.Context, req *policy.DeletePolicyRequ
 		return nil, err
 	}
 
-	r, err := newDeletePolicyRequest(tk, req)
+	r, err := newDeletePolicyRequest(req)
 	if err != nil {
 		return nil, err
 	}

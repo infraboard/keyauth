@@ -43,12 +43,7 @@ func (s *service) CreateTag(ctx context.Context, req *tag.CreateTagRequest) (*ta
 }
 
 func (s *service) QueryTagKey(ctx context.Context, req *tag.QueryTagKeyRequest) (*tag.TagKeySet, error) {
-	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	query, err := newQueryTagKeyRequest(tk, req)
+	query, err := newQueryTagKeyRequest(req)
 	if err != nil {
 		return nil, err
 	}
@@ -79,12 +74,7 @@ func (s *service) QueryTagKey(ctx context.Context, req *tag.QueryTagKeyRequest) 
 }
 
 func (s *service) QueryTagValue(ctx context.Context, req *tag.QueryTagValueRequest) (*tag.TagValueSet, error) {
-	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	query, err := newQueryTagValueRequest(tk, req)
+	query, err := newQueryTagValueRequest(req)
 	if err != nil {
 		return nil, err
 	}

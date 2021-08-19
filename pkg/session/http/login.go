@@ -20,11 +20,18 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	tk, err := ctx.GetToken()
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
 	req, err := session.NewQuerySessionRequestFromHTTP(r)
 	if err != nil {
 		response.Failed(w, exception.NewBadRequest("validate request error, %s", err))
 		return
 	}
+	req.Domain = tk.Domain
 
 	var header, trailer metadata.MD
 	set, err := h.service.QuerySession(
@@ -38,7 +45,6 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	response.Success(w, set)
-	return
 }
 
 func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
@@ -68,5 +74,4 @@ func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	response.Success(w, set)
-	return
 }

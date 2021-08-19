@@ -58,6 +58,9 @@ message QueryPolicyRequest {
     bool with_namespace = 7[
         (google.protobuf.field_tag) = {struct_tag: 'json:"with_namespace,omitempty"'}
         ];
+    string domain = 8[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"domain"'}
+        ];    
 }
 
 // DescribePolicyRequest todo
@@ -84,4 +87,7 @@ message DeletePolicyRequest {
     PolicyType type = 5[
         (google.protobuf.field_tag) = {struct_tag: 'json:"type,omitempty"'}
         ]; 
+    string domain = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"domain"'}
+        ];  
 }

@@ -306,16 +306,11 @@ func (s *service) describeToken(req *describeTokenRequest) (*token.Token, error)
 
 func (s *service) DeleteToken(ctx context.Context, req *token.DeleteTokenRequest) (
 	*token.DeleteTokenResponse, error) {
-	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	if err := req.Validate(); err != nil {
 		return nil, err
 	}
 
-	deleteReq := newDeleteTokenRequest(tk, req)
+	deleteReq := newDeleteTokenRequest(req)
 	s.log.Debugf("delete token filter: %s", deleteReq.FindFilter())
 	resp, err := s.col.DeleteOne(context.TODO(), deleteReq.FindFilter())
 	if err != nil {

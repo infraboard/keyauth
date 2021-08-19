@@ -20,12 +20,7 @@ func insertDocs(perms []*role.Permission) []interface{} {
 }
 
 func (s *service) QueryPermission(ctx context.Context, req *role.QueryPermissionRequest) (*role.PermissionSet, error) {
-	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	query, err := newQueryPermissionRequest(tk, req)
+	query, err := newQueryPermissionRequest(req)
 	if err != nil {
 		return nil, err
 	}
@@ -115,16 +110,11 @@ func (s *service) AddPermissionToRole(ctx context.Context, req *role.AddPermissi
 }
 
 func (s *service) RemovePermissionFromRole(ctx context.Context, req *role.RemovePermissionFromRoleRequest) (*role.PermissionSet, error) {
-	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest("validate remove permission error, %s", err)
 	}
 
-	delReq, err := newDeletePermissionRequest(tk, req)
+	delReq, err := newDeletePermissionRequest(req)
 	if err != nil {
 		return nil, err
 	}

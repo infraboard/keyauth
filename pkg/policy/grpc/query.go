@@ -8,7 +8,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/infraboard/keyauth/pkg/policy"
-	"github.com/infraboard/keyauth/pkg/token"
 )
 
 func newDescribePolicyRequest(req *policy.DescribePolicyRequest) (*describePolicyRequest, error) {
@@ -34,19 +33,17 @@ func (req *describePolicyRequest) FindFilter() bson.M {
 	return filter
 }
 
-func newQueryPolicyRequest(tk *token.Token, req *policy.QueryPolicyRequest) (*queryPolicyRequest, error) {
+func newQueryPolicyRequest(req *policy.QueryPolicyRequest) (*queryPolicyRequest, error) {
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest(err.Error())
 	}
 
 	return &queryPolicyRequest{
-		tk:                 tk,
 		QueryPolicyRequest: req,
 	}, nil
 }
 
 type queryPolicyRequest struct {
-	tk *token.Token
 	*policy.QueryPolicyRequest
 }
 
@@ -64,10 +61,8 @@ func (r *queryPolicyRequest) FindOptions() *options.FindOptions {
 }
 
 func (r *queryPolicyRequest) FindFilter() bson.M {
-	tk := r.tk
-
 	filter := bson.M{}
-	filter["domain"] = tk.Domain
+	filter["domain"] = r.Domain
 
 	if r.NamespaceId != "" {
 		filter["namespace_id"] = r.NamespaceId
@@ -85,23 +80,19 @@ func (r *queryPolicyRequest) FindFilter() bson.M {
 	return filter
 }
 
-func newDeletePolicyRequest(tk *token.Token, req *policy.DeletePolicyRequest) (*deletePolicyRequest, error) {
+func newDeletePolicyRequest(req *policy.DeletePolicyRequest) (*deletePolicyRequest, error) {
 	return &deletePolicyRequest{
-		tk:                  tk,
 		DeletePolicyRequest: req,
 	}, nil
 }
 
 type deletePolicyRequest struct {
-	tk *token.Token
 	*policy.DeletePolicyRequest
 }
 
 func (r *deletePolicyRequest) FindFilter() bson.M {
-	tk := r.tk
-
 	filter := bson.M{}
-	filter["domain"] = tk.Domain
+	filter["domain"] = r.Domain
 
 	if r.Id != "" {
 		filter["_id"] = r.Id

@@ -43,7 +43,6 @@ func (h *handler) CreateSubAccount(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, d)
-	return
 }
 
 func (h *handler) QuerySubAccount(w http.ResponseWriter, r *http.Request) {
@@ -53,8 +52,15 @@ func (h *handler) QuerySubAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	tk, err := ctx.GetToken()
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
 	req := user.NewNewQueryAccountRequestFromHTTP(r)
 	req.UserType = types.UserType_SUB
+	req.Domain = tk.Domain
 
 	var header, trailer metadata.MD
 	d, err := h.service.QueryAccount(
@@ -69,7 +75,6 @@ func (h *handler) QuerySubAccount(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, d)
-	return
 }
 
 func (h *handler) DescribeSubAccount(w http.ResponseWriter, r *http.Request) {
@@ -95,7 +100,6 @@ func (h *handler) DescribeSubAccount(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, d)
-	return
 }
 
 func (h *handler) PatchSubAccount(w http.ResponseWriter, r *http.Request) {
@@ -154,7 +158,6 @@ func (h *handler) DestroySubAccount(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, "delete ok")
-	return
 }
 
 func (h *handler) BlockSubAccount(w http.ResponseWriter, r *http.Request) {
@@ -184,7 +187,6 @@ func (h *handler) BlockSubAccount(w http.ResponseWriter, r *http.Request) {
 	ins.Desensitize()
 
 	response.Success(w, ins)
-	return
 }
 
 func (h *handler) UnBlockSubAccount(w http.ResponseWriter, r *http.Request) {
@@ -214,31 +216,4 @@ func (h *handler) UnBlockSubAccount(w http.ResponseWriter, r *http.Request) {
 	ins.Desensitize()
 
 	response.Success(w, ins)
-	return
-}
-
-func (h *handler) UpdateSubAccountDepartment(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
-	req := user.NewNewQueryAccountRequestFromHTTP(r)
-	req.UserType = types.UserType_SUB
-
-	var header, trailer metadata.MD
-	d, err := h.service.QueryAccount(
-		ctx.Context(),
-		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
-	)
-	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
-		return
-	}
-
-	response.Success(w, d)
-	return
 }

@@ -43,12 +43,7 @@ func (s *service) CreateRole(ctx context.Context, req *role.CreateRoleRequest) (
 }
 
 func (s *service) QueryRole(ctx context.Context, req *role.QueryRoleRequest) (*role.Set, error) {
-	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	query, err := newQueryRoleRequest(tk, req)
+	query, err := newQueryRoleRequest(req)
 	if err != nil {
 		return nil, err
 	}

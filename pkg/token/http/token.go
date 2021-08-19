@@ -171,11 +171,19 @@ func (h *handler) DeleteToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	tk, err := ctx.GetToken()
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
 	req := token.NewDeleteTokenRequest()
 	if err := request.GetDataFromRequest(r, req); err != nil {
 		response.Failed(w, err)
 		return
 	}
+	req.Domain = tk.Domain
+	req.Account = tk.Account
 
 	var header, trailer metadata.MD
 	resp, err := h.service.DeleteToken(
