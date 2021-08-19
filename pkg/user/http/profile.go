@@ -20,7 +20,14 @@ func (h *handler) QueryProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	tk, err := ctx.GetToken()
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
 	req := user.NewDescriptAccountRequest()
+	req.Account = tk.Account
 
 	var header, trailer metadata.MD
 	ins, err := h.service.DescribeAccount(

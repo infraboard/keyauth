@@ -235,3 +235,7 @@ func NewDeleteTokenResponse() *DeleteTokenResponse {
 func NewChangeNamespaceRequest() *ChangeNamespaceRequest {
 	return &ChangeNamespaceRequest{}
 }
+
+func (req *ChangeNamespaceRequest) Validate() error {
+	return validate.Struct(req)
+}

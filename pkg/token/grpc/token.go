@@ -146,7 +146,7 @@ func (s *service) makeBlockExcption(bt token.BlockType, message string) exceptio
 }
 
 func (s *service) BlockToken(ctx context.Context, req *token.BlockTokenRequest) (*token.Token, error) {
-	tk, err := s.DescribeToken(nil, token.NewDescribeTokenRequestWithAccessToken(req.AccessToken))
+	tk, err := s.DescribeToken(ctx, token.NewDescribeTokenRequestWithAccessToken(req.AccessToken))
 	if err != nil {
 		return nil, fmt.Errorf("query session access token error, %s", err)
 	}
@@ -163,7 +163,11 @@ func (s *service) BlockToken(ctx context.Context, req *token.BlockTokenRequest) 
 }
 
 func (s *service) ChangeNamespace(ctx context.Context, req *token.ChangeNamespaceRequest) (*token.Token, error) {
-	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
+	if err := req.Validate(); err != nil {
+		return nil, exception.NewBadRequest("validate change namespace error, %s", err)
+	}
+
+	tk, err := s.DescribeToken(ctx, token.NewDescribeTokenRequestWithAccessToken(req.Token))
 	if err != nil {
 		return nil, err
 	}
@@ -173,6 +177,7 @@ func (s *service) ChangeNamespace(ctx context.Context, req *token.ChangeNamespac
 		return nil, err
 	}
 
+	fmt.Println(tk.UserType, types.UserType_DOMAIN_ADMIN, types.UserType_SUPPER, tk.Namespace)
 	if !tk.UserType.IsIn(types.UserType_DOMAIN_ADMIN, types.UserType_SUPPER) && !tk.HasNamespace(req.Namespace) {
 		return nil, exception.NewPermissionDeny("your has no permission to access namespace %s", req.Namespace)
 	}
