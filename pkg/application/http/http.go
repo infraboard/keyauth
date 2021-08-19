@@ -22,8 +22,8 @@ type handler struct {
 func (h *handler) Registry(router router.SubRouter) {
 	self := router.ResourceRouter("application")
 	self.BasePath("applications")
-	self.Handle("POST", "/", h.CreateUserApplication)
-	self.Handle("GET", "/", h.QueryUserApplication)
+	self.Handle("POST", "/", h.CreateApplication)
+	self.Handle("GET", "/", h.QueryApplication)
 	self.Handle("GET", "/:id", h.GetApplication)
 	self.Handle("DELETE", "/:id", h.DestroyApplication)
 }

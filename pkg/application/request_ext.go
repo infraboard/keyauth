@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/mcube/http/request"
 )
 
@@ -45,6 +46,11 @@ func NewCreateApplicatonRequest() *CreateApplicatonRequest {
 // Validate 请求校验
 func (req *CreateApplicatonRequest) Validate() error {
 	return validate.Struct(req)
+}
+
+func (req *CreateApplicatonRequest) UpdateOwner(tk *token.Token) {
+	req.CreateBy = tk.Account
+	req.Domain = tk.Domain
 }
 
 // NewDeleteApplicationRequestWithID todo

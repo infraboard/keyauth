@@ -64,6 +64,10 @@ func (a *Application) CheckClientSecret(secret string) error {
 	return nil
 }
 
+func (a *Application) IsOwner(account string) bool {
+	return a.CreateBy == account
+}
+
 // NewApplicationSet 实例化
 func NewApplicationSet(req *request.PageRequest) *Set {
 	return &Set{
