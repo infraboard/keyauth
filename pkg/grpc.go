@@ -35,9 +35,7 @@ var (
 	// User 用户服务
 	User user.UserServiceServer
 	// ApplicationUser 应用
-	ApplicationUser application.UserServiceServer
-	// ApplicationAdmin 应用
-	ApplicationAdmin application.AdminServiceServer
+	Application application.ApplicationServiceServer
 	// Token 令牌服务
 	Token token.TokenServiceServer
 	// Micro todo
@@ -89,8 +87,7 @@ var (
 func InitV1GRPCAPI(server *grpc.Server) {
 	domain.RegisterDomainServiceServer(server, Domain)
 	user.RegisterUserServiceServer(server, User)
-	application.RegisterAdminServiceServer(server, ApplicationAdmin)
-	application.RegisterUserServiceServer(server, ApplicationUser)
+	application.RegisterApplicationServiceServer(server, Application)
 	token.RegisterTokenServiceServer(server, Token)
 	micro.RegisterMicroServiceServer(server, Micro)
 	mconf.RegisterMicroConfigServiceServer(server, Mconf)
@@ -154,17 +151,11 @@ func RegistryService(name string, svr Service) {
 		}
 		User = value
 		addService(name, svr)
-	case application.UserServiceServer:
-		if ApplicationUser != nil {
+	case application.ApplicationServiceServer:
+		if Application != nil {
 			registryError(name)
 		}
-		ApplicationUser = value
-		addService(name, svr)
-	case application.AdminServiceServer:
-		if ApplicationAdmin != nil {
-			registryError(name)
-		}
-		ApplicationAdmin = value
+		Application = value
 		addService(name, svr)
 	case token.TokenServiceServer:
 		if Token != nil {

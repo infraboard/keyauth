@@ -11,28 +11,20 @@ func HttpEntry() *http.EntrySet {
 	set := &http.EntrySet{
 		Items: []*http.Entry{
 			{
-				Path:         "/keyauth.application.UserService/CreateUserApplication",
-				FunctionName: "CreateUserApplication",
+				Path:         "/keyauth.application.ApplicationService/CreateApplication",
+				FunctionName: "CreateApplication",
 			},
 			{
-				Path:         "/keyauth.application.UserService/DescribeApplication",
+				Path:         "/keyauth.application.ApplicationService/DescribeApplication",
 				FunctionName: "DescribeApplication",
 			},
 			{
-				Path:         "/keyauth.application.UserService/QueryApplication",
+				Path:         "/keyauth.application.ApplicationService/QueryApplication",
 				FunctionName: "QueryApplication",
 			},
 			{
-				Path:         "/keyauth.application.UserService/DeleteApplication",
+				Path:         "/keyauth.application.ApplicationService/DeleteApplication",
 				FunctionName: "DeleteApplication",
-			},
-			{
-				Path:         "/keyauth.application.AdminService/CreateBuildInApplication",
-				FunctionName: "CreateBuildInApplication",
-			},
-			{
-				Path:         "/keyauth.application.AdminService/GetBuildInApplication",
-				FunctionName: "GetBuildInApplication",
 			},
 		},
 	}

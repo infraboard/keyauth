@@ -14,7 +14,7 @@ import (
 
 type userimpl struct {
 	*service
-	application.UnimplementedUserServiceServer
+	application.UnimplementedApplicationServiceServer
 }
 
 func (s *userimpl) CreateUserApplication(ctx context.Context, req *application.CreateApplicatonRequest) (

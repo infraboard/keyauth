@@ -66,13 +66,8 @@ func (c *Client) GetClientID() string {
 }
 
 // ApplicationAdmin todo
-func (c *Client) ApplicationAdmin() application.AdminServiceClient {
-	return application.NewAdminServiceClient(c.conn)
-}
-
-// ApplicationUser todo
-func (c *Client) ApplicationUser() application.UserServiceClient {
-	return application.NewUserServiceClient(c.conn)
+func (c *Client) Application() application.ApplicationServiceClient {
+	return application.NewApplicationServiceClient(c.conn)
 }
 
 // Department todo

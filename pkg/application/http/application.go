@@ -55,7 +55,7 @@ func (h *handler) CreateUserApplication(w http.ResponseWriter, r *http.Request) 
 	}
 
 	var header, trailer metadata.MD
-	d, err := h.service.CreateUserApplication(
+	d, err := h.service.CreateApplication(
 		ctx.Context(),
 		req,
 		grpc.Header(&header),

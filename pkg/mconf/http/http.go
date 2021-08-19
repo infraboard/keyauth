@@ -8,6 +8,7 @@ import (
 	"github.com/infraboard/keyauth/client"
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/mconf"
+	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
 var (
@@ -21,10 +22,12 @@ type handler struct {
 // Registry 注册HTTP服务路由
 func (h *handler) Registry(router router.SubRouter) {
 	r := router.ResourceRouter("config_group")
+	r.Allow(types.UserType_INTERNAL)
 	r.BasePath("config_group")
 	r.Handle("GET", "/", h.QueryGroup)
 	r.Handle("POST", "/", h.CreateGroup)
 	r.Handle("DELETE", "/:name", h.DestroyGroup)
+
 	r.BasePath("config_item")
 	r.Handle("GET", "/group/:name", h.QueryItem)
 	r.Handle("POST", "/group/:name", h.AddItemToGroup)

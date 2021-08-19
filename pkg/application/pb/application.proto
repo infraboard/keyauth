@@ -21,8 +21,8 @@ message Application {
         (google.protobuf.field_tag) = {struct_tag: 'bson:"domain" json:"domain"'}
         ];
     // 应用属于那个用户
-    string user = 4[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"user" json:"user"'}
+    string create_by = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"user" json:"create_by"'}
         ];
     // 应用创建的时间
     int64 create_at = 5[

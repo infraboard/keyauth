@@ -8,6 +8,7 @@ import (
 	"github.com/infraboard/keyauth/client"
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/endpoint"
+	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
 var (
@@ -23,7 +24,7 @@ func (h *handler) Registry(router router.SubRouter) {
 	r := router.ResourceRouter("endpoint")
 
 	r.BasePath("endpoints")
-	r.Handle("POST", "/", h.Create)
+	r.Handle("POST", "/", h.Create).SetAllow(types.UserType_INTERNAL)
 	r.Handle("GET", "/", h.List)
 	r.Handle("GET", "/:id", h.Get)
 

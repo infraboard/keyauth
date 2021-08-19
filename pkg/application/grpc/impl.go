@@ -14,10 +14,8 @@ import (
 )
 
 var (
-	// UserService 服务实例
-	UserService = &userimpl{service: &service{}}
-	// AdminService todo
-	AdminService = &adminimpl{service: &service{}}
+	// Service 服务实例
+	Service = &userimpl{service: &service{}}
 )
 
 type service struct {
@@ -61,6 +59,5 @@ func (s *service) HTTPEntry() *http.EntrySet {
 }
 
 func init() {
-	pkg.RegistryService("application_admin", AdminService)
-	pkg.RegistryService("application_user", UserService)
+	pkg.RegistryService("application", Service)
 }

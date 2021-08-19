@@ -8,6 +8,7 @@ import (
 	"github.com/infraboard/keyauth/client"
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/namespace"
+	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
 var (
@@ -20,17 +21,18 @@ type handler struct {
 
 // Registry 注册HTTP服务路由
 func (h *handler) Registry(router router.SubRouter) {
-	r := router.ResourceRouter("namespace")
-	// 获取自己的namespace 不需做权限限制
-	r.BasePath("self/namespaces")
-	r.Handle("GET", "/", h.ListSelfNamespace)
-
 	// 需要做权限限制
+	r := router.ResourceRouter("namespace")
 	r.BasePath("namespaces")
-	r.Handle("POST", "/", h.Create)
-	r.Handle("GET", "/", h.List)
+	r.Handle("POST", "/", h.Create).SetAllow(types.UserType_PERM_ADMIN)
+	r.Handle("GET", "/", h.List).SetAllow(types.UserType_PERM_ADMIN)
+	r.Handle("DELETE", "/:id", h.Delete).SetAllow(types.UserType_PERM_ADMIN)
 	r.Handle("GET", "/:id", h.Get)
-	r.Handle("DELETE", "/:id", h.Delete)
+
+	// 获取自己的namespace 不需做权限限制
+	self := router.ResourceRouter("namespace")
+	self.BasePath("self/namespaces")
+	self.Handle("GET", "/", h.ListSelfNamespace)
 }
 
 func (h *handler) Config() error {

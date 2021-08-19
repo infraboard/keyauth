@@ -8,6 +8,7 @@ import (
 	"github.com/infraboard/keyauth/client"
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/domain"
+	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
 var (
@@ -23,13 +24,13 @@ func (h *handler) Registry(router router.SubRouter) {
 	domainRouter := router.ResourceRouter("domain")
 
 	domainRouter.BasePath("domains")
-	domainRouter.Handle("POST", "/", h.CreateDomain)
-	domainRouter.Handle("GET", "/", h.ListDomains)
-	domainRouter.Handle("GET", "/:name", h.GetDomain)
-	domainRouter.Handle("PUT", "/:name", h.PutDomain)
-	domainRouter.Handle("PATCH", "/:name", h.PatchDomain)
-	domainRouter.Handle("DELETE", "/:name", h.DeleteDomain)
-	domainRouter.Handle("PUT", "/:name/security", h.UpdateDomainSecurity)
+	domainRouter.Handle("POST", "/", h.CreateDomain).SetAllow(types.UserType_SUPPER)
+	domainRouter.Handle("GET", "/", h.ListDomains).SetAllow(types.UserType_SUPPER)
+	domainRouter.Handle("GET", "/:name", h.GetDomain).SetAllow(types.UserType_DOMAIN_ADMIN)
+	domainRouter.Handle("PUT", "/:name", h.PutDomain).SetAllow(types.UserType_DOMAIN_ADMIN)
+	domainRouter.Handle("PATCH", "/:name", h.PatchDomain).SetAllow(types.UserType_DOMAIN_ADMIN)
+	domainRouter.Handle("DELETE", "/:name", h.DeleteDomain).SetAllow(types.UserType_SUPPER)
+	domainRouter.Handle("PUT", "/:name/security", h.UpdateDomainSecurity).SetAllow(types.UserType_DOMAIN_ADMIN)
 }
 
 func (h *handler) Config() error {

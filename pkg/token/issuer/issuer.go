@@ -26,7 +26,7 @@ import (
 
 // NewTokenIssuer todo
 func NewTokenIssuer() (Issuer, error) {
-	if pkg.ApplicationUser == nil {
+	if pkg.Application == nil {
 		return nil, fmt.Errorf("dependence service application is nil")
 	}
 	if pkg.User == nil {
@@ -47,7 +47,7 @@ func NewTokenIssuer() (Issuer, error) {
 		domain:  pkg.Domain,
 		token:   pkg.Token,
 		ldap:    pkg.LDAP,
-		app:     pkg.ApplicationUser,
+		app:     pkg.Application,
 		emailRE: regexp.MustCompile(`([a-zA-Z0-9]+)@([a-zA-Z0-9\.]+)\.([a-zA-Z0-9]+)`),
 		log:     zap.L().Named("Token Issuer"),
 	}
@@ -56,7 +56,7 @@ func NewTokenIssuer() (Issuer, error) {
 
 // TokenIssuer 基于该数据进行扩展
 type issuer struct {
-	app     application.UserServiceServer
+	app     application.ApplicationServiceServer
 	token   token.TokenServiceServer
 	user    user.UserServiceServer
 	domain  domain.DomainServiceServer

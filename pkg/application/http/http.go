@@ -15,18 +15,17 @@ var (
 )
 
 type handler struct {
-	service application.UserServiceClient
-	admin   application.AdminServiceClient
+	service application.ApplicationServiceClient
 }
 
 // Registry 注册HTTP服务路由
 func (h *handler) Registry(router router.SubRouter) {
-	appRouter := router.ResourceRouter("application")
-	appRouter.BasePath("applications")
-	appRouter.Handle("POST", "/", h.CreateUserApplication)
-	appRouter.Handle("GET", "/", h.QueryUserApplication)
-	appRouter.Handle("GET", "/:id", h.GetApplication)
-	appRouter.Handle("DELETE", "/:id", h.DestroyApplication)
+	self := router.ResourceRouter("application")
+	self.BasePath("applications")
+	self.Handle("POST", "/", h.CreateUserApplication)
+	self.Handle("GET", "/", h.QueryUserApplication)
+	self.Handle("GET", "/:id", h.GetApplication)
+	self.Handle("DELETE", "/:id", h.DestroyApplication)
 }
 
 func (h *handler) Config() error {
@@ -35,8 +34,7 @@ func (h *handler) Config() error {
 		return errors.New("grpc client not initial")
 	}
 
-	h.service = client.ApplicationUser()
-	h.admin = client.ApplicationAdmin()
+	h.service = client.Application()
 	return nil
 }
 

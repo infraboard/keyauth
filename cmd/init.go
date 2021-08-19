@@ -253,9 +253,10 @@ func (i *Initialer) initApp(account string) ([]*application.Application, error) 
 	req.Name = application.AdminWebApplicationName
 	req.ClientType = application.ClientType_PUBLIC
 	req.Description = "Admin Web管理端"
+	req.BuildIn = true
 
 	ctx := i.mockContext(account)
-	web, err := pkg.ApplicationAdmin.CreateBuildInApplication(ctx, req)
+	web, err := pkg.Application.CreateApplication(ctx, req)
 	if err != nil {
 		return nil, fmt.Errorf("create admin web applicaton error, %s", err)
 	}
@@ -266,7 +267,8 @@ func (i *Initialer) initApp(account string) ([]*application.Application, error) 
 	req.Description = "Admin Service 内置管理端, 服务注册后, 使用该端管理他们的凭证, 默认token不过期"
 	req.AccessTokenExpireSecond = 0
 	req.RefreshTokenExpireSecond = 0
-	svr, err := pkg.ApplicationAdmin.CreateBuildInApplication(ctx, req)
+	req.BuildIn = true
+	svr, err := pkg.Application.CreateApplication(ctx, req)
 	if err != nil {
 		return nil, fmt.Errorf("create admin web applicaton error, %s", err)
 	}

@@ -9,6 +9,7 @@ import (
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/micro"
 	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
 var (
@@ -23,6 +24,7 @@ type handler struct {
 // Registry 注册HTTP服务路由
 func (h *handler) Registry(router router.SubRouter) {
 	r := router.ResourceRouter("service")
+	r.Allow(types.UserType_INTERNAL)
 	r.BasePath("services")
 
 	r.Handle("GET", "/", h.QueryService)

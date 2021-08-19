@@ -18,7 +18,7 @@ func NewUserApplicartion(account string, req *CreateApplicatonRequest) (*Applica
 	}
 
 	app := newDeafultApplication(req)
-	app.User = account
+	app.CreateBy = account
 
 	return app, nil
 }

@@ -9,6 +9,7 @@ import (
 	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/department"
 	"github.com/infraboard/keyauth/pkg/user"
+	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
 var (
@@ -23,7 +24,6 @@ type handler struct {
 // Registry 注册HTTP服务路由
 func (h *handler) Registry(router router.SubRouter) {
 	appRouter := router.ResourceRouter("department")
-
 	appRouter.BasePath("join_apply")
 	appRouter.Handle("POST", "/", h.CreateJoinApply)
 	appRouter.Handle("GET", "/", h.QueryJoinApply)
@@ -31,13 +31,13 @@ func (h *handler) Registry(router router.SubRouter) {
 	appRouter.Handle("PATCH", "/:id", h.DealJoinApply)
 
 	appRouter.BasePath("departments")
-	appRouter.Handle("POST", "/", h.Create)
+	appRouter.Handle("POST", "/", h.Create).SetAllow(types.UserType_ORG_ADMIN)
 	appRouter.Handle("GET", "/", h.List)
 	appRouter.Handle("GET", "/:id", h.Get)
 	appRouter.Handle("PUT", "/:id", h.Put)
 	appRouter.Handle("PATCH", "/:id", h.Patch)
 	appRouter.Handle("GET", "/:id/subs", h.GetSub)
-	appRouter.Handle("DELETE", "/:id", h.Delete)
+	appRouter.Handle("DELETE", "/:id", h.Delete).SetAllow(types.UserType_ORG_ADMIN)
 }
 
 func (h *handler) Config() error {

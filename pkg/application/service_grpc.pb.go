@@ -14,316 +14,194 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// UserServiceClient is the client API for UserService service.
+// ApplicationServiceClient is the client API for ApplicationService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type UserServiceClient interface {
-	CreateUserApplication(ctx context.Context, in *CreateApplicatonRequest, opts ...grpc.CallOption) (*Application, error)
+type ApplicationServiceClient interface {
+	CreateApplication(ctx context.Context, in *CreateApplicatonRequest, opts ...grpc.CallOption) (*Application, error)
 	DescribeApplication(ctx context.Context, in *DescribeApplicationRequest, opts ...grpc.CallOption) (*Application, error)
 	QueryApplication(ctx context.Context, in *QueryApplicationRequest, opts ...grpc.CallOption) (*Set, error)
 	DeleteApplication(ctx context.Context, in *DeleteApplicationRequest, opts ...grpc.CallOption) (*Application, error)
 }
 
-type userServiceClient struct {
+type applicationServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewUserServiceClient(cc grpc.ClientConnInterface) UserServiceClient {
-	return &userServiceClient{cc}
+func NewApplicationServiceClient(cc grpc.ClientConnInterface) ApplicationServiceClient {
+	return &applicationServiceClient{cc}
 }
 
-func (c *userServiceClient) CreateUserApplication(ctx context.Context, in *CreateApplicatonRequest, opts ...grpc.CallOption) (*Application, error) {
+func (c *applicationServiceClient) CreateApplication(ctx context.Context, in *CreateApplicatonRequest, opts ...grpc.CallOption) (*Application, error) {
 	out := new(Application)
-	err := c.cc.Invoke(ctx, "/keyauth.application.UserService/CreateUserApplication", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/keyauth.application.ApplicationService/CreateApplication", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userServiceClient) DescribeApplication(ctx context.Context, in *DescribeApplicationRequest, opts ...grpc.CallOption) (*Application, error) {
+func (c *applicationServiceClient) DescribeApplication(ctx context.Context, in *DescribeApplicationRequest, opts ...grpc.CallOption) (*Application, error) {
 	out := new(Application)
-	err := c.cc.Invoke(ctx, "/keyauth.application.UserService/DescribeApplication", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/keyauth.application.ApplicationService/DescribeApplication", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userServiceClient) QueryApplication(ctx context.Context, in *QueryApplicationRequest, opts ...grpc.CallOption) (*Set, error) {
+func (c *applicationServiceClient) QueryApplication(ctx context.Context, in *QueryApplicationRequest, opts ...grpc.CallOption) (*Set, error) {
 	out := new(Set)
-	err := c.cc.Invoke(ctx, "/keyauth.application.UserService/QueryApplication", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/keyauth.application.ApplicationService/QueryApplication", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userServiceClient) DeleteApplication(ctx context.Context, in *DeleteApplicationRequest, opts ...grpc.CallOption) (*Application, error) {
+func (c *applicationServiceClient) DeleteApplication(ctx context.Context, in *DeleteApplicationRequest, opts ...grpc.CallOption) (*Application, error) {
 	out := new(Application)
-	err := c.cc.Invoke(ctx, "/keyauth.application.UserService/DeleteApplication", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/keyauth.application.ApplicationService/DeleteApplication", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// UserServiceServer is the server API for UserService service.
-// All implementations must embed UnimplementedUserServiceServer
+// ApplicationServiceServer is the server API for ApplicationService service.
+// All implementations must embed UnimplementedApplicationServiceServer
 // for forward compatibility
-type UserServiceServer interface {
-	CreateUserApplication(context.Context, *CreateApplicatonRequest) (*Application, error)
+type ApplicationServiceServer interface {
+	CreateApplication(context.Context, *CreateApplicatonRequest) (*Application, error)
 	DescribeApplication(context.Context, *DescribeApplicationRequest) (*Application, error)
 	QueryApplication(context.Context, *QueryApplicationRequest) (*Set, error)
 	DeleteApplication(context.Context, *DeleteApplicationRequest) (*Application, error)
-	mustEmbedUnimplementedUserServiceServer()
+	mustEmbedUnimplementedApplicationServiceServer()
 }
 
-// UnimplementedUserServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedUserServiceServer struct {
+// UnimplementedApplicationServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedApplicationServiceServer struct {
 }
 
-func (UnimplementedUserServiceServer) CreateUserApplication(context.Context, *CreateApplicatonRequest) (*Application, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateUserApplication not implemented")
+func (UnimplementedApplicationServiceServer) CreateApplication(context.Context, *CreateApplicatonRequest) (*Application, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateApplication not implemented")
 }
-func (UnimplementedUserServiceServer) DescribeApplication(context.Context, *DescribeApplicationRequest) (*Application, error) {
+func (UnimplementedApplicationServiceServer) DescribeApplication(context.Context, *DescribeApplicationRequest) (*Application, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DescribeApplication not implemented")
 }
-func (UnimplementedUserServiceServer) QueryApplication(context.Context, *QueryApplicationRequest) (*Set, error) {
+func (UnimplementedApplicationServiceServer) QueryApplication(context.Context, *QueryApplicationRequest) (*Set, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryApplication not implemented")
 }
-func (UnimplementedUserServiceServer) DeleteApplication(context.Context, *DeleteApplicationRequest) (*Application, error) {
+func (UnimplementedApplicationServiceServer) DeleteApplication(context.Context, *DeleteApplicationRequest) (*Application, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteApplication not implemented")
 }
-func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
+func (UnimplementedApplicationServiceServer) mustEmbedUnimplementedApplicationServiceServer() {}
 
-// UnsafeUserServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to UserServiceServer will
+// UnsafeApplicationServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ApplicationServiceServer will
 // result in compilation errors.
-type UnsafeUserServiceServer interface {
-	mustEmbedUnimplementedUserServiceServer()
+type UnsafeApplicationServiceServer interface {
+	mustEmbedUnimplementedApplicationServiceServer()
 }
 
-func RegisterUserServiceServer(s grpc.ServiceRegistrar, srv UserServiceServer) {
-	s.RegisterService(&UserService_ServiceDesc, srv)
+func RegisterApplicationServiceServer(s grpc.ServiceRegistrar, srv ApplicationServiceServer) {
+	s.RegisterService(&ApplicationService_ServiceDesc, srv)
 }
 
-func _UserService_CreateUserApplication_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ApplicationService_CreateApplication_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateApplicatonRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).CreateUserApplication(ctx, in)
+		return srv.(ApplicationServiceServer).CreateApplication(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.application.UserService/CreateUserApplication",
+		FullMethod: "/keyauth.application.ApplicationService/CreateApplication",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).CreateUserApplication(ctx, req.(*CreateApplicatonRequest))
+		return srv.(ApplicationServiceServer).CreateApplication(ctx, req.(*CreateApplicatonRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_DescribeApplication_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ApplicationService_DescribeApplication_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DescribeApplicationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).DescribeApplication(ctx, in)
+		return srv.(ApplicationServiceServer).DescribeApplication(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.application.UserService/DescribeApplication",
+		FullMethod: "/keyauth.application.ApplicationService/DescribeApplication",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).DescribeApplication(ctx, req.(*DescribeApplicationRequest))
+		return srv.(ApplicationServiceServer).DescribeApplication(ctx, req.(*DescribeApplicationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_QueryApplication_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ApplicationService_QueryApplication_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueryApplicationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).QueryApplication(ctx, in)
+		return srv.(ApplicationServiceServer).QueryApplication(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.application.UserService/QueryApplication",
+		FullMethod: "/keyauth.application.ApplicationService/QueryApplication",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).QueryApplication(ctx, req.(*QueryApplicationRequest))
+		return srv.(ApplicationServiceServer).QueryApplication(ctx, req.(*QueryApplicationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_DeleteApplication_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ApplicationService_DeleteApplication_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteApplicationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).DeleteApplication(ctx, in)
+		return srv.(ApplicationServiceServer).DeleteApplication(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.application.UserService/DeleteApplication",
+		FullMethod: "/keyauth.application.ApplicationService/DeleteApplication",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).DeleteApplication(ctx, req.(*DeleteApplicationRequest))
+		return srv.(ApplicationServiceServer).DeleteApplication(ctx, req.(*DeleteApplicationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
+// ApplicationService_ServiceDesc is the grpc.ServiceDesc for ApplicationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var UserService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "keyauth.application.UserService",
-	HandlerType: (*UserServiceServer)(nil),
+var ApplicationService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "keyauth.application.ApplicationService",
+	HandlerType: (*ApplicationServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CreateUserApplication",
-			Handler:    _UserService_CreateUserApplication_Handler,
+			MethodName: "CreateApplication",
+			Handler:    _ApplicationService_CreateApplication_Handler,
 		},
 		{
 			MethodName: "DescribeApplication",
-			Handler:    _UserService_DescribeApplication_Handler,
+			Handler:    _ApplicationService_DescribeApplication_Handler,
 		},
 		{
 			MethodName: "QueryApplication",
-			Handler:    _UserService_QueryApplication_Handler,
+			Handler:    _ApplicationService_QueryApplication_Handler,
 		},
 		{
 			MethodName: "DeleteApplication",
-			Handler:    _UserService_DeleteApplication_Handler,
-		},
-	},
-	Streams:  []grpc.StreamDesc{},
-	Metadata: "pkg/application/pb/service.proto",
-}
-
-// AdminServiceClient is the client API for AdminService service.
-//
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type AdminServiceClient interface {
-	CreateBuildInApplication(ctx context.Context, in *CreateApplicatonRequest, opts ...grpc.CallOption) (*Application, error)
-	GetBuildInApplication(ctx context.Context, in *GetBuildInApplicationRequest, opts ...grpc.CallOption) (*Application, error)
-}
-
-type adminServiceClient struct {
-	cc grpc.ClientConnInterface
-}
-
-func NewAdminServiceClient(cc grpc.ClientConnInterface) AdminServiceClient {
-	return &adminServiceClient{cc}
-}
-
-func (c *adminServiceClient) CreateBuildInApplication(ctx context.Context, in *CreateApplicatonRequest, opts ...grpc.CallOption) (*Application, error) {
-	out := new(Application)
-	err := c.cc.Invoke(ctx, "/keyauth.application.AdminService/CreateBuildInApplication", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *adminServiceClient) GetBuildInApplication(ctx context.Context, in *GetBuildInApplicationRequest, opts ...grpc.CallOption) (*Application, error) {
-	out := new(Application)
-	err := c.cc.Invoke(ctx, "/keyauth.application.AdminService/GetBuildInApplication", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// AdminServiceServer is the server API for AdminService service.
-// All implementations must embed UnimplementedAdminServiceServer
-// for forward compatibility
-type AdminServiceServer interface {
-	CreateBuildInApplication(context.Context, *CreateApplicatonRequest) (*Application, error)
-	GetBuildInApplication(context.Context, *GetBuildInApplicationRequest) (*Application, error)
-	mustEmbedUnimplementedAdminServiceServer()
-}
-
-// UnimplementedAdminServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedAdminServiceServer struct {
-}
-
-func (UnimplementedAdminServiceServer) CreateBuildInApplication(context.Context, *CreateApplicatonRequest) (*Application, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateBuildInApplication not implemented")
-}
-func (UnimplementedAdminServiceServer) GetBuildInApplication(context.Context, *GetBuildInApplicationRequest) (*Application, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetBuildInApplication not implemented")
-}
-func (UnimplementedAdminServiceServer) mustEmbedUnimplementedAdminServiceServer() {}
-
-// UnsafeAdminServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to AdminServiceServer will
-// result in compilation errors.
-type UnsafeAdminServiceServer interface {
-	mustEmbedUnimplementedAdminServiceServer()
-}
-
-func RegisterAdminServiceServer(s grpc.ServiceRegistrar, srv AdminServiceServer) {
-	s.RegisterService(&AdminService_ServiceDesc, srv)
-}
-
-func _AdminService_CreateBuildInApplication_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateApplicatonRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AdminServiceServer).CreateBuildInApplication(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/keyauth.application.AdminService/CreateBuildInApplication",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AdminServiceServer).CreateBuildInApplication(ctx, req.(*CreateApplicatonRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _AdminService_GetBuildInApplication_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetBuildInApplicationRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AdminServiceServer).GetBuildInApplication(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/keyauth.application.AdminService/GetBuildInApplication",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AdminServiceServer).GetBuildInApplication(ctx, req.(*GetBuildInApplicationRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-// AdminService_ServiceDesc is the grpc.ServiceDesc for AdminService service.
-// It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
-var AdminService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "keyauth.application.AdminService",
-	HandlerType: (*AdminServiceServer)(nil),
-	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "CreateBuildInApplication",
-			Handler:    _AdminService_CreateBuildInApplication_Handler,
-		},
-		{
-			MethodName: "GetBuildInApplication",
-			Handler:    _AdminService_GetBuildInApplication_Handler,
+			Handler:    _ApplicationService_DeleteApplication_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
