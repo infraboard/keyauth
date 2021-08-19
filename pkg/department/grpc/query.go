@@ -6,18 +6,15 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/infraboard/keyauth/pkg/department"
-	"github.com/infraboard/keyauth/pkg/token"
 )
 
-func newQueryDepartmentRequest(tk *token.Token, req *department.QueryDepartmentRequest) *queryDepartmentRequest {
+func newQueryDepartmentRequest(req *department.QueryDepartmentRequest) *queryDepartmentRequest {
 	return &queryDepartmentRequest{
-		tk:                     tk,
 		QueryDepartmentRequest: req,
 	}
 }
 
 type queryDepartmentRequest struct {
-	tk *token.Token
 	*department.QueryDepartmentRequest
 }
 
@@ -37,8 +34,7 @@ func (r *queryDepartmentRequest) FindOptions() *options.FindOptions {
 func (r *queryDepartmentRequest) FindFilter() bson.M {
 	filter := bson.M{}
 
-	tk := r.tk
-	filter["domain"] = tk.Domain
+	filter["domain"] = r.Domain
 	if r.ParentId != "" {
 		if r.ParentId == "." {
 			filter["parent_id"] = ""
@@ -80,15 +76,13 @@ func (r *describeDepartmentRequest) FindFilter() bson.M {
 	return filter
 }
 
-func newQueryApplicationFormRequest(tk *token.Token, req *department.QueryApplicationFormRequet) *queryApplicationFormRequest {
+func newQueryApplicationFormRequest(req *department.QueryApplicationFormRequet) *queryApplicationFormRequest {
 	return &queryApplicationFormRequest{
-		tk:                         tk,
 		QueryApplicationFormRequet: req,
 	}
 }
 
 type queryApplicationFormRequest struct {
-	tk *token.Token
 	*department.QueryApplicationFormRequet
 }
 
@@ -106,10 +100,9 @@ func (r *queryApplicationFormRequest) FindOptions() *options.FindOptions {
 }
 
 func (r *queryApplicationFormRequest) FindFilter() bson.M {
-	tk := r.tk
 
 	filter := bson.M{}
-	filter["domain"] = tk.Domain
+	filter["domain"] = r.Domain
 
 	if r.Account != "" {
 		filter["account"] = r.Account
@@ -124,23 +117,20 @@ func (r *queryApplicationFormRequest) FindFilter() bson.M {
 	return filter
 }
 
-func newDescribeApplicationForm(tk *token.Token, req *department.DescribeApplicationFormRequet) *describeApplicationForm {
+func newDescribeApplicationForm(req *department.DescribeApplicationFormRequet) *describeApplicationForm {
 	return &describeApplicationForm{
-		tk:                            tk,
 		DescribeApplicationFormRequet: req,
 	}
 }
 
 type describeApplicationForm struct {
-	tk *token.Token
 	*department.DescribeApplicationFormRequet
 }
 
 func (r *describeApplicationForm) FindFilter() bson.M {
-	tk := r.tk
 
 	filter := bson.M{}
-	filter["domain"] = tk.Domain
+	filter["domain"] = r.Domain
 
 	if r.Id != "" {
 		filter["_id"] = r.Id

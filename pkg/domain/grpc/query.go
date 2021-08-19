@@ -1,22 +1,19 @@
-package mongo
+package grpc
 
 import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/infraboard/keyauth/pkg/domain"
-	"github.com/infraboard/keyauth/pkg/token"
 )
 
-func newQueryDomainRequest(tk *token.Token, req *domain.QueryDomainRequest) *request {
+func newQueryDomainRequest(req *domain.QueryDomainRequest) *request {
 	return &request{
-		token:              tk,
 		QueryDomainRequest: req,
 	}
 }
 
 type request struct {
-	token *token.Token
 	*domain.QueryDomainRequest
 }
 
@@ -36,7 +33,7 @@ func (r *request) FindOptions() *options.FindOptions {
 func (r *request) FindFilter() bson.M {
 	filter := bson.M{}
 
-	filter["owner"] = r.token.Account
+	filter["owner"] = r.Owner
 	return filter
 }
 

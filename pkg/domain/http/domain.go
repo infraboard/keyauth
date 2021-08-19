@@ -20,8 +20,15 @@ func (h *handler) ListDomains(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	tk, err := ctx.GetToken()
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
 	page := request.NewPageRequestFromHTTP(r)
 	req := domain.NewQueryDomainRequest(page)
+	req.Owner = tk.Account
 
 	var header, trailer metadata.MD
 	dommains, err := h.service.QueryDomain(
@@ -35,7 +42,6 @@ func (h *handler) ListDomains(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	response.Success(w, dommains)
-	return
 }
 
 func (h *handler) GetDomain(w http.ResponseWriter, r *http.Request) {
@@ -63,7 +69,6 @@ func (h *handler) GetDomain(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, d)
-	return
 }
 
 func (h *handler) CreateDomain(w http.ResponseWriter, r *http.Request) {
@@ -92,7 +97,6 @@ func (h *handler) CreateDomain(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, d)
-	return
 }
 
 func (h *handler) PutDomain(w http.ResponseWriter, r *http.Request) {
@@ -127,7 +131,6 @@ func (h *handler) PutDomain(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, ins)
-	return
 }
 
 func (h *handler) PatchDomain(w http.ResponseWriter, r *http.Request) {
@@ -161,7 +164,6 @@ func (h *handler) PatchDomain(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, ins)
-	return
 }
 
 func (h *handler) DeleteDomain(w http.ResponseWriter, r *http.Request) {
@@ -187,7 +189,6 @@ func (h *handler) DeleteDomain(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, "delete ok")
-	return
 }
 
 func (h *handler) UpdateDomainSecurity(w http.ResponseWriter, r *http.Request) {
@@ -222,5 +223,4 @@ func (h *handler) UpdateDomainSecurity(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, ins)
-	return
 }

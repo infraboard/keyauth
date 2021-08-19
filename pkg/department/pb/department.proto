@@ -30,8 +30,8 @@ message Department {
         (google.protobuf.field_tag) = {struct_tag: 'bson:"update_at" json:"update_at"'}
         ];
     // 创建人
-    string creater = 6[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"creater" json:"creater"'}
+    string create_by = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'bson:"create_by" json:"create_by"'}
         ];
     // 部门所属域
     string domain = 7[

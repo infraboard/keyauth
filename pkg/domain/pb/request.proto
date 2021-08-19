@@ -94,10 +94,14 @@ message DeleteDomainRequest {
 // QueryDomainRequest 请求
 message QueryDomainRequest {
     page.PageRequest page = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"page" json:"page"'}
+        (google.protobuf.field_tag) = {struct_tag: 'json:"page"'}
         ];
     string name = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"name" json:"name"'}
+        (google.protobuf.field_tag) = {struct_tag: 'json:"name"'}
+        ];
+    // 域拥有者
+    string owner = 3[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"owner"'}
         ];
 }
 

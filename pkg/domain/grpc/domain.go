@@ -1,4 +1,4 @@
-package mongo
+package grpc
 
 import (
 	"context"
@@ -49,12 +49,7 @@ func (s *service) DescribeDomain(ctx context.Context, req *domain.DescribeDomain
 }
 
 func (s *service) QueryDomain(ctx context.Context, req *domain.QueryDomainRequest) (*domain.Set, error) {
-	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	r := newQueryDomainRequest(tk, req)
+	r := newQueryDomainRequest(req)
 	resp, err := s.col.Find(context.TODO(), r.FindFilter(), r.FindOptions())
 
 	if err != nil {

@@ -12,23 +12,31 @@ import "common/types/types.proto";
 message CreateDepartmentRequest {
     // 部门名称
     string name = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"name" json:"name" validate:"required,lte=60"'}
+        (google.protobuf.field_tag) = {struct_tag: 'json:"name" validate:"required,lte=60"'}
         ];
     // 显示名称
     string display_name = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"display_name" json:"display_name"'}
+        (google.protobuf.field_tag) = {struct_tag: 'json:"display_name"'}
         ];
     // 上级部门ID
     string parent_id = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"parent_id" json:"parent_id" validate:"lte=200"'}
+        (google.protobuf.field_tag) = {struct_tag: 'json:"parent_id" validate:"lte=200"'}
         ];
     // 部门管理者account
     string manager = 4[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"manager" json:"manager" validate:"required,lte=200"'}
+        (google.protobuf.field_tag) = {struct_tag: 'json:"manager" validate:"required,lte=200"'}
         ];
     // 部门成员默认角色
     string default_role_id = 5[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"default_role_id" json:"default_role_id" validate:"lte=200"'}
+        (google.protobuf.field_tag) = {struct_tag: 'json:"default_role_id" validate:"lte=200"'}
+        ];
+    // 部门所属域
+    string domain = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"domain"'}
+        ];
+    // 创建人
+    string create_by = 7[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"create_by"'}
         ];
 }
 
@@ -54,6 +62,9 @@ message QueryDepartmentRequest {
         ];
     bool with_role = 7[
         (google.protobuf.field_tag) = {struct_tag: 'json:"with_role"'}
+        ];
+    string domain = 8[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"domain" validate:"required"'}
         ];
 }
 
@@ -110,7 +121,11 @@ message JoinDepartmentRequest {
     // 留言
     string message = 3[
         (google.protobuf.field_tag) = {struct_tag: 'json:"message"'}
-        ];                                
+        ];
+    // 所属域
+    string domain = 4[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"domain"'}
+        ];                            
 }
 
 // QueryApplicationFormRequet todo
@@ -130,12 +145,18 @@ message QueryApplicationFormRequet {
     bool skip_items = 5[
         (google.protobuf.field_tag) = {struct_tag: 'json:"skip_items"'}
         ];
+    string domain = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"domain" validate:"required"'}
+        ];
 }
 
 // DescribeApplicationFormRequet todo
 message DescribeApplicationFormRequet {
 	string id = 1[
         (google.protobuf.field_tag) = {struct_tag: 'json:"id"'}
+        ];
+    string domain = 2[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"domain"'}
         ];
 }
 

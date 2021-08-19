@@ -19,22 +19,12 @@ var (
 )
 
 func (s *service) JoinDepartment(ctx context.Context, req *department.JoinDepartmentRequest) (*department.ApplicationForm, error) {
-	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	// 默认代表用户自己申请
-	if req.Account == "" {
-		req.Account = tk.Account
-	}
-
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest(err.Error())
 	}
 
 	// 检测部署是否存在
-	_, err = s.DescribeDepartment(ctx, department.NewDescribeDepartmentRequestWithID(req.DepartmentId))
+	_, err := s.DescribeDepartment(ctx, department.NewDescribeDepartmentRequestWithID(req.DepartmentId))
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +32,7 @@ func (s *service) JoinDepartment(ctx context.Context, req *department.JoinDepart
 	// 一个用户只能申请加入一个部门
 	query := department.NewQueryApplicationFormRequet()
 	query.SkipItems = true
-	query.Account = tk.Account
+	query.Account = req.Account
 	query.Status = pending
 
 	as, err := s.QueryApplicationForm(ctx, query)
@@ -53,7 +43,7 @@ func (s *service) JoinDepartment(ctx context.Context, req *department.JoinDepart
 		return nil, exception.NewBadRequest("your has an join_apply pendding")
 	}
 
-	ins, err := department.NewApplicationForm(tk, req)
+	ins, err := department.NewApplicationForm(req)
 	if err != nil {
 		return nil, err
 	}
@@ -132,12 +122,8 @@ func (s *service) QueryApplicationForm(ctx context.Context, req *department.Quer
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest("validate query application form error, %s", err)
 	}
-	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
-	if err != nil {
-		return nil, err
-	}
 
-	query := newQueryApplicationFormRequest(tk, req)
+	query := newQueryApplicationFormRequest(req)
 	set := department.NewDApplicationFormSet()
 
 	if !req.SkipItems {
@@ -169,11 +155,7 @@ func (s *service) QueryApplicationForm(ctx context.Context, req *department.Quer
 
 func (s *service) DescribeApplicationForm(ctx context.Context, req *department.DescribeApplicationFormRequet) (
 	*department.ApplicationForm, error) {
-	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
-	if err != nil {
-		return nil, err
-	}
-	r := newDescribeApplicationForm(tk, req)
+	r := newDescribeApplicationForm(req)
 
 	ins := department.NewDeafultApplicationForm()
 	if err := s.ac.FindOne(context.TODO(), r.FindFilter()).Decode(ins); err != nil {

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/request"
 )
@@ -90,6 +91,11 @@ func NewJoinDepartmentRequest() *JoinDepartmentRequest {
 // Validate todo
 func (req *JoinDepartmentRequest) Validate() error {
 	return validate.Struct(req)
+}
+
+func (req *JoinDepartmentRequest) UpdateOwner(tk *token.Token) {
+	req.Domain = tk.Domain
+	req.Account = tk.Account
 }
 
 // NewDefaultDealApplicationFormRequest todo

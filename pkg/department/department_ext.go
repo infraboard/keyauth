@@ -7,6 +7,7 @@ import (
 	"github.com/go-playground/validator/v10"
 
 	"github.com/infraboard/keyauth/common/types"
+	"github.com/infraboard/keyauth/pkg/token"
 )
 
 // use a single instance of Validate, it caches struct info
@@ -63,6 +64,11 @@ func (req *CreateDepartmentRequest) Validate() error {
 func (req *CreateDepartmentRequest) Patch(data *CreateDepartmentRequest) {
 	patchData, _ := json.Marshal(data)
 	json.Unmarshal(patchData, req)
+}
+
+func (req *CreateDepartmentRequest) UpdateOwner(tk *token.Token) {
+	req.Domain = tk.Domain
+	req.CreateBy = tk.Account
 }
 
 // NewDepartmentSet 实例化

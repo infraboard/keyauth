@@ -21,11 +21,18 @@ func (h *handler) CreateJoinApply(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	tk, err := ctx.GetToken()
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
 	req := department.NewJoinDepartmentRequest()
 	if err := request.GetDataFromRequest(r, req); err != nil {
 		response.Failed(w, err)
 		return
 	}
+	req.UpdateOwner(tk)
 
 	var header, trailer metadata.MD
 	ins, err := h.service.JoinDepartment(
@@ -40,7 +47,6 @@ func (h *handler) CreateJoinApply(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, ins)
-	return
 }
 
 // 查询部门加入申请
@@ -51,11 +57,18 @@ func (h *handler) QueryJoinApply(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	tk, err := ctx.GetToken()
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
 	req, err := department.NewQueryApplicationFormRequestFromHTTP(r)
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
+	req.Domain = tk.Domain
 
 	var header, trailer metadata.MD
 	ins, err := h.service.QueryApplicationForm(
@@ -81,7 +94,14 @@ func (h *handler) GetJoinApply(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	tk, err := ctx.GetToken()
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
 	req := department.NewDescribeApplicationFormRequetWithID(rctx.PS.ByName("id"))
+	req.Domain = tk.Domain
 
 	var header, trailer metadata.MD
 	ins, err := h.service.DescribeApplicationForm(
@@ -96,7 +116,6 @@ func (h *handler) GetJoinApply(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, ins)
-	return
 }
 
 // Create 创建主账号
@@ -128,5 +147,4 @@ func (h *handler) DealJoinApply(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, ins)
-	return
 }

@@ -5,24 +5,22 @@ import (
 	"hash/fnv"
 
 	"github.com/infraboard/mcube/types/ftime"
-
-	"github.com/infraboard/keyauth/pkg/token"
 )
 
 // NewApplicationForm todo
-func NewApplicationForm(tk *token.Token, req *JoinDepartmentRequest) (*ApplicationForm, error) {
+func NewApplicationForm(req *JoinDepartmentRequest) (*ApplicationForm, error) {
 	// 计算申请单Hash
-	hashedStr := fmt.Sprintf("%s-%s-%s", tk.Domain, req.Account, req.DepartmentId)
+	hashedStr := fmt.Sprintf("%s-%s-%s", req.Domain, req.Account, req.DepartmentId)
 	h := fnv.New32a()
 	h.Write([]byte(hashedStr))
 	hashID := fmt.Sprintf("%x", h.Sum32())
 
 	ins := &ApplicationForm{
 		Id:           hashID,
-		Domain:       tk.Domain,
+		Domain:       req.Domain,
 		CreateAt:     ftime.Now().Timestamp(),
 		UpdateAt:     ftime.Now().Timestamp(),
-		Creater:      tk.Account,
+		Creater:      req.Account,
 		Account:      req.Account,
 		DepartmentId: req.DepartmentId,
 		Message:      req.Message,

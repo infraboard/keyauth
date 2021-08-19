@@ -35,7 +35,6 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, apps)
-	return
 }
 
 // Create 创建主账号
@@ -46,11 +45,18 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	tk, err := ctx.GetToken()
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
 	req := department.NewCreateDepartmentRequest()
 	if err := request.GetDataFromRequest(r, req); err != nil {
 		response.Failed(w, err)
 		return
 	}
+	req.UpdateOwner(tk)
 
 	var header, trailer metadata.MD
 	ins, err := h.service.CreateDepartment(
@@ -65,7 +71,6 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, ins)
-	return
 }
 
 // Create 创建主账号

@@ -1,4 +1,4 @@
-package mongo_test
+package grpc_test
 
 import (
 	"testing"
@@ -7,7 +7,7 @@ import (
 
 	"github.com/infraboard/keyauth/conf/mock"
 	"github.com/infraboard/keyauth/pkg/domain"
-	"github.com/infraboard/keyauth/pkg/domain/mongo"
+	"github.com/infraboard/keyauth/pkg/domain/grpc"
 )
 
 func newSuit(t *testing.T) *suit {
@@ -28,7 +28,7 @@ type suit struct {
 func (s *suit) SetUp() {
 	mock.Load()
 
-	svr := mongo.Service
+	svr := grpc.Service
 	err := svr.Config()
 	if err != nil {
 		panic(err)

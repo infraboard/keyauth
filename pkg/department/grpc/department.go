@@ -11,7 +11,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 
 	common "github.com/infraboard/keyauth/common/types"
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/department"
 	"github.com/infraboard/keyauth/pkg/role"
 	"github.com/infraboard/keyauth/pkg/user"
@@ -24,12 +23,7 @@ func (s *service) QueryDepartment(ctx context.Context, req *department.QueryDepa
 		return nil, exception.NewBadRequest("validate query department error, %s", err)
 	}
 
-	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	query := newQueryDepartmentRequest(tk, req)
+	query := newQueryDepartmentRequest(req)
 	set := department.NewDepartmentSet()
 
 	if !req.SkipItems {
@@ -247,16 +241,9 @@ func (s *service) newDepartment(ctx context.Context, req *department.CreateDepar
 		return nil, exception.NewBadRequest(err.Error())
 	}
 
-	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	ins := &department.Department{
 		CreateAt:      ftime.Now().Timestamp(),
 		UpdateAt:      ftime.Now().Timestamp(),
-		Creater:       tk.Account,
-		Domain:        tk.Domain,
 		Grade:         1,
 		Name:          req.Name,
 		DisplayName:   req.DisplayName,
@@ -275,10 +262,11 @@ func (s *service) newDepartment(ctx context.Context, req *department.CreateDepar
 	}
 
 	if req.Manager == "" {
-		ins.Manager = tk.Account
+		ins.Manager = req.CreateBy
 	}
 
 	// 检查Role是否存在
+	var err error
 	if req.DefaultRoleId != "" {
 		ins.DefaultRole, err = s.role.DescribeRole(ctx, role.NewDescribeRoleRequestWithID(req.DefaultRoleId))
 		if err != nil {
