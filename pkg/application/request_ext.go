@@ -21,7 +21,7 @@ func NewDescriptApplicationRequest() *DescribeApplicationRequest {
 // Validate 校验详情查询请求
 func (req *DescribeApplicationRequest) Validate() error {
 	if req.Id == "" && req.ClientId == "" {
-		return errors.New("id or client_id is required")
+		return errors.New("application id or client_id is required")
 	}
 
 	return nil

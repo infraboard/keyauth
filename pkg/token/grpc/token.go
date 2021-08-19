@@ -67,6 +67,7 @@ func (s *service) loginBeforeCheck(ctx context.Context, req *token.IssueTokenReq
 		return err
 	}
 
+	s.log.Debug("security check complete")
 	return nil
 }
 
