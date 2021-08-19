@@ -1,4 +1,4 @@
-package mongo
+package grpc
 
 import (
 	"github.com/infraboard/mcube/exception"

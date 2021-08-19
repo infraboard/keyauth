@@ -13,10 +13,10 @@ import (
 
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
-	"github.com/infraboard/keyauth/pkg/counter"
 	"github.com/infraboard/keyauth/pkg/department"
+	"github.com/infraboard/keyauth/pkg/namespace"
+	"github.com/infraboard/keyauth/pkg/policy"
 	"github.com/infraboard/keyauth/pkg/role"
-	"github.com/infraboard/keyauth/pkg/user"
 )
 
 var (
@@ -25,37 +25,37 @@ var (
 )
 
 type service struct {
-	dc            *mongo.Collection
-	ac            *mongo.Collection
+	col           *mongo.Collection
 	enableCache   bool
 	notifyCachPre string
-	counter       counter.Service
-	user          user.UserServiceServer
+	depart        department.DepartmentServiceServer
+	policy        policy.PolicyServiceServer
 	role          role.RoleServiceServer
 	log           logger.Logger
 
-	department.UnimplementedDepartmentServiceServer
+	namespace.UnimplementedNamespaceServiceServer
 }
 
 func (s *service) Config() error {
-	if pkg.Counter == nil {
-		return fmt.Errorf("dependence counter service is nil")
+	if pkg.Department == nil {
+		return fmt.Errorf("depence department service is nil")
 	}
-	s.counter = pkg.Counter
-	if pkg.User == nil {
-		return fmt.Errorf("dependence user service is nil")
+	s.depart = pkg.Department
+
+	if pkg.Policy == nil {
+		return fmt.Errorf("depence policy service is nil")
 	}
-	s.user = pkg.User
+	s.policy = pkg.Policy
 
 	if pkg.Role == nil {
-		return fmt.Errorf("dependence role service is nil")
+		return fmt.Errorf("depence role service is nil")
 	}
 	s.role = pkg.Role
 
 	db := conf.C().Mongo.GetDB()
+	ac := db.Collection("namespace")
 
-	dc := db.Collection("department")
-	dcIndexs := []mongo.IndexModel{
+	indexs := []mongo.IndexModel{
 		{
 			Keys: bsonx.Doc{
 				{Key: "domain", Value: bsonx.Int32(-1)},
@@ -67,33 +67,22 @@ func (s *service) Config() error {
 			Keys: bsonx.Doc{{Key: "create_at", Value: bsonx.Int32(-1)}},
 		},
 	}
-	_, err := dc.Indexes().CreateMany(context.Background(), dcIndexs)
+
+	_, err := ac.Indexes().CreateMany(context.Background(), indexs)
 	if err != nil {
 		return err
 	}
 
-	ac := db.Collection("join_apply")
-	acIndexs := []mongo.IndexModel{
-		{
-			Keys: bsonx.Doc{{Key: "create_at", Value: bsonx.Int32(-1)}},
-		},
-	}
-	_, err = ac.Indexes().CreateMany(context.Background(), acIndexs)
-	if err != nil {
-		return err
-	}
-
-	s.dc = dc
-	s.ac = ac
-	s.log = zap.L().Named("Department")
+	s.col = ac
+	s.log = zap.L().Named("Namespace")
 	return nil
 }
 
 // HttpEntry todo
 func (s *service) HTTPEntry() *http.EntrySet {
-	return department.HttpEntry()
+	return namespace.HttpEntry()
 }
 
 func init() {
-	pkg.RegistryService("department", Service)
+	pkg.RegistryService("namespace", Service)
 }
