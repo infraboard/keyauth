@@ -63,6 +63,9 @@ message QueryNamespaceRequest {
     bool with_department = 4[
         (google.protobuf.field_tag) = {struct_tag: 'json:"with_department"'}
         ];
+    string domain = 7[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"domain"'}
+        ];
 }
 
 // DescriptNamespaceRequest 查询应用详情

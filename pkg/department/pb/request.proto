@@ -85,6 +85,9 @@ message DescribeDeparmentRequest {
     bool with_role = 5[
         (google.protobuf.field_tag) = {struct_tag: 'json:"with_role"'}
         ];
+    string domain = 6[
+        (google.protobuf.field_tag) = {struct_tag: 'json:"domain" validate:"required"'}
+        ];    
 }
 
 // UpdateDepartmentRequest todo

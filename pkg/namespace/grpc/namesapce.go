@@ -55,15 +55,19 @@ func (s *service) updateNamespacePolicy(ctx context.Context, ns *namespace.Names
 func (s *service) QueryNamespace(ctx context.Context, req *namespace.QueryNamespaceRequest) (
 	*namespace.Set, error) {
 	r := newPaggingQuery(req)
+	set := namespace.NewNamespaceSet()
 
 	if req.Account != "" {
 		qp := policy.NewQueryPolicyRequest(request.NewPageRequest(policy.MaxUserPolicy, 1))
+		qp.Domain = req.Domain
 		qp.Account = req.Account
 		ps, err := s.policy.QueryPolicy(ctx, qp)
 		if err != nil {
 			return nil, err
 		}
-		r.AddNamespace(ps.GetNamespaceWithPage(req.Page))
+		nss, total := ps.GetNamespaceWithPage(req.Page)
+		r.AddNamespace(nss)
+		set.Total = total
 	}
 
 	resp, err := s.col.Find(context.TODO(), r.FindFilter(), r.FindOptions())
@@ -72,7 +76,6 @@ func (s *service) QueryNamespace(ctx context.Context, req *namespace.QueryNamesp
 		return nil, exception.NewInternalServerError("find namespace error, error is %s", err)
 	}
 
-	set := namespace.NewNamespaceSet()
 	// 循环
 	for resp.Next(context.TODO()) {
 		ins := namespace.NewDefaultNamespace()
@@ -82,7 +85,9 @@ func (s *service) QueryNamespace(ctx context.Context, req *namespace.QueryNamesp
 
 		// 补充用户的部门信息
 		if req.WithDepartment && ins.DepartmentId != "" {
-			depart, err := s.depart.DescribeDepartment(ctx, department.NewDescribeDepartmentRequestWithID(ins.DepartmentId))
+			descDepart := department.NewDescribeDepartmentRequestWithID(ins.DepartmentId)
+			descDepart.Domain = req.Domain
+			depart, err := s.depart.DescribeDepartment(ctx, descDepart)
 			if err != nil {
 				s.log.Errorf("get user department error, %s", err)
 			} else {
@@ -94,11 +99,13 @@ func (s *service) QueryNamespace(ctx context.Context, req *namespace.QueryNamesp
 	}
 
 	// count
-	count, err := s.col.CountDocuments(context.TODO(), r.FindFilter())
-	if err != nil {
-		return nil, exception.NewInternalServerError("get namespace count error, error is %s", err)
+	if len(r.namespaces) == 0 {
+		count, err := s.col.CountDocuments(context.TODO(), r.FindFilter())
+		if err != nil {
+			return nil, exception.NewInternalServerError("get namespace count error, error is %s", err)
+		}
+		set.Total = count
 	}
-	set.Total = count
 
 	return set, nil
 }

@@ -6,6 +6,8 @@ import (
 	"net/http"
 
 	"github.com/infraboard/mcube/http/request"
+
+	"github.com/infraboard/keyauth/pkg/token"
 )
 
 // NewQueryNamespaceRequestFromHTTP 列表查询请求
@@ -26,6 +28,11 @@ func NewQueryNamespaceRequest(pageReq *request.PageRequest) *QueryNamespaceReque
 		Page:           &pageReq.PageRequest,
 		WithDepartment: false,
 	}
+}
+
+func (req *QueryNamespaceRequest) UpdateOwner(tk *token.Token) {
+	req.Domain = tk.Domain
+	req.Account = tk.Account
 }
 
 // NewNewDescriptNamespaceRequestWithID todo

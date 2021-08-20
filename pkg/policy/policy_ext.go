@@ -186,12 +186,12 @@ func (s *Set) GetNamespace() (nss []string) {
 	return
 }
 
-func (s *Set) GetNamespaceWithPage(page *page.PageRequest) (nss []string) {
+func (s *Set) GetNamespaceWithPage(page *page.PageRequest) (nss []string, total int64) {
 	nmap := map[string]struct{}{}
 	for i := range s.Items {
 		// 如果policy的namespace为* , 表示所有namespace
 		if s.Items[i].NamespaceId == "*" {
-			return []string{"*"}
+			return []string{}, 0
 		}
 
 		nmap[s.Items[i].NamespaceId] = struct{}{}
@@ -209,5 +209,5 @@ func (s *Set) GetNamespaceWithPage(page *page.PageRequest) (nss []string) {
 		count++
 	}
 
-	return
+	return nss, int64(len(nmap))
 }

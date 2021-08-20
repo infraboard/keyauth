@@ -44,7 +44,14 @@ func (h *handler) ListSelfNamespace(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	tk, err := ctx.GetToken()
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
 	req := namespace.NewQueryNamespaceRequestFromHTTP(r)
+	req.UpdateOwner(tk)
 
 	var header, trailer metadata.MD
 	apps, err := h.service.QueryNamespace(

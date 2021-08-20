@@ -108,7 +108,6 @@ func (h *handler) Put(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, ins)
-	return
 }
 
 // Create 创建主账号
@@ -140,7 +139,6 @@ func (h *handler) Patch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, ins)
-	return
 }
 
 func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
@@ -150,10 +148,17 @@ func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	tk, err := ctx.GetToken()
+	if err != nil {
+		response.Failed(w, err)
+		return
+	}
+
 	rctx := context.GetContext(r)
 	qs := r.URL.Query()
 
 	req := department.NewDescribeDepartmentRequest()
+	req.Domain = tk.Domain
 
 	req.Id = rctx.PS.ByName("id")
 	req.WithSubCount = qs.Get("with_sub_count") == "true"
@@ -173,7 +178,6 @@ func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, ins)
-	return
 }
 
 func (h *handler) GetSub(w http.ResponseWriter, r *http.Request) {
@@ -202,7 +206,6 @@ func (h *handler) GetSub(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, ins)
-	return
 }
 
 // DestroyPrimaryAccount 注销账号
@@ -230,5 +233,4 @@ func (h *handler) Delete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, "delete ok")
-	return
 }

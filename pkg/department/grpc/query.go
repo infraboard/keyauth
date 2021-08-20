@@ -66,6 +66,8 @@ type describeDepartmentRequest struct {
 func (r *describeDepartmentRequest) FindFilter() bson.M {
 	filter := bson.M{}
 
+	filter["domain"] = r.Domain
+
 	if r.Id != "" {
 		filter["_id"] = r.Id
 	}
