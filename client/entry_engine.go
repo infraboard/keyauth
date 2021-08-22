@@ -12,6 +12,8 @@ import (
 	"github.com/infraboard/mcube/logger"
 	httpb "github.com/infraboard/mcube/pb/http"
 	"github.com/infraboard/mcube/types/ftime"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 
 	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/micro"
@@ -63,9 +65,10 @@ func (e *entryEngine) ValidateIdentity(ctx *gcontext.GrpcInCtx) (*token.Token, e
 
 	outCtx := gcontext.NewGrpcOutCtx()
 	outCtx.SetAccessToken(ctx.GetAccessToKen())
-	tk, err := e.client.Token().ValidateToken(outCtx.Context(), req)
+	var header, trailer metadata.MD
+	tk, err := e.client.Token().ValidateToken(outCtx.Context(), req, grpc.Header(&header), grpc.Trailer(&trailer))
 	if err != nil {
-		return nil, err
+		return nil, gcontext.NewExceptionFromTrailer(trailer, err)
 	}
 
 	e.log.Debugf("token check ok, username: %s", tk.Account)
@@ -114,9 +117,10 @@ func (e *entryEngine) ValidatePermission(tk *token.Token, ctx *gcontext.GrpcInCt
 	req := permission.NewCheckPermissionRequest()
 	req.EndpointId = eid
 	req.NamespaceId = tk.Namespace
-	perm, err := e.client.Permission().CheckPermission(outCtx.Context(), req)
+	var header, trailer metadata.MD
+	perm, err := e.client.Permission().CheckPermission(outCtx.Context(), req, grpc.Header(&header), grpc.Trailer(&trailer))
 	if err != nil {
-		return exception.NewPermissionDeny("no permission, %s", err)
+		return gcontext.NewExceptionFromTrailer(trailer, err)
 	}
 	tk.Scope = perm.Scope
 	e.log.Debugf("[%s] permission check passed", tk.Account)
