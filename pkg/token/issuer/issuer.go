@@ -163,7 +163,7 @@ func (i *issuer) IssueToken(ctx context.Context, req *token.IssueTokenRequest) (
 	case token.GrantType_REFRESH:
 		validateReq := token.NewValidateTokenRequest()
 		validateReq.RefreshToken = req.RefreshToken
-		tk, err := i.token.ValidateToken(nil, validateReq)
+		tk, err := i.token.ValidateToken(context.Background(), validateReq)
 		if err != nil {
 			return nil, err
 		}
@@ -181,6 +181,7 @@ func (i *issuer) IssueToken(ctx context.Context, req *token.IssueTokenRequest) (
 		newTK.Domain = tk.Domain
 		newTK.StartGrantType = tk.GetStartGrantType()
 		newTK.SessionId = tk.SessionId
+		newTK.Namespace = tk.Namespace
 
 		revolkReq := token.NewRevolkTokenRequest(app.ClientId, app.ClientSecret)
 		revolkReq.AccessToken = req.AccessToken
@@ -193,7 +194,7 @@ func (i *issuer) IssueToken(ctx context.Context, req *token.IssueTokenRequest) (
 	case token.GrantType_ACCESS:
 		validateReq := token.NewValidateTokenRequest()
 		validateReq.AccessToken = req.AccessToken
-		tk, err := i.token.ValidateToken(nil, validateReq)
+		tk, err := i.token.ValidateToken(context.Background(), validateReq)
 		if err != nil {
 			return nil, exception.NewUnauthorized(err.Error())
 		}
