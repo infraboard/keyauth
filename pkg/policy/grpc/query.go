@@ -62,7 +62,9 @@ func (r *queryPolicyRequest) FindOptions() *options.FindOptions {
 
 func (r *queryPolicyRequest) FindFilter() bson.M {
 	filter := bson.M{}
-	filter["domain"] = r.Domain
+	if r.Domain != "" {
+		filter["domain"] = r.Domain
+	}
 
 	if r.NamespaceId != "" {
 		filter["namespace_id"] = r.NamespaceId
