@@ -1,103 +1,84 @@
 syntax = "proto3";
 
-package keyauth.mconf;
+package infraboard.keyauth.mconf;
 option go_package = "github.com/infraboard/keyauth/pkg/mconf";
 
 import "pkg/mconf/pb/enum.proto";
-import "github.com/infraboard/mcube/cmd/protoc-gen-go-ext/extension/tag/tag.proto";
 import "github.com/infraboard/mcube/pb/page/page.proto";
 
 // CreateGroupRequest 服务组请求
 message CreateGroupRequest {
     // 组类型
-    Type type = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"type"'}
-        ];
+    // @gotags: json:"type"
+    Type type = 1;
     // 名称
-    string name = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"name" validate:"required,lte=200"'}
-        ];
+    // @gotags: json:"name" validate:"required,lte=200"
+    string name = 2;
     // 描述信息
-    string description = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"description,omitempty"'}
-        ];                  
+    // @gotags: json:"description,omitempty"
+    string description = 3;                  
 }
 
 // ItemRequest 健值项
 message ItemRequest {
-     // 建的名称
-    string key = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"_id" json:"key"'}
-        ];
+    // 建的名称
+    // @gotags: bson:"_id" json:"key"
+    string key = 1;
     // 关联的组
-    string group = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"group" json:"group"'}
-        ];
+    // @gotags: bson:"group" json:"group"
+    string group = 2;
     // 值对应的值
-    string value = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"value" json:"value"'}
-        ];
+    // @gotags: bson:"value" json:"value"
+    string value = 3;
     // 描述信息
-    string description = 4[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"description" json:"description,omitempty"'}
-        ];
+    // @gotags: bson:"description" json:"description,omitempty"
+    string description = 4;
 }
 
 // QueryGroupRequest 查询组列表
 message QueryGroupRequest {
-    page.PageRequest page = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"page"'}
-        ];
+    // @gotags: json:"page"
+    page.PageRequest page = 1;
     // 组类型
-    Type type = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"type"'}
-        ];
+    // @gotags: json:"type"
+    Type type = 2;
 }
 
 // DescribeGroupRequest todo
 message DescribeGroupRequest {
-    string name = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"name"'}
-        ];
+    // @gotags: json:"name"
+    string name = 1;
 }
 
 // DeleteGroupRequest todo
 message DeleteGroupRequest {
-    string name = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"name"'}
-        ];
+    // @gotags: json:"name"
+    string name = 1;
 }
 
 // QueryItemRequest 查询值列表
 message QueryItemRequest {
-    page.PageRequest page = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"page"'}
-        ];
+    // @gotags: json:"page"
+    page.PageRequest page = 1;
     // 组名称
-    string group_name = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"group_name" validate:"required,lte=200"'}
-        ];
+    // @gotags: json:"group_name" validate:"required,lte=200"
+    string group_name = 2;
 }
 
 // AddItemToGroupRequest todo
 message AddItemToGroupRequest {
-    string group_name = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"group_name"'}
-        ];
-    repeated ItemRequest items = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"items" json:"items"'}
-        ];
+    // @gotags: json:"group_name"
+    string group_name = 1;
+    // @gotags: bson:"items" json:"items"
+    repeated ItemRequest items = 2;
 }
 
 // RemoveItemFromGroupRequest todo
 message RemoveItemFromGroupRequest {
-    string group_name = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"group_name"'}
-        ];
-    bool remove_all = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"remove_all"'}
-        ];
-    repeated string items = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"items" json:"items"'}
-        ];
+    // @gotags: json:"group_name"
+    string group_name = 1;
+    // @gotags: json:"remove_all"
+    bool remove_all = 2;
+    // @gotags: bson:"items" json:"items"
+    repeated string items = 3;
 }

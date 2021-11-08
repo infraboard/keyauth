@@ -1,106 +1,84 @@
 syntax = "proto3";
 
-package keyauth.domain;
+package infraboard.keyauth.domain;
 option go_package = "github.com/infraboard/keyauth/pkg/domain";
-
-import "github.com/infraboard/mcube/cmd/protoc-gen-go-ext/extension/tag/tag.proto";
 
 // PasswordSecurity 密码安全设置
 message PasswordSecurity {
     // 密码长度
-    int32 length = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"length" json:"length" validate:"required,min=8,max=64"'}
-        ];
+    // @gotags: bson:"length" json:"length" validate:"required,min=8,max=64"
+    int32 length = 1;
     // 包含数字
-    bool include_number = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"include_number" json:"include_number"'}
-        ];
+    // @gotags: bson:"include_number" json:"include_number"
+    bool include_number = 2;
     // 包含小写字母
-    bool include_lower_letter = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"include_lower_letter" json:"include_lower_letter"'}
-        ];
+    // @gotags: bson:"include_lower_letter" json:"include_lower_letter"
+    bool include_lower_letter = 3;
     // 包含大写字母
-    bool include_upper_letter = 4[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"include_upper_letter" json:"include_upper_letter"'}
-        ];
+    // @gotags: bson:"include_upper_letter" json:"include_upper_letter"
+    bool include_upper_letter = 4;
     // 包含特殊字符
-    bool include_symbols = 5[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"include_symbols" json:"include_symbols"'}
-        ];
+    // @gotags: bson:"include_symbols" json:"include_symbols"
+    bool include_symbols = 5;
     // 重复限制
-    uint32 repeate_limite = 6[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"repeate_limite" json:"repeate_limite" validate:"required,min=1,max=24"'}
-        ];
+    // @gotags: bson:"repeate_limite" json:"repeate_limite" validate:"required,min=1,max=24"
+    uint32 repeate_limite = 6;
     // 密码过期时间, 密码过期后要求用户重置密码
-    uint32 password_expired_days = 7[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"password_expired_days" json:"password_expired_days" validate:"required,min=0,max=365"'}
-        ];
+    // @gotags: bson:"password_expired_days" json:"password_expired_days" validate:"required,min=0,max=365"
+    uint32 password_expired_days = 7;
     // 密码过期前多少天开始提醒
-    uint32 before_expired_remind_days = 8[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"before_expired_remind_days" json:"before_expired_remind_days" validate:"required,min=0,max=365"'}
-        ];
+    // @gotags: bson:"before_expired_remind_days" json:"before_expired_remind_days" validate:"required,min=0,max=365"
+    uint32 before_expired_remind_days = 8;
 }
 
 // ExceptionLockConfig todo
 message ExceptionLockConfig {
     // 异地登录
-    bool other_place_login = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"other_place_login" json:"other_place_login"'}
-        ];
-    // 未登录天数,
-    uint32 not_login_days = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"not_login_days" json:"not_login_days"'}
-        ];     
+    // @gotags: bson:"other_place_login" json:"other_place_login"
+    bool other_place_login = 1;
+    // 未登录天数
+    // @gotags: bson:"not_login_days" json:"not_login_days"
+    uint32 not_login_days = 2;     
 }
 
 // IPLimiteConfig todo
 message IPLimiteConfig {
     // 黑名单还是白名单
-    string type = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"type" json:"type"'}
-        ];
+    // @gotags: bson:"type" json:"type"
+    string type = 1;
     // ip列表
-    repeated string ip = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"ip" json:"ip"'}
-        ];   
+    // @gotags: bson:"ip" json:"ip"
+    repeated string ip = 2;   
 }
 
 // RetryLockConfig 重试锁配置
 message RetryLockConfig {
     // 重试限制
-    uint32 retry_limite = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"retry_limite" json:"retry_limite"'}
-        ];
+    // @gotags: bson:"retry_limite" json:"retry_limite"
+    uint32 retry_limite = 1;
     // 锁定时长
-    uint32 locked_minite = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"locked_minite" json:"locked_minite"'}
-        ];
+    // @gotags: bson:"locked_minite" json:"locked_minite"
+    uint32 locked_minite = 2;
 }
 
 // LoginSecurity 登录安全
 message LoginSecurity {
     // 异常登录锁
-    bool exception_lock = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"exception_lock" json:"exception_lock"'}
-        ];
+    // @gotags: bson:"exception_lock" json:"exception_lock"
+    bool exception_lock = 1;
     // 异常配置
-    ExceptionLockConfig exception_lock_config = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"exception_lock_config" json:"exception_lock_config"'}
-        ];
+    // @gotags: bson:"exception_lock_config" json:"exception_lock_config"
+    ExceptionLockConfig exception_lock_config = 2;
     // 重试锁
-    bool retry_lock = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"retry_lock" json:"retry_lock"'}
-        ];
+    // @gotags: bson:"retry_lock" json:"retry_lock"
+    bool retry_lock = 3;
     // 重试锁配置
-    RetryLockConfig retry_lock_config = 4[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"retry_lock_config" json:"retry_lock_config"'}
-        ];
+    // @gotags: bson:"retry_lock_config" json:"retry_lock_config"
+    RetryLockConfig retry_lock_config = 4;
     // IP限制
-    bool ip_limite = 5[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"ip_limite" json:"ip_limite"'}
-        ];
+    // @gotags: bson:"ip_limite" json:"ip_limite"
+    bool ip_limite = 5;
     // IP限制配置
-    IPLimiteConfig ip_limite_config = 6[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"ip_limite_config" json:"ip_limite_config"'}
-        ];          
+     // @gotags: bson:"ip_limite_config" json:"ip_limite_config"
+    IPLimiteConfig ip_limite_config = 6;          
 }

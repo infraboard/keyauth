@@ -1,93 +1,71 @@
 syntax = "proto3";
 
-package keyauth.policy;
+package infraboard.keyauth.policy;
 option go_package = "github.com/infraboard/keyauth/pkg/policy";
 
 import "pkg/policy/pb/enum.proto";
-import "github.com/infraboard/mcube/cmd/protoc-gen-go-ext/extension/tag/tag.proto";
 import "github.com/infraboard/mcube/pb/page/page.proto";
 
 // CreatePolicyRequest 创建策略的请求
 message CreatePolicyRequest {
     // 范围
-    string namespace_id = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"namespace_id" json:"namespace_id" validate:"lte=120"'}
-        ];
+    // @gotags: bson:"namespace_id" json:"namespace_id" validate:"lte=120"
+    string namespace_id = 1;
     // 用户
-    string account = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"account" json:"account" validate:"required,lte=120"'}
-        ];
+    // @gotags: bson:"account" json:"account" validate:"required,lte=120"
+    string account = 2;
     // 角色名称
-    string role_id = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"role_id" json:"role_id" validate:"required,lte=40"'}
-        ];
+    // @gotags: bson:"role_id" json:"role_id" validate:"required,lte=40"
+    string role_id = 3;
     // 范围控制
-    string scope = 4[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"scope" json:"scope"'}
-        ];
+    // @gotags: bson:"scope" json:"scope"
+    string scope = 4;
     // 策略过期时间
-    int64 expired_time = 5[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"expired_time" json:"expired_time"'}
-        ];
+    // @gotags: bson:"expired_time" json:"expired_time"
+    int64 expired_time = 5;
     // 策略的类型
-    PolicyType type = 6[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"type" json:"type"'}
-        ];                                   
+    // @gotags: bson:"type" json:"type"
+    PolicyType type = 6;                                   
 }
 
 // QueryPolicyRequest 获取子账号列表
 message QueryPolicyRequest {
-    page.PageRequest page = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"page" json:"page"'}
-        ];
-    string account = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"account,omitempty"'}
-        ];
-    string role_id = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"role_id,omitempty"'}
-        ];
-    string namespace_id = 4[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"namespace_id,omitempty"'}
-        ];
-    PolicyType type = 5[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"type,omitempty"'}
-        ]; 
-    bool with_role = 6[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"with_role,omitempty"'}
-        ];
-    bool with_namespace = 7[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"with_namespace,omitempty"'}
-        ];
-    string domain = 8[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"domain"'}
-        ];    
+    // @gotags: bson:"page" json:"page"
+    page.PageRequest page = 1;
+    // @gotags: json:"account,omitempty"
+    string account = 2;
+    // @gotags: json:"role_id,omitempty"
+    string role_id = 3;
+    // @gotags: json:"namespace_id,omitempty"
+    string namespace_id = 4;
+    // @gotags: json:"type,omitempty"
+    PolicyType type = 5;
+    // @gotags: json:"with_role,omitempty"
+    bool with_role = 6;
+    // @gotags: json:"with_namespace,omitempty"
+    bool with_namespace = 7;
+    // @gotags: json:"domain"
+    string domain = 8;    
 }
 
 // DescribePolicyRequest todo
 message DescribePolicyRequest {
-	string id = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"id"'}
-        ];
+    // @gotags: json:"id"
+	string id = 1;
 }
 
 // DeletePolicyRequest todo
 message DeletePolicyRequest {
-	string id = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"id"'}
-        ];
-    string account = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"account,omitempty"'}
-        ];
-    string role_id = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"role_id,omitempty"'}
-        ];
-    string namespace_id = 4[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"namespace_id,omitempty"'}
-        ];
-    PolicyType type = 5[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"type,omitempty"'}
-        ]; 
-    string domain = 6[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"domain"'}
-        ];  
+    // @gotags: json:"id"
+	string id = 1;
+    // @gotags: json:"account,omitempty"
+    string account = 2;
+    // @gotags: json:"role_id,omitempty"
+    string role_id = 3;
+    // @gotags: json:"namespace_id,omitempty"
+    string namespace_id = 4;
+    // @gotags: json:"type,omitempty"
+    PolicyType type = 5;
+    // @gotags: json:"domain"
+    string domain = 6;  
 }

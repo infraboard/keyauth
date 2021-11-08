@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package keyauth.verifycode;
+package infraboard.keyauth.verifycode;
 option go_package = "github.com/infraboard/keyauth/pkg/verifycode";
 
 enum NotifyType {

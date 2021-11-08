@@ -1,50 +1,40 @@
 syntax = "proto3";
 
-package keyauth.verifycode;
+package infraboard.keyauth.verifycode;
 option go_package = "github.com/infraboard/keyauth/pkg/verifycode";
 
-import "github.com/infraboard/mcube/cmd/protoc-gen-go-ext/extension/tag/tag.proto";
 import "pkg/verifycode/pb/enum.proto";
 
 // IssueCodeRequest 验证码申请请求
 message IssueCodeRequest {
-    IssueType issue_type = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"issue_type"'}
-        ];
-    string username = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"username" validate:"required"'}
-        ];
-    string password = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"password" validate:"required"'}
-        ];
-    string client_id = 4[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"client_id" validate:"required"'}
-        ];
-    string client_secret = 5[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"client_secret" validate:"required"'}
-        ];
+    // @gotags: json:"issue_type"
+    IssueType issue_type = 1;
+    // @gotags: json:"username" validate:"required"
+    string username = 2;
+    // @gotags: json:"password" validate:"required"
+    string password = 3;
+    // @gotags: json:"client_id" validate:"required"
+    string client_id = 4;
+    // @gotags: json:"client_secret" validate:"required"
+    string client_secret = 5;
 }
 
 // IssueCodeResponse todo
 message IssueCodeResponse {
-    string message = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"message"'}
-        ];
+    // @gotags: json:"message"
+    string message = 1;
 }
 
 // CheckCodeRequest 验证码校验请求
 message CheckCodeRequest {
-    string username = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"username" validate:"required"'}
-        ];
-    string number = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"number" validate:"required"'}
-        ];
+    // @gotags: json:"username" validate:"required"
+    string username = 1;
+    // @gotags: json:"number" validate:"required"
+    string number = 2;
 }
 
 // CheckCodeResponse todo
 message CheckCodeResponse {
-    string message = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"message"'}
-        ];
+    // @gotags: json:"message"
+    string message = 1;
 }

@@ -1,10 +1,9 @@
 syntax = "proto3";
 
-package keyauth.session;
+package infraboard.keyauth.session;
 option go_package = "github.com/infraboard/keyauth/pkg/session";
 
 import "pkg/token/pb/token.proto";
-import "github.com/infraboard/mcube/cmd/protoc-gen-go-ext/extension/tag/tag.proto";
 import "github.com/infraboard/mcube/pb/page/page.proto";
 
 // LogoutRequest 登出请求
@@ -36,7 +35,6 @@ message QuerySessionRequest {
 
 // QueryUserLastSessionRequest todo
 message QueryUserLastSessionRequest {
-    string account = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'validate:"required"'}
-        ];
+    // @gotags: validate:"required"
+    string account = 2;
 }

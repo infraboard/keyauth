@@ -1,89 +1,70 @@
 syntax = "proto3";
 
-package keyauth.mconf;
+package infraboard.keyauth.mconf;
 option go_package = "github.com/infraboard/keyauth/pkg/mconf";
 
-import "github.com/infraboard/mcube/cmd/protoc-gen-go-ext/extension/tag/tag.proto";
 import "pkg/mconf/pb/enum.proto";
 
 // Micro is service provider
 message Group {
     // 组名称
-   string name = 1[
-       (google.protobuf.field_tag) = {struct_tag: 'bson:"_id" json:"name"'}
-       ];
+    // @gotags: bson:"_id" json:"name"
+   string name = 1;
     // 组类型
-    Type type = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"type" json:"type"'}
-        ];
+    // @gotags: bson:"type" json:"type"
+    Type type = 2;
     // 创建人
-    string creater = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"creater" json:"creater"'}
-        ];
+    // @gotags: bson:"creater" json:"creater"
+    string creater = 3;
     // 创建的时间
-    int64 create_at = 4[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"create_at" json:"create_at"'}
-        ];
+    // @gotags: bson:"create_at" json:"create_at"
+    int64 create_at = 4;
     // 描述信息
-    string description = 5[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"description" json:"description"'}
-        ];
+    // @gotags: bson:"description" json:"description"
+    string description = 5;
 }
 
 // Item 健值项
 message Item {
     // 项ID
-    string id = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"_id" json:"id"'}
-        ];
-     // 建的名称
-    string key = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"key" json:"key"'}
-        ];
+    // @gotags: bson:"_id" json:"id"
+    string id = 1;
+    // 建的名称
+    // @gotags: bson:"key" json:"key"
+    string key = 2;
     // 关联的组
-    string group = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"group" json:"group"'}
-        ];
+    // @gotags: bson:"group" json:"group"
+    string group = 3;
     // 创建人
-    string creater = 4[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"creater" json:"creater"'}
-        ];
+    // @gotags: bson:"creater" json:"creater"
+    string creater = 4;
     // 创建的时间
-    int64 create_at = 5[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"create_at" json:"create_at"'}
-        ];
+    // @gotags: bson:"create_at" json:"create_at"
+    int64 create_at = 5;
     // 创建的时间
-    int64 updater = 6[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"updater" json:"updater,omitempty"'}
-        ];
+    // @gotags: bson:"updater" json:"updater,omitempty"
+    int64 updater = 6;
     // 更新时间
-    int64 update_at = 7[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"update_at" json:"update_at,omitempty"'}
-        ];
+    // @gotags: bson:"update_at" json:"update_at,omitempty"
+    int64 update_at = 7;
     // 值对应的值
-    string value = 8[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"value" json:"value"'}
-        ];
+    // @gotags: bson:"value" json:"value"
+    string value = 8;
     // 描述信息
-    string description = 9[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"description" json:"description,omitempty"'}
-        ];
+    // @gotags: bson:"description" json:"description,omitempty"
+    string description = 9;
 }
 
 message ItemSet {
-    int64 total = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"total" json:"total"'}
-        ];
-    repeated Item items = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"items" json:"items"'}
-        ];
+    // @gotags: bson:"total" json:"total"
+    int64 total = 1;
+    // @gotags: bson:"items" json:"items"
+    repeated Item items = 2;
 }
 
 message GroupSet {
-    int64 total = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"total" json:"total"'}
-        ];
-    repeated Group items = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"items" json:"items"'}
-        ];
+    // @gotags: bson:"total" json:"total"
+    int64 total = 1;
+    // @gotags: bson:"items" json:"items"
+    repeated Group items = 2;
 }

@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package keyauth.tag;
+package infraboard.keyauth.tag;
 option go_package = "github.com/infraboard/keyauth/pkg/tag";
 
 enum ScopeType {

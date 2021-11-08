@@ -1,25 +1,18 @@
 syntax = "proto3";
 
-package keyauth.verifycode;
+package infraboard.keyauth.verifycode;
 option go_package = "github.com/infraboard/keyauth/pkg/verifycode";
-
-import "github.com/infraboard/mcube/cmd/protoc-gen-go-ext/extension/tag/tag.proto";
 
 // Code todo
 message Code {
-    string id = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"_id" json:"id"'}
-        ];
-    string username = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"username" validate:"required"'}
-        ];
-    string number = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"number" validate:"required"'}
-        ];
-    int64 issue_at = 4[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"issue_at" json:"issue_at"'}
-        ];
-    uint32 expired_minite = 5[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"expired_minite" json:"expired_minite"'}
-        ];  
+    // @gotags: bson:"_id" json:"id"
+    string id = 1;
+    // @gotags: json:"username" validate:"required"
+    string username = 2;
+    // @gotags: json:"number" validate:"required"
+    string number = 3;
+    // @gotags: bson:"issue_at" json:"issue_at"
+    int64 issue_at = 4;
+    // @gotags: bson:"expired_minite" json:"expired_minite"
+    uint32 expired_minite = 5;  
 }

@@ -1,11 +1,10 @@
 syntax = "proto3";
 
-package keyauth.token;
+package infraboard.keyauth.token;
 option go_package = "github.com/infraboard/keyauth/pkg/token";
 
 import "pkg/token/pb/token.proto";
 import "github.com/infraboard/mcube/pb/page/page.proto";
-import "github.com/infraboard/mcube/cmd/protoc-gen-go-ext/extension/tag/tag.proto";
 
 message DescribeTokenRequest {
     string access_token = 1;
@@ -60,12 +59,10 @@ message BlockTokenRequest {
 }
 
 message ChangeNamespaceRequest {
-    string namespace = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"namespace" validate:"required"'}
-        ];
-    string token = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"token" validate:"required"'}
-        ];
+    // @gotags: json:"namespace" validate:"required"
+    string namespace = 1;
+    // @gotags: json:"token" validate:"required"
+    string token = 2;
 }
 
 message DeleteTokenRequest { 

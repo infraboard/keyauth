@@ -1,154 +1,123 @@
 syntax = "proto3";
 
-package keyauth.domain;
+package infraboard.keyauth.domain;
 option go_package = "github.com/infraboard/keyauth/pkg/domain";
 
 import "pkg/domain/pb/setting.proto";
 import "common/types/types.proto";
 import "github.com/infraboard/mcube/pb/page/page.proto";
-import "github.com/infraboard/mcube/cmd/protoc-gen-go-ext/extension/tag/tag.proto";
 
 message CreateDomainRequest  {
     // 公司或者组织名称
-    string name = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"name" json:"name"'}
-        ];
+    // @gotags: bson:"name" json:"name"
+    string name = 1;
     // Profile 需要修改内容
-    DomainProfile profile = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"profile" json:"profile"'}
-        ];
+    // @gotags: bson:"profile" json:"profile"
+    DomainProfile profile = 2;
 }
 
 message DomainProfile {
     // 全称
-    string display_name = 5[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"display_name" json:"display_name"'}
-        ];
+    // @gotags: bson:"display_name" json:"display_name"
+    string display_name = 5;
     // 公司LOGO图片的URL
-    string logo_path = 6[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"logo_path" json:"logo_path"'}
-        ];
+    // @gotags: bson:"logo_path" json:"logo_path"
+    string logo_path = 6;
     // 描述
-    string description = 7[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"description" json:"description"'}
-        ];
+    // @gotags: bson:"description" json:"description"
+    string description = 7;
     // 电话
-    string phone = 9[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"phone" json:"phone"'}
-        ];
+    // @gotags: bson:"phone" json:"phone"
+    string phone = 9;
     // 规模: 50人以下, 50~100, ...
-    string size = 10[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"size" json:"size"'}
-        ];
+    // @gotags: bson:"size" json:"size"
+    string size = 10;
     // 位置: 指城市, 比如 中国,四川,成都
-    string location = 11[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"location" json:"location"'}
-        ];
+    // @gotags: bson:"location" json:"location"
+    string location = 11;
     // 地址: 比如环球中心 10F 1034
-    string address = 12[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"address" json:"address"'}
-        ];
+    // @gotags: bson:"address" json:"address"
+    string address = 12;
     // 所属行业: 比如, 互联网
-    string industry = 13[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"industry" json:"industry"'}
-        ];
+    // @gotags: bson:"industry" json:"industry"
+    string industry = 13;
     // 传真
-    string fax = 14[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"fax" json:"fax"'}
-        ];
+    // @gotags: bson:"fax" json:"fax"
+    string fax = 14;
     // 联系人
-    Contact contack = 15[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"contack" json:"contack"'}
-        ];    
+    // @gotags: bson:"contack" json:"contack"
+    Contact contack = 15;    
 }
 
 message UpdateDomainInfoRequest  {
     // 更新模式
-    common.types.UpdateMode update_mode = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"update_mode" json:"update_mode"'}
-        ];
+    // @gotags: bson:"update_mode" json:"update_mode"
+    common.types.UpdateMode update_mode = 1;
     // 公司或者组织名称
-    string name = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"name" json:"name"'}
-        ];
+    // @gotags: bson:"name" json:"name"
+    string name = 2;
     // CreateDomainRequest 需要修改内容
-    DomainProfile profile = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"profile" json:"profile"'}
-        ];
+    // @gotags: bson:"profile" json:"profile"
+    DomainProfile profile = 3;
 }
 
 // DescribeDomainRequest 查询domain详情请求
 message DescribeDomainRequest {
-    string name = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"name" json:"name"'}
-        ];
+     // @gotags: bson:"name" json:"name"
+    string name = 1;
 }
 
 // DeleteDomainRequest 删除域
 message DeleteDomainRequest {
-    string name = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"name" json:"name"'}
-        ];
+    // @gotags: bson:"name" json:"name"
+    string name = 1;
 }
 
 // QueryDomainRequest 请求
 message QueryDomainRequest {
-    page.PageRequest page = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"page"'}
-        ];
-    string name = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"name"'}
-        ];
-    // 域拥有者
-    string owner = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"owner"'}
-        ];
+    // @gotags: json:"page"
+    page.PageRequest page = 1;
+    // @gotags: json:"name"
+    string name = 2;
+    // @gotags: json:"owner"
+    string owner = 3;
 }
 
 // UpdateDomainSecurityRequest todo
 message UpdateDomainSecurityRequest {
     // 更新模式
-    common.types.UpdateMode update_mode = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"update_mode" json:"update_mode"'}
-        ];
+    // @gotags: bson:"update_mode" json:"update_mode"
+    common.types.UpdateMode update_mode = 1;
     // 名称
-    string name = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"name" json:"name"'}
-        ];
+    // @gotags: bson:"name" json:"name"
+    string name = 2;
     // SecuritySetting 域安全设置
-    SecuritySetting security_setting = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"security_setting" json:"security_setting"'}
-        ];    
+    // @gotags: bson:"security_setting" json:"security_setting"
+    SecuritySetting security_setting = 3;    
 }
 
 // SecuritySetting 安全策略
 message SecuritySetting {
     // 密码安全
-    PasswordSecurity password_security = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"password_security" json:"password_security"'}
-        ];
+    // @gotags: bson:"password_security" json:"password_security"
+    PasswordSecurity password_security = 1;
     // 登录安全
-    LoginSecurity login_security = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"login_security" json:"login_security"'}
-        ];      
+    // @gotags: bson:"login_security" json:"login_security"
+    LoginSecurity login_security = 2;      
 }
 
 // 联系人
 message Contact {
     // 姓名
-    string name = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"name" json:"name"'}
-        ];
+    // @gotags: bson:"name" json:"name"
+    string name = 1;
     // 职位
-    string title = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"title" json:"title"'}
-        ];
+    // @gotags: bson:"title" json:"title"
+    string title = 2;
     // 电话
-    string phone = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"phone" json:"phone"'}
-        ];
+    // @gotags: bson:"phone" json:"phone"
+    string phone = 3;
     // 邮箱
-    string email = 4[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"email" json:"email"'}
-        ];
+     // @gotags: bson:"email" json:"email"
+    string email = 4;
 }

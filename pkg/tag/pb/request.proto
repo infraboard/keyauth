@@ -1,120 +1,95 @@
 syntax = "proto3";
 
-package keyauth.tag;
+package infraboard.keyauth.tag;
 option go_package = "github.com/infraboard/keyauth/pkg/tag";
 
-import "github.com/infraboard/mcube/cmd/protoc-gen-go-ext/extension/tag/tag.proto";
 import "github.com/infraboard/mcube/pb/page/page.proto";
 import "pkg/tag/pb/enum.proto";
 
 // CreateTagRequest todo
 message CreateTagRequest {
     // tag生效范围
-    ScopeType scope_type = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"scope_type"'}
-        ];
+    // @gotags: json:"scope_type"
+    ScopeType scope_type = 1;
     // tag属于哪个namespace
-    string namespace = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"namespace"'}
-        ];
+    // @gotags: json:"namespace"
+    string namespace = 2;
     // 建名称
-    string key_name = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"key_name" validate:"lte=200"'}
-        ];
+    // @gotags: json:"key_name" validate:"lte=200"
+    string key_name = 3;
     // 建标识
-    string key_label = 4[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"key_label"'}
-        ];
+    // @gotags: json:"key_label"
+    string key_label = 4;
     // 建描述
-    string key_desc = 5[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"key_desc"'}
-        ];
+    // @gotags: json:"key_desc"
+    string key_desc = 5;
     // 值来源
-    ValueFrom value_from = 6[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"value_from"'}
-        ];
+    // @gotags: json:"value_from"
+    ValueFrom value_from = 6;
     // http 获取Tag 值的参数
-    HTTPFromOption http_from_option = 7[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"http_from_option"'}
-        ];
+    // @gotags: json:"http_from_option"
+    HTTPFromOption http_from_option = 7;
     // String 类型的值
-    repeated ValueOption values = 8[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"values"'}
-        ];
+    // @gotags: json:"values"
+    repeated ValueOption values = 8;
 }
 
 // QueryTagKeyRequest todo
 message QueryTagKeyRequest {
-    page.PageRequest page = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"page"'}
-        ];
+    // @gotags: json:"page"
+    page.PageRequest page = 1;
     // tag生效范围
-    ScopeType scope_type = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"scope_type"'}
-        ];
+    // @gotags: json:"scope_type"
+    ScopeType scope_type = 2;
     // 关键字
-    string keywords = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"keywords"'}
-        ];
+    // @gotags: json:"keywords"
+    string keywords = 3;
 }
 
 // QueryTagValueRequest todo
 message QueryTagValueRequest {
-    page.PageRequest page = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"page"'}
-        ];
+    // @gotags: json:"page"
+    page.PageRequest page = 1;
     // Tag Value ID
-    string tag_id = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"tag_id"'}
-        ];
+    // @gotags: json:"tag_id"
+    string tag_id = 2;
 }
 
 // DeleteTagRequest todo
 message DeleteTagRequest {
     // Tag Value ID
-    string tag_id = 2[
-    (google.protobuf.field_tag) = {struct_tag: 'json:"tag_id" validate:"lte=200"'}
-    ]; 
+    // @gotags: json:"tag_id" validate:"lte=200"
+    string tag_id = 2; 
 }
 
 message DescribeTagRequest {
     // Tag Value ID
-    string tag_id = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"tag_id" validate:"lte=200"'}
-        ]; 
+    // @gotags: json:"tag_id" validate:"lte=200"
+    string tag_id = 2; 
 }
 
 // ValueOptions 值描述
 message ValueOption {
-    string Value = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"value" json:"value" validate:"lte=200"'}
-        ];
-    string Label = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"label" json:"label"'}
-        ];
-    string Desc = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"desc" json:"desc"'}
-        ];
+    // @gotags: bson:"value" json:"value" validate:"lte=200"
+    string Value = 1;
+    // @gotags: bson:"label" json:"label"
+    string Label = 2;
+    // @gotags: bson:"desc" json:"desc"
+    string Desc = 3;
 }
 
 // HTTPFromOptions todo
 message HTTPFromOption {
-    string url = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"url" json:"url"'}
-        ];
-    map<string, string> headers = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"headers" json:"headers"'}
-        ];
-    string search_key = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"search_key" json:"search_key"'}
-        ];
-    string value_key = 4[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"value_key" json:"value_key"'}
-        ];
-    string label_key = 5[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"label_key" json:"label_key"'}
-        ];
-    string desc_key = 6[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"desc_key" json:"desc_key"'}
-        ];
+    // @gotags: bson:"url" json:"url"
+    string url = 1;
+    // @gotags: bson:"headers" json:"headers"
+    map<string, string> headers = 2;
+    // @gotags: bson:"search_key" json:"search_key"
+    string search_key = 3;
+    // @gotags: bson:"value_key" json:"value_key"
+    string value_key = 4;
+    // @gotags: bson:"label_key" json:"label_key"
+    string label_key = 5;
+    // @gotags: bson:"desc_key" json:"desc_key"
+    string desc_key = 6;
 }

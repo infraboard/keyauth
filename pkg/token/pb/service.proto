@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package keyauth.token;
+package infraboard.keyauth.token;
 option go_package = "github.com/infraboard/keyauth/pkg/token";
 
 import "pkg/token/pb/request.proto";
@@ -8,66 +8,12 @@ import "pkg/token/pb/token.proto";
 import "github.com/infraboard/mcube/pb/http/entry.proto";
 
 service TokenService {
-    rpc IssueToken(IssueTokenRequest) returns (Token) {
-		option (mcube.http.rest_api) = {
-			path: "/oauth2/tokens"
-			method: "POST"
-			resource: "token"
-		};
-	};
-    rpc ValidateToken (ValidateTokenRequest) returns (Token) {
-		option (mcube.http.rest_api) = {
-			path: "/oauth2/tokens"
-			method: "GET"
-			resource: "token"
-		};
-	};
-	rpc DescribeToken(DescribeTokenRequest) returns (Token) {
-		option (mcube.http.rest_api) = {
-			path: "/applications/:id/tokens"
-			method: "GET"
-			resource: "token"
-			auth_enable: true
-		};
-	};
-    rpc RevolkToken(RevolkTokenRequest) returns (Token) {
-		option (mcube.http.rest_api) = {
-			path: "/applications/:id/tokens"
-			method: "DELETE"
-			resource: "token"
-			auth_enable: true
-		};
-	};
-    rpc BlockToken(BlockTokenRequest) returns (Token) {
-		option (mcube.http.rest_api) = {
-			path: "/applications/:id/tokens"
-			method: "PUT"
-			resource: "token"
-			auth_enable: true
-		};
-	};
-    rpc ChangeNamespace(ChangeNamespaceRequest) returns (Token) {
-		option (mcube.http.rest_api) = {
-			path: "/applications/:id/tokens"
-			method: "PUT"
-			resource: "token"
-			auth_enable: true
-		};
-	};
-	rpc QueryToken(QueryTokenRequest) returns (Set) {
-		option (mcube.http.rest_api) = {
-			path: "/applications/:id/tokens"
-			method: "GET"
-			resource: "token"
-			auth_enable: true
-		};
-	};
-	rpc DeleteToken(DeleteTokenRequest) returns (DeleteTokenResponse) {
-		option (mcube.http.rest_api) = {
-			path: "/applications/:id/tokens"
-			method: "GET"
-			resource: "token"
-			auth_enable: true
-		};
-	};
+    rpc IssueToken(IssueTokenRequest) returns (Token) {};
+    rpc ValidateToken (ValidateTokenRequest) returns (Token) {};
+	rpc DescribeToken(DescribeTokenRequest) returns (Token) {};
+    rpc RevolkToken(RevolkTokenRequest) returns (Token) {};
+    rpc BlockToken(BlockTokenRequest) returns (Token) {};
+    rpc ChangeNamespace(ChangeNamespaceRequest) returns (Token) {};
+	rpc QueryToken(QueryTokenRequest) returns (Set) {};
+	rpc DeleteToken(DeleteTokenRequest) returns (DeleteTokenResponse) {};
 }

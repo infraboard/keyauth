@@ -109,39 +109,30 @@ message QueryApplicationFormRequet {
     // @gotags: json:"department_id"
     string department_id = 3;
     // @gotags: json:"status"
-    ApplicationFormStatus status =4[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"status"'}
-        ];
-    bool skip_items = 5[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"skip_items"'}
-        ];
-    string domain = 6[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"domain" validate:"required"'}
-        ];
+    ApplicationFormStatus status =4;
+    // @gotags: json:"skip_items"
+    bool skip_items = 5;
+    // @gotags: json:"domain" validate:"required"
+    string domain = 6;
 }
 
 // DescribeApplicationFormRequet todo
 message DescribeApplicationFormRequet {
-	string id = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"id"'}
-        ];
-    string domain = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"domain"'}
-        ];
+    // @gotags: json:"id"
+	string id = 1;
+    // @gotags: json:"domain"
+    string domain = 2;
 }
 
 // DealApplicationFormRequest todo
 message DealApplicationFormRequest {
     // 用户
-	string id = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"id"'}
-        ];
+    // @gotags: json:"id"
+	string id = 1;
     // 状态
-    ApplicationFormStatus status =2[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"status"'}
-        ];
+    // @gotags: json:"status"
+    ApplicationFormStatus status =2;
     // 备注
-    string message = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"message"'}
-        ];
+    // @gotags: json:"message"
+    string message = 3;
 }

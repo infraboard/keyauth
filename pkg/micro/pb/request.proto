@@ -1,71 +1,58 @@
 syntax = "proto3";
 
-package keyauth.micro;
+package infraboard.keyauth.micro;
 option go_package = "github.com/infraboard/keyauth/pkg/micro";
 
 import "pkg/micro/pb/enum.proto";
-import "github.com/infraboard/mcube/cmd/protoc-gen-go-ext/extension/tag/tag.proto";
 import "github.com/infraboard/mcube/pb/page/page.proto";
 
 // ValidateClientCredentialRequest 校验服务凭证
 message ValidateClientCredentialRequest {
     // 服务客户端ID
-    string client_id = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"client_id" validate:"required,lte=100"'}
-        ];
+    // @gotags: json:"client_id" validate:"required,lte=100"
+    string client_id = 1;
     // 服务客户端凭证
-    string client_secret = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"client_secret" validate:"required,lte=100"'}
-        ];                  
+    // @gotags: json:"client_secret" validate:"required,lte=100"
+    string client_secret = 2;                  
 }
 
 // CreateMicroRequest 服务创建请求
 message CreateMicroRequest {
     // 服务类型
-    Type type = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"type" json:"type"'}
-        ];
+    // @gotags: bson:"type" json:"type"
+    Type type = 1;
     // 名称
-    string name = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"name" json:"name" validate:"required,lte=200"'}
-        ];
+    // @gotags: bson:"name" json:"name" validate:"required,lte=200"
+    string name = 2;
     // 服务标签
-    map<string, string> label = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"label" json:"label" validate:"lte=80"'}
-        ];
+    // @gotags: bson:"label" json:"label" validate:"lte=80"
+    map<string, string> label = 3;
     // 描述信息
-    string description = 4[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"description" json:"description,omitempty"'}
-        ];                  
+    // @gotags: bson:"description" json:"description,omitempty"
+    string description = 4;                  
 }
 
 // QueryMicroRequest 查询应用列表
 message QueryMicroRequest {
-    page.PageRequest page = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"page"'}
-        ];
+    // @gotags: json:"page"
+    page.PageRequest page = 1;
     // 服务类型
-    Type type = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"type"'}
-        ];
+    // @gotags: json:"type"
+    Type type = 2;
 }
 
 // DescribeMicroRequest 查询应用详情
 message DescribeMicroRequest {
-    string client_id = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"client_id"'}
-        ];
-    string name = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"name"'}
-        ];
-    string id = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"id"'}
-        ];
+    // @gotags: json:"client_id"
+    string client_id = 1;
+    // @gotags: json:"name"
+    string name = 2;
+    // @gotags: json:"id"
+    string id = 3;
 }
 
 // DeleteMicroRequest todo
 message DeleteMicroRequest {
-    string id = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"id"'}
-        ];
+    // @gotags: json:"id"
+    string id = 1;
 }

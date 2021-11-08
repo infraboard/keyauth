@@ -1,13 +1,12 @@
 syntax = "proto3";
 
-package keyauth.token;
+package infraboard.keyauth.token;
 option go_package = "github.com/infraboard/keyauth/pkg/token";
 
-import "github.com/infraboard/mcube/cmd/protoc-gen-go-ext/extension/tag/tag.proto";
 import "pkg/user/pb/types.proto";
 
 enum GrantType {
-    NULL = 0;
+    NULL = 0;s
     UNKNOWN = 1;
     PASSWORD = 2;
     LDAP = 3;
@@ -32,88 +31,61 @@ enum BlockType {
 }
 
 message Token {
-    string session_id = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"session_id" json:"session_id"'}
-        ];
-    string access_token = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"_id" json:"access_token"'}
-        ];
-    string refresh_token = 4[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"refresh_token" json:"refresh_token,omitempty"'}
-        ];
-    int64 create_at = 5[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"create_at" json:"create_at,omitempty"'}
-        ];
-    int64 access_expired_at = 6[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"access_expired_at" json:"access_expired_at,omitempty"'}
-        ];
-    int64 refresh_expired_at = 7[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"refresh_expired_at" json:"refresh_expired_at,omitempty"'}
-        ];
-    string domain = 8[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"domain" json:"domain,omitempty"'}
-        ];
-    user.UserType user_type = 9[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"user_type" json:"user_type"'}
-        ];
-    string account = 10[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"account" json:"account"'}
-        ];
-    string application_id = 11[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"application_id" json:"application_id"'}
-        ];
-    string application_name = 12[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"application_name" json:"application_name"'}
-        ];
-    string client_id = 13[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"client_id" json:"client_id"'}
-        ];
-    GrantType start_grant_type = 14[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"start_grant_type" json:"start_grant_type"'}
-        ];
-    GrantType grant_type = 15[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"grant_type" json:"grant_type"'}
-        ];
-    TokenType type = 16[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"type" json:"type"'}
-        ];
-    string namespace = 25[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"namespace" json:"namespace"'}
-        ];
-    string scope = 17[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"scope" json:"scope"'}
-        ];
-    string description = 18[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"description" json:"description"'}
-        ];
-    bool is_block = 19[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"is_block" json:"is_block"'}
-        ];
-    BlockType block_type = 20[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"block_type" json:"block_type"'}
-        ];
-    int64 block_at = 21[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"block_at" json:"block_at"'}
-        ];
-    string block_reason = 22[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"block_reason" json:"block_reason"'}
-        ];
-    string remote_ip = 23[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"-"'}
-        ];
-    string user_agent = 24[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"-"'}
-        ];
-    repeated string available_namespace = 26[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"-" json:"available_namespace"'}
-        ];
+    // @gotags: bson:"session_id" json:"session_id"
+    string session_id = 2;
+    // @gotags: bson:"_id" json:"access_token"
+    string access_token = 3;
+    // @gotags: bson:"refresh_token" json:"refresh_token,omitempty"
+    string refresh_token = 4;
+    // @gotags: bson:"create_at" json:"create_at,omitempty"
+    int64 create_at = 5;
+    // @gotags: bson:"access_expired_at" json:"access_expired_at,omitempty"
+    int64 access_expired_at = 6;
+    // @gotags: bson:"refresh_expired_at" json:"refresh_expired_at,omitempty"
+    int64 refresh_expired_at = 7;
+    // @gotags: bson:"domain" json:"domain,omitempty"
+    string domain = 8;
+    // @gotags: bson:"user_type" json:"user_type"
+    user.UserType user_type = 9;
+    // @gotags: bson:"account" json:"account"
+    string account = 10;
+    // @gotags: bson:"application_id" json:"application_id"
+    string application_id = 11;
+    // @gotags: bson:"application_name" json:"application_name"
+    string application_name = 12;
+    // @gotags: bson:"client_id" json:"client_id"
+    string client_id = 13;
+    // @gotags: bson:"start_grant_type" json:"start_grant_type"
+    GrantType start_grant_type = 14;
+    // @gotags: bson:"grant_type" json:"grant_type"
+    GrantType grant_type = 15;
+    // @gotags: bson:"type" json:"type"
+    TokenType type = 16;
+    // @gotags: bson:"namespace" json:"namespace"
+    string namespace = 25;
+    // @gotags: bson:"scope" json:"scope"
+    string scope = 17;
+    // @gotags: bson:"description" json:"description"
+    string description = 18;
+    // @gotags: bson:"is_block" json:"is_block"
+    bool is_block = 19;
+    // @gotags: bson:"block_type" json:"block_type"
+    BlockType block_type = 20;
+    // @gotags: bson:"block_at" json:"block_at"
+    int64 block_at = 21;
+    // @gotags: bson:"block_reason" json:"block_reason"
+    string block_reason = 22;
+    // @gotags: bson:"-" json:"-"
+    string remote_ip = 23;
+    // @gotags: bson:"-" json:"-"
+    string user_agent = 24;
+    // @gotags: bson:"-" json:"available_namespace"
+    repeated string available_namespace = 26;
 }
 
 message Set {
-    int64 total = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"total" json:"total"'}
-        ];
-    repeated Token items = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'bson:"items" json:"items"'}
-        ];
+    // @gotags: bson:"total" json:"total"
+    int64 total = 1;
+    // @gotags: bson:"items" json:"items"
+    repeated Token items = 2;
 }

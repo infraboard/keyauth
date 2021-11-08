@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package keyauth.role;
+package infraboard.keyauth.role;
 option go_package = "github.com/infraboard/keyauth/pkg/role";
 
 // RoleType 角色
