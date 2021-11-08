@@ -1,9 +1,8 @@
 syntax = "proto3";
 
-package keyauth.application;
+package infraboard.keyauth.application;
 option go_package = "github.com/infraboard/keyauth/pkg/application";
 
-import "github.com/infraboard/mcube/cmd/protoc-gen-go-ext/extension/tag/tag.proto";
 import "github.com/infraboard/mcube/pb/page/page.proto";
 
 enum ClientType {
@@ -14,54 +13,45 @@ enum ClientType {
 // CreateApplicatonRequest 创建应用请求
 message CreateApplicatonRequest {
     // 是否是内建应用
-    bool build_in =9[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"build_in"'}
-        ];
+    // @gotags: json:"build_in"
+    bool build_in =9;
     // 所处于域
-    string domain =10[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"domain" validate:"required"'}
-        ];
+    // @gotags: json:"domain" validate:"required"
+    string domain =10;
     // 应用属于那个用户
-    string create_by = 11[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"create_by"'}
-        ];
+    // @gotags: json:"create_by"
+    string create_by = 11;
     // 应用名称
-    string name = 1[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"name" validate:"required"'}
-        ];
-     // 应用的网站地址
-    string website = 2[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"website"'}
-        ];
+    // @gotags: json:"name" validate:"required"
+    string name = 1;
+    // 应用的网站地址
+    // @gotags: json:"website"
+    string website = 2;
     // 应用的LOGO
-    string logo_image = 3[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"logo_image"'}
-        ];
+    // @gotags: json:"logo_image"
+    string logo_image = 3;
     // 应用简单的描述
-    string description = 4[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"description"'}
-        ];
+    // @gotags: json:"description"
+    string description = 4;
     // 应用重定向URI, Oauht2时需要该参数
-    string redirect_uri = 5[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"redirect_uri"'}
-        ];
+    // @gotags: json:"redirect_uri"
+    string redirect_uri = 5;
     // 应用申请的token的过期时间
-    int64 access_token_expire_second = 6[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"access_token_expire_second"'}
-        ];
+    // @gotags: json:"access_token_expire_second"
+    int64 access_token_expire_second = 6;
     // 刷新token过期时间
-    int64 refresh_token_expire_second = 7[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"refresh_token_expire_second"'}
-        ];
+    // @gotags: json:"refresh_token_expire_second"
+    int64 refresh_token_expire_second = 7;
     // 客户端类型
-    ClientType client_type = 8[
-        (google.protobuf.field_tag) = {struct_tag: 'json:"client_type"'}
-        ];
+    // @gotags: json:"client_type"
+    ClientType client_type = 8;
 }
 
 // DescribeApplicationRequest 查询应用详情
 message DescribeApplicationRequest {
+    // @gotags: json:"id"
     string id = 1;
+    // @gotags: json:"client_id"
     string client_id = 2;
 }
 
@@ -72,7 +62,7 @@ message DeleteApplicationRequest {
 
 // QueryApplicationRequest 查询应用列表
 message QueryApplicationRequest {
-    page.PageRequest page = 1 ;
+    infraboard.mcube.page.PageRequest page = 1 ;
     string account = 3;
 }
 

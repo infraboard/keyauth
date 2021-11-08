@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package keyauth.application;
+package infraboard.keyauth.application;
 option go_package = "github.com/infraboard/keyauth/pkg/application";
 
 import "pkg/application/pb/request.proto";
