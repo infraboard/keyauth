@@ -36,7 +36,7 @@ func NewDomainServiceClient(cc grpc.ClientConnInterface) DomainServiceClient {
 
 func (c *domainServiceClient) CreateDomain(ctx context.Context, in *CreateDomainRequest, opts ...grpc.CallOption) (*Domain, error) {
 	out := new(Domain)
-	err := c.cc.Invoke(ctx, "/keyauth.domain.DomainService/CreateDomain", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.domain.DomainService/CreateDomain", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func (c *domainServiceClient) CreateDomain(ctx context.Context, in *CreateDomain
 
 func (c *domainServiceClient) UpdateDomain(ctx context.Context, in *UpdateDomainInfoRequest, opts ...grpc.CallOption) (*Domain, error) {
 	out := new(Domain)
-	err := c.cc.Invoke(ctx, "/keyauth.domain.DomainService/UpdateDomain", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.domain.DomainService/UpdateDomain", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +54,7 @@ func (c *domainServiceClient) UpdateDomain(ctx context.Context, in *UpdateDomain
 
 func (c *domainServiceClient) DescribeDomain(ctx context.Context, in *DescribeDomainRequest, opts ...grpc.CallOption) (*Domain, error) {
 	out := new(Domain)
-	err := c.cc.Invoke(ctx, "/keyauth.domain.DomainService/DescribeDomain", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.domain.DomainService/DescribeDomain", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +63,7 @@ func (c *domainServiceClient) DescribeDomain(ctx context.Context, in *DescribeDo
 
 func (c *domainServiceClient) QueryDomain(ctx context.Context, in *QueryDomainRequest, opts ...grpc.CallOption) (*Set, error) {
 	out := new(Set)
-	err := c.cc.Invoke(ctx, "/keyauth.domain.DomainService/QueryDomain", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.domain.DomainService/QueryDomain", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +72,7 @@ func (c *domainServiceClient) QueryDomain(ctx context.Context, in *QueryDomainRe
 
 func (c *domainServiceClient) DeleteDomain(ctx context.Context, in *DeleteDomainRequest, opts ...grpc.CallOption) (*Domain, error) {
 	out := new(Domain)
-	err := c.cc.Invoke(ctx, "/keyauth.domain.DomainService/DeleteDomain", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.domain.DomainService/DeleteDomain", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +81,7 @@ func (c *domainServiceClient) DeleteDomain(ctx context.Context, in *DeleteDomain
 
 func (c *domainServiceClient) UpdateDomainSecurity(ctx context.Context, in *UpdateDomainSecurityRequest, opts ...grpc.CallOption) (*SecuritySetting, error) {
 	out := new(SecuritySetting)
-	err := c.cc.Invoke(ctx, "/keyauth.domain.DomainService/UpdateDomainSecurity", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.domain.DomainService/UpdateDomainSecurity", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -146,7 +146,7 @@ func _DomainService_CreateDomain_Handler(srv interface{}, ctx context.Context, d
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.domain.DomainService/CreateDomain",
+		FullMethod: "/infraboard.keyauth.domain.DomainService/CreateDomain",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DomainServiceServer).CreateDomain(ctx, req.(*CreateDomainRequest))
@@ -164,7 +164,7 @@ func _DomainService_UpdateDomain_Handler(srv interface{}, ctx context.Context, d
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.domain.DomainService/UpdateDomain",
+		FullMethod: "/infraboard.keyauth.domain.DomainService/UpdateDomain",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DomainServiceServer).UpdateDomain(ctx, req.(*UpdateDomainInfoRequest))
@@ -182,7 +182,7 @@ func _DomainService_DescribeDomain_Handler(srv interface{}, ctx context.Context,
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.domain.DomainService/DescribeDomain",
+		FullMethod: "/infraboard.keyauth.domain.DomainService/DescribeDomain",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DomainServiceServer).DescribeDomain(ctx, req.(*DescribeDomainRequest))
@@ -200,7 +200,7 @@ func _DomainService_QueryDomain_Handler(srv interface{}, ctx context.Context, de
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.domain.DomainService/QueryDomain",
+		FullMethod: "/infraboard.keyauth.domain.DomainService/QueryDomain",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DomainServiceServer).QueryDomain(ctx, req.(*QueryDomainRequest))
@@ -218,7 +218,7 @@ func _DomainService_DeleteDomain_Handler(srv interface{}, ctx context.Context, d
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.domain.DomainService/DeleteDomain",
+		FullMethod: "/infraboard.keyauth.domain.DomainService/DeleteDomain",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DomainServiceServer).DeleteDomain(ctx, req.(*DeleteDomainRequest))
@@ -236,7 +236,7 @@ func _DomainService_UpdateDomainSecurity_Handler(srv interface{}, ctx context.Co
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.domain.DomainService/UpdateDomainSecurity",
+		FullMethod: "/infraboard.keyauth.domain.DomainService/UpdateDomainSecurity",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DomainServiceServer).UpdateDomainSecurity(ctx, req.(*UpdateDomainSecurityRequest))
@@ -248,7 +248,7 @@ func _DomainService_UpdateDomainSecurity_Handler(srv interface{}, ctx context.Co
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var DomainService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "keyauth.domain.DomainService",
+	ServiceName: "infraboard.keyauth.domain.DomainService",
 	HandlerType: (*DomainServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

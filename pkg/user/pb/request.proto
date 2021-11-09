@@ -80,7 +80,7 @@ message DescribeAccountRequest {
 // QueryAccountRequest 获取子账号列表
 message QueryAccountRequest {
     // @gotags: json:"page"
-    page.PageRequest page = 1;
+   infraboard.mcube.page.PageRequest page = 1;
     // @gotags: json:"accounts"
     repeated string accounts = 2;
     // @gotags: json:"user_type"
@@ -105,7 +105,7 @@ message QueryAccountRequest {
 message UpdateAccountRequest {
     // 更新模式
     // @gotags: json:"update_mode"
-    common.types.UpdateMode update_mode = 1;
+    infraboard.keyauth.types.UpdateMode update_mode = 1;
     // 用户账号名称
     // @gotags: json:"account" validate:"required,lte=120"
     string account = 2;

@@ -1,4 +1,4 @@
-package grpc
+package impl
 
 import (
 	"github.com/infraboard/mcube/exception"

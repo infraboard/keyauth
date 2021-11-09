@@ -35,7 +35,7 @@ func NewTagServiceClient(cc grpc.ClientConnInterface) TagServiceClient {
 
 func (c *tagServiceClient) CreateTag(ctx context.Context, in *CreateTagRequest, opts ...grpc.CallOption) (*TagKey, error) {
 	out := new(TagKey)
-	err := c.cc.Invoke(ctx, "/keyauth.tag.TagService/CreateTag", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.tag.TagService/CreateTag", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +44,7 @@ func (c *tagServiceClient) CreateTag(ctx context.Context, in *CreateTagRequest, 
 
 func (c *tagServiceClient) DescribeTag(ctx context.Context, in *DescribeTagRequest, opts ...grpc.CallOption) (*TagKey, error) {
 	out := new(TagKey)
-	err := c.cc.Invoke(ctx, "/keyauth.tag.TagService/DescribeTag", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.tag.TagService/DescribeTag", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +53,7 @@ func (c *tagServiceClient) DescribeTag(ctx context.Context, in *DescribeTagReque
 
 func (c *tagServiceClient) DeleteTag(ctx context.Context, in *DeleteTagRequest, opts ...grpc.CallOption) (*TagKey, error) {
 	out := new(TagKey)
-	err := c.cc.Invoke(ctx, "/keyauth.tag.TagService/DeleteTag", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.tag.TagService/DeleteTag", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +62,7 @@ func (c *tagServiceClient) DeleteTag(ctx context.Context, in *DeleteTagRequest, 
 
 func (c *tagServiceClient) QueryTagKey(ctx context.Context, in *QueryTagKeyRequest, opts ...grpc.CallOption) (*TagKeySet, error) {
 	out := new(TagKeySet)
-	err := c.cc.Invoke(ctx, "/keyauth.tag.TagService/QueryTagKey", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.tag.TagService/QueryTagKey", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +71,7 @@ func (c *tagServiceClient) QueryTagKey(ctx context.Context, in *QueryTagKeyReque
 
 func (c *tagServiceClient) QueryTagValue(ctx context.Context, in *QueryTagValueRequest, opts ...grpc.CallOption) (*TagValueSet, error) {
 	out := new(TagValueSet)
-	err := c.cc.Invoke(ctx, "/keyauth.tag.TagService/QueryTagValue", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.tag.TagService/QueryTagValue", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -132,7 +132,7 @@ func _TagService_CreateTag_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.tag.TagService/CreateTag",
+		FullMethod: "/infraboard.keyauth.tag.TagService/CreateTag",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TagServiceServer).CreateTag(ctx, req.(*CreateTagRequest))
@@ -150,7 +150,7 @@ func _TagService_DescribeTag_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.tag.TagService/DescribeTag",
+		FullMethod: "/infraboard.keyauth.tag.TagService/DescribeTag",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TagServiceServer).DescribeTag(ctx, req.(*DescribeTagRequest))
@@ -168,7 +168,7 @@ func _TagService_DeleteTag_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.tag.TagService/DeleteTag",
+		FullMethod: "/infraboard.keyauth.tag.TagService/DeleteTag",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TagServiceServer).DeleteTag(ctx, req.(*DeleteTagRequest))
@@ -186,7 +186,7 @@ func _TagService_QueryTagKey_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.tag.TagService/QueryTagKey",
+		FullMethod: "/infraboard.keyauth.tag.TagService/QueryTagKey",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TagServiceServer).QueryTagKey(ctx, req.(*QueryTagKeyRequest))
@@ -204,7 +204,7 @@ func _TagService_QueryTagValue_Handler(srv interface{}, ctx context.Context, dec
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.tag.TagService/QueryTagValue",
+		FullMethod: "/infraboard.keyauth.tag.TagService/QueryTagValue",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TagServiceServer).QueryTagValue(ctx, req.(*QueryTagValueRequest))
@@ -216,7 +216,7 @@ func _TagService_QueryTagValue_Handler(srv interface{}, ctx context.Context, dec
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var TagService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "keyauth.tag.TagService",
+	ServiceName: "infraboard.keyauth.tag.TagService",
 	HandlerType: (*TagServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

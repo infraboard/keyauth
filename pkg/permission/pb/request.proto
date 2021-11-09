@@ -8,7 +8,7 @@ import "github.com/infraboard/mcube/pb/page/page.proto";
 // QueryPermissionRequest 查询用户权限
 message QueryPermissionRequest {
     // @gotags: json:"page"
-    page.PageRequest page = 1;
+   infraboard.mcube.page.PageRequest page = 1;
     // @gotags: json:"namespace_id"
     string namespace_id = 2;
 }
@@ -16,7 +16,7 @@ message QueryPermissionRequest {
 // QueryRoleRequest 查询用户权限
 message QueryRoleRequest {
     // @gotags: json:"page"
-    page.PageRequest page = 1;
+   infraboard.mcube.page.PageRequest page = 1;
     // @gotags: json:"namespace_id"
     string namespace_id = 2;
     // @gotags: json:"with_permission"
@@ -26,7 +26,7 @@ message QueryRoleRequest {
 // CheckPermissionRequest todo
 message CheckPermissionRequest {
     // @gotags: json:"page"
-    page.PageRequest page = 1;
+   infraboard.mcube.page.PageRequest page = 1;
     // @gotags: json:"namespace_id"
     string namespace_id = 2;
     // @gotags: json:"endpoint_id"

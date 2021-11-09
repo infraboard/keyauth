@@ -34,7 +34,7 @@ func NewNamespaceServiceClient(cc grpc.ClientConnInterface) NamespaceServiceClie
 
 func (c *namespaceServiceClient) CreateNamespace(ctx context.Context, in *CreateNamespaceRequest, opts ...grpc.CallOption) (*Namespace, error) {
 	out := new(Namespace)
-	err := c.cc.Invoke(ctx, "/keyauth.namespace.NamespaceService/CreateNamespace", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.namespace.NamespaceService/CreateNamespace", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +43,7 @@ func (c *namespaceServiceClient) CreateNamespace(ctx context.Context, in *Create
 
 func (c *namespaceServiceClient) QueryNamespace(ctx context.Context, in *QueryNamespaceRequest, opts ...grpc.CallOption) (*Set, error) {
 	out := new(Set)
-	err := c.cc.Invoke(ctx, "/keyauth.namespace.NamespaceService/QueryNamespace", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.namespace.NamespaceService/QueryNamespace", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +52,7 @@ func (c *namespaceServiceClient) QueryNamespace(ctx context.Context, in *QueryNa
 
 func (c *namespaceServiceClient) DescribeNamespace(ctx context.Context, in *DescriptNamespaceRequest, opts ...grpc.CallOption) (*Namespace, error) {
 	out := new(Namespace)
-	err := c.cc.Invoke(ctx, "/keyauth.namespace.NamespaceService/DescribeNamespace", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.namespace.NamespaceService/DescribeNamespace", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +61,7 @@ func (c *namespaceServiceClient) DescribeNamespace(ctx context.Context, in *Desc
 
 func (c *namespaceServiceClient) DeleteNamespace(ctx context.Context, in *DeleteNamespaceRequest, opts ...grpc.CallOption) (*Namespace, error) {
 	out := new(Namespace)
-	err := c.cc.Invoke(ctx, "/keyauth.namespace.NamespaceService/DeleteNamespace", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.namespace.NamespaceService/DeleteNamespace", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -118,7 +118,7 @@ func _NamespaceService_CreateNamespace_Handler(srv interface{}, ctx context.Cont
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.namespace.NamespaceService/CreateNamespace",
+		FullMethod: "/infraboard.keyauth.namespace.NamespaceService/CreateNamespace",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(NamespaceServiceServer).CreateNamespace(ctx, req.(*CreateNamespaceRequest))
@@ -136,7 +136,7 @@ func _NamespaceService_QueryNamespace_Handler(srv interface{}, ctx context.Conte
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.namespace.NamespaceService/QueryNamespace",
+		FullMethod: "/infraboard.keyauth.namespace.NamespaceService/QueryNamespace",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(NamespaceServiceServer).QueryNamespace(ctx, req.(*QueryNamespaceRequest))
@@ -154,7 +154,7 @@ func _NamespaceService_DescribeNamespace_Handler(srv interface{}, ctx context.Co
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.namespace.NamespaceService/DescribeNamespace",
+		FullMethod: "/infraboard.keyauth.namespace.NamespaceService/DescribeNamespace",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(NamespaceServiceServer).DescribeNamespace(ctx, req.(*DescriptNamespaceRequest))
@@ -172,7 +172,7 @@ func _NamespaceService_DeleteNamespace_Handler(srv interface{}, ctx context.Cont
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.namespace.NamespaceService/DeleteNamespace",
+		FullMethod: "/infraboard.keyauth.namespace.NamespaceService/DeleteNamespace",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(NamespaceServiceServer).DeleteNamespace(ctx, req.(*DeleteNamespaceRequest))
@@ -184,7 +184,7 @@ func _NamespaceService_DeleteNamespace_Handler(srv interface{}, ctx context.Cont
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var NamespaceService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "keyauth.namespace.NamespaceService",
+	ServiceName: "infraboard.keyauth.namespace.NamespaceService",
 	HandlerType: (*NamespaceServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

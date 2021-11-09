@@ -35,7 +35,7 @@ message CreateMicroRequest {
 // QueryMicroRequest 查询应用列表
 message QueryMicroRequest {
     // @gotags: json:"page"
-    page.PageRequest page = 1;
+   infraboard.mcube.page.PageRequest page = 1;
     // 服务类型
     // @gotags: json:"type"
     Type type = 2;

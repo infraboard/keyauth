@@ -22,12 +22,12 @@ message DescribeSessionRequest {
 
 // QuerySessionRequest todo
 message QuerySessionRequest {
-    page.PageRequest page = 1 ;
+   infraboard.mcube.page.PageRequest page = 1 ;
     string account = 2;
     string login_ip = 3;
     string login_city = 4;
     string application_id = 5;
-    keyauth.token.GrantType grant_type = 6;
+    infraboard.keyauth.token.GrantType grant_type = 6;
     int64 start_login_time = 7;
     int64 end_login_time = 8;
     string domain = 9;

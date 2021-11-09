@@ -34,7 +34,7 @@ func NewPermissionServiceClient(cc grpc.ClientConnInterface) PermissionServiceCl
 
 func (c *permissionServiceClient) QueryPermission(ctx context.Context, in *QueryPermissionRequest, opts ...grpc.CallOption) (*role.PermissionSet, error) {
 	out := new(role.PermissionSet)
-	err := c.cc.Invoke(ctx, "/keyauth.permission.PermissionService/QueryPermission", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.permission.PermissionService/QueryPermission", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +43,7 @@ func (c *permissionServiceClient) QueryPermission(ctx context.Context, in *Query
 
 func (c *permissionServiceClient) QueryRole(ctx context.Context, in *QueryRoleRequest, opts ...grpc.CallOption) (*role.Set, error) {
 	out := new(role.Set)
-	err := c.cc.Invoke(ctx, "/keyauth.permission.PermissionService/QueryRole", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.permission.PermissionService/QueryRole", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +52,7 @@ func (c *permissionServiceClient) QueryRole(ctx context.Context, in *QueryRoleRe
 
 func (c *permissionServiceClient) CheckPermission(ctx context.Context, in *CheckPermissionRequest, opts ...grpc.CallOption) (*role.Permission, error) {
 	out := new(role.Permission)
-	err := c.cc.Invoke(ctx, "/keyauth.permission.PermissionService/CheckPermission", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.permission.PermissionService/CheckPermission", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -105,7 +105,7 @@ func _PermissionService_QueryPermission_Handler(srv interface{}, ctx context.Con
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.permission.PermissionService/QueryPermission",
+		FullMethod: "/infraboard.keyauth.permission.PermissionService/QueryPermission",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PermissionServiceServer).QueryPermission(ctx, req.(*QueryPermissionRequest))
@@ -123,7 +123,7 @@ func _PermissionService_QueryRole_Handler(srv interface{}, ctx context.Context, 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.permission.PermissionService/QueryRole",
+		FullMethod: "/infraboard.keyauth.permission.PermissionService/QueryRole",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PermissionServiceServer).QueryRole(ctx, req.(*QueryRoleRequest))
@@ -141,7 +141,7 @@ func _PermissionService_CheckPermission_Handler(srv interface{}, ctx context.Con
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.permission.PermissionService/CheckPermission",
+		FullMethod: "/infraboard.keyauth.permission.PermissionService/CheckPermission",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PermissionServiceServer).CheckPermission(ctx, req.(*CheckPermissionRequest))
@@ -153,7 +153,7 @@ func _PermissionService_CheckPermission_Handler(srv interface{}, ctx context.Con
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var PermissionService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "keyauth.permission.PermissionService",
+	ServiceName: "infraboard.keyauth.permission.PermissionService",
 	HandlerType: (*PermissionServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

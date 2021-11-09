@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package keyauth.common.types;
+package infraboard.keyauth.types;
 option go_package = "github.com/infraboard/keyauth/common/types";
 
 enum UpdateMode {

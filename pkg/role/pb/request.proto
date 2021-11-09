@@ -49,7 +49,7 @@ message CreatePermssionRequest {
 // QueryRoleRequest 列表查询
 message QueryRoleRequest {
     // @gotags: json:"page"
-    page.PageRequest page = 1;
+   infraboard.mcube.page.PageRequest page = 1;
     // @gotags: json:"type"
     RoleType type = 2;
     // @gotags: json:"domain"
@@ -78,7 +78,7 @@ message DeleteRoleRequest {
 
 message QueryPermissionRequest {
     // @gotags: bson:"page" json:"page"
-    page.PageRequest page = 1;
+   infraboard.mcube.page.PageRequest page = 1;
     // @gotags: json:"role_id" validate:"required,lte=64"
     string role_id = 2;
     // @gotags: json:"skip_itmes"

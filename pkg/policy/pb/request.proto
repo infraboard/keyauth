@@ -31,7 +31,7 @@ message CreatePolicyRequest {
 // QueryPolicyRequest 获取子账号列表
 message QueryPolicyRequest {
     // @gotags: bson:"page" json:"page"
-    page.PageRequest page = 1;
+   infraboard.mcube.page.PageRequest page = 1;
     // @gotags: json:"account,omitempty"
     string account = 2;
     // @gotags: json:"role_id,omitempty"

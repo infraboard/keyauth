@@ -1,4 +1,4 @@
-package grpc
+package impl
 
 import (
 	"context"
@@ -61,7 +61,7 @@ func (s *service) QueryEndpoints(ctx context.Context, req *endpoint.QueryEndpoin
 	return set, nil
 }
 
-func (s *service) Registry(ctx context.Context, req *endpoint.RegistryRequest) (*endpoint.RegistryResponse, error) {
+func (s *service) RegistryEndpoint(ctx context.Context, req *endpoint.RegistryRequest) (*endpoint.RegistryResponse, error) {
 	rctx, err := pkg.GetGrpcInCtx(ctx)
 	if err != nil {
 		return nil, err

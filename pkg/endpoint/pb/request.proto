@@ -13,7 +13,7 @@ message RegistryRequest {
         // @gotags: json:"version" validate:"required,lte=32"
 	string version = 3;
          // @gotags: json:"entries"
-	repeated mcube.http.Entry entries = 4;
+	repeated infraboard.mcube.http.Entry entries = 4;
 }
 
 // RegistryReponse todo
@@ -31,7 +31,7 @@ message DescribeEndpointRequest {
 // QueryEndpointRequest 查询应用列表
 message QueryEndpointRequest {
         // @gotags: json:"page"
-        page.PageRequest page = 1;
+        infraboard.mcube.page.PageRequest page = 1;
         // @gotags: json:"service_ids"
 	repeated string service_ids = 2;
         // @gotags: json:"path"
@@ -57,7 +57,7 @@ message DeleteEndpointRequest {
 // QueryResourceRequest todo
 message QueryResourceRequest {
         // @gotags: json:"page"
-        page.PageRequest page = 1;
+        infraboard.mcube.page.PageRequest page = 1;
         // @gotags: json:"service_ids"
 	repeated string service_ids = 2;
         // @gotags: json:"resources"

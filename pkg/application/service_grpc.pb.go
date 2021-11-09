@@ -34,7 +34,7 @@ func NewApplicationServiceClient(cc grpc.ClientConnInterface) ApplicationService
 
 func (c *applicationServiceClient) CreateApplication(ctx context.Context, in *CreateApplicatonRequest, opts ...grpc.CallOption) (*Application, error) {
 	out := new(Application)
-	err := c.cc.Invoke(ctx, "/keyauth.application.ApplicationService/CreateApplication", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.application.ApplicationService/CreateApplication", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +43,7 @@ func (c *applicationServiceClient) CreateApplication(ctx context.Context, in *Cr
 
 func (c *applicationServiceClient) DescribeApplication(ctx context.Context, in *DescribeApplicationRequest, opts ...grpc.CallOption) (*Application, error) {
 	out := new(Application)
-	err := c.cc.Invoke(ctx, "/keyauth.application.ApplicationService/DescribeApplication", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.application.ApplicationService/DescribeApplication", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +52,7 @@ func (c *applicationServiceClient) DescribeApplication(ctx context.Context, in *
 
 func (c *applicationServiceClient) QueryApplication(ctx context.Context, in *QueryApplicationRequest, opts ...grpc.CallOption) (*Set, error) {
 	out := new(Set)
-	err := c.cc.Invoke(ctx, "/keyauth.application.ApplicationService/QueryApplication", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.application.ApplicationService/QueryApplication", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +61,7 @@ func (c *applicationServiceClient) QueryApplication(ctx context.Context, in *Que
 
 func (c *applicationServiceClient) DeleteApplication(ctx context.Context, in *DeleteApplicationRequest, opts ...grpc.CallOption) (*Application, error) {
 	out := new(Application)
-	err := c.cc.Invoke(ctx, "/keyauth.application.ApplicationService/DeleteApplication", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.application.ApplicationService/DeleteApplication", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -118,7 +118,7 @@ func _ApplicationService_CreateApplication_Handler(srv interface{}, ctx context.
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.application.ApplicationService/CreateApplication",
+		FullMethod: "/infraboard.keyauth.application.ApplicationService/CreateApplication",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ApplicationServiceServer).CreateApplication(ctx, req.(*CreateApplicatonRequest))
@@ -136,7 +136,7 @@ func _ApplicationService_DescribeApplication_Handler(srv interface{}, ctx contex
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.application.ApplicationService/DescribeApplication",
+		FullMethod: "/infraboard.keyauth.application.ApplicationService/DescribeApplication",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ApplicationServiceServer).DescribeApplication(ctx, req.(*DescribeApplicationRequest))
@@ -154,7 +154,7 @@ func _ApplicationService_QueryApplication_Handler(srv interface{}, ctx context.C
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.application.ApplicationService/QueryApplication",
+		FullMethod: "/infraboard.keyauth.application.ApplicationService/QueryApplication",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ApplicationServiceServer).QueryApplication(ctx, req.(*QueryApplicationRequest))
@@ -172,7 +172,7 @@ func _ApplicationService_DeleteApplication_Handler(srv interface{}, ctx context.
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.application.ApplicationService/DeleteApplication",
+		FullMethod: "/infraboard.keyauth.application.ApplicationService/DeleteApplication",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ApplicationServiceServer).DeleteApplication(ctx, req.(*DeleteApplicationRequest))
@@ -184,7 +184,7 @@ func _ApplicationService_DeleteApplication_Handler(srv interface{}, ctx context.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var ApplicationService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "keyauth.application.ApplicationService",
+	ServiceName: "infraboard.keyauth.application.ApplicationService",
 	HandlerType: (*ApplicationServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

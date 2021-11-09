@@ -39,7 +39,7 @@ func NewRoleServiceClient(cc grpc.ClientConnInterface) RoleServiceClient {
 
 func (c *roleServiceClient) CreateRole(ctx context.Context, in *CreateRoleRequest, opts ...grpc.CallOption) (*Role, error) {
 	out := new(Role)
-	err := c.cc.Invoke(ctx, "/keyauth.role.RoleService/CreateRole", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.role.RoleService/CreateRole", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +48,7 @@ func (c *roleServiceClient) CreateRole(ctx context.Context, in *CreateRoleReques
 
 func (c *roleServiceClient) QueryRole(ctx context.Context, in *QueryRoleRequest, opts ...grpc.CallOption) (*Set, error) {
 	out := new(Set)
-	err := c.cc.Invoke(ctx, "/keyauth.role.RoleService/QueryRole", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.role.RoleService/QueryRole", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +57,7 @@ func (c *roleServiceClient) QueryRole(ctx context.Context, in *QueryRoleRequest,
 
 func (c *roleServiceClient) DescribeRole(ctx context.Context, in *DescribeRoleRequest, opts ...grpc.CallOption) (*Role, error) {
 	out := new(Role)
-	err := c.cc.Invoke(ctx, "/keyauth.role.RoleService/DescribeRole", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.role.RoleService/DescribeRole", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +66,7 @@ func (c *roleServiceClient) DescribeRole(ctx context.Context, in *DescribeRoleRe
 
 func (c *roleServiceClient) DeleteRole(ctx context.Context, in *DeleteRoleRequest, opts ...grpc.CallOption) (*Role, error) {
 	out := new(Role)
-	err := c.cc.Invoke(ctx, "/keyauth.role.RoleService/DeleteRole", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.role.RoleService/DeleteRole", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +75,7 @@ func (c *roleServiceClient) DeleteRole(ctx context.Context, in *DeleteRoleReques
 
 func (c *roleServiceClient) QueryPermission(ctx context.Context, in *QueryPermissionRequest, opts ...grpc.CallOption) (*PermissionSet, error) {
 	out := new(PermissionSet)
-	err := c.cc.Invoke(ctx, "/keyauth.role.RoleService/QueryPermission", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.role.RoleService/QueryPermission", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -84,7 +84,7 @@ func (c *roleServiceClient) QueryPermission(ctx context.Context, in *QueryPermis
 
 func (c *roleServiceClient) DescribePermission(ctx context.Context, in *DescribePermissionRequest, opts ...grpc.CallOption) (*Permission, error) {
 	out := new(Permission)
-	err := c.cc.Invoke(ctx, "/keyauth.role.RoleService/DescribePermission", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.role.RoleService/DescribePermission", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -93,7 +93,7 @@ func (c *roleServiceClient) DescribePermission(ctx context.Context, in *Describe
 
 func (c *roleServiceClient) AddPermissionToRole(ctx context.Context, in *AddPermissionToRoleRequest, opts ...grpc.CallOption) (*PermissionSet, error) {
 	out := new(PermissionSet)
-	err := c.cc.Invoke(ctx, "/keyauth.role.RoleService/AddPermissionToRole", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.role.RoleService/AddPermissionToRole", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +102,7 @@ func (c *roleServiceClient) AddPermissionToRole(ctx context.Context, in *AddPerm
 
 func (c *roleServiceClient) RemovePermissionFromRole(ctx context.Context, in *RemovePermissionFromRoleRequest, opts ...grpc.CallOption) (*PermissionSet, error) {
 	out := new(PermissionSet)
-	err := c.cc.Invoke(ctx, "/keyauth.role.RoleService/RemovePermissionFromRole", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.role.RoleService/RemovePermissionFromRole", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -111,7 +111,7 @@ func (c *roleServiceClient) RemovePermissionFromRole(ctx context.Context, in *Re
 
 func (c *roleServiceClient) UpdatePermission(ctx context.Context, in *UpdatePermissionRequest, opts ...grpc.CallOption) (*Permission, error) {
 	out := new(Permission)
-	err := c.cc.Invoke(ctx, "/keyauth.role.RoleService/UpdatePermission", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.role.RoleService/UpdatePermission", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -188,7 +188,7 @@ func _RoleService_CreateRole_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.role.RoleService/CreateRole",
+		FullMethod: "/infraboard.keyauth.role.RoleService/CreateRole",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RoleServiceServer).CreateRole(ctx, req.(*CreateRoleRequest))
@@ -206,7 +206,7 @@ func _RoleService_QueryRole_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.role.RoleService/QueryRole",
+		FullMethod: "/infraboard.keyauth.role.RoleService/QueryRole",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RoleServiceServer).QueryRole(ctx, req.(*QueryRoleRequest))
@@ -224,7 +224,7 @@ func _RoleService_DescribeRole_Handler(srv interface{}, ctx context.Context, dec
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.role.RoleService/DescribeRole",
+		FullMethod: "/infraboard.keyauth.role.RoleService/DescribeRole",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RoleServiceServer).DescribeRole(ctx, req.(*DescribeRoleRequest))
@@ -242,7 +242,7 @@ func _RoleService_DeleteRole_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.role.RoleService/DeleteRole",
+		FullMethod: "/infraboard.keyauth.role.RoleService/DeleteRole",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RoleServiceServer).DeleteRole(ctx, req.(*DeleteRoleRequest))
@@ -260,7 +260,7 @@ func _RoleService_QueryPermission_Handler(srv interface{}, ctx context.Context, 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.role.RoleService/QueryPermission",
+		FullMethod: "/infraboard.keyauth.role.RoleService/QueryPermission",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RoleServiceServer).QueryPermission(ctx, req.(*QueryPermissionRequest))
@@ -278,7 +278,7 @@ func _RoleService_DescribePermission_Handler(srv interface{}, ctx context.Contex
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.role.RoleService/DescribePermission",
+		FullMethod: "/infraboard.keyauth.role.RoleService/DescribePermission",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RoleServiceServer).DescribePermission(ctx, req.(*DescribePermissionRequest))
@@ -296,7 +296,7 @@ func _RoleService_AddPermissionToRole_Handler(srv interface{}, ctx context.Conte
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.role.RoleService/AddPermissionToRole",
+		FullMethod: "/infraboard.keyauth.role.RoleService/AddPermissionToRole",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RoleServiceServer).AddPermissionToRole(ctx, req.(*AddPermissionToRoleRequest))
@@ -314,7 +314,7 @@ func _RoleService_RemovePermissionFromRole_Handler(srv interface{}, ctx context.
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.role.RoleService/RemovePermissionFromRole",
+		FullMethod: "/infraboard.keyauth.role.RoleService/RemovePermissionFromRole",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RoleServiceServer).RemovePermissionFromRole(ctx, req.(*RemovePermissionFromRoleRequest))
@@ -332,7 +332,7 @@ func _RoleService_UpdatePermission_Handler(srv interface{}, ctx context.Context,
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.role.RoleService/UpdatePermission",
+		FullMethod: "/infraboard.keyauth.role.RoleService/UpdatePermission",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RoleServiceServer).UpdatePermission(ctx, req.(*UpdatePermissionRequest))
@@ -344,7 +344,7 @@ func _RoleService_UpdatePermission_Handler(srv interface{}, ctx context.Context,
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var RoleService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "keyauth.role.RoleService",
+	ServiceName: "infraboard.keyauth.role.RoleService",
 	HandlerType: (*RoleServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

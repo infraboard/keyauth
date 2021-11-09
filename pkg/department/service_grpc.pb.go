@@ -39,7 +39,7 @@ func NewDepartmentServiceClient(cc grpc.ClientConnInterface) DepartmentServiceCl
 
 func (c *departmentServiceClient) QueryDepartment(ctx context.Context, in *QueryDepartmentRequest, opts ...grpc.CallOption) (*Set, error) {
 	out := new(Set)
-	err := c.cc.Invoke(ctx, "/keyauth.department.DepartmentService/QueryDepartment", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.department.DepartmentService/QueryDepartment", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +48,7 @@ func (c *departmentServiceClient) QueryDepartment(ctx context.Context, in *Query
 
 func (c *departmentServiceClient) DescribeDepartment(ctx context.Context, in *DescribeDeparmentRequest, opts ...grpc.CallOption) (*Department, error) {
 	out := new(Department)
-	err := c.cc.Invoke(ctx, "/keyauth.department.DepartmentService/DescribeDepartment", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.department.DepartmentService/DescribeDepartment", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +57,7 @@ func (c *departmentServiceClient) DescribeDepartment(ctx context.Context, in *De
 
 func (c *departmentServiceClient) CreateDepartment(ctx context.Context, in *CreateDepartmentRequest, opts ...grpc.CallOption) (*Department, error) {
 	out := new(Department)
-	err := c.cc.Invoke(ctx, "/keyauth.department.DepartmentService/CreateDepartment", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.department.DepartmentService/CreateDepartment", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +66,7 @@ func (c *departmentServiceClient) CreateDepartment(ctx context.Context, in *Crea
 
 func (c *departmentServiceClient) UpdateDepartment(ctx context.Context, in *UpdateDepartmentRequest, opts ...grpc.CallOption) (*Department, error) {
 	out := new(Department)
-	err := c.cc.Invoke(ctx, "/keyauth.department.DepartmentService/UpdateDepartment", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.department.DepartmentService/UpdateDepartment", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +75,7 @@ func (c *departmentServiceClient) UpdateDepartment(ctx context.Context, in *Upda
 
 func (c *departmentServiceClient) DeleteDepartment(ctx context.Context, in *DeleteDepartmentRequest, opts ...grpc.CallOption) (*Department, error) {
 	out := new(Department)
-	err := c.cc.Invoke(ctx, "/keyauth.department.DepartmentService/DeleteDepartment", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.department.DepartmentService/DeleteDepartment", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -84,7 +84,7 @@ func (c *departmentServiceClient) DeleteDepartment(ctx context.Context, in *Dele
 
 func (c *departmentServiceClient) QueryApplicationForm(ctx context.Context, in *QueryApplicationFormRequet, opts ...grpc.CallOption) (*ApplicationFormSet, error) {
 	out := new(ApplicationFormSet)
-	err := c.cc.Invoke(ctx, "/keyauth.department.DepartmentService/QueryApplicationForm", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.department.DepartmentService/QueryApplicationForm", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -93,7 +93,7 @@ func (c *departmentServiceClient) QueryApplicationForm(ctx context.Context, in *
 
 func (c *departmentServiceClient) DescribeApplicationForm(ctx context.Context, in *DescribeApplicationFormRequet, opts ...grpc.CallOption) (*ApplicationForm, error) {
 	out := new(ApplicationForm)
-	err := c.cc.Invoke(ctx, "/keyauth.department.DepartmentService/DescribeApplicationForm", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.department.DepartmentService/DescribeApplicationForm", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +102,7 @@ func (c *departmentServiceClient) DescribeApplicationForm(ctx context.Context, i
 
 func (c *departmentServiceClient) JoinDepartment(ctx context.Context, in *JoinDepartmentRequest, opts ...grpc.CallOption) (*ApplicationForm, error) {
 	out := new(ApplicationForm)
-	err := c.cc.Invoke(ctx, "/keyauth.department.DepartmentService/JoinDepartment", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.department.DepartmentService/JoinDepartment", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -111,7 +111,7 @@ func (c *departmentServiceClient) JoinDepartment(ctx context.Context, in *JoinDe
 
 func (c *departmentServiceClient) DealApplicationForm(ctx context.Context, in *DealApplicationFormRequest, opts ...grpc.CallOption) (*ApplicationForm, error) {
 	out := new(ApplicationForm)
-	err := c.cc.Invoke(ctx, "/keyauth.department.DepartmentService/DealApplicationForm", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.department.DepartmentService/DealApplicationForm", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -188,7 +188,7 @@ func _DepartmentService_QueryDepartment_Handler(srv interface{}, ctx context.Con
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.department.DepartmentService/QueryDepartment",
+		FullMethod: "/infraboard.keyauth.department.DepartmentService/QueryDepartment",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DepartmentServiceServer).QueryDepartment(ctx, req.(*QueryDepartmentRequest))
@@ -206,7 +206,7 @@ func _DepartmentService_DescribeDepartment_Handler(srv interface{}, ctx context.
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.department.DepartmentService/DescribeDepartment",
+		FullMethod: "/infraboard.keyauth.department.DepartmentService/DescribeDepartment",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DepartmentServiceServer).DescribeDepartment(ctx, req.(*DescribeDeparmentRequest))
@@ -224,7 +224,7 @@ func _DepartmentService_CreateDepartment_Handler(srv interface{}, ctx context.Co
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.department.DepartmentService/CreateDepartment",
+		FullMethod: "/infraboard.keyauth.department.DepartmentService/CreateDepartment",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DepartmentServiceServer).CreateDepartment(ctx, req.(*CreateDepartmentRequest))
@@ -242,7 +242,7 @@ func _DepartmentService_UpdateDepartment_Handler(srv interface{}, ctx context.Co
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.department.DepartmentService/UpdateDepartment",
+		FullMethod: "/infraboard.keyauth.department.DepartmentService/UpdateDepartment",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DepartmentServiceServer).UpdateDepartment(ctx, req.(*UpdateDepartmentRequest))
@@ -260,7 +260,7 @@ func _DepartmentService_DeleteDepartment_Handler(srv interface{}, ctx context.Co
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.department.DepartmentService/DeleteDepartment",
+		FullMethod: "/infraboard.keyauth.department.DepartmentService/DeleteDepartment",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DepartmentServiceServer).DeleteDepartment(ctx, req.(*DeleteDepartmentRequest))
@@ -278,7 +278,7 @@ func _DepartmentService_QueryApplicationForm_Handler(srv interface{}, ctx contex
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.department.DepartmentService/QueryApplicationForm",
+		FullMethod: "/infraboard.keyauth.department.DepartmentService/QueryApplicationForm",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DepartmentServiceServer).QueryApplicationForm(ctx, req.(*QueryApplicationFormRequet))
@@ -296,7 +296,7 @@ func _DepartmentService_DescribeApplicationForm_Handler(srv interface{}, ctx con
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.department.DepartmentService/DescribeApplicationForm",
+		FullMethod: "/infraboard.keyauth.department.DepartmentService/DescribeApplicationForm",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DepartmentServiceServer).DescribeApplicationForm(ctx, req.(*DescribeApplicationFormRequet))
@@ -314,7 +314,7 @@ func _DepartmentService_JoinDepartment_Handler(srv interface{}, ctx context.Cont
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.department.DepartmentService/JoinDepartment",
+		FullMethod: "/infraboard.keyauth.department.DepartmentService/JoinDepartment",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DepartmentServiceServer).JoinDepartment(ctx, req.(*JoinDepartmentRequest))
@@ -332,7 +332,7 @@ func _DepartmentService_DealApplicationForm_Handler(srv interface{}, ctx context
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.department.DepartmentService/DealApplicationForm",
+		FullMethod: "/infraboard.keyauth.department.DepartmentService/DealApplicationForm",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DepartmentServiceServer).DealApplicationForm(ctx, req.(*DealApplicationFormRequest))
@@ -344,7 +344,7 @@ func _DepartmentService_DealApplicationForm_Handler(srv interface{}, ctx context
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var DepartmentService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "keyauth.department.DepartmentService",
+	ServiceName: "infraboard.keyauth.department.DepartmentService",
 	HandlerType: (*DepartmentServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

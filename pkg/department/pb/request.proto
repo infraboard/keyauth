@@ -72,7 +72,7 @@ message DescribeDeparmentRequest {
 message UpdateDepartmentRequest {
     // 更新模式
     // @gotags: json:"update_mode"
-    common.types.UpdateMode update_mode = 1;
+    infraboard.keyauth.types.UpdateMode update_mode = 1;
     // @gotags: json:"id"
     string id = 2;
     // @gotags: json:"data"

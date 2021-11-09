@@ -35,7 +35,7 @@ func NewUserServiceClient(cc grpc.ClientConnInterface) UserServiceClient {
 
 func (c *userServiceClient) Login(ctx context.Context, in *token.Token, opts ...grpc.CallOption) (*Session, error) {
 	out := new(Session)
-	err := c.cc.Invoke(ctx, "/keyauth.session.UserService/Login", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.session.UserService/Login", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +44,7 @@ func (c *userServiceClient) Login(ctx context.Context, in *token.Token, opts ...
 
 func (c *userServiceClient) Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*Session, error) {
 	out := new(Session)
-	err := c.cc.Invoke(ctx, "/keyauth.session.UserService/Logout", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.session.UserService/Logout", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +53,7 @@ func (c *userServiceClient) Logout(ctx context.Context, in *LogoutRequest, opts 
 
 func (c *userServiceClient) DescribeSession(ctx context.Context, in *DescribeSessionRequest, opts ...grpc.CallOption) (*Session, error) {
 	out := new(Session)
-	err := c.cc.Invoke(ctx, "/keyauth.session.UserService/DescribeSession", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.session.UserService/DescribeSession", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +62,7 @@ func (c *userServiceClient) DescribeSession(ctx context.Context, in *DescribeSes
 
 func (c *userServiceClient) QuerySession(ctx context.Context, in *QuerySessionRequest, opts ...grpc.CallOption) (*Set, error) {
 	out := new(Set)
-	err := c.cc.Invoke(ctx, "/keyauth.session.UserService/QuerySession", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.session.UserService/QuerySession", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -119,7 +119,7 @@ func _UserService_Login_Handler(srv interface{}, ctx context.Context, dec func(i
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.session.UserService/Login",
+		FullMethod: "/infraboard.keyauth.session.UserService/Login",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).Login(ctx, req.(*token.Token))
@@ -137,7 +137,7 @@ func _UserService_Logout_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.session.UserService/Logout",
+		FullMethod: "/infraboard.keyauth.session.UserService/Logout",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).Logout(ctx, req.(*LogoutRequest))
@@ -155,7 +155,7 @@ func _UserService_DescribeSession_Handler(srv interface{}, ctx context.Context, 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.session.UserService/DescribeSession",
+		FullMethod: "/infraboard.keyauth.session.UserService/DescribeSession",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).DescribeSession(ctx, req.(*DescribeSessionRequest))
@@ -173,7 +173,7 @@ func _UserService_QuerySession_Handler(srv interface{}, ctx context.Context, dec
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.session.UserService/QuerySession",
+		FullMethod: "/infraboard.keyauth.session.UserService/QuerySession",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).QuerySession(ctx, req.(*QuerySessionRequest))
@@ -185,7 +185,7 @@ func _UserService_QuerySession_Handler(srv interface{}, ctx context.Context, dec
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var UserService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "keyauth.session.UserService",
+	ServiceName: "infraboard.keyauth.session.UserService",
 	HandlerType: (*UserServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -226,7 +226,7 @@ func NewAdminServiceClient(cc grpc.ClientConnInterface) AdminServiceClient {
 
 func (c *adminServiceClient) QueryUserLastSession(ctx context.Context, in *QueryUserLastSessionRequest, opts ...grpc.CallOption) (*Session, error) {
 	out := new(Session)
-	err := c.cc.Invoke(ctx, "/keyauth.session.AdminService/QueryUserLastSession", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.session.AdminService/QueryUserLastSession", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -271,7 +271,7 @@ func _AdminService_QueryUserLastSession_Handler(srv interface{}, ctx context.Con
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.session.AdminService/QueryUserLastSession",
+		FullMethod: "/infraboard.keyauth.session.AdminService/QueryUserLastSession",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AdminServiceServer).QueryUserLastSession(ctx, req.(*QueryUserLastSessionRequest))
@@ -283,7 +283,7 @@ func _AdminService_QueryUserLastSession_Handler(srv interface{}, ctx context.Con
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var AdminService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "keyauth.session.AdminService",
+	ServiceName: "infraboard.keyauth.session.AdminService",
 	HandlerType: (*AdminServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

@@ -34,7 +34,7 @@ func NewPolicyServiceClient(cc grpc.ClientConnInterface) PolicyServiceClient {
 
 func (c *policyServiceClient) CreatePolicy(ctx context.Context, in *CreatePolicyRequest, opts ...grpc.CallOption) (*Policy, error) {
 	out := new(Policy)
-	err := c.cc.Invoke(ctx, "/keyauth.policy.PolicyService/CreatePolicy", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.policy.PolicyService/CreatePolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +43,7 @@ func (c *policyServiceClient) CreatePolicy(ctx context.Context, in *CreatePolicy
 
 func (c *policyServiceClient) QueryPolicy(ctx context.Context, in *QueryPolicyRequest, opts ...grpc.CallOption) (*Set, error) {
 	out := new(Set)
-	err := c.cc.Invoke(ctx, "/keyauth.policy.PolicyService/QueryPolicy", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.policy.PolicyService/QueryPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +52,7 @@ func (c *policyServiceClient) QueryPolicy(ctx context.Context, in *QueryPolicyRe
 
 func (c *policyServiceClient) DescribePolicy(ctx context.Context, in *DescribePolicyRequest, opts ...grpc.CallOption) (*Policy, error) {
 	out := new(Policy)
-	err := c.cc.Invoke(ctx, "/keyauth.policy.PolicyService/DescribePolicy", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.policy.PolicyService/DescribePolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +61,7 @@ func (c *policyServiceClient) DescribePolicy(ctx context.Context, in *DescribePo
 
 func (c *policyServiceClient) DeletePolicy(ctx context.Context, in *DeletePolicyRequest, opts ...grpc.CallOption) (*Policy, error) {
 	out := new(Policy)
-	err := c.cc.Invoke(ctx, "/keyauth.policy.PolicyService/DeletePolicy", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.policy.PolicyService/DeletePolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -118,7 +118,7 @@ func _PolicyService_CreatePolicy_Handler(srv interface{}, ctx context.Context, d
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.policy.PolicyService/CreatePolicy",
+		FullMethod: "/infraboard.keyauth.policy.PolicyService/CreatePolicy",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PolicyServiceServer).CreatePolicy(ctx, req.(*CreatePolicyRequest))
@@ -136,7 +136,7 @@ func _PolicyService_QueryPolicy_Handler(srv interface{}, ctx context.Context, de
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.policy.PolicyService/QueryPolicy",
+		FullMethod: "/infraboard.keyauth.policy.PolicyService/QueryPolicy",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PolicyServiceServer).QueryPolicy(ctx, req.(*QueryPolicyRequest))
@@ -154,7 +154,7 @@ func _PolicyService_DescribePolicy_Handler(srv interface{}, ctx context.Context,
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.policy.PolicyService/DescribePolicy",
+		FullMethod: "/infraboard.keyauth.policy.PolicyService/DescribePolicy",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PolicyServiceServer).DescribePolicy(ctx, req.(*DescribePolicyRequest))
@@ -172,7 +172,7 @@ func _PolicyService_DeletePolicy_Handler(srv interface{}, ctx context.Context, d
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.policy.PolicyService/DeletePolicy",
+		FullMethod: "/infraboard.keyauth.policy.PolicyService/DeletePolicy",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PolicyServiceServer).DeletePolicy(ctx, req.(*DeletePolicyRequest))
@@ -184,7 +184,7 @@ func _PolicyService_DeletePolicy_Handler(srv interface{}, ctx context.Context, d
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var PolicyService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "keyauth.policy.PolicyService",
+	ServiceName: "infraboard.keyauth.policy.PolicyService",
 	HandlerType: (*PolicyServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

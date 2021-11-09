@@ -1,27 +1,25 @@
-package mongo
+package impl
 
 import (
 	"context"
 
-	"github.com/infraboard/mcube/pb/http"
+	"github.com/infraboard/mcube/app"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/x/bsonx"
+	"google.golang.org/grpc"
 
 	"github.com/infraboard/keyauth/conf"
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/application"
 )
 
 var (
 	// Service 服务实例
-	Service = &userimpl{service: &service{}}
+	svr = &userimpl{service: &service{}}
 )
 
 type service struct {
-	col           *mongo.Collection
-	enableCache   bool
-	notifyCachPre string
+	col *mongo.Collection
 }
 
 func (s *service) Config() error {
@@ -53,11 +51,14 @@ func (s *service) Config() error {
 	return nil
 }
 
-// HttpEntry todo
-func (s *service) HTTPEntry() *http.EntrySet {
-	return application.HttpEntry()
+func (s *service) Name() string {
+	return application.AppName
+}
+
+func (s *service) Registry(server *grpc.Server) {
+	application.RegisterApplicationServiceServer(server, svr)
 }
 
 func init() {
-	pkg.RegistryService("application", Service)
+	app.RegistryGrpcApp(svr)
 }

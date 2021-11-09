@@ -52,7 +52,7 @@ message DomainProfile {
 message UpdateDomainInfoRequest  {
     // 更新模式
     // @gotags: bson:"update_mode" json:"update_mode"
-    common.types.UpdateMode update_mode = 1;
+    infraboard.keyauth.types.UpdateMode update_mode = 1;
     // 公司或者组织名称
     // @gotags: bson:"name" json:"name"
     string name = 2;
@@ -76,7 +76,7 @@ message DeleteDomainRequest {
 // QueryDomainRequest 请求
 message QueryDomainRequest {
     // @gotags: json:"page"
-    page.PageRequest page = 1;
+    infraboard.mcube.page.PageRequest page = 1;
     // @gotags: json:"name"
     string name = 2;
     // @gotags: json:"owner"
@@ -87,7 +87,7 @@ message QueryDomainRequest {
 message UpdateDomainSecurityRequest {
     // 更新模式
     // @gotags: bson:"update_mode" json:"update_mode"
-    common.types.UpdateMode update_mode = 1;
+    infraboard.keyauth.types.UpdateMode update_mode = 1;
     // 名称
     // @gotags: bson:"name" json:"name"
     string name = 2;

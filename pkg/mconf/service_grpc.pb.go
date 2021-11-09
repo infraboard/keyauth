@@ -36,7 +36,7 @@ func NewMicroConfigServiceClient(cc grpc.ClientConnInterface) MicroConfigService
 
 func (c *microConfigServiceClient) CreateGroup(ctx context.Context, in *CreateGroupRequest, opts ...grpc.CallOption) (*Group, error) {
 	out := new(Group)
-	err := c.cc.Invoke(ctx, "/keyauth.mconf.MicroConfigService/CreateGroup", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.mconf.MicroConfigService/CreateGroup", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func (c *microConfigServiceClient) CreateGroup(ctx context.Context, in *CreateGr
 
 func (c *microConfigServiceClient) QueryGroup(ctx context.Context, in *QueryGroupRequest, opts ...grpc.CallOption) (*GroupSet, error) {
 	out := new(GroupSet)
-	err := c.cc.Invoke(ctx, "/keyauth.mconf.MicroConfigService/QueryGroup", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.mconf.MicroConfigService/QueryGroup", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +54,7 @@ func (c *microConfigServiceClient) QueryGroup(ctx context.Context, in *QueryGrou
 
 func (c *microConfigServiceClient) DeleteGroup(ctx context.Context, in *DeleteGroupRequest, opts ...grpc.CallOption) (*Group, error) {
 	out := new(Group)
-	err := c.cc.Invoke(ctx, "/keyauth.mconf.MicroConfigService/DeleteGroup", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.mconf.MicroConfigService/DeleteGroup", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +63,7 @@ func (c *microConfigServiceClient) DeleteGroup(ctx context.Context, in *DeleteGr
 
 func (c *microConfigServiceClient) QueryItem(ctx context.Context, in *QueryItemRequest, opts ...grpc.CallOption) (*ItemSet, error) {
 	out := new(ItemSet)
-	err := c.cc.Invoke(ctx, "/keyauth.mconf.MicroConfigService/QueryItem", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.mconf.MicroConfigService/QueryItem", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +72,7 @@ func (c *microConfigServiceClient) QueryItem(ctx context.Context, in *QueryItemR
 
 func (c *microConfigServiceClient) AddItemToGroup(ctx context.Context, in *AddItemToGroupRequest, opts ...grpc.CallOption) (*ItemSet, error) {
 	out := new(ItemSet)
-	err := c.cc.Invoke(ctx, "/keyauth.mconf.MicroConfigService/AddItemToGroup", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.mconf.MicroConfigService/AddItemToGroup", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +81,7 @@ func (c *microConfigServiceClient) AddItemToGroup(ctx context.Context, in *AddIt
 
 func (c *microConfigServiceClient) RemoveItemFromGroup(ctx context.Context, in *RemoveItemFromGroupRequest, opts ...grpc.CallOption) (*ItemSet, error) {
 	out := new(ItemSet)
-	err := c.cc.Invoke(ctx, "/keyauth.mconf.MicroConfigService/RemoveItemFromGroup", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.mconf.MicroConfigService/RemoveItemFromGroup", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -146,7 +146,7 @@ func _MicroConfigService_CreateGroup_Handler(srv interface{}, ctx context.Contex
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.mconf.MicroConfigService/CreateGroup",
+		FullMethod: "/infraboard.keyauth.mconf.MicroConfigService/CreateGroup",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MicroConfigServiceServer).CreateGroup(ctx, req.(*CreateGroupRequest))
@@ -164,7 +164,7 @@ func _MicroConfigService_QueryGroup_Handler(srv interface{}, ctx context.Context
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.mconf.MicroConfigService/QueryGroup",
+		FullMethod: "/infraboard.keyauth.mconf.MicroConfigService/QueryGroup",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MicroConfigServiceServer).QueryGroup(ctx, req.(*QueryGroupRequest))
@@ -182,7 +182,7 @@ func _MicroConfigService_DeleteGroup_Handler(srv interface{}, ctx context.Contex
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.mconf.MicroConfigService/DeleteGroup",
+		FullMethod: "/infraboard.keyauth.mconf.MicroConfigService/DeleteGroup",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MicroConfigServiceServer).DeleteGroup(ctx, req.(*DeleteGroupRequest))
@@ -200,7 +200,7 @@ func _MicroConfigService_QueryItem_Handler(srv interface{}, ctx context.Context,
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.mconf.MicroConfigService/QueryItem",
+		FullMethod: "/infraboard.keyauth.mconf.MicroConfigService/QueryItem",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MicroConfigServiceServer).QueryItem(ctx, req.(*QueryItemRequest))
@@ -218,7 +218,7 @@ func _MicroConfigService_AddItemToGroup_Handler(srv interface{}, ctx context.Con
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.mconf.MicroConfigService/AddItemToGroup",
+		FullMethod: "/infraboard.keyauth.mconf.MicroConfigService/AddItemToGroup",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MicroConfigServiceServer).AddItemToGroup(ctx, req.(*AddItemToGroupRequest))
@@ -236,7 +236,7 @@ func _MicroConfigService_RemoveItemFromGroup_Handler(srv interface{}, ctx contex
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.mconf.MicroConfigService/RemoveItemFromGroup",
+		FullMethod: "/infraboard.keyauth.mconf.MicroConfigService/RemoveItemFromGroup",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MicroConfigServiceServer).RemoveItemFromGroup(ctx, req.(*RemoveItemFromGroupRequest))
@@ -248,7 +248,7 @@ func _MicroConfigService_RemoveItemFromGroup_Handler(srv interface{}, ctx contex
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var MicroConfigService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "keyauth.mconf.MicroConfigService",
+	ServiceName: "infraboard.keyauth.mconf.MicroConfigService",
 	HandlerType: (*MicroConfigServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

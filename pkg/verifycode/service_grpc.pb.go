@@ -32,7 +32,7 @@ func NewVerifyCodeServiceClient(cc grpc.ClientConnInterface) VerifyCodeServiceCl
 
 func (c *verifyCodeServiceClient) IssueCode(ctx context.Context, in *IssueCodeRequest, opts ...grpc.CallOption) (*IssueCodeResponse, error) {
 	out := new(IssueCodeResponse)
-	err := c.cc.Invoke(ctx, "/keyauth.verifycode.VerifyCodeService/IssueCode", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.verifycode.VerifyCodeService/IssueCode", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +41,7 @@ func (c *verifyCodeServiceClient) IssueCode(ctx context.Context, in *IssueCodeRe
 
 func (c *verifyCodeServiceClient) CheckCode(ctx context.Context, in *CheckCodeRequest, opts ...grpc.CallOption) (*Code, error) {
 	out := new(Code)
-	err := c.cc.Invoke(ctx, "/keyauth.verifycode.VerifyCodeService/CheckCode", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.verifycode.VerifyCodeService/CheckCode", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -90,7 +90,7 @@ func _VerifyCodeService_IssueCode_Handler(srv interface{}, ctx context.Context, 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.verifycode.VerifyCodeService/IssueCode",
+		FullMethod: "/infraboard.keyauth.verifycode.VerifyCodeService/IssueCode",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(VerifyCodeServiceServer).IssueCode(ctx, req.(*IssueCodeRequest))
@@ -108,7 +108,7 @@ func _VerifyCodeService_CheckCode_Handler(srv interface{}, ctx context.Context, 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.verifycode.VerifyCodeService/CheckCode",
+		FullMethod: "/infraboard.keyauth.verifycode.VerifyCodeService/CheckCode",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(VerifyCodeServiceServer).CheckCode(ctx, req.(*CheckCodeRequest))
@@ -120,7 +120,7 @@ func _VerifyCodeService_CheckCode_Handler(srv interface{}, ctx context.Context, 
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var VerifyCodeService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "keyauth.verifycode.VerifyCodeService",
+	ServiceName: "infraboard.keyauth.verifycode.VerifyCodeService",
 	HandlerType: (*VerifyCodeServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

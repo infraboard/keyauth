@@ -36,7 +36,7 @@ func NewMicroServiceClient(cc grpc.ClientConnInterface) MicroServiceClient {
 
 func (c *microServiceClient) ValidateClientCredential(ctx context.Context, in *ValidateClientCredentialRequest, opts ...grpc.CallOption) (*Micro, error) {
 	out := new(Micro)
-	err := c.cc.Invoke(ctx, "/keyauth.micro.MicroService/ValidateClientCredential", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.micro.MicroService/ValidateClientCredential", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func (c *microServiceClient) ValidateClientCredential(ctx context.Context, in *V
 
 func (c *microServiceClient) CreateService(ctx context.Context, in *CreateMicroRequest, opts ...grpc.CallOption) (*Micro, error) {
 	out := new(Micro)
-	err := c.cc.Invoke(ctx, "/keyauth.micro.MicroService/CreateService", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.micro.MicroService/CreateService", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +54,7 @@ func (c *microServiceClient) CreateService(ctx context.Context, in *CreateMicroR
 
 func (c *microServiceClient) QueryService(ctx context.Context, in *QueryMicroRequest, opts ...grpc.CallOption) (*Set, error) {
 	out := new(Set)
-	err := c.cc.Invoke(ctx, "/keyauth.micro.MicroService/QueryService", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.micro.MicroService/QueryService", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +63,7 @@ func (c *microServiceClient) QueryService(ctx context.Context, in *QueryMicroReq
 
 func (c *microServiceClient) DescribeService(ctx context.Context, in *DescribeMicroRequest, opts ...grpc.CallOption) (*Micro, error) {
 	out := new(Micro)
-	err := c.cc.Invoke(ctx, "/keyauth.micro.MicroService/DescribeService", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.micro.MicroService/DescribeService", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +72,7 @@ func (c *microServiceClient) DescribeService(ctx context.Context, in *DescribeMi
 
 func (c *microServiceClient) DeleteService(ctx context.Context, in *DeleteMicroRequest, opts ...grpc.CallOption) (*Micro, error) {
 	out := new(Micro)
-	err := c.cc.Invoke(ctx, "/keyauth.micro.MicroService/DeleteService", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.micro.MicroService/DeleteService", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +81,7 @@ func (c *microServiceClient) DeleteService(ctx context.Context, in *DeleteMicroR
 
 func (c *microServiceClient) RefreshServiceClientSecret(ctx context.Context, in *DescribeMicroRequest, opts ...grpc.CallOption) (*Micro, error) {
 	out := new(Micro)
-	err := c.cc.Invoke(ctx, "/keyauth.micro.MicroService/RefreshServiceClientSecret", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.micro.MicroService/RefreshServiceClientSecret", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -146,7 +146,7 @@ func _MicroService_ValidateClientCredential_Handler(srv interface{}, ctx context
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.micro.MicroService/ValidateClientCredential",
+		FullMethod: "/infraboard.keyauth.micro.MicroService/ValidateClientCredential",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MicroServiceServer).ValidateClientCredential(ctx, req.(*ValidateClientCredentialRequest))
@@ -164,7 +164,7 @@ func _MicroService_CreateService_Handler(srv interface{}, ctx context.Context, d
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.micro.MicroService/CreateService",
+		FullMethod: "/infraboard.keyauth.micro.MicroService/CreateService",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MicroServiceServer).CreateService(ctx, req.(*CreateMicroRequest))
@@ -182,7 +182,7 @@ func _MicroService_QueryService_Handler(srv interface{}, ctx context.Context, de
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.micro.MicroService/QueryService",
+		FullMethod: "/infraboard.keyauth.micro.MicroService/QueryService",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MicroServiceServer).QueryService(ctx, req.(*QueryMicroRequest))
@@ -200,7 +200,7 @@ func _MicroService_DescribeService_Handler(srv interface{}, ctx context.Context,
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.micro.MicroService/DescribeService",
+		FullMethod: "/infraboard.keyauth.micro.MicroService/DescribeService",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MicroServiceServer).DescribeService(ctx, req.(*DescribeMicroRequest))
@@ -218,7 +218,7 @@ func _MicroService_DeleteService_Handler(srv interface{}, ctx context.Context, d
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.micro.MicroService/DeleteService",
+		FullMethod: "/infraboard.keyauth.micro.MicroService/DeleteService",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MicroServiceServer).DeleteService(ctx, req.(*DeleteMicroRequest))
@@ -236,7 +236,7 @@ func _MicroService_RefreshServiceClientSecret_Handler(srv interface{}, ctx conte
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.micro.MicroService/RefreshServiceClientSecret",
+		FullMethod: "/infraboard.keyauth.micro.MicroService/RefreshServiceClientSecret",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MicroServiceServer).RefreshServiceClientSecret(ctx, req.(*DescribeMicroRequest))
@@ -248,7 +248,7 @@ func _MicroService_RefreshServiceClientSecret_Handler(srv interface{}, ctx conte
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var MicroService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "keyauth.micro.MicroService",
+	ServiceName: "infraboard.keyauth.micro.MicroService",
 	HandlerType: (*MicroServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

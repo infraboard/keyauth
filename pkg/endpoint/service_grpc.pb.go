@@ -20,7 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 type EndpointServiceClient interface {
 	DescribeEndpoint(ctx context.Context, in *DescribeEndpointRequest, opts ...grpc.CallOption) (*Endpoint, error)
 	QueryEndpoints(ctx context.Context, in *QueryEndpointRequest, opts ...grpc.CallOption) (*Set, error)
-	Registry(ctx context.Context, in *RegistryRequest, opts ...grpc.CallOption) (*RegistryResponse, error)
+	RegistryEndpoint(ctx context.Context, in *RegistryRequest, opts ...grpc.CallOption) (*RegistryResponse, error)
 	DeleteEndpoint(ctx context.Context, in *DeleteEndpointRequest, opts ...grpc.CallOption) (*Endpoint, error)
 	QueryResources(ctx context.Context, in *QueryResourceRequest, opts ...grpc.CallOption) (*ResourceSet, error)
 }
@@ -35,7 +35,7 @@ func NewEndpointServiceClient(cc grpc.ClientConnInterface) EndpointServiceClient
 
 func (c *endpointServiceClient) DescribeEndpoint(ctx context.Context, in *DescribeEndpointRequest, opts ...grpc.CallOption) (*Endpoint, error) {
 	out := new(Endpoint)
-	err := c.cc.Invoke(ctx, "/keyauth.endpoint.EndpointService/DescribeEndpoint", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.endpoint.EndpointService/DescribeEndpoint", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -44,16 +44,16 @@ func (c *endpointServiceClient) DescribeEndpoint(ctx context.Context, in *Descri
 
 func (c *endpointServiceClient) QueryEndpoints(ctx context.Context, in *QueryEndpointRequest, opts ...grpc.CallOption) (*Set, error) {
 	out := new(Set)
-	err := c.cc.Invoke(ctx, "/keyauth.endpoint.EndpointService/QueryEndpoints", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.endpoint.EndpointService/QueryEndpoints", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *endpointServiceClient) Registry(ctx context.Context, in *RegistryRequest, opts ...grpc.CallOption) (*RegistryResponse, error) {
+func (c *endpointServiceClient) RegistryEndpoint(ctx context.Context, in *RegistryRequest, opts ...grpc.CallOption) (*RegistryResponse, error) {
 	out := new(RegistryResponse)
-	err := c.cc.Invoke(ctx, "/keyauth.endpoint.EndpointService/Registry", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.endpoint.EndpointService/RegistryEndpoint", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +62,7 @@ func (c *endpointServiceClient) Registry(ctx context.Context, in *RegistryReques
 
 func (c *endpointServiceClient) DeleteEndpoint(ctx context.Context, in *DeleteEndpointRequest, opts ...grpc.CallOption) (*Endpoint, error) {
 	out := new(Endpoint)
-	err := c.cc.Invoke(ctx, "/keyauth.endpoint.EndpointService/DeleteEndpoint", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.endpoint.EndpointService/DeleteEndpoint", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +71,7 @@ func (c *endpointServiceClient) DeleteEndpoint(ctx context.Context, in *DeleteEn
 
 func (c *endpointServiceClient) QueryResources(ctx context.Context, in *QueryResourceRequest, opts ...grpc.CallOption) (*ResourceSet, error) {
 	out := new(ResourceSet)
-	err := c.cc.Invoke(ctx, "/keyauth.endpoint.EndpointService/QueryResources", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.endpoint.EndpointService/QueryResources", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -84,7 +84,7 @@ func (c *endpointServiceClient) QueryResources(ctx context.Context, in *QueryRes
 type EndpointServiceServer interface {
 	DescribeEndpoint(context.Context, *DescribeEndpointRequest) (*Endpoint, error)
 	QueryEndpoints(context.Context, *QueryEndpointRequest) (*Set, error)
-	Registry(context.Context, *RegistryRequest) (*RegistryResponse, error)
+	RegistryEndpoint(context.Context, *RegistryRequest) (*RegistryResponse, error)
 	DeleteEndpoint(context.Context, *DeleteEndpointRequest) (*Endpoint, error)
 	QueryResources(context.Context, *QueryResourceRequest) (*ResourceSet, error)
 	mustEmbedUnimplementedEndpointServiceServer()
@@ -100,8 +100,8 @@ func (UnimplementedEndpointServiceServer) DescribeEndpoint(context.Context, *Des
 func (UnimplementedEndpointServiceServer) QueryEndpoints(context.Context, *QueryEndpointRequest) (*Set, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryEndpoints not implemented")
 }
-func (UnimplementedEndpointServiceServer) Registry(context.Context, *RegistryRequest) (*RegistryResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Registry not implemented")
+func (UnimplementedEndpointServiceServer) RegistryEndpoint(context.Context, *RegistryRequest) (*RegistryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RegistryEndpoint not implemented")
 }
 func (UnimplementedEndpointServiceServer) DeleteEndpoint(context.Context, *DeleteEndpointRequest) (*Endpoint, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteEndpoint not implemented")
@@ -132,7 +132,7 @@ func _EndpointService_DescribeEndpoint_Handler(srv interface{}, ctx context.Cont
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.endpoint.EndpointService/DescribeEndpoint",
+		FullMethod: "/infraboard.keyauth.endpoint.EndpointService/DescribeEndpoint",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(EndpointServiceServer).DescribeEndpoint(ctx, req.(*DescribeEndpointRequest))
@@ -150,7 +150,7 @@ func _EndpointService_QueryEndpoints_Handler(srv interface{}, ctx context.Contex
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.endpoint.EndpointService/QueryEndpoints",
+		FullMethod: "/infraboard.keyauth.endpoint.EndpointService/QueryEndpoints",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(EndpointServiceServer).QueryEndpoints(ctx, req.(*QueryEndpointRequest))
@@ -158,20 +158,20 @@ func _EndpointService_QueryEndpoints_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _EndpointService_Registry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _EndpointService_RegistryEndpoint_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RegistryRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(EndpointServiceServer).Registry(ctx, in)
+		return srv.(EndpointServiceServer).RegistryEndpoint(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.endpoint.EndpointService/Registry",
+		FullMethod: "/infraboard.keyauth.endpoint.EndpointService/RegistryEndpoint",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EndpointServiceServer).Registry(ctx, req.(*RegistryRequest))
+		return srv.(EndpointServiceServer).RegistryEndpoint(ctx, req.(*RegistryRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -186,7 +186,7 @@ func _EndpointService_DeleteEndpoint_Handler(srv interface{}, ctx context.Contex
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.endpoint.EndpointService/DeleteEndpoint",
+		FullMethod: "/infraboard.keyauth.endpoint.EndpointService/DeleteEndpoint",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(EndpointServiceServer).DeleteEndpoint(ctx, req.(*DeleteEndpointRequest))
@@ -204,7 +204,7 @@ func _EndpointService_QueryResources_Handler(srv interface{}, ctx context.Contex
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.endpoint.EndpointService/QueryResources",
+		FullMethod: "/infraboard.keyauth.endpoint.EndpointService/QueryResources",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(EndpointServiceServer).QueryResources(ctx, req.(*QueryResourceRequest))
@@ -216,7 +216,7 @@ func _EndpointService_QueryResources_Handler(srv interface{}, ctx context.Contex
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var EndpointService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "keyauth.endpoint.EndpointService",
+	ServiceName: "infraboard.keyauth.endpoint.EndpointService",
 	HandlerType: (*EndpointServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -228,8 +228,8 @@ var EndpointService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _EndpointService_QueryEndpoints_Handler,
 		},
 		{
-			MethodName: "Registry",
-			Handler:    _EndpointService_Registry_Handler,
+			MethodName: "RegistryEndpoint",
+			Handler:    _EndpointService_RegistryEndpoint_Handler,
 		},
 		{
 			MethodName: "DeleteEndpoint",

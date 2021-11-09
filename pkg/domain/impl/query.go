@@ -1,4 +1,4 @@
-package grpc
+package impl
 
 import (
 	"go.mongodb.org/mongo-driver/bson"

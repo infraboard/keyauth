@@ -2,14 +2,10 @@ package all
 
 import (
 	// 加载服务模块
-	_ "github.com/infraboard/keyauth/pkg/application/grpc"
 	_ "github.com/infraboard/keyauth/pkg/application/http"
 	_ "github.com/infraboard/keyauth/pkg/counter/mongo"
-	_ "github.com/infraboard/keyauth/pkg/department/grpc"
 	_ "github.com/infraboard/keyauth/pkg/department/http"
-	_ "github.com/infraboard/keyauth/pkg/domain/grpc"
 	_ "github.com/infraboard/keyauth/pkg/domain/http"
-	_ "github.com/infraboard/keyauth/pkg/endpoint/grpc"
 	_ "github.com/infraboard/keyauth/pkg/endpoint/http"
 	_ "github.com/infraboard/keyauth/pkg/geoip/http"
 	_ "github.com/infraboard/keyauth/pkg/geoip/mongo"

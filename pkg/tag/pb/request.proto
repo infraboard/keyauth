@@ -37,7 +37,7 @@ message CreateTagRequest {
 // QueryTagKeyRequest todo
 message QueryTagKeyRequest {
     // @gotags: json:"page"
-    page.PageRequest page = 1;
+   infraboard.mcube.page.PageRequest page = 1;
     // tag生效范围
     // @gotags: json:"scope_type"
     ScopeType scope_type = 2;
@@ -49,7 +49,7 @@ message QueryTagKeyRequest {
 // QueryTagValueRequest todo
 message QueryTagValueRequest {
     // @gotags: json:"page"
-    page.PageRequest page = 1;
+   infraboard.mcube.page.PageRequest page = 1;
     // Tag Value ID
     // @gotags: json:"tag_id"
     string tag_id = 2;

@@ -35,7 +35,7 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = pkg.Endpoint.Registry(
+	_, err = pkg.Endpoint.RegistryEndpoint(
 		ctx.Context(),
 		req,
 	)

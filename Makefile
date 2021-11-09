@@ -44,9 +44,25 @@ push: # push git to multi repo
 	@git push -u gitee
 	@git push -u origin
 
-codegen: # Init Service
-	@protoc -I=. -I${MOD_DIR} --go-ext_out=. --go-ext_opt=module=${PKG} --go-grpc_out=. --go-grpc_opt=module=${PKG} common/types/*.proto
-	@protoc -I=. -I${MOD_DIR} --go-ext_out=. --go-ext_opt=module=${PKG} --go-grpc_out=. --go-grpc_opt=module=${PKG} --go-http_out=. --go-http_opt=module=${PKG} pkg/*/pb/*.proto
+gen: # Init Service
+	@protoc -I=. --go_out=. --go_opt=module=${PKG} --go-grpc_out=. --go-grpc_opt=module=${PKG} common/types/*.proto
+	@protoc-go-inject-tag -input=common/types/*.pb.go
+	@protoc -I=. --go_out=. --go_opt=module=${PKG} --go-grpc_out=. --go-grpc_opt=module=${PKG} pkg/*/pb/*.proto
+	@protoc-go-inject-tag -input=pkg/application/*.pb.go
+	@protoc-go-inject-tag -input=pkg/department/*.pb.go
+	@protoc-go-inject-tag -input=pkg/domain/*.pb.go
+	@protoc-go-inject-tag -input=pkg/endpoint/*.pb.go
+	@protoc-go-inject-tag -input=pkg/mconf/*.pb.go
+	@protoc-go-inject-tag -input=pkg/micro/*.pb.go
+	@protoc-go-inject-tag -input=pkg/namespace/*.pb.go
+	@protoc-go-inject-tag -input=pkg/permission/*.pb.go
+	@protoc-go-inject-tag -input=pkg/policy/*.pb.go
+	@protoc-go-inject-tag -input=pkg/role/*.pb.go
+	@protoc-go-inject-tag -input=pkg/session/*.pb.go
+	@protoc-go-inject-tag -input=pkg/tag/*.pb.go
+	@protoc-go-inject-tag -input=pkg/token/*.pb.go
+	@protoc-go-inject-tag -input=pkg/user/*.pb.go
+	@protoc-go-inject-tag -input=pkg/verifycode/*.pb.go
 	@go generate ./...
 
 install: dep# Install depence go package

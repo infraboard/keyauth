@@ -5,7 +5,6 @@ option go_package = "github.com/infraboard/keyauth/pkg/token";
 
 import "pkg/token/pb/request.proto";
 import "pkg/token/pb/token.proto";
-import "github.com/infraboard/mcube/pb/http/entry.proto";
 
 service TokenService {
     rpc IssueToken(IssueTokenRequest) returns (Token) {};

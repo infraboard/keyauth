@@ -33,7 +33,7 @@ message CreateNamespaceRequest {
 message QueryNamespaceRequest {
     // 分页请求
     // @gotags: json:"page"
-    page.PageRequest page = 1;
+   infraboard.mcube.page.PageRequest page = 1;
     // 空间的名称
     // @gotags: json:"name"
     string name = 5;

@@ -85,7 +85,7 @@ func (s *GRPCService) RegistryEndpoints() error {
 
 	req := endpoint.NewRegistryRequest(version.Short(), pkg.HTTPEntry().Items)
 	ctx.SetClientCredentials(svr.ClientId, svr.ClientSecret)
-	_, err = pkg.Endpoint.Registry(ctx.Context(), req)
+	_, err = pkg.Endpoint.RegistryEndpoint(ctx.Context(), req)
 	return err
 }
 

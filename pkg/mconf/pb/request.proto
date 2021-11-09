@@ -38,7 +38,7 @@ message ItemRequest {
 // QueryGroupRequest 查询组列表
 message QueryGroupRequest {
     // @gotags: json:"page"
-    page.PageRequest page = 1;
+    infraboard.mcube.page.PageRequest page = 1;
     // 组类型
     // @gotags: json:"type"
     Type type = 2;
@@ -59,7 +59,7 @@ message DeleteGroupRequest {
 // QueryItemRequest 查询值列表
 message QueryItemRequest {
     // @gotags: json:"page"
-    page.PageRequest page = 1;
+    infraboard.mcube.page.PageRequest page = 1;
     // 组名称
     // @gotags: json:"group_name" validate:"required,lte=200"
     string group_name = 2;

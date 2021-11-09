@@ -48,7 +48,7 @@ func NewUserServiceClient(cc grpc.ClientConnInterface) UserServiceClient {
 
 func (c *userServiceClient) QueryAccount(ctx context.Context, in *QueryAccountRequest, opts ...grpc.CallOption) (*Set, error) {
 	out := new(Set)
-	err := c.cc.Invoke(ctx, "/keyauth.user.UserService/QueryAccount", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.user.UserService/QueryAccount", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +57,7 @@ func (c *userServiceClient) QueryAccount(ctx context.Context, in *QueryAccountRe
 
 func (c *userServiceClient) DescribeAccount(ctx context.Context, in *DescribeAccountRequest, opts ...grpc.CallOption) (*User, error) {
 	out := new(User)
-	err := c.cc.Invoke(ctx, "/keyauth.user.UserService/DescribeAccount", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.user.UserService/DescribeAccount", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +66,7 @@ func (c *userServiceClient) DescribeAccount(ctx context.Context, in *DescribeAcc
 
 func (c *userServiceClient) CreateAccount(ctx context.Context, in *CreateAccountRequest, opts ...grpc.CallOption) (*User, error) {
 	out := new(User)
-	err := c.cc.Invoke(ctx, "/keyauth.user.UserService/CreateAccount", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.user.UserService/CreateAccount", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +75,7 @@ func (c *userServiceClient) CreateAccount(ctx context.Context, in *CreateAccount
 
 func (c *userServiceClient) BlockAccount(ctx context.Context, in *BlockAccountRequest, opts ...grpc.CallOption) (*User, error) {
 	out := new(User)
-	err := c.cc.Invoke(ctx, "/keyauth.user.UserService/BlockAccount", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.user.UserService/BlockAccount", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -84,7 +84,7 @@ func (c *userServiceClient) BlockAccount(ctx context.Context, in *BlockAccountRe
 
 func (c *userServiceClient) UnBlockAccount(ctx context.Context, in *UnBlockAccountRequest, opts ...grpc.CallOption) (*User, error) {
 	out := new(User)
-	err := c.cc.Invoke(ctx, "/keyauth.user.UserService/UnBlockAccount", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.user.UserService/UnBlockAccount", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -93,7 +93,7 @@ func (c *userServiceClient) UnBlockAccount(ctx context.Context, in *UnBlockAccou
 
 func (c *userServiceClient) DeleteAccount(ctx context.Context, in *DeleteAccountRequest, opts ...grpc.CallOption) (*User, error) {
 	out := new(User)
-	err := c.cc.Invoke(ctx, "/keyauth.user.UserService/DeleteAccount", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.user.UserService/DeleteAccount", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +102,7 @@ func (c *userServiceClient) DeleteAccount(ctx context.Context, in *DeleteAccount
 
 func (c *userServiceClient) UpdateAccountProfile(ctx context.Context, in *UpdateAccountRequest, opts ...grpc.CallOption) (*User, error) {
 	out := new(User)
-	err := c.cc.Invoke(ctx, "/keyauth.user.UserService/UpdateAccountProfile", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.user.UserService/UpdateAccountProfile", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -111,7 +111,7 @@ func (c *userServiceClient) UpdateAccountProfile(ctx context.Context, in *Update
 
 func (c *userServiceClient) UpdateAccountPassword(ctx context.Context, in *UpdatePasswordRequest, opts ...grpc.CallOption) (*Password, error) {
 	out := new(Password)
-	err := c.cc.Invoke(ctx, "/keyauth.user.UserService/UpdateAccountPassword", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.user.UserService/UpdateAccountPassword", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -120,7 +120,7 @@ func (c *userServiceClient) UpdateAccountPassword(ctx context.Context, in *Updat
 
 func (c *userServiceClient) GeneratePassword(ctx context.Context, in *GeneratePasswordRequest, opts ...grpc.CallOption) (*GeneratePasswordResponse, error) {
 	out := new(GeneratePasswordResponse)
-	err := c.cc.Invoke(ctx, "/keyauth.user.UserService/GeneratePassword", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.user.UserService/GeneratePassword", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -206,7 +206,7 @@ func _UserService_QueryAccount_Handler(srv interface{}, ctx context.Context, dec
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.user.UserService/QueryAccount",
+		FullMethod: "/infraboard.keyauth.user.UserService/QueryAccount",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).QueryAccount(ctx, req.(*QueryAccountRequest))
@@ -224,7 +224,7 @@ func _UserService_DescribeAccount_Handler(srv interface{}, ctx context.Context, 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.user.UserService/DescribeAccount",
+		FullMethod: "/infraboard.keyauth.user.UserService/DescribeAccount",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).DescribeAccount(ctx, req.(*DescribeAccountRequest))
@@ -242,7 +242,7 @@ func _UserService_CreateAccount_Handler(srv interface{}, ctx context.Context, de
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.user.UserService/CreateAccount",
+		FullMethod: "/infraboard.keyauth.user.UserService/CreateAccount",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).CreateAccount(ctx, req.(*CreateAccountRequest))
@@ -260,7 +260,7 @@ func _UserService_BlockAccount_Handler(srv interface{}, ctx context.Context, dec
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.user.UserService/BlockAccount",
+		FullMethod: "/infraboard.keyauth.user.UserService/BlockAccount",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).BlockAccount(ctx, req.(*BlockAccountRequest))
@@ -278,7 +278,7 @@ func _UserService_UnBlockAccount_Handler(srv interface{}, ctx context.Context, d
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.user.UserService/UnBlockAccount",
+		FullMethod: "/infraboard.keyauth.user.UserService/UnBlockAccount",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).UnBlockAccount(ctx, req.(*UnBlockAccountRequest))
@@ -296,7 +296,7 @@ func _UserService_DeleteAccount_Handler(srv interface{}, ctx context.Context, de
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.user.UserService/DeleteAccount",
+		FullMethod: "/infraboard.keyauth.user.UserService/DeleteAccount",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).DeleteAccount(ctx, req.(*DeleteAccountRequest))
@@ -314,7 +314,7 @@ func _UserService_UpdateAccountProfile_Handler(srv interface{}, ctx context.Cont
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.user.UserService/UpdateAccountProfile",
+		FullMethod: "/infraboard.keyauth.user.UserService/UpdateAccountProfile",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).UpdateAccountProfile(ctx, req.(*UpdateAccountRequest))
@@ -332,7 +332,7 @@ func _UserService_UpdateAccountPassword_Handler(srv interface{}, ctx context.Con
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.user.UserService/UpdateAccountPassword",
+		FullMethod: "/infraboard.keyauth.user.UserService/UpdateAccountPassword",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).UpdateAccountPassword(ctx, req.(*UpdatePasswordRequest))
@@ -350,7 +350,7 @@ func _UserService_GeneratePassword_Handler(srv interface{}, ctx context.Context,
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.user.UserService/GeneratePassword",
+		FullMethod: "/infraboard.keyauth.user.UserService/GeneratePassword",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).GeneratePassword(ctx, req.(*GeneratePasswordRequest))
@@ -362,7 +362,7 @@ func _UserService_GeneratePassword_Handler(srv interface{}, ctx context.Context,
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var UserService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "keyauth.user.UserService",
+	ServiceName: "infraboard.keyauth.user.UserService",
 	HandlerType: (*UserServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

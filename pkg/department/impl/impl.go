@@ -1,15 +1,16 @@
-package grpc
+package impl
 
 import (
 	"context"
 	"fmt"
 
+	"github.com/infraboard/mcube/app"
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
-	"github.com/infraboard/mcube/pb/http"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/x/bsonx"
+	"google.golang.org/grpc"
 
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/keyauth/pkg"
@@ -21,7 +22,7 @@ import (
 
 var (
 	// Service 服务实例
-	Service = &service{}
+	svr = &service{}
 )
 
 type service struct {
@@ -89,11 +90,14 @@ func (s *service) Config() error {
 	return nil
 }
 
-// HttpEntry todo
-func (s *service) HTTPEntry() *http.EntrySet {
-	return department.HttpEntry()
+func (s *service) Name() string {
+	return department.AppName
+}
+
+func (s *service) Registry(server *grpc.Server) {
+	department.RegisterDepartmentServiceServer(server, svr)
 }
 
 func init() {
-	pkg.RegistryService("department", Service)
+	app.RegistryGrpcApp(svr)
 }

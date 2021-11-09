@@ -46,7 +46,7 @@ message RevolkTokenRequest {
 }
 
 message QueryTokenRequest { 
-    page.PageRequest page = 1 ;
+   infraboard.mcube.page.PageRequest page = 1 ;
     string application_id = 2;
     string account = 4;
     GrantType grant_type = 3;

@@ -38,7 +38,7 @@ func NewTokenServiceClient(cc grpc.ClientConnInterface) TokenServiceClient {
 
 func (c *tokenServiceClient) IssueToken(ctx context.Context, in *IssueTokenRequest, opts ...grpc.CallOption) (*Token, error) {
 	out := new(Token)
-	err := c.cc.Invoke(ctx, "/keyauth.token.TokenService/IssueToken", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.token.TokenService/IssueToken", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +47,7 @@ func (c *tokenServiceClient) IssueToken(ctx context.Context, in *IssueTokenReque
 
 func (c *tokenServiceClient) ValidateToken(ctx context.Context, in *ValidateTokenRequest, opts ...grpc.CallOption) (*Token, error) {
 	out := new(Token)
-	err := c.cc.Invoke(ctx, "/keyauth.token.TokenService/ValidateToken", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.token.TokenService/ValidateToken", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +56,7 @@ func (c *tokenServiceClient) ValidateToken(ctx context.Context, in *ValidateToke
 
 func (c *tokenServiceClient) DescribeToken(ctx context.Context, in *DescribeTokenRequest, opts ...grpc.CallOption) (*Token, error) {
 	out := new(Token)
-	err := c.cc.Invoke(ctx, "/keyauth.token.TokenService/DescribeToken", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.token.TokenService/DescribeToken", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +65,7 @@ func (c *tokenServiceClient) DescribeToken(ctx context.Context, in *DescribeToke
 
 func (c *tokenServiceClient) RevolkToken(ctx context.Context, in *RevolkTokenRequest, opts ...grpc.CallOption) (*Token, error) {
 	out := new(Token)
-	err := c.cc.Invoke(ctx, "/keyauth.token.TokenService/RevolkToken", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.token.TokenService/RevolkToken", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -74,7 +74,7 @@ func (c *tokenServiceClient) RevolkToken(ctx context.Context, in *RevolkTokenReq
 
 func (c *tokenServiceClient) BlockToken(ctx context.Context, in *BlockTokenRequest, opts ...grpc.CallOption) (*Token, error) {
 	out := new(Token)
-	err := c.cc.Invoke(ctx, "/keyauth.token.TokenService/BlockToken", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.token.TokenService/BlockToken", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -83,7 +83,7 @@ func (c *tokenServiceClient) BlockToken(ctx context.Context, in *BlockTokenReque
 
 func (c *tokenServiceClient) ChangeNamespace(ctx context.Context, in *ChangeNamespaceRequest, opts ...grpc.CallOption) (*Token, error) {
 	out := new(Token)
-	err := c.cc.Invoke(ctx, "/keyauth.token.TokenService/ChangeNamespace", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.token.TokenService/ChangeNamespace", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +92,7 @@ func (c *tokenServiceClient) ChangeNamespace(ctx context.Context, in *ChangeName
 
 func (c *tokenServiceClient) QueryToken(ctx context.Context, in *QueryTokenRequest, opts ...grpc.CallOption) (*Set, error) {
 	out := new(Set)
-	err := c.cc.Invoke(ctx, "/keyauth.token.TokenService/QueryToken", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.token.TokenService/QueryToken", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -101,7 +101,7 @@ func (c *tokenServiceClient) QueryToken(ctx context.Context, in *QueryTokenReque
 
 func (c *tokenServiceClient) DeleteToken(ctx context.Context, in *DeleteTokenRequest, opts ...grpc.CallOption) (*DeleteTokenResponse, error) {
 	out := new(DeleteTokenResponse)
-	err := c.cc.Invoke(ctx, "/keyauth.token.TokenService/DeleteToken", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.token.TokenService/DeleteToken", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -174,7 +174,7 @@ func _TokenService_IssueToken_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.token.TokenService/IssueToken",
+		FullMethod: "/infraboard.keyauth.token.TokenService/IssueToken",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TokenServiceServer).IssueToken(ctx, req.(*IssueTokenRequest))
@@ -192,7 +192,7 @@ func _TokenService_ValidateToken_Handler(srv interface{}, ctx context.Context, d
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.token.TokenService/ValidateToken",
+		FullMethod: "/infraboard.keyauth.token.TokenService/ValidateToken",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TokenServiceServer).ValidateToken(ctx, req.(*ValidateTokenRequest))
@@ -210,7 +210,7 @@ func _TokenService_DescribeToken_Handler(srv interface{}, ctx context.Context, d
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.token.TokenService/DescribeToken",
+		FullMethod: "/infraboard.keyauth.token.TokenService/DescribeToken",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TokenServiceServer).DescribeToken(ctx, req.(*DescribeTokenRequest))
@@ -228,7 +228,7 @@ func _TokenService_RevolkToken_Handler(srv interface{}, ctx context.Context, dec
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.token.TokenService/RevolkToken",
+		FullMethod: "/infraboard.keyauth.token.TokenService/RevolkToken",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TokenServiceServer).RevolkToken(ctx, req.(*RevolkTokenRequest))
@@ -246,7 +246,7 @@ func _TokenService_BlockToken_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.token.TokenService/BlockToken",
+		FullMethod: "/infraboard.keyauth.token.TokenService/BlockToken",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TokenServiceServer).BlockToken(ctx, req.(*BlockTokenRequest))
@@ -264,7 +264,7 @@ func _TokenService_ChangeNamespace_Handler(srv interface{}, ctx context.Context,
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.token.TokenService/ChangeNamespace",
+		FullMethod: "/infraboard.keyauth.token.TokenService/ChangeNamespace",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TokenServiceServer).ChangeNamespace(ctx, req.(*ChangeNamespaceRequest))
@@ -282,7 +282,7 @@ func _TokenService_QueryToken_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.token.TokenService/QueryToken",
+		FullMethod: "/infraboard.keyauth.token.TokenService/QueryToken",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TokenServiceServer).QueryToken(ctx, req.(*QueryTokenRequest))
@@ -300,7 +300,7 @@ func _TokenService_DeleteToken_Handler(srv interface{}, ctx context.Context, dec
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/keyauth.token.TokenService/DeleteToken",
+		FullMethod: "/infraboard.keyauth.token.TokenService/DeleteToken",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TokenServiceServer).DeleteToken(ctx, req.(*DeleteTokenRequest))
@@ -312,7 +312,7 @@ func _TokenService_DeleteToken_Handler(srv interface{}, ctx context.Context, dec
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var TokenService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "keyauth.token.TokenService",
+	ServiceName: "infraboard.keyauth.token.TokenService",
 	HandlerType: (*TokenServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
