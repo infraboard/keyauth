@@ -11,6 +11,8 @@ message QueryPermissionRequest {
    infraboard.mcube.page.PageRequest page = 1;
     // @gotags: json:"namespace_id"
     string namespace_id = 2;
+    // @gotags: json:"account"
+    string account = 3;
 }
 
 // QueryRoleRequest 查询用户权限
@@ -21,6 +23,8 @@ message QueryRoleRequest {
     string namespace_id = 2;
     // @gotags: json:"with_permission"
     bool with_permission = 3;
+    // @gotags: json:"account"
+    string account = 4;
 }
 
 // CheckPermissionRequest todo

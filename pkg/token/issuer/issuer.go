@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/infraboard/mcube/app"
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/logger"
@@ -14,7 +15,6 @@ import (
 	"github.com/rs/xid"
 
 	"github.com/infraboard/keyauth/common/password"
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/application"
 	"github.com/infraboard/keyauth/pkg/domain"
 	"github.com/infraboard/keyauth/pkg/provider"
@@ -26,28 +26,12 @@ import (
 
 // NewTokenIssuer todo
 func NewTokenIssuer() (Issuer, error) {
-	if pkg.Application == nil {
-		return nil, fmt.Errorf("dependence service application is nil")
-	}
-	if pkg.User == nil {
-		return nil, fmt.Errorf("dependence user application is nil")
-	}
-	if pkg.Domain == nil {
-		return nil, fmt.Errorf("dependence domain application is nil")
-	}
-	if pkg.Token == nil {
-		return nil, fmt.Errorf("dependence token application is nil")
-	}
-	if pkg.LDAP == nil {
-		return nil, fmt.Errorf("dependence ldap application is nil")
-	}
-
 	issuer := &issuer{
-		user:    pkg.User,
-		domain:  pkg.Domain,
-		token:   pkg.Token,
-		ldap:    pkg.LDAP,
-		app:     pkg.Application,
+		user:    app.GetGrpcApp(user.AppName).(user.UserServiceServer),
+		domain:  app.GetGrpcApp(domain.AppName).(domain.DomainServiceServer),
+		token:   app.GetGrpcApp(token.AppName).(token.TokenServiceServer),
+		ldap:    app.GetGrpcApp(provider.AppName).(provider.LDAP),
+		app:     app.GetGrpcApp(application.AppName).(application.ApplicationServiceServer),
 		emailRE: regexp.MustCompile(`([a-zA-Z0-9]+)@([a-zA-Z0-9\.]+)\.([a-zA-Z0-9]+)`),
 		log:     zap.L().Named("Token Issuer"),
 	}
@@ -65,8 +49,7 @@ type issuer struct {
 	log     logger.Logger
 }
 
-func (i *issuer) checkUserPass(user, pass string) (*user.User, error) {
-	ctx := pkg.NewInternalMockGrpcCtx(user).Context()
+func (i *issuer) checkUserPass(ctx context.Context, user, pass string) (*user.User, error) {
 	u, err := i.getUser(ctx, user)
 	if err != nil {
 		return nil, err
@@ -104,10 +87,9 @@ func (i *issuer) getDomain(ctx context.Context, u *user.User) (*domain.Domain, e
 	return i.domain.DescribeDomain(ctx, req)
 }
 
-func (i *issuer) setTokenDomain(tk *token.Token) error {
+func (i *issuer) setTokenDomain(ctx context.Context, tk *token.Token) error {
 	// 获取最近1个
 	req := domain.NewQueryDomainRequest(request.NewPageRequest(1, 1))
-	ctx := pkg.NewInternalMockGrpcCtx(tk.Account).Context()
 	domains, err := i.domain.QueryDomain(ctx, req)
 	if err != nil {
 		return err
@@ -133,7 +115,7 @@ func (i *issuer) IssueToken(ctx context.Context, req *token.IssueTokenRequest) (
 
 	switch req.GrantType {
 	case token.GrantType_PASSWORD:
-		u, checkErr := i.checkUserPass(req.Username, req.Password)
+		u, checkErr := i.checkUserPass(ctx, req.Username, req.Password)
 		if checkErr != nil {
 			i.log.Debugf("issue password token error, %s", checkErr)
 			return nil, exception.NewUnauthorized("user or password not connrect")
@@ -150,7 +132,7 @@ func (i *issuer) IssueToken(ctx context.Context, req *token.IssueTokenRequest) (
 		tk := i.issueUserToken(app, u, token.GrantType_PASSWORD)
 		switch u.Type {
 		case types.UserType_SUPPER, types.UserType_PRIMARY:
-			err := i.setTokenDomain(tk)
+			err := i.setTokenDomain(ctx, tk)
 			if err != nil {
 				return nil, fmt.Errorf("set token domain error, %s", err)
 			}
@@ -171,9 +153,7 @@ func (i *issuer) IssueToken(ctx context.Context, req *token.IssueTokenRequest) (
 			return nil, exception.NewPermissionDeny("refresh_token's access_tken not connrect")
 		}
 
-		inctx := pkg.NewGrpcInCtx()
-		inctx.SetAccessToken(req.AccessToken)
-		u, err := i.getUser(inctx.Context(), tk.Account)
+		u, err := i.getUser(ctx, tk.Account)
 		if err != nil {
 			return nil, err
 		}
@@ -187,7 +167,7 @@ func (i *issuer) IssueToken(ctx context.Context, req *token.IssueTokenRequest) (
 		revolkReq.AccessToken = req.AccessToken
 		revolkReq.LogoutSession = false
 
-		if _, err := i.token.RevolkToken(inctx.Context(), revolkReq); err != nil {
+		if _, err := i.token.RevolkToken(ctx, revolkReq); err != nil {
 			return nil, err
 		}
 		return newTK, nil
@@ -198,9 +178,8 @@ func (i *issuer) IssueToken(ctx context.Context, req *token.IssueTokenRequest) (
 		if err != nil {
 			return nil, exception.NewUnauthorized(err.Error())
 		}
-		inctx := pkg.NewGrpcInCtx()
-		inctx.SetAccessToken(req.AccessToken)
-		u, err := i.getUser(inctx.Context(), tk.Account)
+
+		u, err := i.getUser(ctx, tk.Account)
 		if err != nil {
 			return nil, err
 		}
@@ -266,8 +245,7 @@ func (i *issuer) genBaseDN(username string) (string, string, error) {
 
 func (i *issuer) syncLDAPUser(ctx context.Context, userName string) (*user.User, error) {
 	descUser := user.NewDescriptAccountRequestWithAccount(userName)
-	inCtx := pkg.NewInternalMockGrpcCtx(userName).Context()
-	u, err := i.user.DescribeAccount(inCtx, descUser)
+	u, err := i.user.DescribeAccount(ctx, descUser)
 
 	if u != nil && u.Type.IsIn(types.UserType_PRIMARY, types.UserType_SUPPER) {
 		return nil, exception.NewBadRequest("用户名和主账号用户名冲突, 请修改")
@@ -277,7 +255,7 @@ func (i *issuer) syncLDAPUser(ctx context.Context, userName string) (*user.User,
 		if exception.IsNotFoundError(err) {
 			req := user.NewCreateUserRequestWithLDAPSync(userName, i.randomPass())
 			req.UserType = types.UserType_SUB
-			u, err = i.user.CreateAccount(inCtx, req)
+			u, err = i.user.CreateAccount(ctx, req)
 			if err != nil {
 				return nil, err
 			}
@@ -298,14 +276,6 @@ func (i *issuer) randomPass() string {
 	}
 
 	return xid.New().String()
-}
-
-func (i *issuer) mockBuildInToken(app *application.Application, userName, domainID string) *token.Token {
-	tk := i.newBearToken(app, token.GrantType_LDAP)
-	tk.Account = userName
-	tk.UserType = types.UserType_PRIMARY
-	tk.Domain = domainID
-	return tk
 }
 
 func (i *issuer) issueUserToken(app *application.Application, u *user.User, gt token.GrantType) *token.Token {

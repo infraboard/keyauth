@@ -9,17 +9,11 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/infraboard/keyauth/common/types"
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/domain"
 )
 
 func (s *service) CreateDomain(ctx context.Context, req *domain.CreateDomainRequest) (*domain.Domain, error) {
-	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	d, err := domain.New(tk.Account, req)
+	d, err := domain.New(req)
 	if err != nil {
 		return nil, exception.NewBadRequest(err.Error())
 	}

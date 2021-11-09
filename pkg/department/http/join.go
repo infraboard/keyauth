@@ -6,26 +6,15 @@ import (
 	"github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/metadata"
 
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/department"
+	"github.com/infraboard/keyauth/pkg/token"
 )
 
 // 创建部门加入申请
 func (h *handler) CreateJoinApply(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
-	tk, err := ctx.GetToken()
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
+	ctx := context.GetContext(r)
+	tk := ctx.AuthInfo.(*token.Token)
 
 	req := department.NewJoinDepartmentRequest()
 	if err := request.GetDataFromRequest(r, req); err != nil {
@@ -34,15 +23,12 @@ func (h *handler) CreateJoinApply(w http.ResponseWriter, r *http.Request) {
 	}
 	req.UpdateOwner(tk)
 
-	var header, trailer metadata.MD
 	ins, err := h.service.JoinDepartment(
-		ctx.Context(),
+		r.Context(),
 		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
 	)
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 
@@ -51,17 +37,8 @@ func (h *handler) CreateJoinApply(w http.ResponseWriter, r *http.Request) {
 
 // 查询部门加入申请
 func (h *handler) QueryJoinApply(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
-	tk, err := ctx.GetToken()
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
+	ctx := context.GetContext(r)
+	tk := ctx.AuthInfo.(*token.Token)
 
 	req, err := department.NewQueryApplicationFormRequestFromHTTP(r)
 	if err != nil {
@@ -70,15 +47,12 @@ func (h *handler) QueryJoinApply(w http.ResponseWriter, r *http.Request) {
 	}
 	req.Domain = tk.Domain
 
-	var header, trailer metadata.MD
 	ins, err := h.service.QueryApplicationForm(
-		ctx.Context(),
+		r.Context(),
 		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
 	)
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 
@@ -87,31 +61,18 @@ func (h *handler) QueryJoinApply(w http.ResponseWriter, r *http.Request) {
 
 // Create 创建主账号
 func (h *handler) GetJoinApply(w http.ResponseWriter, r *http.Request) {
-	rctx := context.GetContext(r)
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
+	ctx := context.GetContext(r)
+	tk := ctx.AuthInfo.(*token.Token)
 
-	tk, err := ctx.GetToken()
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
-	req := department.NewDescribeApplicationFormRequetWithID(rctx.PS.ByName("id"))
+	req := department.NewDescribeApplicationFormRequetWithID(ctx.PS.ByName("id"))
 	req.Domain = tk.Domain
 
-	var header, trailer metadata.MD
 	ins, err := h.service.DescribeApplicationForm(
-		ctx.Context(),
+		r.Context(),
 		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
 	)
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 
@@ -121,11 +82,6 @@ func (h *handler) GetJoinApply(w http.ResponseWriter, r *http.Request) {
 // Create 创建主账号
 func (h *handler) DealJoinApply(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
 
 	req := department.NewDefaultDealApplicationFormRequest()
 	if err := request.GetDataFromRequest(r, req); err != nil {
@@ -134,15 +90,12 @@ func (h *handler) DealJoinApply(w http.ResponseWriter, r *http.Request) {
 	}
 	req.Id = rctx.PS.ByName("id")
 
-	var header, trailer metadata.MD
 	ins, err := h.service.DealApplicationForm(
-		ctx.Context(),
+		r.Context(),
 		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
 	)
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 

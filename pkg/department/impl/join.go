@@ -8,10 +8,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/department"
 	"github.com/infraboard/keyauth/pkg/user"
-	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
 var (
@@ -61,10 +59,6 @@ func (s *service) DealApplicationForm(ctx context.Context, req *department.DealA
 		return nil, exception.NewBadRequest("validate deal application form request error, %s", err)
 	}
 
-	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
-	if err != nil {
-		return nil, err
-	}
 	descReq := department.NewDescribeApplicationFormRequetWithID(req.Id)
 	af, err := s.DescribeApplicationForm(ctx, descReq)
 	if err != nil {
@@ -76,14 +70,9 @@ func (s *service) DealApplicationForm(ctx context.Context, req *department.DealA
 	}
 
 	// 判断用户申请的部门是否还存在
-	dp, err := s.DescribeDepartment(ctx, department.NewDescribeDepartmentRequestWithID(af.DepartmentId))
+	_, err = s.DescribeDepartment(ctx, department.NewDescribeDepartmentRequestWithID(af.DepartmentId))
 	if err != nil {
 		return nil, err
-	}
-
-	// 只有部门管理员才能处理成员加入申请
-	if !(tk.UserType.IsIn(types.UserType_SUPPER, types.UserType_DOMAIN_ADMIN, types.UserType_ORG_ADMIN) || dp.Manager == tk.Account) {
-		return nil, exception.NewPermissionDeny("only department manger can deal join apply")
 	}
 
 	// 修改用户的归属部门
@@ -100,8 +89,7 @@ func (s *service) DealApplicationForm(ctx context.Context, req *department.DealA
 	patchReq := user.NewPatchAccountRequest()
 	patchReq.DepartmentId = af.DepartmentId
 	patchReq.Account = af.Account
-	mockCtx := pkg.NewInternalMockGrpcCtx(af.Account)
-	_, err = s.user.UpdateAccountProfile(mockCtx.Context(), patchReq)
+	_, err = s.user.UpdateAccountProfile(ctx, patchReq)
 	if err != nil {
 		return nil, err
 	}

@@ -6,7 +6,6 @@ import (
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/request"
 
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/permission"
 	"github.com/infraboard/keyauth/pkg/policy"
@@ -19,14 +18,9 @@ func (s *service) QueryPermission(ctx context.Context, req *permission.QueryPerm
 		return nil, exception.NewBadRequest("validate param error, %s", err)
 	}
 
-	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	// 获取用户的策略列表
 	preq := policy.NewQueryPolicyRequest(request.NewPageRequest(100, 1))
-	preq.Account = tk.Account
+	preq.Account = req.Account
 	preq.NamespaceId = req.NamespaceId
 
 	policySet, err := s.policy.QueryPolicy(ctx, preq)
@@ -49,14 +43,9 @@ func (s *service) QueryRole(ctx context.Context, req *permission.QueryRoleReques
 		return nil, exception.NewBadRequest("validate param error, %s", err)
 	}
 
-	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	// 获取用户的策略列表
 	preq := policy.NewQueryPolicyRequest(request.NewPageRequest(100, 1))
-	preq.Account = tk.Account
+	preq.Account = req.Account
 	preq.NamespaceId = req.NamespaceId
 
 	policySet, err := s.policy.QueryPolicy(ctx, preq)

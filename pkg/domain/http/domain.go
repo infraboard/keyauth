@@ -3,68 +3,45 @@ package http
 import (
 	"net/http"
 
-	httpcontext "github.com/infraboard/mcube/http/context"
+	"github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/metadata"
 
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/domain"
+	"github.com/infraboard/keyauth/pkg/token"
 )
 
 func (h *handler) ListDomains(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
-	tk, err := ctx.GetToken()
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
+	ctx := context.GetContext(r)
+	tk := ctx.AuthInfo.(*token.Token)
 
 	page := request.NewPageRequestFromHTTP(r)
 	req := domain.NewQueryDomainRequest(page)
 	req.Owner = tk.Account
 
-	var header, trailer metadata.MD
 	dommains, err := h.service.QueryDomain(
-		ctx.Context(),
+		r.Context(),
 		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
 	)
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 	response.Success(w, dommains)
 }
 
 func (h *handler) GetDomain(w http.ResponseWriter, r *http.Request) {
-	rctx := httpcontext.GetContext(r)
+	rctx := context.GetContext(r)
 
 	req := domain.NewDescribeDomainRequest()
 	req.Name = rctx.PS.ByName("name")
 
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
-	var header, trailer metadata.MD
 	d, err := h.service.DescribeDomain(
-		ctx.Context(),
+		r.Context(),
 		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
 	)
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 
@@ -78,21 +55,12 @@ func (h *handler) CreateDomain(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
-	var header, trailer metadata.MD
 	d, err := h.service.CreateDomain(
-		ctx.Context(),
+		r.Context(),
 		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
 	)
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 
@@ -100,13 +68,7 @@ func (h *handler) CreateDomain(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) PutDomain(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
-	rctx := httpcontext.GetContext(r)
+	rctx := context.GetContext(r)
 
 	// 查找出原来的domain
 	req := domain.NewPutDomainRequest()
@@ -118,15 +80,12 @@ func (h *handler) PutDomain(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var header, trailer metadata.MD
 	ins, err := h.service.UpdateDomain(
-		ctx.Context(),
+		r.Context(),
 		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
 	)
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 
@@ -134,12 +93,7 @@ func (h *handler) PutDomain(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) PatchDomain(w http.ResponseWriter, r *http.Request) {
-	rctx := httpcontext.GetContext(r)
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
+	rctx := context.GetContext(r)
 
 	// 查找出原来的domain
 	req := domain.NewPatchDomainRequest()
@@ -151,15 +105,12 @@ func (h *handler) PatchDomain(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var header, trailer metadata.MD
 	ins, err := h.service.UpdateDomain(
-		ctx.Context(),
+		r.Context(),
 		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
 	)
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 
@@ -167,24 +118,16 @@ func (h *handler) PatchDomain(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) DeleteDomain(w http.ResponseWriter, r *http.Request) {
-	rctx := httpcontext.GetContext(r)
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
+	rctx := context.GetContext(r)
 
 	req := domain.NewDeleteDomainRequestByName(rctx.PS.ByName("name"))
 
-	var header, trailer metadata.MD
-	_, err = h.service.DeleteDomain(
-		ctx.Context(),
+	_, err := h.service.DeleteDomain(
+		r.Context(),
 		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
 	)
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 
@@ -192,12 +135,7 @@ func (h *handler) DeleteDomain(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) UpdateDomainSecurity(w http.ResponseWriter, r *http.Request) {
-	rctx := httpcontext.GetContext(r)
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
+	rctx := context.GetContext(r)
 
 	// 查找出原来的domain
 	req := domain.NewPutDomainSecurityRequest()
@@ -210,15 +148,12 @@ func (h *handler) UpdateDomainSecurity(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var header, trailer metadata.MD
 	ins, err := h.service.UpdateDomainSecurity(
-		ctx.Context(),
+		r.Context(),
 		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
 	)
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 

@@ -1,8 +1,6 @@
 package domain
 
 import (
-	"errors"
-
 	"github.com/go-playground/validator/v10"
 	"github.com/infraboard/mcube/types/ftime"
 )
@@ -13,11 +11,7 @@ var (
 )
 
 // New 新建一个domain
-func New(owner string, req *CreateDomainRequest) (*Domain, error) {
-	if owner == "" {
-		return nil, errors.New("domain required owner")
-	}
-
+func New(req *CreateDomainRequest) (*Domain, error) {
 	if err := req.Validate(); err != nil {
 		return nil, err
 	}
@@ -25,7 +19,7 @@ func New(owner string, req *CreateDomainRequest) (*Domain, error) {
 	d := &Domain{
 		CreateAt:        ftime.Now().Timestamp(),
 		UpdateAt:        ftime.Now().Timestamp(),
-		Owner:           owner,
+		Owner:           req.Owner,
 		Name:            req.Name,
 		Profile:         req.Profile,
 		Enabled:         true,

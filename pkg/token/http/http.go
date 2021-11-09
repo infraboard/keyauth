@@ -1,12 +1,9 @@
 package http
 
 import (
-	"errors"
-
 	"github.com/infraboard/mcube/app"
 	"github.com/infraboard/mcube/http/router"
 
-	"github.com/infraboard/keyauth/client"
 	"github.com/infraboard/keyauth/pkg/token"
 )
 
@@ -15,7 +12,7 @@ var (
 )
 
 type handler struct {
-	service token.TokenServiceClient
+	service token.TokenServiceServer
 }
 
 // Registry 注册HTTP服务路由
@@ -34,12 +31,7 @@ func (h *handler) Registry(router router.SubRouter) {
 }
 
 func (h *handler) Config() error {
-	client := client.C()
-	if client == nil {
-		return errors.New("grpc client not initial")
-	}
-
-	h.service = client.Token()
+	h.service = app.GetGrpcApp(token.AppName).(token.TokenServiceServer)
 	return nil
 }
 

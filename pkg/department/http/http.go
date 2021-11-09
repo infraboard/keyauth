@@ -17,8 +17,8 @@ var (
 )
 
 type handler struct {
-	service department.DepartmentServiceClient
-	user    user.UserServiceClient
+	service department.DepartmentServiceServer
+	user    user.UserServiceServer
 }
 
 // Registry 注册HTTP服务路由
@@ -46,8 +46,8 @@ func (h *handler) Config() error {
 		return errors.New("grpc client not initial")
 	}
 
-	h.service = client.Department()
-	h.user = client.User()
+	h.service = app.GetGrpcApp(department.AppName).(department.DepartmentServiceServer)
+	h.user = app.GetGrpcApp(user.AppName).(user.UserServiceServer)
 	return nil
 }
 

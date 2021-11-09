@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/infraboard/mcube/app"
 	"github.com/infraboard/mcube/cache"
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
 
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/domain"
 	"github.com/infraboard/keyauth/pkg/ip2region"
 	"github.com/infraboard/keyauth/pkg/session"
@@ -20,29 +20,17 @@ import (
 
 // NewChecker todo
 func NewChecker() (Checker, error) {
-	if pkg.Domain == nil {
-		return nil, fmt.Errorf("denpence domain service required")
-	}
-	if pkg.User == nil {
-		return nil, fmt.Errorf("denpence user service required")
-	}
-	if pkg.Session == nil {
-		return nil, fmt.Errorf("denpence session service required")
-	}
-	if pkg.IP2Region == nil {
-		return nil, fmt.Errorf("denpence ip2region service required")
-	}
 	c := cache.C()
 	if c == nil {
 		return nil, fmt.Errorf("denpence cache service is nil")
 	}
 
 	return &checker{
-		domain:    pkg.Domain,
-		user:      pkg.User,
-		session:   pkg.Session,
+		domain:    app.GetGrpcApp(domain.AppName).(domain.DomainServiceServer),
+		user:      app.GetGrpcApp(user.AppName).(user.UserServiceServer),
+		session:   app.GetGrpcApp(session.AppName).(session.ServiceServer),
 		cache:     c,
-		ip2Regoin: pkg.IP2Region,
+		ip2Regoin: app.GetInternalApp(ip2region.AppName).(ip2region.Service),
 		log:       zap.L().Named("Login Security"),
 	}, nil
 }
@@ -57,7 +45,7 @@ type checker struct {
 }
 
 func (c *checker) MaxFailedRetryCheck(ctx context.Context, req *token.IssueTokenRequest) error {
-	ss := c.getOrDefaultSecuritySettingWithUser(req.Username)
+	ss := c.getOrDefaultSecuritySettingWithUser(ctx, req.Username)
 	if !ss.LoginSecurity.RetryLock {
 		c.log.Debugf("retry lock check disabled, don't check")
 		return nil
@@ -80,7 +68,7 @@ func (c *checker) MaxFailedRetryCheck(ctx context.Context, req *token.IssueToken
 }
 
 func (c *checker) UpdateFailedRetry(ctx context.Context, req *token.IssueTokenRequest) error {
-	ss := c.getOrDefaultSecuritySettingWithUser(req.Username)
+	ss := c.getOrDefaultSecuritySettingWithUser(ctx, req.Username)
 	if !ss.LoginSecurity.RetryLock {
 		c.log.Debugf("retry lock check disabled, don't check")
 		return nil
@@ -165,7 +153,7 @@ func (c *checker) OtherPlaceLoggedInChecK(ctx context.Context, tk *token.Token) 
 }
 
 func (c *checker) NotLoginDaysChecK(ctx context.Context, tk *token.Token) error {
-	ss := c.getOrDefaultSecuritySettingWithUser(tk.Account)
+	ss := c.getOrDefaultSecuritySettingWithUser(ctx, tk.Account)
 	if !ss.LoginSecurity.ExceptionLock {
 		c.log.Debugf("exception check disabled, don't check")
 		return nil
@@ -198,7 +186,7 @@ func (c *checker) NotLoginDaysChecK(ctx context.Context, tk *token.Token) error 
 }
 
 func (c *checker) IPProtectCheck(ctx context.Context, req *token.IssueTokenRequest) error {
-	ss := c.getOrDefaultSecuritySettingWithUser(req.Username)
+	ss := c.getOrDefaultSecuritySettingWithUser(ctx, req.Username)
 	if !ss.LoginSecurity.IpLimite {
 		c.log.Debugf("ip limite check disabled, don't check")
 		return nil
@@ -209,9 +197,8 @@ func (c *checker) IPProtectCheck(ctx context.Context, req *token.IssueTokenReque
 	return nil
 }
 
-func (c *checker) getOrDefaultSecuritySettingWithUser(account string) *domain.SecuritySetting {
+func (c *checker) getOrDefaultSecuritySettingWithUser(ctx context.Context, account string) *domain.SecuritySetting {
 	ss := domain.NewDefaultSecuritySetting()
-	ctx := pkg.NewInternalMockGrpcCtx(account).Context()
 	u, err := c.user.DescribeAccount(ctx, user.NewDescriptAccountRequestWithAccount(account))
 	if err != nil {
 		c.log.Errorf("get user account error, %s, use default setting to check", err)
