@@ -17,6 +17,7 @@ func NewGroup(req *CreateGroupRequest) (*Group, error) {
 		Type:        req.Type,
 		Name:        req.Name,
 		Description: req.Description,
+		Creater:     req.Creater,
 	}
 
 	return ins, nil

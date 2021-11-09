@@ -3,26 +3,16 @@ package http
 import (
 	"net/http"
 
-	"github.com/infraboard/keyauth/pkg"
+	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
+	"github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/metadata"
 )
 
 func (h *handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
-	tk, err := ctx.GetToken()
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
+	ctx := context.GetContext(r)
+	tk := ctx.AuthInfo.(*token.Token)
 
 	// 解析需要更新的数据
 	req := user.NewUpdatePasswordRequest()
@@ -32,15 +22,9 @@ func (h *handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 	}
 	req.Account = tk.Account
 
-	var header, trailer metadata.MD
-	pass, err := h.service.UpdateAccountPassword(
-		ctx.Context(),
-		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
-	)
+	pass, err := h.service.UpdateAccountPassword(r.Context(), req)
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 
@@ -50,12 +34,6 @@ func (h *handler) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) GeneratePassword(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
 	// 解析需要更新的数据
 	req := user.NewGeneratePasswordRequest()
 	if err := request.GetDataFromRequest(r, req); err != nil {
@@ -63,15 +41,12 @@ func (h *handler) GeneratePassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var header, trailer metadata.MD
 	pass, err := h.service.GeneratePassword(
-		ctx.Context(),
+		r.Context(),
 		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
 	)
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 

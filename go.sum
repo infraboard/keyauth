@@ -257,8 +257,8 @@ github.com/ianlancetaylor/demangle v0.0.0-20181102032728-5e5cf60278f6/go.mod h1:
 github.com/ianlancetaylor/demangle v0.0.0-20200824232613-28f6c0f3b639/go.mod h1:aSSvb/t6k1mPoxDqO4vJh6VOCGPwU4O0C2/Eqndh1Sc=
 github.com/inconshreveable/mousetrap v1.0.0 h1:Z8tu5sraLXCXIcARxBp/8cbvlwVa7Z1NHg9XEKhtSvM=
 github.com/inconshreveable/mousetrap v1.0.0/go.mod h1:PxqpIevigyE2G7u3NXJIT2ANytuPF1OarO4DADm73n8=
-github.com/infraboard/mcube v1.5.0 h1:ALHzpnG0wCRKsWpZe65YjbSrcMYr9yQJeP/fw8FLmQk=
-github.com/infraboard/mcube v1.5.0/go.mod h1:hSZCgfcMvjvc/pgj7rWosO+Mts9pz+A73a+76tH6tMs=
+github.com/infraboard/mcube v1.5.2 h1:oTonCupk3fWjbMt8/rI8PIgfcDvGx39E6TMDwTgB5uQ=
+github.com/infraboard/mcube v1.5.2/go.mod h1:hSZCgfcMvjvc/pgj7rWosO+Mts9pz+A73a+76tH6tMs=
 github.com/jcmturner/aescts/v2 v2.0.0 h1:9YKLH6ey7H4eDBXW8khjYslgyqG2xZikXP0EQFKrle8=
 github.com/jcmturner/aescts/v2 v2.0.0/go.mod h1:AiaICIRyfYg35RUkr8yESTqvSy7csK90qZ5xfvvsoNs=
 github.com/jcmturner/dnsutils/v2 v2.0.0 h1:lltnkeZGL0wILNvrNiVCR6Ro5PGU/SeBvVO/8c/iPbo=

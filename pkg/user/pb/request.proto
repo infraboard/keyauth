@@ -44,6 +44,9 @@ message Profile {
 
 // CreateAccountRequest 创建用户请求
 message CreateAccountRequest {
+    // 域信息
+    // @gotags: json:"domin" validate:"required"
+    string domin = 9;
     // 创建方式
     // @gotags: json:"create_type"
     CreateType create_type = 1;
@@ -125,12 +128,16 @@ message UpdatePasswordRequest {
     string old_pass = 2;
     // @gotags: json:"new_pass"
     string new_pass = 3;
+    // @gotags: json:"is_reset"
+    bool is_reset = 4;
 }
 
 // GeneratePasswordRequest todo
 message GeneratePasswordRequest {
     // @gotags: json:"length"
     int32 length = 1;
+    // @gotags: json:"domain"
+    string domain = 2;
 }
 
 // GeneratePasswordResponse todo

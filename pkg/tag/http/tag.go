@@ -1,25 +1,22 @@
 package http
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/metadata"
 
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/tag"
+	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
 // CreateApplication 创建自定义角色
 func (h *handler) CreateTag(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
+	ctx := context.GetContext(r)
+	tk := ctx.AuthInfo.(*token.Token)
 
 	req := tag.NewCreateTagRequest()
 	if err := request.GetDataFromRequest(r, req); err != nil {
@@ -27,15 +24,22 @@ func (h *handler) CreateTag(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var header, trailer metadata.MD
-	d, err := h.service.CreateTag(
-		ctx.Context(),
-		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
-	)
+	switch req.ScopeType {
+	case tag.ScopeType_GLOBAL:
+		if !tk.UserType.IsIn(types.UserType_SUPPER) {
+			response.Failed(w, fmt.Errorf("only supper account can create global tag"))
+			return
+		}
+	case tag.ScopeType_DOMAIN:
+		if !tk.UserType.IsIn(types.UserType_SUPPER, types.UserType_DOMAIN_ADMIN) {
+			response.Failed(w, fmt.Errorf("only domain account can create domain tag"))
+			return
+		}
+	}
+
+	d, err := h.service.CreateTag(r.Context(), req)
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 
@@ -44,23 +48,14 @@ func (h *handler) CreateTag(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) QueryTagKey(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
 	req := tag.NewQueryTageKeyRequestFromHTTP(r)
 
-	var header, trailer metadata.MD
 	apps, err := h.service.QueryTagKey(
-		ctx.Context(),
+		r.Context(),
 		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
 	)
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 
@@ -69,25 +64,14 @@ func (h *handler) QueryTagKey(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) QueryTagValue(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
 
 	rctx := context.GetContext(r)
 	req := tag.NewQueryTageValueRequestFromHTTP(r)
 	req.TagId = rctx.PS.ByName("id")
 
-	var header, trailer metadata.MD
-	apps, err := h.service.QueryTagValue(
-		ctx.Context(),
-		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
-	)
+	apps, err := h.service.QueryTagValue(r.Context(), req)
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 
@@ -96,26 +80,14 @@ func (h *handler) QueryTagValue(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) DescribeTag(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
 	rctx := context.GetContext(r)
 	pid := rctx.PS.ByName("id")
 
 	req := tag.NewDescribeTagRequestWithID(pid)
 
-	var header, trailer metadata.MD
-	ins, err := h.service.DescribeTag(
-		ctx.Context(),
-		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
-	)
+	ins, err := h.service.DescribeTag(r.Context(), req)
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 
@@ -124,24 +96,15 @@ func (h *handler) DescribeTag(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) DeleteTag(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
 	rctx := context.GetContext(r)
 	req := tag.NewDeleteTagRequestWithID(rctx.PS.ByName("id"))
 
-	var header, trailer metadata.MD
-	_, err = h.service.DeleteTag(
-		ctx.Context(),
+	_, err := h.service.DeleteTag(
+		r.Context(),
 		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
 	)
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 

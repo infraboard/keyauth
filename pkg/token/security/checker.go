@@ -26,7 +26,7 @@ func NewChecker() (Checker, error) {
 	if pkg.User == nil {
 		return nil, fmt.Errorf("denpence user service required")
 	}
-	if pkg.SessionAdmin == nil {
+	if pkg.Session == nil {
 		return nil, fmt.Errorf("denpence session service required")
 	}
 	if pkg.IP2Region == nil {
@@ -40,7 +40,7 @@ func NewChecker() (Checker, error) {
 	return &checker{
 		domain:    pkg.Domain,
 		user:      pkg.User,
-		session:   pkg.SessionAdmin,
+		session:   pkg.Session,
 		cache:     c,
 		ip2Regoin: pkg.IP2Region,
 		log:       zap.L().Named("Login Security"),
@@ -50,7 +50,7 @@ func NewChecker() (Checker, error) {
 type checker struct {
 	domain    domain.DomainServiceServer
 	user      user.UserServiceServer
-	session   session.AdminServiceServer
+	session   session.ServiceServer
 	cache     cache.Cache
 	ip2Regoin ip2region.Service
 	log       logger.Logger

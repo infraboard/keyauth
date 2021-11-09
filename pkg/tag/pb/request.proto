@@ -32,6 +32,12 @@ message CreateTagRequest {
     // String 类型的值
     // @gotags: json:"values"
     repeated ValueOption values = 8;
+    // Tag所属的域
+    // @gotags: json:"domain"
+    string domain = 9;
+    // 创建人
+    // @gotags: json:"creater"
+    string creater = 10;
 }
 
 // QueryTagKeyRequest todo

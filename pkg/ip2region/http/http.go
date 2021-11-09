@@ -1,12 +1,10 @@
 package http
 
 import (
-	"errors"
-
+	"github.com/infraboard/mcube/app"
 	"github.com/infraboard/mcube/http/label"
 	"github.com/infraboard/mcube/http/router"
 
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/ip2region"
 )
 
@@ -30,14 +28,14 @@ func (h *handler) Registry(router router.SubRouter) {
 }
 
 func (h *handler) Config() error {
-	if pkg.IP2Region == nil {
-		return errors.New("denpence IP2Region service is nil")
-	}
-
-	h.service = pkg.IP2Region
+	h.service = app.GetInternalApp(ip2region.AppName).(ip2region.Service)
 	return nil
 }
 
+func (h *handler) Name() string {
+	return ip2region.AppName
+}
+
 func init() {
-	pkg.RegistryHTTPV1("ip2region", api)
+	app.RegistryHttpApp(api)
 }

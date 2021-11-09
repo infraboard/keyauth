@@ -7,7 +7,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/micro"
 )
@@ -62,23 +61,19 @@ func (s *service) QueryEndpoints(ctx context.Context, req *endpoint.QueryEndpoin
 }
 
 func (s *service) RegistryEndpoint(ctx context.Context, req *endpoint.RegistryRequest) (*endpoint.RegistryResponse, error) {
-	rctx, err := pkg.GetGrpcInCtx(ctx)
-	if err != nil {
-		return nil, err
-	}
 
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest(err.Error())
 	}
 
 	// 查询该服务
-	svr, err := s.micro.DescribeService(ctx, micro.NewDescribeServiceRequestWithClientID(rctx.GetClientID()))
+	svr, err := s.micro.DescribeService(ctx, micro.NewDescribeServiceRequestWithClientID(req.ClientId))
 	if err != nil {
 		return nil, err
 	}
 	s.log.Debugf("service %s registry endpoints", svr.Name)
 
-	if err := svr.ValiateClientCredential(rctx.GetClientSecret()); err != nil {
+	if err := svr.ValiateClientCredential(req.ClientSecret); err != nil {
 		return nil, err
 	}
 

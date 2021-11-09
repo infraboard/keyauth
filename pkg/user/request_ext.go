@@ -93,11 +93,6 @@ func NewUpdatePasswordRequest() *UpdatePasswordRequest {
 	return &UpdatePasswordRequest{}
 }
 
-// IsReset 密码是否需要被重置, 如果不是自己设置的密码 都需要被用户自己重置
-func (req *UpdatePasswordRequest) IsReset() bool {
-	return true
-}
-
 // Validate tood
 func (req *UpdatePasswordRequest) Validate() error {
 	if req.Account == "" {

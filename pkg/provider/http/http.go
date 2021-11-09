@@ -1,12 +1,10 @@
 package http
 
 import (
-	"errors"
-
+	"github.com/infraboard/mcube/app"
 	"github.com/infraboard/mcube/http/label"
 	"github.com/infraboard/mcube/http/router"
 
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/provider"
 )
 
@@ -29,14 +27,14 @@ func (h *handler) Registry(router router.SubRouter) {
 }
 
 func (h *handler) Config() error {
-	if pkg.LDAP == nil {
-		return errors.New("denpence namespace service is nil")
-	}
-
-	h.service = pkg.LDAP
+	h.service = app.GetGrpcApp(provider.AppName).(provider.LDAP)
 	return nil
 }
 
+func (h *handler) Name() string {
+	return provider.AppName
+}
+
 func init() {
-	pkg.RegistryHTTPV1("ldap", api)
+	app.RegistryHttpApp(api)
 }

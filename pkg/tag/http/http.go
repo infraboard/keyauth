@@ -3,10 +3,10 @@ package http
 import (
 	"errors"
 
+	"github.com/infraboard/mcube/app"
 	"github.com/infraboard/mcube/http/router"
 
 	"github.com/infraboard/keyauth/client"
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/tag"
 )
 
@@ -15,7 +15,7 @@ var (
 )
 
 type handler struct {
-	service tag.TagServiceClient
+	service tag.TagServiceServer
 }
 
 // Registry 注册HTTP服务路由
@@ -35,10 +35,14 @@ func (h *handler) Config() error {
 		return errors.New("grpc client not initial")
 	}
 
-	h.service = client.Tag()
+	h.service = app.GetGrpcApp(tag.AppName).(tag.TagServiceServer)
 	return nil
 }
 
+func (h *handler) Name() string {
+	return tag.AppName
+}
+
 func init() {
-	pkg.RegistryHTTPV1("tag", api)
+	app.RegistryHttpApp(api)
 }

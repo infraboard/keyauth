@@ -121,13 +121,8 @@ func (c *Client) Tag() tag.TagServiceClient {
 }
 
 // SessionAdmin todo
-func (c *Client) SessionAdmin() session.AdminServiceClient {
-	return session.NewAdminServiceClient(c.conn)
-}
-
-// SessionUser todo
-func (c *Client) SessionUser() session.UserServiceClient {
-	return session.NewUserServiceClient(c.conn)
+func (c *Client) Session() session.ServiceClient {
+	return session.NewServiceClient(c.conn)
 }
 
 // Token todo

@@ -3,10 +3,10 @@ package http
 import (
 	"errors"
 
+	"github.com/infraboard/mcube/app"
 	"github.com/infraboard/mcube/http/router"
 
 	"github.com/infraboard/keyauth/client"
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/domain"
 	"github.com/infraboard/keyauth/pkg/user"
 )
@@ -16,8 +16,8 @@ var (
 )
 
 type handler struct {
-	service user.UserServiceClient
-	domain  domain.DomainServiceClient
+	service user.UserServiceServer
+	domain  domain.DomainServiceServer
 }
 
 // Registry 注册HTTP服务路由
@@ -61,11 +61,15 @@ func (h *handler) Config() error {
 		return errors.New("grpc client not initial")
 	}
 
-	h.service = client.User()
-	h.domain = client.Domain()
+	h.service = app.GetGrpcApp(user.AppName).(user.UserServiceServer)
+	h.domain = app.GetGrpcApp(domain.AppName).(domain.DomainServiceServer)
 	return nil
 }
 
+func (h *handler) Name() string {
+	return user.AppName
+}
+
 func init() {
-	pkg.RegistryHTTPV1("user", api)
+	app.RegistryHttpApp(api)
 }

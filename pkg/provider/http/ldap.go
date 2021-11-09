@@ -4,11 +4,12 @@ import (
 	"net/http"
 
 	"github.com/infraboard/mcube/exception"
+	"github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
 
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/provider"
+	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
@@ -23,22 +24,12 @@ func (h *handler) List(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, apps)
-	return
 }
 
 // CreateApplication 创建主账号
 func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
-	tk, err := ctx.GetToken()
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
+	ctx := context.GetContext(r)
+	tk := ctx.AuthInfo.(*token.Token)
 
 	req := provider.NewSaveLDAPConfigRequest()
 	req.WithToken(tk)
@@ -60,21 +51,12 @@ func (h *handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, d)
-	return
 }
 
 func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
+	ctx := context.GetContext(r)
+	tk := ctx.AuthInfo.(*token.Token)
 
-	tk, err := ctx.GetToken()
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
 	req := provider.NewDescribeLDAPConfigWithDomain(tk.Domain)
 	d, err := h.service.DescribeConfig(req)
 	if err != nil {
@@ -84,21 +66,11 @@ func (h *handler) Get(w http.ResponseWriter, r *http.Request) {
 
 	d.Desensitize()
 	response.Success(w, d)
-	return
 }
 
 func (h *handler) Check(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
-	tk, err := ctx.GetToken()
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
+	ctx := context.GetContext(r)
+	tk := ctx.AuthInfo.(*token.Token)
 
 	req := provider.NewDescribeLDAPConfigWithDomain(tk.Domain)
 	if err := h.service.CheckConnect(req); err != nil {
@@ -107,5 +79,4 @@ func (h *handler) Check(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, "passed")
-	return
 }

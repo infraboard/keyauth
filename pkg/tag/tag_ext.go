@@ -1,38 +1,23 @@
 package tag
 
 import (
-	"fmt"
-
 	"github.com/infraboard/mcube/types/ftime"
 
 	"github.com/infraboard/keyauth/common/tools"
-	"github.com/infraboard/keyauth/pkg/token"
-	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
 // New 新创建一个Role
-func New(tk *token.Token, req *CreateTagRequest) (*TagKey, error) {
+func New(req *CreateTagRequest) (*TagKey, error) {
 	if err := req.Validate(); err != nil {
 		return nil, err
-	}
-
-	switch req.ScopeType {
-	case ScopeType_GLOBAL:
-		if !tk.UserType.IsIn(types.UserType_SUPPER) {
-			return nil, fmt.Errorf("only supper account can create global tag")
-		}
-	case ScopeType_DOMAIN:
-		if !tk.UserType.IsIn(types.UserType_SUPPER, types.UserType_DOMAIN_ADMIN) {
-			return nil, fmt.Errorf("only domain account can create domain tag")
-		}
 	}
 
 	r := &TagKey{
 		Id:        req.GenUUID(),
 		CreateAt:  ftime.Now().Timestamp(),
 		UpdateAt:  ftime.Now().Timestamp(),
-		Domain:    tk.Domain,
-		Creater:   tk.Account,
+		Domain:    req.Domain,
+		Creater:   req.Creater,
 		ScopeType: req.ScopeType,
 		Namespace: req.Namespace,
 		KeyName:   req.KeyName,
@@ -45,7 +30,7 @@ func New(tk *token.Token, req *CreateTagRequest) (*TagKey, error) {
 			Id:       tools.GenHashID(r.Id + req.Values[i].Value),
 			CreateAt: ftime.Now().Timestamp(),
 			UpdateAt: ftime.Now().Timestamp(),
-			Creater:  tk.Account,
+			Creater:  req.Creater,
 			KeyId:    r.Id,
 			Value:    req.Values[i],
 		})

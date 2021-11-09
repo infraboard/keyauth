@@ -16,7 +16,10 @@ message CreateGroupRequest {
     string name = 2;
     // 描述信息
     // @gotags: json:"description,omitempty"
-    string description = 3;                  
+    string description = 3; 
+    // 创建人
+    // @gotags: bson:"creater" json:"creater"
+    string creater = 4;                
 }
 
 // ItemRequest 健值项
@@ -67,6 +70,8 @@ message QueryItemRequest {
 
 // AddItemToGroupRequest todo
 message AddItemToGroupRequest {
+    // @gotags: json:"account"
+    string account = 3;
     // @gotags: json:"group_name"
     string group_name = 1;
     // @gotags: bson:"items" json:"items"

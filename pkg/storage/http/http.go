@@ -3,6 +3,7 @@ package http
 import (
 	"errors"
 
+	"github.com/infraboard/mcube/app"
 	"github.com/infraboard/mcube/http/router"
 
 	"github.com/infraboard/keyauth/pkg"
@@ -34,6 +35,10 @@ func (h *handler) Config() error {
 	return nil
 }
 
+func (h *handler) Name() string {
+	return storage.AppName
+}
+
 func init() {
-	pkg.RegistryHTTPV1("buckets", api)
+	app.RegistryHttpApp(api)
 }

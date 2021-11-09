@@ -10,6 +10,10 @@ import "pkg/endpoint/pb/enum.proto";
 
 // RegistryRequest 服务注册请求
 message RegistryRequest {
+        // @gotags: json:"client_id" validate:"required"
+        string client_id = 1;
+        // @gotags: json:"client_secret" validate:"required"
+        string client_secret = 2;
         // @gotags: json:"version" validate:"required,lte=32"
 	string version = 3;
          // @gotags: json:"entries"

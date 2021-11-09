@@ -16,7 +16,7 @@ var (
 )
 
 type handler struct {
-	endpoint endpoint.EndpointServiceClient
+	endpoint endpoint.EndpointServiceServer
 }
 
 // Registry 注册HTTP服务路由
@@ -39,14 +39,6 @@ func (h *handler) Config() error {
 		return errors.New("grpc client not initial")
 	}
 
-	h.endpoint = client.Endpoint()
+	h.endpoint = app.GetGrpcApp(endpoint.AppName).(endpoint.EndpointServiceServer)
 	return nil
-}
-
-func (h *handler) Name() string {
-	return endpoint.AppName
-}
-
-func init() {
-	app.RegistryHttpApp(api)
 }

@@ -34,6 +34,7 @@ func New(req *CreateAccountRequest) (*User, error) {
 	}
 
 	u := &User{
+		Domain:         req.Domin,
 		CreateAt:       ftime.Now().Timestamp(),
 		UpdateAt:       ftime.Now().Timestamp(),
 		Profile:        req.Profile,

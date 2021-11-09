@@ -8,7 +8,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/application"
 )
 
@@ -19,12 +18,7 @@ type userimpl struct {
 
 func (s *userimpl) CreateUserApplication(ctx context.Context, req *application.CreateApplicatonRequest) (
 	*application.Application, error) {
-	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	app, err := application.NewUserApplicartion(tk.Account, req)
+	app, err := application.NewUserApplicartion(req)
 	if err != nil {
 		return nil, err
 	}

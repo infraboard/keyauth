@@ -3,10 +3,10 @@ package http
 import (
 	"errors"
 
+	"github.com/infraboard/mcube/app"
 	"github.com/infraboard/mcube/http/router"
 
 	"github.com/infraboard/keyauth/client"
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/session"
 )
 
@@ -15,7 +15,7 @@ var (
 )
 
 type handler struct {
-	service session.UserServiceClient
+	service session.ServiceClient
 }
 
 // Registry 注册HTTP服务路由
@@ -32,10 +32,14 @@ func (h *handler) Config() error {
 		return errors.New("grpc client not initial")
 	}
 
-	h.service = client.SessionUser()
+	h.service = client.Session()
 	return nil
 }
 
+func (h *handler) Name() string {
+	return session.AppName
+}
+
 func init() {
-	pkg.RegistryHTTPV1("session", api)
+	app.RegistryHttpApp(api)
 }

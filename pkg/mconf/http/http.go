@@ -3,10 +3,10 @@ package http
 import (
 	"errors"
 
+	"github.com/infraboard/mcube/app"
 	"github.com/infraboard/mcube/http/router"
 
 	"github.com/infraboard/keyauth/client"
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/mconf"
 	"github.com/infraboard/keyauth/pkg/user/types"
 )
@@ -43,6 +43,10 @@ func (h *handler) Config() error {
 	return nil
 }
 
+func (h *handler) Name() string {
+	return mconf.AppName
+}
+
 func init() {
-	pkg.RegistryHTTPV1("service_config", api)
+	app.RegistryHttpApp(api)
 }

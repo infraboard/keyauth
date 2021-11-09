@@ -3,21 +3,23 @@ package http
 import (
 	"net/http"
 
+	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/metadata"
 
-	"github.com/infraboard/keyauth/pkg"
+	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
 	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
 func (h *handler) CreateSubAccount(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
+	ctx := context.GetContext(r)
+	tk := ctx.AuthInfo.(*token.Token)
+
+	// 非管理员, 主账号 可以创建子账号
+	if !tk.UserType.IsIn(types.UserType_SUPPER, types.UserType_INTERNAL, types.UserType_PRIMARY) {
+		response.Failed(w, exception.NewPermissionDeny("%s user can't create sub account", tk.UserType))
 		return
 	}
 
@@ -30,15 +32,12 @@ func (h *handler) CreateSubAccount(w http.ResponseWriter, r *http.Request) {
 	req.UserType = types.UserType_SUB
 	req.CreateType = user.CreateType_DOMAIN_CREATED
 
-	var header, trailer metadata.MD
 	d, err := h.service.CreateAccount(
-		ctx.Context(),
+		r.Context(),
 		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
 	)
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 
@@ -46,31 +45,19 @@ func (h *handler) CreateSubAccount(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) QuerySubAccount(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
-	tk, err := ctx.GetToken()
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
+	ctx := context.GetContext(r)
+	tk := ctx.AuthInfo.(*token.Token)
 
 	req := user.NewNewQueryAccountRequestFromHTTP(r)
 	req.UserType = types.UserType_SUB
 	req.Domain = tk.Domain
 
-	var header, trailer metadata.MD
 	d, err := h.service.QueryAccount(
-		ctx.Context(),
+		r.Context(),
 		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
 	)
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 
@@ -78,24 +65,12 @@ func (h *handler) QuerySubAccount(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) DescribeSubAccount(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
 	rctx := context.GetContext(r)
 	req := user.NewDescriptAccountRequestWithAccount(rctx.PS.ByName("account"))
 
-	var header, trailer metadata.MD
-	d, err := h.service.DescribeAccount(
-		ctx.Context(),
-		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
-	)
+	d, err := h.service.DescribeAccount(r.Context(), req)
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 
@@ -103,13 +78,7 @@ func (h *handler) DescribeSubAccount(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) PatchSubAccount(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
 	rctx := context.GetContext(r)
-
 	req := user.NewPatchAccountRequest()
 	req.Account = rctx.PS.ByName("account")
 
@@ -118,15 +87,9 @@ func (h *handler) PatchSubAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var header, trailer metadata.MD
-	ins, err := h.service.UpdateAccountProfile(
-		ctx.Context(),
-		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
-	)
+	ins, err := h.service.UpdateAccountProfile(r.Context(), req)
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 	ins.Desensitize()
@@ -137,23 +100,15 @@ func (h *handler) PatchSubAccount(w http.ResponseWriter, r *http.Request) {
 
 // DestroySubAccount 注销账号
 func (h *handler) DestroySubAccount(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
 	rctx := context.GetContext(r)
 	req := &user.DeleteAccountRequest{Account: rctx.PS.ByName("account")}
 
-	var header, trailer metadata.MD
-	_, err = h.service.DeleteAccount(
-		ctx.Context(),
+	_, err := h.service.DeleteAccount(
+		r.Context(),
 		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
 	)
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 
@@ -161,27 +116,18 @@ func (h *handler) DestroySubAccount(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) BlockSubAccount(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
 	req := user.NewBlockAccountRequest("", "")
 	if err := request.GetDataFromRequest(r, req); err != nil {
 		response.Failed(w, err)
 		return
 	}
 
-	var header, trailer metadata.MD
 	ins, err := h.service.BlockAccount(
-		ctx.Context(),
+		r.Context(),
 		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
 	)
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 	ins.Desensitize()
@@ -190,27 +136,18 @@ func (h *handler) BlockSubAccount(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) UnBlockSubAccount(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
 	req := user.NewBlockAccountRequest("", "")
 	if err := request.GetDataFromRequest(r, req); err != nil {
 		response.Failed(w, err)
 		return
 	}
 
-	var header, trailer metadata.MD
 	ins, err := h.service.BlockAccount(
-		ctx.Context(),
+		r.Context(),
 		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
 	)
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 	ins.Desensitize()

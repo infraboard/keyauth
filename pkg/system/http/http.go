@@ -1,11 +1,9 @@
 package http
 
 import (
-	"errors"
-
+	"github.com/infraboard/mcube/app"
 	"github.com/infraboard/mcube/http/router"
 
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/system"
 )
 
@@ -30,14 +28,14 @@ func (h *handler) Registry(router router.SubRouter) {
 }
 
 func (h *handler) Config() error {
-	if pkg.System == nil {
-		return errors.New("denpence system service is nil")
-	}
-
-	h.service = pkg.System
+	h.service = app.GetInternalApp(system.AppName).(system.Service)
 	return nil
 }
 
+func (h *handler) Name() string {
+	return system.AppName
+}
+
 func init() {
-	pkg.RegistryHTTPV1("system_config", api)
+	app.RegistryHttpApp(api)
 }

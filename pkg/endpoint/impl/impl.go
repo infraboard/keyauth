@@ -2,7 +2,6 @@ package impl
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/infraboard/mcube/app"
 	"github.com/infraboard/mcube/logger"
@@ -12,7 +11,6 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/infraboard/keyauth/conf"
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/micro"
 )
@@ -49,10 +47,7 @@ func (s *service) Config() error {
 
 	s.col = col
 
-	if pkg.Micro == nil {
-		return fmt.Errorf("dependence micro service is nil, please load first")
-	}
-	s.micro = pkg.Micro
+	s.micro = app.GetGrpcApp(micro.AppName).(micro.MicroServiceServer)
 	s.log = zap.L().Named("Endpoint")
 	return nil
 }

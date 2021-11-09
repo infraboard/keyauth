@@ -1,37 +1,37 @@
 package pkg
 
-import (
-	"strconv"
+// import (
+// 	"strconv"
 
-	"github.com/infraboard/mcube/exception"
-	"google.golang.org/grpc/metadata"
+// 	"github.com/infraboard/mcube/exception"
+// 	"google.golang.org/grpc/metadata"
 
-	"github.com/infraboard/keyauth/version"
-)
+// 	"github.com/infraboard/keyauth/version"
+// )
 
-const (
-	// ResponseCodeHeader todo
-	ResponseCodeHeader = "x-rpc-code"
-	// ResponseReasonHeader todo
-	ResponseReasonHeader = "x-rpc-reason"
-	// ResponseDescHeader todo
-	ResponseDescHeader = "x-rpc-desc"
-	// ResponseMetaHeader todo
-	ResponseMetaHeader = "x-rpc-meta"
-	// ResponseDataHeader todo
-	ResponseDataHeader = "x-rpc-data"
-)
+// const (
+// 	// ResponseCodeHeader todo
+// 	ResponseCodeHeader = "x-rpc-code"
+// 	// ResponseReasonHeader todo
+// 	ResponseReasonHeader = "x-rpc-reason"
+// 	// ResponseDescHeader todo
+// 	ResponseDescHeader = "x-rpc-desc"
+// 	// ResponseMetaHeader todo
+// 	ResponseMetaHeader = "x-rpc-meta"
+// 	// ResponseDataHeader todo
+// 	ResponseDataHeader = "x-rpc-data"
+// )
 
-// NewExceptionFromTrailer todo
-func NewExceptionFromTrailer(md metadata.MD, err error) exception.APIException {
-	ctx := newGrpcCtx(md)
-	code, _ := strconv.Atoi(ctx.get(ResponseCodeHeader))
-	reason := ctx.get(ResponseReasonHeader)
-	message := ctx.get(ResponseDescHeader)
-	ctx.get(ResponseMetaHeader)
-	ctx.get(ResponseDataHeader)
-	if message == "" {
-		message = err.Error()
-	}
-	return exception.NewAPIException(version.ServiceName, code, reason, message)
-}
+// // NewExceptionFromTrailer todo
+// func NewExceptionFromTrailer(md metadata.MD, err error) exception.APIException {
+// 	ctx := newGrpcCtx(md)
+// 	code, _ := strconv.Atoi(ctx.get(ResponseCodeHeader))
+// 	reason := ctx.get(ResponseReasonHeader)
+// 	message := ctx.get(ResponseDescHeader)
+// 	ctx.get(ResponseMetaHeader)
+// 	ctx.get(ResponseDataHeader)
+// 	if message == "" {
+// 		message = err.Error()
+// 	}
+// 	return exception.NewAPIException(version.ServiceName, code, reason, message)
+// }

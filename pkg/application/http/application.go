@@ -4,34 +4,23 @@ import (
 	"net/http"
 
 	"github.com/infraboard/mcube/exception"
-	httpctx "github.com/infraboard/mcube/http/context"
+	"github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/metadata"
 
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/application"
+	"github.com/infraboard/keyauth/pkg/token"
 )
 
 func (h *handler) QueryApplication(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
-	tk, err := ctx.GetToken()
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
+	ctx := context.GetContext(r)
+	tk := ctx.AuthInfo.(*token.Token)
 
 	page := request.NewPageRequestFromHTTP(r)
 	req := application.NewQueryApplicationRequest(page)
 	req.Account = tk.Account
 
-	apps, err := h.service.QueryApplication(ctx.Context(), req)
+	apps, err := h.service.QueryApplication(r.Context(), req)
 	if err != nil {
 		response.Failed(w, err)
 		return
@@ -42,17 +31,8 @@ func (h *handler) QueryApplication(w http.ResponseWriter, r *http.Request) {
 
 // CreateApplication 创建主账号
 func (h *handler) CreateApplication(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
-	tk, err := ctx.GetToken()
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
+	ctx := context.GetContext(r)
+	tk := ctx.AuthInfo.(*token.Token)
 
 	req := application.NewCreateApplicatonRequest()
 	if err := request.GetDataFromRequest(r, req); err != nil {
@@ -61,15 +41,9 @@ func (h *handler) CreateApplication(w http.ResponseWriter, r *http.Request) {
 	}
 	req.UpdateOwner(tk)
 
-	var header, trailer metadata.MD
-	d, err := h.service.CreateApplication(
-		ctx.Context(),
-		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
-	)
+	d, err := h.service.CreateApplication(r.Context(), req)
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 
@@ -77,32 +51,15 @@ func (h *handler) CreateApplication(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) GetApplication(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
+	ctx := context.GetContext(r)
+	tk := ctx.AuthInfo.(*token.Token)
 
-	tk, err := ctx.GetToken()
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
-	rctx := httpctx.GetContext(r)
 	req := application.NewDescriptApplicationRequest()
-	req.Id = rctx.PS.ByName("id")
+	req.Id = ctx.PS.ByName("id")
 
-	var header, trailer metadata.MD
-	ins, err := h.service.DescribeApplication(
-		ctx.Context(),
-		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
-	)
-
+	ins, err := h.service.DescribeApplication(r.Context(), req)
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 
@@ -116,32 +73,16 @@ func (h *handler) GetApplication(w http.ResponseWriter, r *http.Request) {
 
 // DestroyPrimaryAccount 注销账号
 func (h *handler) DestroyApplication(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
+	ctx := context.GetContext(r)
+	tk := ctx.AuthInfo.(*token.Token)
 
-	tk, err := ctx.GetToken()
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
-	rctx := httpctx.GetContext(r)
 	descReq := application.NewDescriptApplicationRequest()
-	descReq.Id = rctx.PS.ByName("id")
+	descReq.Id = ctx.PS.ByName("id")
 
-	var header, trailer metadata.MD
-	ins, err := h.service.DescribeApplication(
-		ctx.Context(),
-		descReq,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
-	)
+	ins, err := h.service.DescribeApplication(r.Context(), descReq)
 
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 
@@ -150,18 +91,12 @@ func (h *handler) DestroyApplication(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rctx = httpctx.GetContext(r)
-	req := application.NewDeleteApplicationRequestWithID(rctx.PS.ByName("id"))
+	req := application.NewDeleteApplicationRequestWithID(ctx.PS.ByName("id"))
 
-	_, err = h.service.DeleteApplication(
-		ctx.Context(),
-		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
-	)
+	_, err = h.service.DeleteApplication(r.Context(), req)
 
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 

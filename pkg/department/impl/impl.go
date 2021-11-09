@@ -2,7 +2,6 @@ package impl
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/infraboard/mcube/app"
 	"github.com/infraboard/mcube/logger"
@@ -13,7 +12,6 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/infraboard/keyauth/conf"
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/counter"
 	"github.com/infraboard/keyauth/pkg/department"
 	"github.com/infraboard/keyauth/pkg/role"
@@ -39,19 +37,9 @@ type service struct {
 }
 
 func (s *service) Config() error {
-	if pkg.Counter == nil {
-		return fmt.Errorf("dependence counter service is nil")
-	}
-	s.counter = pkg.Counter
-	if pkg.User == nil {
-		return fmt.Errorf("dependence user service is nil")
-	}
-	s.user = pkg.User
-
-	if pkg.Role == nil {
-		return fmt.Errorf("dependence role service is nil")
-	}
-	s.role = pkg.Role
+	s.counter = app.GetInternalApp(counter.AppName).(counter.Service)
+	s.user = app.GetGrpcApp(user.AppName).(user.UserServiceServer)
+	s.role = app.GetGrpcApp(role.AppName).(role.RoleServiceServer)
 
 	db := conf.C().Mongo.GetDB()
 

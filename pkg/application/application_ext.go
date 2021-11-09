@@ -12,20 +12,19 @@ import (
 )
 
 // NewUserApplicartion 新建实例
-func NewUserApplicartion(account string, req *CreateApplicatonRequest) (*Application, error) {
+func NewUserApplicartion(req *CreateApplicatonRequest) (*Application, error) {
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest(err.Error())
 	}
 
 	app := newDeafultApplication(req)
-	app.CreateBy = account
 
 	return app, nil
 }
 
 // NewBuildInApplication 构建内建应用
 func NewBuildInApplication(account string, req *CreateApplicatonRequest) (*Application, error) {
-	app, err := NewUserApplicartion(account, req)
+	app, err := NewUserApplicartion(req)
 	if err != nil {
 		return nil, err
 	}
@@ -43,6 +42,7 @@ func newDeafultApplication(req *CreateApplicatonRequest) *Application {
 		UpdateAt:     now,
 		ClientId:     token.MakeBearer(24),
 		ClientSecret: token.MakeBearer(32),
+		CreateBy:     req.CreateBy,
 
 		Name:                     req.Name,
 		Website:                  req.Website,

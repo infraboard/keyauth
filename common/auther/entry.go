@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/infraboard/mcube/app"
 	"github.com/infraboard/mcube/bus"
 	"github.com/infraboard/mcube/bus/event"
 	"github.com/infraboard/mcube/exception"
@@ -14,7 +15,6 @@ import (
 	httpb "github.com/infraboard/mcube/pb/http"
 	"github.com/infraboard/mcube/types/ftime"
 
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/micro"
 	"github.com/infraboard/keyauth/pkg/permission"
 	"github.com/infraboard/keyauth/pkg/token"
@@ -23,17 +23,13 @@ import (
 )
 
 func newEntryEngine(entry *httpb.Entry) *entryEngine {
-	if pkg.Token == nil || pkg.Permission == nil || pkg.Micro == nil {
-		panic("token, permission, micro required")
-	}
-
 	return &entryEngine{
 		Entry:      entry,
 		log:        zap.L().Named("Auther Entry"),
 		uniPath:    false,
-		token:      pkg.Token,
-		permission: pkg.Permission,
-		micro:      pkg.Micro,
+		token:      app.GetGrpcApp(token.AppName).(token.TokenServiceServer),
+		permission: app.GetGrpcApp(permission.AppName).(permission.PermissionServiceServer),
+		micro:      app.GetGrpcApp(micro.AppName).(micro.MicroServiceServer),
 	}
 }
 

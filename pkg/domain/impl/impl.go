@@ -3,19 +3,19 @@ package impl
 import (
 	"context"
 
-	"github.com/infraboard/mcube/pb/http"
+	"github.com/infraboard/mcube/app"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/x/bsonx"
+	"google.golang.org/grpc"
 
 	"github.com/infraboard/keyauth/conf"
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/domain"
 )
 
 var (
 	// Service 服务实例
-	Service = &service{}
+	svr = &service{}
 )
 
 type service struct {
@@ -53,11 +53,14 @@ func (s *service) Config() error {
 	return nil
 }
 
-// HttpEntry todo
-func (s *service) HTTPEntry() *http.EntrySet {
-	return domain.HttpEntry()
+func (s *service) Name() string {
+	return domain.AppName
+}
+
+func (s *service) Registry(server *grpc.Server) {
+	domain.RegisterDomainServiceServer(server, svr)
 }
 
 func init() {
-	pkg.RegistryService("domain", Service)
+	app.RegistryGrpcApp(svr)
 }

@@ -1,43 +1,28 @@
 package http
 
 import (
-	"fmt"
 	"net/http"
 
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/domain"
+	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
+	"github.com/infraboard/keyauth/pkg/user/types"
+	"github.com/infraboard/mcube/exception"
+	"github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/http/request"
 	"github.com/infraboard/mcube/http/response"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/metadata"
 )
 
 func (h *handler) QueryProfile(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
-	tk, err := ctx.GetToken()
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
+	ctx := context.GetContext(r)
+	tk := ctx.AuthInfo.(*token.Token)
 
 	req := user.NewDescriptAccountRequest()
 	req.Account = tk.Account
 
-	var header, trailer metadata.MD
-	ins, err := h.service.DescribeAccount(
-		ctx.Context(),
-		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
-	)
+	ins, err := h.service.DescribeAccount(r.Context(), req)
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 	ins.Desensitize()
@@ -47,17 +32,8 @@ func (h *handler) QueryProfile(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *handler) PutProfile(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
-	tk, err := ctx.GetToken()
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
+	ctx := context.GetContext(r)
+	tk := ctx.AuthInfo.(*token.Token)
 
 	req := user.NewPutAccountRequest()
 	req.Account = tk.Account
@@ -67,35 +43,19 @@ func (h *handler) PutProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var header, trailer metadata.MD
-	ins, err := h.service.UpdateAccountProfile(
-		ctx.Context(),
-		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
-	)
+	ins, err := h.service.UpdateAccountProfile(r.Context(), req)
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 	ins.Desensitize()
 
 	response.Success(w, ins)
-	return
 }
 
 func (h *handler) PatchProfile(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
-	tk, err := ctx.GetToken()
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
+	ctx := context.GetContext(r)
+	tk := ctx.AuthInfo.(*token.Token)
 
 	req := user.NewPatchAccountRequest()
 	req.Account = tk.Account
@@ -105,69 +65,46 @@ func (h *handler) PatchProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var header, trailer metadata.MD
-	ins, err := h.service.UpdateAccountProfile(
-		ctx.Context(),
-		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
-	)
+	// 更新部门
+	if req.DepartmentId != "" {
+		if !tk.UserType.IsIn(types.UserType_SUPPER, types.UserType_INTERNAL, types.UserType_DOMAIN_ADMIN, types.UserType_ORG_ADMIN) {
+			response.Failed(w, exception.NewBadRequest("组织管理员才能直接修改用户部门"))
+			return
+		}
+	}
+
+	ins, err := h.service.UpdateAccountProfile(r.Context(), req)
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 	ins.Desensitize()
 
 	response.Success(w, ins)
-	return
 }
 
 func (h *handler) QueryDomain(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
-	tk, err := ctx.GetToken()
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
-	fmt.Println(tk)
+	ctx := context.GetContext(r)
+	tk := ctx.AuthInfo.(*token.Token)
 
 	req := domain.NewDescribeDomainRequest()
 	req.Name = tk.Domain
 
-	var header, trailer metadata.MD
 	ins, err := h.domain.DescribeDomain(
-		ctx.Context(),
+		r.Context(),
 		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
 	)
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 
 	response.Success(w, ins)
-	return
 }
 
 func (h *handler) UpdateDomainInfo(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
-	tk, err := ctx.GetToken()
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
+	ctx := context.GetContext(r)
+	tk := ctx.AuthInfo.(*token.Token)
 
 	// 查找出原来的domain
 	req := domain.NewPatchDomainRequest()
@@ -179,34 +116,18 @@ func (h *handler) UpdateDomainInfo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var header, trailer metadata.MD
-	ins, err := h.domain.UpdateDomain(
-		ctx.Context(),
-		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
-	)
+	ins, err := h.domain.UpdateDomain(r.Context(), req)
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 
 	response.Success(w, ins)
-	return
 }
 
 func (h *handler) UpdateDomainSecurity(w http.ResponseWriter, r *http.Request) {
-	ctx, err := pkg.NewGrpcOutCtxFromHTTPRequest(r)
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
-
-	tk, err := ctx.GetToken()
-	if err != nil {
-		response.Failed(w, err)
-		return
-	}
+	ctx := context.GetContext(r)
+	tk := ctx.AuthInfo.(*token.Token)
 
 	// 查找出原来的domain
 	req := domain.NewPutDomainSecurityRequest()
@@ -218,18 +139,11 @@ func (h *handler) UpdateDomainSecurity(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var header, trailer metadata.MD
-	ins, err := h.domain.UpdateDomainSecurity(
-		ctx.Context(),
-		req,
-		grpc.Header(&header),
-		grpc.Trailer(&trailer),
-	)
+	ins, err := h.domain.UpdateDomainSecurity(r.Context(), req)
 	if err != nil {
-		response.Failed(w, pkg.NewExceptionFromTrailer(trailer, err))
+		response.Failed(w, err)
 		return
 	}
 
 	response.Success(w, ins)
-	return
 }
