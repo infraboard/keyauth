@@ -1,7 +1,6 @@
 package session_test
 
 import (
-	"fmt"
 	"testing"
 	"time"
 
@@ -27,5 +26,4 @@ func TestMemStore(t *testing.T) {
 
 	time.Sleep(2 * time.Second)
 	s.ReturnToken(tk)
-	fmt.Println(s.GetToken("abc"))
 }

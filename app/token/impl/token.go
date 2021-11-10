@@ -176,7 +176,6 @@ func (s *service) ChangeNamespace(ctx context.Context, req *token.ChangeNamespac
 		return nil, err
 	}
 
-	fmt.Println(tk.UserType, types.UserType_DOMAIN_ADMIN, types.UserType_SUPPER, tk.Namespace)
 	if !tk.UserType.IsIn(types.UserType_DOMAIN_ADMIN, types.UserType_SUPPER) && !tk.HasNamespace(req.Namespace) {
 		return nil, exception.NewPermissionDeny("your has no permission to access namespace %s", req.Namespace)
 	}

@@ -13,6 +13,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/infraboard/keyauth/app/micro"
+	"github.com/infraboard/keyauth/common/header"
 )
 
 var (
@@ -64,8 +65,8 @@ func (a *grpcAuther) Auth(
 
 func (a *grpcAuther) GetClientCredentialsFromMeta(md metadata.MD) (
 	clientId, clientSecret string) {
-	cids := md.Get("client_id")
-	sids := md.Get("client_secret")
+	cids := md.Get(header.ClientHeaderKey)
+	sids := md.Get(header.ClientSecretKey)
 	if len(cids) > 0 {
 		clientId = cids[0]
 	}

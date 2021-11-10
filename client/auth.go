@@ -2,6 +2,8 @@ package client
 
 import (
 	"context"
+
+	"github.com/infraboard/keyauth/common/header"
 )
 
 // Authentication todo
@@ -21,8 +23,8 @@ func (a *Authentication) GetRequestMetadata(context.Context, ...string) (
 	map[string]string, error,
 ) {
 	return map[string]string{
-		"client-id":     a.clientID,
-		"client-secret": a.clientSecret,
+		header.ClientHeaderKey: a.clientID,
+		header.ClientSecretKey: a.clientSecret,
 	}, nil
 }
 

@@ -2,7 +2,6 @@ package impl
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/types/ftime"
@@ -29,7 +28,6 @@ func (s *service) CreateService(ctx context.Context, req *micro.CreateMicroReque
 
 func (s *service) QueryService(ctx context.Context, req *micro.QueryMicroRequest) (*micro.Set, error) {
 	r := newPaggingQuery(req)
-	fmt.Println(r.FindFilter())
 	resp, err := s.scol.Find(context.TODO(), r.FindFilter(), r.FindOptions())
 
 	if err != nil {
