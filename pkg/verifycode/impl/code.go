@@ -8,7 +8,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/system/notify"
 	"github.com/infraboard/keyauth/pkg/system/notify/mail"
 	"github.com/infraboard/keyauth/pkg/system/notify/sms"
@@ -33,10 +32,9 @@ func (s *service) IssueCode(ctx context.Context, req *verifycode.IssueCodeReques
 	}
 
 	// 如果是issue by pass, 这要检测
-	var tk *token.Token
 	switch req.IssueType {
 	case verifycode.IssueType_PASS:
-		tk, err = s.issuer.IssueToken(ctx, token.NewIssueTokenByPassword(
+		_, err := s.issuer.IssueToken(ctx, token.NewIssueTokenByPassword(
 			req.ClientId,
 			req.ClientSecret,
 			req.Username,
@@ -46,23 +44,19 @@ func (s *service) IssueCode(ctx context.Context, req *verifycode.IssueCodeReques
 			return nil, err
 		}
 	case verifycode.IssueType_TOKEN:
-		tk, err = pkg.GetTokenFromGrpcInCtx(ctx)
+		_, err := s.token.DescribeToken(ctx, token.NewDescribeTokenRequestWithAccessToken(req.AccessToken))
 		if err != nil {
 			return nil, err
 		}
 	default:
 		return nil, fmt.Errorf("unknown issue_type %s", req.IssueType)
 	}
-	fmt.Println(tk)
 	if _, err := s.col.InsertOne(context.TODO(), code); err != nil {
 		return nil, exception.NewInternalServerError("inserted verify code(%s) document error, %s",
 			code, err)
 	}
 
-	inctx := pkg.NewGrpcInCtx()
-	inctx.SetIsInternalCall(tk.Account, tk.Domain)
-
-	msg, err := s.sendCode(inctx.Context(), code)
+	msg, err := s.sendCode(ctx, code)
 	if err != nil {
 		return nil, exception.NewInternalServerError("send verify code error, %s", err)
 	}

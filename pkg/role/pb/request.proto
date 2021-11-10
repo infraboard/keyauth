@@ -20,6 +20,12 @@ message CreateRoleRequest {
     // 角色关联的其他信息，比如展示的视图
     // @gotags: bson:"meta" json:"meta" validate:"lte=400"
     map<string,string> meta =4;
+    // 所属域
+    // @gotags: bson:"domain" json:"domain"
+    string domain = 5;
+    // 创建者ID
+    // @gotags: bson:"creater" json:"creater"
+    string creater = 6; 
     // 读权限
     // @gotags: bson:"permissions" json:"permissions"
     repeated CreatePermssionRequest permissions = 9;                   
@@ -92,6 +98,9 @@ message DescribePermissionRequest {
 }
 
 message AddPermissionToRoleRequest {
+   // 创建者ID
+    // @gotags: json:"creater" validate:"required"
+    string creater = 3; 
     // @gotags: json:"role_id" validate:"required,lte=64"
     string role_id = 1;
     // @gotags: json:"permissions" validate:"required"

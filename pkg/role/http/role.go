@@ -1,6 +1,7 @@
 package http
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/infraboard/mcube/http/context"
@@ -9,13 +10,22 @@ import (
 
 	"github.com/infraboard/keyauth/pkg/role"
 	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
 // CreateApplication 创建自定义角色
 func (h *handler) CreateRole(w http.ResponseWriter, r *http.Request) {
+	ctx := context.GetContext(r)
+	tk := ctx.AuthInfo.(*token.Token)
+
 	req := role.NewCreateRoleRequest()
 	if err := request.GetDataFromRequest(r, req); err != nil {
 		response.Failed(w, err)
+		return
+	}
+
+	if !tk.UserType.IsIn(types.UserType_SUPPER) && !req.IsCumstomType() {
+		response.Failed(w, fmt.Errorf("only supper account can create global and build role"))
 		return
 	}
 

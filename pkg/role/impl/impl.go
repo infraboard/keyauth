@@ -2,7 +2,6 @@ package impl
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/infraboard/mcube/app"
 	"github.com/infraboard/mcube/logger"
@@ -13,7 +12,6 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/infraboard/keyauth/conf"
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/policy"
 	"github.com/infraboard/keyauth/pkg/role"
 )
@@ -33,10 +31,7 @@ type service struct {
 }
 
 func (s *service) Config() error {
-	if pkg.Policy == nil {
-		return fmt.Errorf("dependence policy service is nil, please load first")
-	}
-	s.policy = pkg.Policy
+	s.policy = app.GetGrpcApp(policy.AppName).(policy.PolicyServiceServer)
 
 	db := conf.C().Mongo.GetDB()
 	col := db.Collection("role")

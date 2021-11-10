@@ -25,7 +25,13 @@ message CreatePolicyRequest {
     int64 expired_time = 5;
     // 策略的类型
     // @gotags: bson:"type" json:"type"
-    PolicyType type = 6;                                   
+    PolicyType type = 6;  
+    // 策略所属域
+    // @gotags: bson:"domain" json:"domain"
+    string domain = 7;
+    // 创建者ID
+    // @gotags: bson:"creater" json:"creater"
+    string creater = 8;                                 
 }
 
 // QueryPolicyRequest 获取子账号列表

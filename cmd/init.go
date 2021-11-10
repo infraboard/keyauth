@@ -7,10 +7,10 @@ import (
 	"strings"
 
 	"github.com/AlecAivazis/survey/v2"
+	"github.com/infraboard/mcube/app"
 	"github.com/infraboard/mcube/http/label"
 	"github.com/spf13/cobra"
 
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/application"
 	"github.com/infraboard/keyauth/pkg/department"
 	"github.com/infraboard/keyauth/pkg/domain"
@@ -45,9 +45,8 @@ var InitCmd = &cobra.Command{
 		}
 
 		// 初始化服务层
-		if err := pkg.InitService(); err != nil {
-			return err
-		}
+		app.LoadGrpcApp(nil)
+		app.LoadInternalApp()
 
 		initer, err := NewInitialerFromCLI()
 		if err != nil {
@@ -64,7 +63,7 @@ var InitCmd = &cobra.Command{
 func NewInitialerFromCLI() (*Initialer, error) {
 	i := NewInitialer()
 
-	if err := i.checkIsInit(); err != nil {
+	if err := i.checkIsInit(context.Background()); err != nil {
 		return nil, err
 	}
 
@@ -130,6 +129,14 @@ func NewInitialer() *Initialer {
 			UserType: types.UserType_SUPPER,
 			Domain:   domain.AdminDomainName,
 		},
+		user:        app.GetGrpcApp(user.AppName).(user.UserServiceServer),
+		domain:      app.GetGrpcApp(domain.AppName).(domain.DomainServiceServer),
+		application: app.GetGrpcApp(application.AppName).(application.ApplicationServiceServer),
+		token:       app.GetGrpcApp(token.AppName).(token.TokenServiceServer),
+		department:  app.GetGrpcApp(department.AppName).(department.DepartmentServiceServer),
+		role:        app.GetGrpcApp(role.AppName).(role.RoleServiceServer),
+		micro:       app.GetGrpcApp(micro.AppName).(micro.MicroServiceServer),
+		system:      app.GetInternalApp(system.AppName).(system.Service),
 	}
 }
 
@@ -140,18 +147,15 @@ type Initialer struct {
 	password          string
 	tk                *token.Token
 	mockTK            *token.Token
-}
 
-func (i *Initialer) mockContext(account string) context.Context {
-	ctx := pkg.NewGrpcInCtx()
-	ctx.SetIsInternalCall(account, domain.AdminDomainName)
-	return ctx.Context()
-}
-
-func (i *Initialer) userContext() context.Context {
-	ctx := pkg.NewGrpcInCtx()
-	ctx.SetAccessToken(i.tk.AccessToken)
-	return ctx.Context()
+	user        user.UserServiceServer
+	domain      domain.DomainServiceServer
+	application application.ApplicationServiceServer
+	token       token.TokenServiceServer
+	department  department.DepartmentServiceServer
+	role        role.RoleServiceServer
+	micro       micro.MicroServiceServer
+	system      system.Service
 }
 
 // Run 执行初始化
@@ -159,19 +163,21 @@ func (i *Initialer) Run() error {
 	fmt.Println()
 	fmt.Println("开始初始化...")
 
-	u, err := i.initUser()
+	ctx := context.Background()
+
+	u, err := i.initUser(ctx)
 	if err != nil {
 		return err
 	}
 	fmt.Printf("初始化用户: %s [成功]\n", i.username)
 
-	_, err = i.initDomain(u.Account)
+	_, err = i.initDomain(ctx, u.Account)
 	if err != nil {
 		return err
 	}
 	fmt.Printf("初始化域: %s   [成功]\n", i.domainDisplayName)
 
-	apps, err := i.initApp(u.Account)
+	apps, err := i.initApp(ctx, u.Account)
 	if err != nil {
 		return err
 	}
@@ -181,12 +187,12 @@ func (i *Initialer) Run() error {
 		fmt.Printf("应用客户端凭证: %s\n", apps[index].ClientSecret)
 	}
 
-	if err := i.getAdminToken(apps[0]); err != nil {
+	if err := i.getAdminToken(ctx, apps[0]); err != nil {
 		return err
 	}
 
 	var adminRole *role.Role
-	roles, err := i.initRole()
+	roles, err := i.initRole(ctx)
 	if err != nil {
 		return err
 	}
@@ -198,13 +204,13 @@ func (i *Initialer) Run() error {
 		}
 	}
 
-	svr, err := i.initService(adminRole)
+	svr, err := i.initService(ctx, adminRole)
 	if err != nil {
 		return err
 	}
 	fmt.Printf("初始化服务: %s   [成功]\n", svr.Name)
 
-	dep, err := i.initDepartment()
+	dep, err := i.initDepartment(ctx)
 	if err != nil {
 		return err
 	}
@@ -219,10 +225,10 @@ func (i *Initialer) Run() error {
 	return nil
 }
 
-func (i *Initialer) checkIsInit() error {
+func (i *Initialer) checkIsInit(ctx context.Context) error {
 	req := user.NewQueryAccountRequest()
 	req.UserType = types.UserType_SUPPER
-	userSet, err := pkg.User.QueryAccount(i.mockContext("internal"), req)
+	userSet, err := i.user.QueryAccount(ctx, req)
 	if err != nil {
 		return err
 	}
@@ -233,30 +239,29 @@ func (i *Initialer) checkIsInit() error {
 	return nil
 }
 
-func (i *Initialer) initUser() (*user.User, error) {
+func (i *Initialer) initUser(ctx context.Context) (*user.User, error) {
 	req := user.NewCreateUserRequest()
 	req.UserType = types.UserType_SUPPER
 	req.Account = strings.TrimSpace(i.username)
 	req.Password = strings.TrimSpace(i.password)
-	return pkg.User.CreateAccount(i.mockContext(i.username), req)
+	return i.user.CreateAccount(ctx, req)
 }
 
-func (i *Initialer) initDomain(account string) (*domain.Domain, error) {
+func (i *Initialer) initDomain(ctx context.Context, account string) (*domain.Domain, error) {
 	req := domain.NewCreateDomainRequest()
 	req.Name = domain.AdminDomainName
 	req.Profile.DisplayName = strings.TrimSpace(i.domainDisplayName)
-	return pkg.Domain.CreateDomain(i.mockContext(account), req)
+	return i.domain.CreateDomain(ctx, req)
 }
 
-func (i *Initialer) initApp(account string) ([]*application.Application, error) {
+func (i *Initialer) initApp(ctx context.Context, account string) ([]*application.Application, error) {
 	req := application.NewCreateApplicatonRequest()
 	req.Name = application.AdminWebApplicationName
 	req.ClientType = application.ClientType_PUBLIC
 	req.Description = "Admin Web管理端"
 	req.BuildIn = true
 
-	ctx := i.mockContext(account)
-	web, err := pkg.Application.CreateApplication(ctx, req)
+	web, err := i.application.CreateApplication(ctx, req)
 	if err != nil {
 		return nil, fmt.Errorf("create admin web applicaton error, %s", err)
 	}
@@ -268,7 +273,7 @@ func (i *Initialer) initApp(account string) ([]*application.Application, error) 
 	req.AccessTokenExpireSecond = 0
 	req.RefreshTokenExpireSecond = 0
 	req.BuildIn = true
-	svr, err := pkg.Application.CreateApplication(ctx, req)
+	svr, err := i.application.CreateApplication(ctx, req)
 	if err != nil {
 		return nil, fmt.Errorf("create admin web applicaton error, %s", err)
 	}
@@ -277,13 +282,13 @@ func (i *Initialer) initApp(account string) ([]*application.Application, error) 
 	return apps, nil
 }
 
-func (i *Initialer) getAdminToken(app *application.Application) error {
+func (i *Initialer) getAdminToken(ctx context.Context, app *application.Application) error {
 	if app == nil {
 		return fmt.Errorf("get admin token need app")
 	}
 
 	req := token.NewIssueTokenByPassword(app.ClientId, app.ClientSecret, i.username, i.password)
-	tk, err := pkg.Token.IssueToken(context.Background(), req)
+	tk, err := i.token.IssueToken(ctx, req)
 	if err != nil {
 		return err
 	}
@@ -291,7 +296,7 @@ func (i *Initialer) getAdminToken(app *application.Application) error {
 	return nil
 }
 
-func (i *Initialer) initRole() ([]*role.Role, error) {
+func (i *Initialer) initRole(ctx context.Context) ([]*role.Role, error) {
 	admin := role.NewDefaultPermission()
 	admin.ServiceId = "*"
 	admin.ResourceName = "*"
@@ -303,7 +308,7 @@ func (i *Initialer) initRole() ([]*role.Role, error) {
 	req.Description = "系统管理员, 有系统所有功能的访问权限"
 	req.Permissions = []*role.CreatePermssionRequest{admin}
 	req.Type = role.RoleType_BUILDIN
-	adminRole, err := pkg.Role.CreateRole(i.userContext(), req)
+	adminRole, err := i.role.CreateRole(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -319,7 +324,7 @@ func (i *Initialer) initRole() ([]*role.Role, error) {
 	req.Description = "访客, 登录系统后, 默认的权限"
 	req.Permissions = []*role.CreatePermssionRequest{vistor}
 	req.Type = role.RoleType_BUILDIN
-	vistorRole, err := pkg.Role.CreateRole(i.userContext(), req)
+	vistorRole, err := i.role.CreateRole(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -327,29 +332,25 @@ func (i *Initialer) initRole() ([]*role.Role, error) {
 	return []*role.Role{adminRole, vistorRole}, nil
 }
 
-func (i *Initialer) initDepartment() (*department.Department, error) {
-	if pkg.Department == nil {
-		return nil, fmt.Errorf("dependence service department is nil")
-	}
-
+func (i *Initialer) initDepartment(ctx context.Context) (*department.Department, error) {
 	req := department.NewCreateDepartmentRequest()
 	req.Name = department.DefaultDepartmentName
 	req.DisplayName = i.domainDisplayName
 	req.Manager = strings.TrimSpace(i.username)
-	return pkg.Department.CreateDepartment(i.userContext(), req)
+	return i.department.CreateDepartment(ctx, req)
 }
 
-func (i *Initialer) initService(r *role.Role) (*micro.Micro, error) {
+func (i *Initialer) initService(ctx context.Context, r *role.Role) (*micro.Micro, error) {
 	req := micro.NewCreateMicroRequest()
 	req.Name = version.ServiceName
 	req.Description = version.Description
 	req.Type = micro.Type_BUILD_IN
-	return pkg.Micro.CreateService(i.userContext(), req)
+	return i.micro.CreateService(ctx, req)
 }
 
 func (i *Initialer) initSystemConfig() (*system.Config, error) {
 	sysConf := system.NewDefaultConfig()
-	if err := pkg.System.InitConfig(sysConf); err != nil {
+	if err := i.system.InitConfig(sysConf); err != nil {
 		return nil, err
 	}
 	return sysConf, nil

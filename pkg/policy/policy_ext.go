@@ -6,31 +6,25 @@ import (
 	"hash/fnv"
 	"strings"
 
-	"github.com/infraboard/mcube/exception"
 	page "github.com/infraboard/mcube/pb/page"
 	"github.com/infraboard/mcube/types/ftime"
 
 	"github.com/infraboard/keyauth/pkg/namespace"
 	"github.com/infraboard/keyauth/pkg/role"
-	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/user"
 )
 
 // New 新实例
-func New(tk *token.Token, req *CreatePolicyRequest) (*Policy, error) {
+func New(req *CreatePolicyRequest) (*Policy, error) {
 	if err := req.Validate(); err != nil {
 		return nil, err
-	}
-
-	if tk == nil {
-		return nil, exception.NewUnauthorized("token required")
 	}
 
 	p := &Policy{
 		CreateAt:    ftime.Now().Timestamp(),
 		UpdateAt:    ftime.Now().Timestamp(),
-		Creater:     tk.Account,
-		Domain:      tk.Domain,
+		Creater:     req.Creater,
+		Domain:      req.Domain,
 		NamespaceId: req.NamespaceId,
 		Account:     req.Account,
 		RoleId:      req.RoleId,

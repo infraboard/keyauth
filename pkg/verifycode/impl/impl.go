@@ -2,7 +2,6 @@ package impl
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/infraboard/mcube/app"
 	"github.com/infraboard/mcube/logger"
@@ -12,8 +11,8 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/infraboard/keyauth/conf"
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/system"
+	"github.com/infraboard/keyauth/pkg/token"
 	"github.com/infraboard/keyauth/pkg/token/issuer"
 	"github.com/infraboard/keyauth/pkg/user"
 	"github.com/infraboard/keyauth/pkg/verifycode"
@@ -30,6 +29,7 @@ type service struct {
 	system system.Service
 	log    logger.Logger
 	user   user.UserServiceServer
+	token  token.TokenServiceServer
 
 	verifycode.UnimplementedVerifyCodeServiceServer
 }
@@ -50,15 +50,9 @@ func (s *service) Config() error {
 	}
 	s.col = col
 
-	if pkg.System == nil {
-		return fmt.Errorf("depence system config service is required")
-	}
-	s.system = pkg.System
-
-	if pkg.User == nil {
-		return fmt.Errorf("depence user service is required")
-	}
-	s.user = pkg.User
+	s.system = app.GetGrpcApp(system.AppName).(system.Service)
+	s.user = app.GetGrpcApp(user.AppName).(user.UserServiceServer)
+	s.token = app.GetGrpcApp(token.AppName).(token.TokenServiceServer)
 
 	is, err := issuer.NewTokenIssuer()
 	if err != nil {

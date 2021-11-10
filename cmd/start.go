@@ -20,7 +20,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/infraboard/keyauth/conf"
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/protocol"
 
 	// 加载所有服务
@@ -46,11 +45,6 @@ var serviceCmd = &cobra.Command{
 
 		// 初始化全局组件
 		if err := loadGlobalComponent(); err != nil {
-			return err
-		}
-
-		// 初始化服务层
-		if err := pkg.InitService(); err != nil {
 			return err
 		}
 
@@ -110,9 +104,6 @@ type service struct {
 }
 
 func (s *service) start() error {
-	s.log.Infof("loaded domain pkg: %v", pkg.LoadedService())
-	s.log.Infof("loaded http service: %s", pkg.LoadedHTTP())
-
 	if s.bm != nil {
 		if err := s.bm.Connect(); err != nil {
 			s.log.Errorf("connect bus error, %s", err)

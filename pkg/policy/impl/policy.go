@@ -6,7 +6,6 @@ import (
 	"github.com/infraboard/mcube/exception"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/namespace"
 	"github.com/infraboard/keyauth/pkg/policy"
 	"github.com/infraboard/keyauth/pkg/role"
@@ -14,12 +13,7 @@ import (
 
 func (s *service) CreatePolicy(ctx context.Context, req *policy.CreatePolicyRequest) (
 	*policy.Policy, error) {
-	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	ins, err := policy.New(tk, req)
+	ins, err := policy.New(req)
 	if err != nil {
 		return nil, exception.NewBadRequest(err.Error())
 	}

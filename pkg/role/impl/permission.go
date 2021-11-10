@@ -3,7 +3,6 @@ package impl
 import (
 	"context"
 
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/role"
 	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/request"
@@ -72,11 +71,6 @@ func (s *service) DescribePermission(ctx context.Context, req *role.DescribePerm
 }
 
 func (s *service) AddPermissionToRole(ctx context.Context, req *role.AddPermissionToRoleRequest) (*role.PermissionSet, error) {
-	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest("validate add permission error, %s", err)
 	}
@@ -98,8 +92,8 @@ func (s *service) AddPermissionToRole(ctx context.Context, req *role.AddPermissi
 			role.RoleMaxPermission, ps.Total, req.Length())
 	}
 
-	perms := role.NewPermission(ins.Id, tk.Account, req.Permissions)
-	if _, err := s.perm.InsertMany(context.TODO(), insertDocs(perms)); err != nil {
+	perms := role.NewPermission(ins.Id, req.Creater, req.Permissions)
+	if _, err := s.perm.InsertMany(ctx, insertDocs(perms)); err != nil {
 		return nil, exception.NewInternalServerError("inserted permission(%s) document error, %s",
 			perms, err)
 	}

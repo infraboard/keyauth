@@ -4,16 +4,15 @@ import (
 	"fmt"
 	"net"
 
+	"github.com/infraboard/mcube/app"
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
 	"google.golang.org/grpc"
 
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	auther "github.com/infraboard/keyauth/common/interceptor/grpc"
 	"github.com/infraboard/keyauth/conf"
-	"github.com/infraboard/keyauth/pkg"
-	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/keyauth/pkg/micro"
-	"github.com/infraboard/keyauth/version"
 	"github.com/infraboard/mcube/grpc/middleware/recovery"
 )
 
@@ -24,13 +23,14 @@ func NewGRPCService() *GRPCService {
 	rc := recovery.NewInterceptor(recovery.NewZapRecoveryHandler())
 	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
 		rc.UnaryServerInterceptor(),
-		pkg.AuthUnaryServerInterceptor(),
+		auther.GrpcAuthUnaryServerInterceptor(),
 	)))
 
 	return &GRPCService{
-		svr: grpcServer,
-		l:   log,
-		c:   conf.C(),
+		svr:   grpcServer,
+		l:     log,
+		c:     conf.C(),
+		micro: app.GetGrpcApp(micro.AppName).(micro.MicroServiceServer),
 	}
 }
 
@@ -39,12 +39,24 @@ type GRPCService struct {
 	svr *grpc.Server
 	l   logger.Logger
 	c   *conf.Config
+
+	micro micro.MicroServiceServer
 }
 
 // Start 启动GRPC服务
 func (s *GRPCService) Start() error {
 	// 装载所有GRPC服务
-	pkg.InitV1GRPCAPI(s.svr)
+	if err := app.LoadGrpcApp(s.svr); err != nil {
+		return err
+	}
+
+	// 加载内部服务
+	if err := app.LoadInternalApp(); err != nil {
+		return err
+	}
+
+	s.l.Infof("loaded grpc service: %v", app.LoadedGrpcApp())
+	s.l.Infof("loaded internal service: %v", app.LoadedInternalApp())
 
 	// 启动HTTP服务
 	lis, err := net.Listen("tcp", s.c.App.GRPCAddr())
@@ -62,31 +74,6 @@ func (s *GRPCService) Start() error {
 	}
 
 	return nil
-}
-
-// RegistryEndpoints 注册条目
-func (s *GRPCService) RegistryEndpoints() error {
-	if pkg.Micro == nil {
-		return fmt.Errorf("dependence micro service is nil")
-	}
-
-	ctx := pkg.NewInternalMockGrpcCtx("internal")
-
-	desc := micro.NewDescribeServiceRequest()
-	desc.Name = version.ServiceName
-	svr, err := pkg.Micro.DescribeService(ctx.Context(), desc)
-	if err != nil {
-		return err
-	}
-
-	if pkg.Endpoint == nil {
-		return fmt.Errorf("dependence endpoint service is nil")
-	}
-
-	req := endpoint.NewRegistryRequest(version.Short(), pkg.HTTPEntry().Items)
-	ctx.SetClientCredentials(svr.ClientId, svr.ClientSecret)
-	_, err = pkg.Endpoint.RegistryEndpoint(ctx.Context(), req)
-	return err
 }
 
 // Stop 停止GRPC服务

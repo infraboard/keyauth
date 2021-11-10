@@ -2,7 +2,6 @@ package impl
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/infraboard/mcube/app"
@@ -15,7 +14,6 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/infraboard/keyauth/conf"
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/application"
 	"github.com/infraboard/keyauth/pkg/domain"
 	"github.com/infraboard/keyauth/pkg/endpoint"
@@ -54,45 +52,14 @@ type service struct {
 }
 
 func (s *service) Config() error {
-	if pkg.Application == nil {
-		return errors.New("denpence application service is nil")
-	}
-	s.app = pkg.Application
-
-	if pkg.User == nil {
-		return errors.New("denpence user service is nil")
-	}
-	s.user = pkg.User
-
-	if pkg.Domain == nil {
-		return errors.New("denpence domain service is nil")
-	}
-	s.domain = pkg.Domain
-
-	if pkg.Policy == nil {
-		return errors.New("denpence policy service is nil")
-	}
-	s.policy = pkg.Policy
-
-	if pkg.Endpoint == nil {
-		return errors.New("denpence endpoint service is nil")
-	}
-	s.endpoint = pkg.Endpoint
-
-	if pkg.Session == nil {
-		return errors.New("denpence session service is nil")
-	}
-	s.session = pkg.Session
-
-	if pkg.VerifyCode == nil {
-		return errors.New("denpence verify code service is nil")
-	}
-	s.code = pkg.VerifyCode
-
-	if pkg.Namespace == nil {
-		return errors.New("denpence namespace service is nil")
-	}
-	s.ns = pkg.Namespace
+	s.app = app.GetGrpcApp(application.AppName).(application.ApplicationServiceServer)
+	s.user = app.GetGrpcApp(user.AppName).(user.UserServiceServer)
+	s.domain = app.GetGrpcApp(domain.AppName).(domain.DomainServiceServer)
+	s.policy = app.GetGrpcApp(policy.AppName).(policy.PolicyServiceServer)
+	s.endpoint = app.GetGrpcApp(endpoint.AppName).(endpoint.EndpointServiceServer)
+	s.session = app.GetGrpcApp(session.AppName).(session.ServiceServer)
+	s.code = app.GetGrpcApp(verifycode.AppName).(verifycode.VerifyCodeServiceServer)
+	s.ns = app.GetGrpcApp(namespace.AppName).(namespace.NamespaceServiceServer)
 
 	issuer, err := issuer.NewTokenIssuer()
 	if err != nil {

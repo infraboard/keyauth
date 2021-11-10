@@ -9,32 +9,26 @@ import (
 	"github.com/rs/xid"
 
 	"github.com/infraboard/keyauth/pkg/endpoint"
-	"github.com/infraboard/keyauth/pkg/token"
-	"github.com/infraboard/keyauth/pkg/user/types"
 )
 
 // New 新创建一个Role
-func New(tk *token.Token, req *CreateRoleRequest) (*Role, error) {
+func New(req *CreateRoleRequest) (*Role, error) {
 	if err := req.Validate(); err != nil {
 		return nil, err
-	}
-
-	if !tk.UserType.IsIn(types.UserType_SUPPER) && !req.IsCumstomType() {
-		return nil, fmt.Errorf("only supper account can create global and build role")
 	}
 
 	r := &Role{
 		Id:          xid.New().String(),
 		CreateAt:    ftime.Now().Timestamp(),
 		UpdateAt:    ftime.Now().Timestamp(),
-		Domain:      tk.Domain,
-		Creater:     tk.Account,
+		Domain:      req.Domain,
+		Creater:     req.Creater,
 		Type:        req.Type,
 		Name:        req.Name,
 		Meta:        req.Meta,
 		Description: req.Description,
 	}
-	r.Permissions = NewPermission(r.Id, tk.Account, req.Permissions)
+	r.Permissions = NewPermission(r.Id, req.Creater, req.Permissions)
 	return r, nil
 }
 

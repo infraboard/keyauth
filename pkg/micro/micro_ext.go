@@ -24,6 +24,8 @@ func New(req *CreateMicroRequest) (*Micro, error) {
 		CreateAt:      ftime.Now().Timestamp(),
 		UpdateAt:      ftime.Now().Timestamp(),
 		Enabled:       true,
+		Creater:       req.Creater,
+		Domain:        req.Domain,
 		Type:          req.Type,
 		Name:          req.Name,
 		Label:         req.Label,

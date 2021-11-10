@@ -29,7 +29,13 @@ message CreateMicroRequest {
     map<string, string> label = 3;
     // 描述信息
     // @gotags: bson:"description" json:"description,omitempty"
-    string description = 4;                  
+    string description = 4;
+    // 服务所属域
+    // @gotags: bson:"domain" json:"domain"
+    string domain = 5;
+    // 创建者ID
+    // @gotags: bson:"creater" json:"creater"
+    string creater = 6;                 
 }
 
 // QueryMicroRequest 查询应用列表

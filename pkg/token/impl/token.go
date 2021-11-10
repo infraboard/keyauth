@@ -9,7 +9,6 @@ import (
 	"github.com/infraboard/mcube/http/request"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/namespace"
 	"github.com/infraboard/keyauth/pkg/policy"
 	"github.com/infraboard/keyauth/pkg/session"
@@ -203,7 +202,7 @@ func (s *service) DescribeToken(ctx context.Context, req *token.DescribeTokenReq
 	// 查询用户可以访问的空间
 	query := policy.NewQueryPolicyRequest(request.NewPageRequest(policy.MaxUserPolicy, 1))
 	query.Account = tk.Account
-	ps, err := s.policy.QueryPolicy(pkg.NewInternalMockGrpcCtx(tk.Account).Context(), query)
+	ps, err := s.policy.QueryPolicy(ctx, query)
 	if err != nil {
 		return nil, err
 	}
@@ -216,12 +215,6 @@ func (s *service) DescribeToken(ctx context.Context, req *token.DescribeTokenReq
 }
 
 func (s *service) QueryToken(ctx context.Context, req *token.QueryTokenRequest) (*token.Set, error) {
-	tk, err := pkg.GetTokenFromGrpcInCtx(ctx)
-	if err != nil {
-		return nil, err
-	}
-	req.Account = tk.Account
-
 	query := newQueryRequest(req)
 	resp, err := s.col.Find(context.TODO(), query.FindFilter(), query.FindOptions())
 

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/infraboard/mcube/app"
 	"github.com/infraboard/mcube/http/middleware/accesslog"
 	"github.com/infraboard/mcube/http/middleware/cors"
 	"github.com/infraboard/mcube/http/middleware/recovery"
@@ -14,12 +15,8 @@ import (
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
 
-	"github.com/infraboard/keyauth/client"
-	"github.com/infraboard/keyauth/common/auther"
+	auther "github.com/infraboard/keyauth/common/interceptor/http"
 	"github.com/infraboard/keyauth/conf"
-	"github.com/infraboard/keyauth/pkg"
-	"github.com/infraboard/keyauth/pkg/micro"
-	"github.com/infraboard/keyauth/version"
 )
 
 // NewHTTPService 构建函数
@@ -35,12 +32,12 @@ func NewHTTPService() *HTTPService {
 
 	server := &http.Server{
 		ReadHeaderTimeout: 20 * time.Second,
-		// ReadTimeout:       20 * time.Second,
-		// WriteTimeout:      25 * time.Second,
-		IdleTimeout:    120 * time.Second,
-		MaxHeaderBytes: 1 << 20,
-		Addr:           conf.C().App.HTTPAddr(),
-		Handler:        r,
+		ReadTimeout:       20 * time.Second,
+		WriteTimeout:      25 * time.Second,
+		IdleTimeout:       120 * time.Second,
+		MaxHeaderBytes:    1 << 20,
+		Addr:              conf.C().App.HTTPAddr(),
+		Handler:           r,
 	}
 
 	return &HTTPService{
@@ -59,17 +56,18 @@ type HTTPService struct {
 	server *http.Server
 }
 
+func (s *HTTPService) PathPrefix() string {
+	return fmt.Sprintf("/%s/api/v1", s.c.App.Name)
+}
+
 // Start 启动服务
 func (s *HTTPService) Start() error {
-	// 初始化GRPC客户端
-	if err := s.initGRPCClient(); err != nil {
+	// 装置子服务路由
+	if err := app.LoadHttpApp(s.PathPrefix(), s.r); err != nil {
 		return err
 	}
 
-	// 装置子服务路由
-	if err := pkg.InitV1HTTPAPI(s.c.App.Name, s.r); err != nil {
-		return err
-	}
+	s.l.Infof("loaded http service: %v", app.LoadedHttpApp())
 
 	// 启动HTTP服务
 	s.l.Infof("HTTP 服务开始启动, 监听地址: %s", s.server.Addr)
@@ -95,29 +93,4 @@ func (s *HTTPService) Stop() error {
 	}
 
 	return nil
-}
-
-// InitGRPCClient 初始化grpc客户端
-func (s *HTTPService) initGRPCClient() error {
-	if pkg.Micro == nil {
-		return fmt.Errorf("dependence micro service is nil")
-	}
-
-	ctx := pkg.NewInternalMockGrpcCtx("internal")
-	desc := micro.NewDescribeServiceRequest()
-	desc.Name = version.ServiceName
-	svr, err := pkg.Micro.DescribeService(ctx.Context(), desc)
-	if err != nil {
-		return err
-	}
-
-	cf := client.NewDefaultConfig()
-	cf.SetAddress(s.c.App.GRPCAddr())
-	cf.SetClientCredentials(svr.ClientId, svr.ClientSecret)
-	cli, err := client.NewClient(cf)
-	if err != nil {
-		return err
-	}
-	client.SetGlobal(cli)
-	return err
 }

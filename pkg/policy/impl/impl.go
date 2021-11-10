@@ -2,7 +2,6 @@ package impl
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/infraboard/mcube/app"
 	"github.com/infraboard/mcube/logger"
@@ -12,9 +11,7 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/infraboard/keyauth/conf"
-	"github.com/infraboard/keyauth/pkg"
 	"github.com/infraboard/keyauth/pkg/namespace"
-	"github.com/infraboard/keyauth/pkg/permission"
 	"github.com/infraboard/keyauth/pkg/policy"
 	"github.com/infraboard/keyauth/pkg/role"
 	"github.com/infraboard/keyauth/pkg/user"
@@ -39,20 +36,9 @@ type service struct {
 }
 
 func (s *service) Config() error {
-	if pkg.Namespace == nil {
-		return fmt.Errorf("dependence namespace service is nil, please load first")
-	}
-	s.namespace = pkg.Namespace
-
-	if pkg.User == nil {
-		return fmt.Errorf("dependence user service is nil, please load first")
-	}
-	s.user = pkg.User
-
-	if pkg.Role == nil {
-		return fmt.Errorf("dependence role service is nil, please load first")
-	}
-	s.role = pkg.Role
+	s.namespace = app.GetGrpcApp(namespace.AppName).(namespace.NamespaceServiceServer)
+	s.user = app.GetGrpcApp(user.AppName).(user.UserServiceServer)
+	s.role = app.GetGrpcApp(role.AppName).(role.RoleServiceServer)
 
 	db := conf.C().Mongo.GetDB()
 	col := db.Collection("policy")
@@ -74,7 +60,7 @@ func (s *service) Config() error {
 }
 
 func (s *service) Name() string {
-	return permission.AppName
+	return policy.AppName
 }
 
 func (s *service) Registry(server *grpc.Server) {
