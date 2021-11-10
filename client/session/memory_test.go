@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/infraboard/keyauth/app/token"
 	"github.com/infraboard/keyauth/client/session"
-	"github.com/infraboard/keyauth/pkg/token"
 )
 
 func TestMemStore(t *testing.T) {

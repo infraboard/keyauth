@@ -10,9 +10,9 @@ import (
 	"google.golang.org/grpc"
 
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	"github.com/infraboard/keyauth/app/micro"
 	auther "github.com/infraboard/keyauth/common/interceptor/grpc"
 	"github.com/infraboard/keyauth/conf"
-	"github.com/infraboard/keyauth/pkg/micro"
 	"github.com/infraboard/mcube/grpc/middleware/recovery"
 )
 
@@ -45,18 +45,15 @@ type GRPCService struct {
 
 // Start 启动GRPC服务
 func (s *GRPCService) Start() error {
-	// 装载所有GRPC服务
-	if err := app.LoadGrpcApp(s.svr); err != nil {
-		return err
-	}
-
 	// 加载内部服务
 	if err := app.LoadInternalApp(); err != nil {
 		return err
 	}
 
-	s.l.Infof("loaded grpc service: %v", app.LoadedGrpcApp())
-	s.l.Infof("loaded internal service: %v", app.LoadedInternalApp())
+	// 装载所有GRPC服务
+	if err := app.LoadGrpcApp(s.svr); err != nil {
+		return err
+	}
 
 	// 启动HTTP服务
 	lis, err := net.Listen("tcp", s.c.App.GRPCAddr())

@@ -1,0 +1,85 @@
+syntax = "proto3";
+
+package infraboard.keyauth.session;
+option go_package = "github.com/infraboard/keyauth/app/session";
+
+import "app/user/pb/types.proto";
+import "app/token/pb/token.proto";
+
+// UserAgent todo
+message UserAgent {
+    // @gotags: bson:"os" json:"os"
+    string os = 1;
+    // @gotags: bson:"platform" json:"platform"
+    string platform = 2;
+    // @gotags: bson:"engine_name" json:"engine_name"
+    string engine_name = 3;
+    // @gotags: bson:"engine_version" json:"engine_version"
+    string engine_version = 4;
+    // @gotags: bson:"browser_name" json:"browser_name"
+    string browser_name = 5;
+    // @gotags: bson:"browser_version" json:"browser_version"
+    string browser_version = 6;
+}
+
+// IPInfo todo
+message IPInfo {
+    // @gotags: bson:"city_id" json:"city_id"
+    int64 city_id = 1;
+    // @gotags: bson:"country" json:"country"
+    string country = 2;
+    // @gotags: bson:"region" json:"region"
+    string region = 3;
+    // @gotags: bson:"province" json:"province"
+    string province = 4;
+    // @gotags: bson:"city" json:"city"
+    string city = 5;
+    // @gotags: bson:"isp" json:"isp"
+    string isp = 6;
+}
+
+// Session 登录回话
+message Session {
+    // 唯一ID
+    // @gotags: bson:"_id" json:"id"
+    string id = 1;
+    // 所处域
+    // @gotags: bson:"domain" json:"domain"
+    string domain =2;
+    // 用户名称
+    // @gotags: bson:"account" json:"account"
+    string account =3;
+    // 用户类型
+    // @gotags: bson:"user_type" json:"user_type"
+    user.UserType user_type = 4;
+    // 用户通过哪个端登录的
+    // @gotags: bson:"application_id" json:"application_id"
+    string application_id = 5;
+    // 用户通过哪个端登录的
+    // @gotags: bson:"application_name" json:"application_name"
+    string application_name = 6;
+    // 登录方式
+    // @gotags: bson:"grant_type" json:"grant_type"
+    token.GrantType grant_type = 7;
+    // 登录时间
+    // @gotags: bson:"login_at" json:"login_at"
+    int64 login_at =8;
+    // 登录IP
+    // @gotags: bson:"login_ip" json:"login_ip"
+    string login_ip = 9;
+    // 登出时间
+    // @gotags: bson:"logout_at" json:"logout_at"
+    int64 logout_at = 10;
+    // 应用的网站地址
+    // @gotags: bson:"access_token" json:"access_token"
+    string access_token = 11;
+    // @gotags: bson:"user_agent" json:"user_agent"
+    UserAgent user_agent = 12;
+    // @gotags: bson:"ip_info" json:"ip_info"
+    IPInfo ip_info = 13;
+}
+
+message Set {
+    int64 total = 1;
+    repeated Session items = 2;
+}

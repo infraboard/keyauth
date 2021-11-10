@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package infraboard.keyauth.verifycode;
+option go_package = "github.com/infraboard/keyauth/app/verifycode";
+
+import "app/verifycode/pb/enum.proto";
+
+// IssueCodeRequest 验证码申请请求
+message IssueCodeRequest {
+    // @gotags: json:"issue_type"
+    IssueType issue_type = 1;
+    // @gotags: json:"username"
+    string username = 2;
+    // @gotags: json:"password" 
+    string password = 3;
+    // @gotags: json:"access_token"
+    string access_token = 6;
+    // @gotags: json:"client_id" validate:"required"
+    string client_id = 4;
+    // @gotags: json:"client_secret" validate:"required"
+    string client_secret = 5;
+}
+
+// IssueCodeResponse todo
+message IssueCodeResponse {
+    // @gotags: json:"message"
+    string message = 1;
+}
+
+// CheckCodeRequest 验证码校验请求
+message CheckCodeRequest {
+    // @gotags: json:"username" validate:"required"
+    string username = 1;
+    // @gotags: json:"number" validate:"required"
+    string number = 2;
+}
+
+// CheckCodeResponse todo
+message CheckCodeResponse {
+    // @gotags: json:"message"
+    string message = 1;
+}

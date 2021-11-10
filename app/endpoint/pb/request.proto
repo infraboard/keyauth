@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+package infraboard.keyauth.endpoint;
+option go_package = "github.com/infraboard/keyauth/app/endpoint";
+
+import "github.com/infraboard/mcube/pb/page/page.proto";
+import "github.com/infraboard/mcube/pb/http/entry.proto";
+
+import "app/endpoint/pb/enum.proto";
+
+// RegistryRequest 服务注册请求
+message RegistryRequest {
+        // @gotags: json:"client_id" validate:"required"
+        string client_id = 1;
+        // @gotags: json:"client_secret" validate:"required"
+        string client_secret = 2;
+        // @gotags: json:"version" validate:"required,lte=32"
+	string version = 3;
+         // @gotags: json:"entries"
+	repeated infraboard.mcube.http.Entry entries = 4;
+}
+
+// RegistryReponse todo
+message RegistryResponse {
+        // @gotags: json:"message"
+	string message = 1;
+}
+
+// DescribeEndpointRequest todo
+message DescribeEndpointRequest {
+        // @gotags: json:"id"
+	string id = 1;
+}
+
+// QueryEndpointRequest 查询应用列表
+message QueryEndpointRequest {
+        // @gotags: json:"page"
+        infraboard.mcube.page.PageRequest page = 1;
+        // @gotags: json:"service_ids"
+	repeated string service_ids = 2;
+        // @gotags: json:"path"
+	string path = 3;
+        // @gotags: json:"method"
+	string method = 4;
+        // @gotags: json:"function_name"
+	string function_name = 5;
+        // @gotags: json:"resources"
+        repeated string resources = 6;
+        // @gotags: json:"labels"
+        map<string, string> labels = 7;
+        // @gotags: json:"permission_enable"
+        BoolQuery permission_enable = 8;
+}
+
+// DeleteEndpointRequest todo
+message DeleteEndpointRequest {
+        // @gotags: json:"service_id"
+	string service_id = 1;
+}
+
+// QueryResourceRequest todo
+message QueryResourceRequest {
+        // @gotags: json:"page"
+        infraboard.mcube.page.PageRequest page = 1;
+        // @gotags: json:"service_ids"
+	repeated string service_ids = 2;
+        // @gotags: json:"resources"
+        repeated string resources = 3;
+        // @gotags: json:"permission_enable"
+        BoolQuery permission_enable = 4; 
+}

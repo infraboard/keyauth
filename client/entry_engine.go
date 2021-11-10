@@ -15,11 +15,11 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 
-	"github.com/infraboard/keyauth/pkg/endpoint"
-	"github.com/infraboard/keyauth/pkg/micro"
-	"github.com/infraboard/keyauth/pkg/permission"
-	"github.com/infraboard/keyauth/pkg/token"
-	"github.com/infraboard/keyauth/pkg/user/types"
+	"github.com/infraboard/keyauth/app/endpoint"
+	"github.com/infraboard/keyauth/app/micro"
+	"github.com/infraboard/keyauth/app/permission"
+	"github.com/infraboard/keyauth/app/token"
+	"github.com/infraboard/keyauth/app/user/types"
 	"github.com/infraboard/keyauth/version"
 )
 

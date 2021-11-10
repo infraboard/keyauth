@@ -9,6 +9,7 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/infraboard/mcube/app"
 	"github.com/infraboard/mcube/bus"
 	"github.com/infraboard/mcube/bus/broker/kafka"
 	"github.com/infraboard/mcube/bus/broker/nats"
@@ -23,7 +24,7 @@ import (
 	"github.com/infraboard/keyauth/protocol"
 
 	// 加载所有服务
-	_ "github.com/infraboard/keyauth/pkg/all"
+	_ "github.com/infraboard/keyauth/app/all"
 )
 
 var (
@@ -109,6 +110,10 @@ func (s *service) start() error {
 			s.log.Errorf("connect bus error, %s", err)
 		}
 	}
+
+	s.log.Infof("loaded grpc app: %s", app.LoadedGrpcApp())
+	s.log.Infof("loaded http app: %s", app.LoadedHttpApp())
+	s.log.Infof("loaded internal app: %s", app.LoadedInternalApp())
 
 	go s.grpc.Start()
 	return s.http.Start()

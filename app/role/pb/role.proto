@@ -1,0 +1,98 @@
+syntax = "proto3";
+
+package infraboard.keyauth.role;
+option go_package = "github.com/infraboard/keyauth/app/role";
+
+import "app/role/pb/enum.proto";
+
+// Role is rbac's role
+message Role {
+    // 角色ID
+    // @gotags: bson:"_id" json:"id"
+    string id = 1;
+    // 创建时间
+    // @gotags: bson:"create_at" json:"create_at"
+    int64 create_at = 2;
+    // 更新时间
+    // @gotags: bson:"update_at" json:"update_at"
+    int64 update_at = 3;
+    // 角色所属域
+    // @gotags: bson:"domain" json:"domain"
+    string domain = 4;
+    // 创建人
+    // @gotags: bson:"creater" json:"creater"
+    string creater = 5;
+    // 角色类型
+    // @gotags: bson:"type" json:"type"
+    RoleType type = 6;
+    // 应用名称
+    // @gotags: bson:"name" json:"name"
+    string name = 7;
+    // 应用简单的描述
+    // @gotags: bson:"description" json:"description"
+    string description =8;
+    // 角色关联的一些额外的meta信息, 比如前端视图
+    // @gotags: bson:"meta" json:"meta"
+    map<string, string> meta =10;
+    // 读权限
+    // @gotags: bson:"-" json:"permissions,omitempty"
+    repeated Permission permissions = 9;
+    // 范围, 角色范围限制, 由策略引擎动态补充
+    // @gotags: bson:"-" json:"scope"
+    string scope = 11;
+}
+
+// Permission 权限
+message Permission {
+    // id
+    // @gotags: bson:"_id" json:"id"
+    string id = 1;
+    // 关联角色ID
+    // @gotags: bson:"role_id" json:"role_id"
+    string role_id = 2;
+    // 创建时间
+    // @gotags: bson:"create_at" json:"create_at"
+    int64 create_at = 3;
+    // 创建人
+    // @gotags: bson:"creater" json:"creater"
+    string creater = 4;
+    // 效力
+    // @gotags: bson:"effect" json:"effect"
+    EffectType effect = 5;
+    // 服务ID
+    // @gotags: bson:"service_id" json:"service_id"
+    string service_id = 6;
+    // 资源列表
+    // @gotags: bson:"resource_name" json:"resource_name"
+    string resource_name = 7;
+    // 维度
+    // @gotags: bson:"label_key" json:"label_key"
+    string label_key = 8;
+    // 适配所有值
+    // @gotags: bson:"match_all" json:"match_all"
+    bool match_all = 9;
+    // 标识值
+    // @gotags: bson:"label_values" json:"label_values"
+    repeated string label_values = 10; 
+    // 范围, 角色范围限制, 由策略引擎动态补充
+    // @gotags: bson:"-" json:"scope"
+    string scope = 11;
+    // 权限描述
+    // @gotags: bson:"desc" json:"desc"
+    string desc = 12;
+}
+
+message Set {
+    // @gotags: bson:"total" json:"total"
+    int64 total = 1;
+    // @gotags: bson:"items" json:"items"
+    repeated Role items = 2;
+}
+
+// PermissionSet 用户列表
+message PermissionSet {
+    // @gotags: bson:"total" json:"total"
+    int64 total = 1;
+    // @gotags: bson:"items" json:"items"
+    repeated Permission items = 2;
+}

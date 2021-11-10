@@ -15,10 +15,10 @@ import (
 	httpb "github.com/infraboard/mcube/pb/http"
 	"github.com/infraboard/mcube/types/ftime"
 
-	"github.com/infraboard/keyauth/pkg/micro"
-	"github.com/infraboard/keyauth/pkg/permission"
-	"github.com/infraboard/keyauth/pkg/token"
-	"github.com/infraboard/keyauth/pkg/user/types"
+	"github.com/infraboard/keyauth/app/micro"
+	"github.com/infraboard/keyauth/app/permission"
+	"github.com/infraboard/keyauth/app/token"
+	"github.com/infraboard/keyauth/app/user/types"
 	"github.com/infraboard/keyauth/version"
 )
 

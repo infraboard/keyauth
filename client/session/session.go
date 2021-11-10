@@ -1,7 +1,7 @@
 package session
 
 import (
-	"github.com/infraboard/keyauth/pkg/token"
+	"github.com/infraboard/keyauth/app/token"
 )
 
 var (

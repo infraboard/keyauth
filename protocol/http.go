@@ -67,8 +67,6 @@ func (s *HTTPService) Start() error {
 		return err
 	}
 
-	s.l.Infof("loaded http service: %v", app.LoadedHttpApp())
-
 	// 启动HTTP服务
 	s.l.Infof("HTTP 服务开始启动, 监听地址: %s", s.server.Addr)
 	if err := s.server.ListenAndServe(); err != nil {

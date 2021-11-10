@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package infraboard.keyauth.policy;
+option go_package = "github.com/infraboard/keyauth/app/policy";
+
+import "app/user/pb/types.proto";
+import "app/role/pb/role.proto";
+import "app/namespace/pb/namespace.proto";
+import "app/policy/pb/enum.proto";
+
+
+// Policy 权限策略
+message Policy {
+    // 策略ID
+    // @gotags: bson:"_id" json:"id"
+    string id = 1;
+    // 创建时间
+    // @gotags: bson:"create_at" json:"create_at"
+    int64 create_at = 2;
+    // 更新时间
+    // @gotags: bson:"update_at" json:"update_at"
+    int64 update_at = 3;
+    // 策略所属域
+    // @gotags: bson:"domain" json:"domain"
+    string domain = 4;
+    // 创建者ID
+    // @gotags: bson:"creater" json:"creater"
+    string creater = 5;
+    // 用户类型
+    // @gotags: bson:"user_type" json:"user_type"
+    user.UserType user_type = 6;
+    // 范围
+    // @gotags: bson:"namespace_id" json:"namespace_id"
+    string namespace_id = 7;
+    // 用户
+    // @gotags: bson:"account" json:"account"
+    string account = 8;
+    // 角色名称
+    // @gotags: bson:"role_id" json:"role_id"
+    string role_id = 9;
+    // 范围控制
+    // @gotags: bson:"scope" json:"scope"
+    string scope = 10;
+    // 策略过期时间
+    // @gotags: bson:"expired_time" json:"expired_time"
+    int64 expired_time = 11;
+    // 策略的类型
+    // @gotags: bson:"type" json:"type"
+    PolicyType type = 12;  
+    // 关联的角色对象
+    // @gotags: bson:"-" json:"role,omitempty"
+    role.Role role = 13;
+    // 关联的空间信息
+    // @gotags: bson:"-" json:"namespace,omitempty"
+    namespace.Namespace namespace = 14;
+}
+
+message Set {
+    // @gotags: bson:"total" json:"total"
+    int64 total = 1;
+    // @gotags: bson:"items" json:"items"
+    repeated Policy items = 2;
+}

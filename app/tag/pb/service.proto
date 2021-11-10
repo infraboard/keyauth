@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package infraboard.keyauth.tag;
+option go_package = "github.com/infraboard/keyauth/app/tag";
+
+import "app/tag/pb/request.proto";
+import "app/tag/pb/tag.proto";
+
+
+// Service Tag服务
+service TagService {
+	rpc CreateTag(CreateTagRequest) returns(TagKey);
+	rpc DescribeTag(DescribeTagRequest) returns(TagKey);
+	rpc DeleteTag(DeleteTagRequest) returns(TagKey);
+	rpc QueryTagKey(QueryTagKeyRequest) returns(TagKeySet);
+	rpc QueryTagValue(QueryTagValueRequest) returns(TagValueSet);
+}

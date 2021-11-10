@@ -7,8 +7,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/metadata"
 
+	"github.com/infraboard/keyauth/app/endpoint"
 	"github.com/infraboard/keyauth/client"
-	"github.com/infraboard/keyauth/pkg/endpoint"
 	"github.com/infraboard/mcube/http/request"
 )
 
