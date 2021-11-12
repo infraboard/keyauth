@@ -1,12 +1,14 @@
 package client
 
 import (
+	"context"
 	"net/http"
-	"reflect"
 
 	"github.com/infraboard/keyauth/app/token"
-	"github.com/infraboard/mcube/grpc/gcontext"
-	"github.com/infraboard/mcube/http/context"
+	"github.com/infraboard/keyauth/app/user/types"
+	"github.com/infraboard/keyauth/common/header"
+	"github.com/infraboard/mcube/exception"
+	httpctx "github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
 	httpb "github.com/infraboard/mcube/pb/http"
@@ -29,52 +31,91 @@ type HTTPAuther struct {
 
 func (a *HTTPAuther) Auth(r *http.Request, entry httpb.Entry) (
 	authInfo interface{}, err error) {
-	ctx, err := gcontext.NewGrpcInCtxFromHTTPRequest(r)
-	if err != nil {
-		return nil, err
-	}
+	var tk *token.Token
 
-	engine := newEntryEngine(a.keyauth, &entry, a.log())
-	engine.UseUniPath()
+	// 从请求中获取access token
+	acessToken := r.Header.Get(header.OAuthTokenHeader)
 
-	// 校验身份
-	tk, err := engine.ValidateIdentity(ctx)
-	if err != nil {
-		return nil, err
-	}
+	if entry.AuthEnable {
+		ctx := r.Context()
 
-	// 校验权限
-	if err := engine.ValidatePermission(tk, ctx); err != nil {
-		return nil, err
+		// 校验身份
+		tk, err = a.ValidateIdentity(ctx, acessToken)
+		if err != nil {
+			return nil, err
+		}
+
+		// namesapce检查
+		if entry.RequiredNamespace && tk.Namespace == "" {
+			return nil, exception.NewBadRequest("namespace required!")
+		}
+
+		// 权限检查
+		err = a.ValidatePermission(ctx, tk, entry)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	// 设置RequestID
-	if r.Header.Get(gcontext.RequestID) == "" {
-		r.Header.Set(gcontext.RequestID, xid.New().String())
+	if r.Header.Get(header.RequestIdHeader) == "" {
+		r.Header.Set(header.RequestIdHeader, xid.New().String())
 	}
 
 	return tk, nil
 }
 
-func (a *HTTPAuther) ResponseHook(w http.ResponseWriter, r *http.Request, entry httpb.Entry) {
-	ctx, err := gcontext.NewGrpcInCtxFromHTTPRequest(r)
-	if err != nil {
-		a.log().Errorf("reponse hook NewGrpcInCtxFromHTTPRequest error, %s", err)
-		return
+func (a *HTTPAuther) ValidateIdentity(ctx context.Context, accessToken string) (*token.Token, error) {
+	a.l.Debug("start token identity check ...")
+
+	if accessToken == "" {
+		return nil, exception.NewBadRequest("token required")
 	}
 
-	tk, ok := context.GetContext(r).AuthInfo.(*token.Token)
-	if !ok {
-		a.log().Errorf("context AuthInfo is not *token.Token, is %s", reflect.TypeOf(context.GetContext(r).AuthInfo))
-		return
+	req := token.NewValidateTokenRequest()
+	req.AccessToken = accessToken
+	tk, err := a.keyauth.Token().ValidateToken(ctx, req)
+	if err != nil {
+		return nil, err
 	}
+
+	a.l.Debugf("token check ok, username: %s", tk.Account)
+	return tk, nil
+}
+
+func (a *HTTPAuther) ValidatePermission(ctx context.Context, tk *token.Token, e httpb.Entry) error {
+	if tk == nil {
+		return exception.NewUnauthorized("validate permission need token")
+	}
+
+	// 如果是超级管理员不做权限校验, 直接放行
+	if tk.UserType.IsIn(types.UserType_SUPPER) {
+		a.l.Debugf("[%s] supper admin skip permission check!", tk.Account)
+		return nil
+	}
+
+	// 检查是否是允许的类型
+	if len(e.Allow) > 0 {
+		a.l.Debugf("[%s] start check permission to keyauth ...", tk.Account)
+		if !e.IsAllow(tk.UserType) {
+			return exception.NewPermissionDeny("no permission, allow: %s, but current: %s", e.Allow, tk.UserType)
+		}
+		a.l.Debugf("[%s] permission check passed", tk.Account)
+	}
+
+	return nil
+}
+
+func (a *HTTPAuther) ResponseHook(w http.ResponseWriter, r *http.Request, entry httpb.Entry) {
+	ctx := httpctx.GetContext(r)
+	tk := ctx.AuthInfo.(*token.Token)
 
 	// 审计日志
 	od := newOperateEventData(&entry, tk)
-	hd := newEventHeaderFromCtx(ctx)
+	hd := newEventHeaderFromHTTP(r)
 	if entry.AuditLog {
 		if err := SendOperateEvent(r.URL.String(), nil, hd, od); err != nil {
-			a.log().Errorf("send operate event error, %s", err)
+			a.l.Errorf("send operate event error, %s", err)
 		}
 	}
 }
