@@ -3,116 +3,18 @@ package auther
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"os"
 
-	"github.com/infraboard/mcube/app"
 	"github.com/infraboard/mcube/bus"
 	"github.com/infraboard/mcube/bus/event"
-	"github.com/infraboard/mcube/exception"
-	"github.com/infraboard/mcube/grpc/gcontext"
-	"github.com/infraboard/mcube/logger"
-	"github.com/infraboard/mcube/logger/zap"
+	"github.com/infraboard/mcube/http/request"
 	httpb "github.com/infraboard/mcube/pb/http"
 	"github.com/infraboard/mcube/types/ftime"
 
-	"github.com/infraboard/keyauth/app/micro"
-	"github.com/infraboard/keyauth/app/permission"
 	"github.com/infraboard/keyauth/app/token"
-	"github.com/infraboard/keyauth/app/user/types"
 	"github.com/infraboard/keyauth/version"
 )
-
-func newEntryEngine(entry *httpb.Entry) *entryEngine {
-	return &entryEngine{
-		Entry:      entry,
-		log:        zap.L().Named("Auther Entry"),
-		uniPath:    false,
-		token:      app.GetGrpcApp(token.AppName).(token.TokenServiceServer),
-		permission: app.GetGrpcApp(permission.AppName).(permission.PermissionServiceServer),
-		micro:      app.GetGrpcApp(micro.AppName).(micro.MicroServiceServer),
-	}
-}
-
-type entryEngine struct {
-	*httpb.Entry
-
-	serviceId  string
-	log        logger.Logger
-	uniPath    bool
-	token      token.TokenServiceServer
-	permission permission.PermissionServiceServer
-	micro      micro.MicroServiceServer
-}
-
-func (e *entryEngine) UseUniPath() {
-	e.uniPath = true
-}
-
-func (e *entryEngine) ValidateIdentity(ctx *gcontext.GrpcInCtx) (*token.Token, error) {
-	e.log.Debug("start token identity check ...")
-
-	if !e.AuthEnable {
-		e.log.Debug("auth disabled skip")
-		return nil, nil
-	}
-
-	// 获取需要校验的access token(用户的身份凭证)
-	accessToken := ctx.GetAccessToKen()
-
-	if accessToken == "" {
-		e.log.Debugf("[%s] auth enabled, but not get access token", e.Path)
-		return nil, exception.NewBadRequest("token required")
-	}
-
-	req := token.NewValidateTokenRequest()
-	req.AccessToken = accessToken
-
-	outCtx := gcontext.NewGrpcOutCtx()
-	outCtx.SetAccessToken(ctx.GetAccessToKen())
-	tk, err := e.token.ValidateToken(outCtx.Context(), req)
-	if err != nil {
-		return nil, err
-	}
-
-	e.log.Debugf("token check ok, username: %s", tk.Account)
-	return tk, nil
-}
-
-func (e *entryEngine) ValidatePermission(tk *token.Token, ctx *gcontext.GrpcInCtx) error {
-	if !e.AuthEnable {
-		return nil
-	}
-
-	if tk == nil {
-		return exception.NewUnauthorized("validate permission need token")
-	}
-
-	if !e.PermissionEnable {
-		e.log.Debugf("[%s] permission disabled skip check!", tk.Account)
-		return nil
-	}
-
-	if e.RequiredNamespace && tk.Namespace == "" {
-		return exception.NewBadRequest("namespace required!")
-	}
-
-	// 如果是超级管理员不做权限校验, 直接放行
-	if tk.UserType.IsIn(types.UserType_SUPPER) {
-		e.log.Debugf("[%s] supper admin skip permission check!", tk.Account)
-		return nil
-	}
-
-	// 检查是否是允许的类型
-	if len(e.Allow) > 0 {
-		e.log.Debugf("[%s] start check permission to keyauth ...", tk.Account)
-		if !e.IsAllow(tk.UserType) {
-			return exception.NewPermissionDeny("no permission, allow: %s, but current: %s", e.Allow, tk.UserType)
-		}
-		e.log.Debugf("[%s] permission check passed", tk.Account)
-	}
-
-	return nil
-}
 
 func SendOperateEvent(req, resp interface{}, hd *event.Header, od *event.OperateEventData) error {
 	if od == nil {
@@ -163,11 +65,11 @@ func newOperateEventData(e *httpb.Entry, tk *token.Token) *event.OperateEventDat
 	return od
 }
 
-func newEventHeaderFromCtx(ctx *gcontext.GrpcInCtx) *event.Header {
+func newEventHeaderFromHTTP(r *http.Request) *event.Header {
 	hd := event.NewHeader()
-	// hd.IpAddress = ctx.GetRemoteIP()
-	// hd.UserAgent = ctx.GetUserAgent()
-	hd.RequestId = ctx.GetRequestID()
+	hd.IpAddress = request.GetRemoteIP(r)
+	hd.UserAgent = r.UserAgent()
+	hd.RequestId = r.Header.Get("RequestIdHeader")
 	hd.Source = version.ServiceName
 	hd.Meta["host"], _ = os.Hostname()
 	return hd
