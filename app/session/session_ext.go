@@ -6,7 +6,6 @@ import (
 	"github.com/mssola/user_agent"
 	"github.com/rs/xid"
 
-	"github.com/infraboard/keyauth/app/ip2region"
 	"github.com/infraboard/keyauth/app/token"
 )
 
@@ -16,7 +15,7 @@ var (
 )
 
 // NewSession todo
-func NewSession(ip ip2region.Service, tk *token.Token) (*Session, error) {
+func NewSession(tk *token.Token) (*Session, error) {
 	if err := tk.IsAvailable(); err != nil {
 		return nil, exception.NewPermissionDeny("token is not available, %s", err)
 	}

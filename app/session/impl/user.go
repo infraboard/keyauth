@@ -30,7 +30,7 @@ func (s *service) Login(ctx context.Context, tk *token.Token) (*session.Session,
 	// 关闭之前的session
 	s.closeOldSession(ctx, tk)
 
-	sess, err := session.NewSession(s.ip, tk)
+	sess, err := session.NewSession(tk)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +82,7 @@ func (s *service) closeOldSession(ctx context.Context, tk *token.Token) {
 	}
 
 	blockReq := token.NewBlockTokenRequest(sess.AccessToken, token.BlockType_OTHER_CLIENT_LOGGED_IN, "session closed by other login")
-	preTK, err := s.token.BlockToken(nil, blockReq)
+	preTK, err := s.token.BlockToken(ctx, blockReq)
 	if err != nil {
 		s.log.Errorf("block previous token error, %s", err)
 		return
