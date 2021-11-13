@@ -22,7 +22,8 @@ func GrpcAuthUnaryServerInterceptor(c *Client) grpc.UnaryServerInterceptor {
 
 func newGrpcAuther(c *Client) *grpcAuther {
 	return &grpcAuther{
-		log: zap.L().Named("Grpc Auther"),
+		log:     zap.L().Named("Grpc Auther"),
+		keyauth: c,
 	}
 }
 
