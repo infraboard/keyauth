@@ -1,4 +1,4 @@
-package client
+package interceptor
 
 import (
 	"encoding/json"

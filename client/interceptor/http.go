@@ -1,4 +1,4 @@
-package client
+package interceptor
 
 import (
 	"context"
@@ -6,6 +6,7 @@ import (
 
 	"github.com/infraboard/keyauth/app/token"
 	"github.com/infraboard/keyauth/app/user/types"
+	"github.com/infraboard/keyauth/client"
 	"github.com/infraboard/keyauth/common/header"
 	"github.com/infraboard/mcube/exception"
 	httpctx "github.com/infraboard/mcube/http/context"
@@ -16,7 +17,7 @@ import (
 )
 
 // NewInternalAuther 内部使用的auther
-func NewHTTPAuther(c *Client) *HTTPAuther {
+func NewHTTPAuther(c *client.Client) *HTTPAuther {
 	return &HTTPAuther{
 		keyauth: c,
 		l:       zap.L().Named("Http Interceptor"),
@@ -26,7 +27,7 @@ func NewHTTPAuther(c *Client) *HTTPAuther {
 // internal todo
 type HTTPAuther struct {
 	l       logger.Logger
-	keyauth *Client
+	keyauth *client.Client
 }
 
 func (a *HTTPAuther) Auth(r *http.Request, entry httpb.Entry) (

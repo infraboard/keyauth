@@ -1,4 +1,4 @@
-package client
+package interceptor
 
 import (
 	"context"
@@ -12,15 +12,16 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/infraboard/keyauth/app/micro"
+	"github.com/infraboard/keyauth/client"
 	"github.com/infraboard/keyauth/common/header"
 )
 
 // GrpcAuthUnaryServerInterceptor returns a new unary server interceptor for auth.
-func GrpcAuthUnaryServerInterceptor(c *Client) grpc.UnaryServerInterceptor {
+func GrpcAuthUnaryServerInterceptor(c *client.Client) grpc.UnaryServerInterceptor {
 	return newGrpcAuther(c).Auth
 }
 
-func newGrpcAuther(c *Client) *grpcAuther {
+func newGrpcAuther(c *client.Client) *grpcAuther {
 	return &grpcAuther{
 		log:     zap.L().Named("Grpc Auther"),
 		keyauth: c,
@@ -30,7 +31,7 @@ func newGrpcAuther(c *Client) *grpcAuther {
 // internal todo
 type grpcAuther struct {
 	log     logger.Logger
-	keyauth *Client
+	keyauth *client.Client
 }
 
 func (a *grpcAuther) Auth(
