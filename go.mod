@@ -16,7 +16,8 @@ require (
 	github.com/rs/xid v1.3.0
 	github.com/spf13/cobra v1.2.1
 	github.com/stretchr/testify v1.7.0
-	github.com/tencentcloud/tencentcloud-sdk-go v1.0.57
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.272
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/sms v1.0.272
 	go.mongodb.org/mongo-driver v1.7.1
 	golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97
 	google.golang.org/grpc v1.38.0

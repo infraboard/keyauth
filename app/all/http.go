@@ -9,12 +9,10 @@ import (
 	_ "github.com/infraboard/keyauth/app/ip2region/http"
 	_ "github.com/infraboard/keyauth/app/mconf/http"
 	_ "github.com/infraboard/keyauth/app/micro/http"
-
 	_ "github.com/infraboard/keyauth/app/namespace/http"
 	_ "github.com/infraboard/keyauth/app/permission/http"
 	_ "github.com/infraboard/keyauth/app/policy/http"
 	_ "github.com/infraboard/keyauth/app/provider/http"
-
 	_ "github.com/infraboard/keyauth/app/role/http"
 	_ "github.com/infraboard/keyauth/app/session/http"
 	_ "github.com/infraboard/keyauth/app/system/http"
