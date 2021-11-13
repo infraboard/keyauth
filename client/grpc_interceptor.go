@@ -15,11 +15,6 @@ import (
 	"github.com/infraboard/keyauth/common/header"
 )
 
-// 检测是不是owner请求
-type OwnerChecker interface {
-	CheckOwner(account string) bool
-}
-
 // GrpcAuthUnaryServerInterceptor returns a new unary server interceptor for auth.
 func GrpcAuthUnaryServerInterceptor(c *Client) grpc.UnaryServerInterceptor {
 	return newGrpcAuther(c).Auth

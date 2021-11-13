@@ -16,29 +16,22 @@ import (
 	"github.com/infraboard/keyauth/common/header"
 )
 
-var (
-	interceptor = newGrpcAuther()
-)
-
-// 检测是不是owner请求
-type OwnerChecker interface {
-	CheckOwner(account string) bool
-}
-
 // GrpcAuthUnaryServerInterceptor returns a new unary server interceptor for auth.
 func GrpcAuthUnaryServerInterceptor() grpc.UnaryServerInterceptor {
-	return interceptor.Auth
+	return newGrpcAuther().Auth
 }
 
 func newGrpcAuther() *grpcAuther {
 	return &grpcAuther{
-		log: zap.L().Named("Grpc Auther"),
+		log:   zap.L().Named("Grpc Auther"),
+		micro: app.GetGrpcApp(micro.AppName).(micro.MicroServiceServer),
 	}
 }
 
 // internal todo
 type grpcAuther struct {
-	log logger.Logger
+	log   logger.Logger
+	micro micro.MicroServiceServer
 }
 
 func (a *grpcAuther) Auth(
@@ -81,9 +74,8 @@ func (a *grpcAuther) validateServiceCredential(clientId, clientSecret string) er
 		return status.Errorf(codes.Unauthenticated, "client_id or client_secret is \"\"")
 	}
 
-	microSvr := app.GetGrpcApp(micro.AppName).(micro.MicroServiceServer)
 	vsReq := micro.NewValidateClientCredentialRequest(clientId, clientSecret)
-	_, err := microSvr.ValidateClientCredential(context.Background(), vsReq)
+	_, err := a.micro.ValidateClientCredential(context.Background(), vsReq)
 	if err != nil {
 		return status.Errorf(codes.Unauthenticated, "service auth error, %s", err)
 	}
