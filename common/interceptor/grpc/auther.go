@@ -24,14 +24,14 @@ func GrpcAuthUnaryServerInterceptor() grpc.UnaryServerInterceptor {
 func newGrpcAuther() *grpcAuther {
 	return &grpcAuther{
 		log:   zap.L().Named("Grpc Auther"),
-		micro: app.GetGrpcApp(micro.AppName).(micro.MicroServiceServer),
+		micro: app.GetGrpcApp(micro.AppName).(micro.ServiceServer),
 	}
 }
 
 // internal todo
 type grpcAuther struct {
 	log   logger.Logger
-	micro micro.MicroServiceServer
+	micro micro.ServiceServer
 }
 
 func (a *grpcAuther) Auth(

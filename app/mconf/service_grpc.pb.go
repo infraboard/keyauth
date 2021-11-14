@@ -14,10 +14,10 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// MicroConfigServiceClient is the client API for MicroConfigService service.
+// ConfigServiceClient is the client API for ConfigService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type MicroConfigServiceClient interface {
+type ConfigServiceClient interface {
 	CreateGroup(ctx context.Context, in *CreateGroupRequest, opts ...grpc.CallOption) (*Group, error)
 	QueryGroup(ctx context.Context, in *QueryGroupRequest, opts ...grpc.CallOption) (*GroupSet, error)
 	DeleteGroup(ctx context.Context, in *DeleteGroupRequest, opts ...grpc.CallOption) (*Group, error)
@@ -26,254 +26,254 @@ type MicroConfigServiceClient interface {
 	RemoveItemFromGroup(ctx context.Context, in *RemoveItemFromGroupRequest, opts ...grpc.CallOption) (*ItemSet, error)
 }
 
-type microConfigServiceClient struct {
+type configServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewMicroConfigServiceClient(cc grpc.ClientConnInterface) MicroConfigServiceClient {
-	return &microConfigServiceClient{cc}
+func NewConfigServiceClient(cc grpc.ClientConnInterface) ConfigServiceClient {
+	return &configServiceClient{cc}
 }
 
-func (c *microConfigServiceClient) CreateGroup(ctx context.Context, in *CreateGroupRequest, opts ...grpc.CallOption) (*Group, error) {
+func (c *configServiceClient) CreateGroup(ctx context.Context, in *CreateGroupRequest, opts ...grpc.CallOption) (*Group, error) {
 	out := new(Group)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.mconf.MicroConfigService/CreateGroup", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.mconf.ConfigService/CreateGroup", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *microConfigServiceClient) QueryGroup(ctx context.Context, in *QueryGroupRequest, opts ...grpc.CallOption) (*GroupSet, error) {
+func (c *configServiceClient) QueryGroup(ctx context.Context, in *QueryGroupRequest, opts ...grpc.CallOption) (*GroupSet, error) {
 	out := new(GroupSet)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.mconf.MicroConfigService/QueryGroup", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.mconf.ConfigService/QueryGroup", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *microConfigServiceClient) DeleteGroup(ctx context.Context, in *DeleteGroupRequest, opts ...grpc.CallOption) (*Group, error) {
+func (c *configServiceClient) DeleteGroup(ctx context.Context, in *DeleteGroupRequest, opts ...grpc.CallOption) (*Group, error) {
 	out := new(Group)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.mconf.MicroConfigService/DeleteGroup", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.mconf.ConfigService/DeleteGroup", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *microConfigServiceClient) QueryItem(ctx context.Context, in *QueryItemRequest, opts ...grpc.CallOption) (*ItemSet, error) {
+func (c *configServiceClient) QueryItem(ctx context.Context, in *QueryItemRequest, opts ...grpc.CallOption) (*ItemSet, error) {
 	out := new(ItemSet)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.mconf.MicroConfigService/QueryItem", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.mconf.ConfigService/QueryItem", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *microConfigServiceClient) AddItemToGroup(ctx context.Context, in *AddItemToGroupRequest, opts ...grpc.CallOption) (*ItemSet, error) {
+func (c *configServiceClient) AddItemToGroup(ctx context.Context, in *AddItemToGroupRequest, opts ...grpc.CallOption) (*ItemSet, error) {
 	out := new(ItemSet)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.mconf.MicroConfigService/AddItemToGroup", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.mconf.ConfigService/AddItemToGroup", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *microConfigServiceClient) RemoveItemFromGroup(ctx context.Context, in *RemoveItemFromGroupRequest, opts ...grpc.CallOption) (*ItemSet, error) {
+func (c *configServiceClient) RemoveItemFromGroup(ctx context.Context, in *RemoveItemFromGroupRequest, opts ...grpc.CallOption) (*ItemSet, error) {
 	out := new(ItemSet)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.mconf.MicroConfigService/RemoveItemFromGroup", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.mconf.ConfigService/RemoveItemFromGroup", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// MicroConfigServiceServer is the server API for MicroConfigService service.
-// All implementations must embed UnimplementedMicroConfigServiceServer
+// ConfigServiceServer is the server API for ConfigService service.
+// All implementations must embed UnimplementedConfigServiceServer
 // for forward compatibility
-type MicroConfigServiceServer interface {
+type ConfigServiceServer interface {
 	CreateGroup(context.Context, *CreateGroupRequest) (*Group, error)
 	QueryGroup(context.Context, *QueryGroupRequest) (*GroupSet, error)
 	DeleteGroup(context.Context, *DeleteGroupRequest) (*Group, error)
 	QueryItem(context.Context, *QueryItemRequest) (*ItemSet, error)
 	AddItemToGroup(context.Context, *AddItemToGroupRequest) (*ItemSet, error)
 	RemoveItemFromGroup(context.Context, *RemoveItemFromGroupRequest) (*ItemSet, error)
-	mustEmbedUnimplementedMicroConfigServiceServer()
+	mustEmbedUnimplementedConfigServiceServer()
 }
 
-// UnimplementedMicroConfigServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedMicroConfigServiceServer struct {
+// UnimplementedConfigServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedConfigServiceServer struct {
 }
 
-func (UnimplementedMicroConfigServiceServer) CreateGroup(context.Context, *CreateGroupRequest) (*Group, error) {
+func (UnimplementedConfigServiceServer) CreateGroup(context.Context, *CreateGroupRequest) (*Group, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateGroup not implemented")
 }
-func (UnimplementedMicroConfigServiceServer) QueryGroup(context.Context, *QueryGroupRequest) (*GroupSet, error) {
+func (UnimplementedConfigServiceServer) QueryGroup(context.Context, *QueryGroupRequest) (*GroupSet, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryGroup not implemented")
 }
-func (UnimplementedMicroConfigServiceServer) DeleteGroup(context.Context, *DeleteGroupRequest) (*Group, error) {
+func (UnimplementedConfigServiceServer) DeleteGroup(context.Context, *DeleteGroupRequest) (*Group, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteGroup not implemented")
 }
-func (UnimplementedMicroConfigServiceServer) QueryItem(context.Context, *QueryItemRequest) (*ItemSet, error) {
+func (UnimplementedConfigServiceServer) QueryItem(context.Context, *QueryItemRequest) (*ItemSet, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryItem not implemented")
 }
-func (UnimplementedMicroConfigServiceServer) AddItemToGroup(context.Context, *AddItemToGroupRequest) (*ItemSet, error) {
+func (UnimplementedConfigServiceServer) AddItemToGroup(context.Context, *AddItemToGroupRequest) (*ItemSet, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddItemToGroup not implemented")
 }
-func (UnimplementedMicroConfigServiceServer) RemoveItemFromGroup(context.Context, *RemoveItemFromGroupRequest) (*ItemSet, error) {
+func (UnimplementedConfigServiceServer) RemoveItemFromGroup(context.Context, *RemoveItemFromGroupRequest) (*ItemSet, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveItemFromGroup not implemented")
 }
-func (UnimplementedMicroConfigServiceServer) mustEmbedUnimplementedMicroConfigServiceServer() {}
+func (UnimplementedConfigServiceServer) mustEmbedUnimplementedConfigServiceServer() {}
 
-// UnsafeMicroConfigServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to MicroConfigServiceServer will
+// UnsafeConfigServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ConfigServiceServer will
 // result in compilation errors.
-type UnsafeMicroConfigServiceServer interface {
-	mustEmbedUnimplementedMicroConfigServiceServer()
+type UnsafeConfigServiceServer interface {
+	mustEmbedUnimplementedConfigServiceServer()
 }
 
-func RegisterMicroConfigServiceServer(s grpc.ServiceRegistrar, srv MicroConfigServiceServer) {
-	s.RegisterService(&MicroConfigService_ServiceDesc, srv)
+func RegisterConfigServiceServer(s grpc.ServiceRegistrar, srv ConfigServiceServer) {
+	s.RegisterService(&ConfigService_ServiceDesc, srv)
 }
 
-func _MicroConfigService_CreateGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ConfigService_CreateGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateGroupRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MicroConfigServiceServer).CreateGroup(ctx, in)
+		return srv.(ConfigServiceServer).CreateGroup(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.mconf.MicroConfigService/CreateGroup",
+		FullMethod: "/infraboard.keyauth.mconf.ConfigService/CreateGroup",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MicroConfigServiceServer).CreateGroup(ctx, req.(*CreateGroupRequest))
+		return srv.(ConfigServiceServer).CreateGroup(ctx, req.(*CreateGroupRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MicroConfigService_QueryGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ConfigService_QueryGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueryGroupRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MicroConfigServiceServer).QueryGroup(ctx, in)
+		return srv.(ConfigServiceServer).QueryGroup(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.mconf.MicroConfigService/QueryGroup",
+		FullMethod: "/infraboard.keyauth.mconf.ConfigService/QueryGroup",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MicroConfigServiceServer).QueryGroup(ctx, req.(*QueryGroupRequest))
+		return srv.(ConfigServiceServer).QueryGroup(ctx, req.(*QueryGroupRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MicroConfigService_DeleteGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ConfigService_DeleteGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteGroupRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MicroConfigServiceServer).DeleteGroup(ctx, in)
+		return srv.(ConfigServiceServer).DeleteGroup(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.mconf.MicroConfigService/DeleteGroup",
+		FullMethod: "/infraboard.keyauth.mconf.ConfigService/DeleteGroup",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MicroConfigServiceServer).DeleteGroup(ctx, req.(*DeleteGroupRequest))
+		return srv.(ConfigServiceServer).DeleteGroup(ctx, req.(*DeleteGroupRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MicroConfigService_QueryItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ConfigService_QueryItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueryItemRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MicroConfigServiceServer).QueryItem(ctx, in)
+		return srv.(ConfigServiceServer).QueryItem(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.mconf.MicroConfigService/QueryItem",
+		FullMethod: "/infraboard.keyauth.mconf.ConfigService/QueryItem",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MicroConfigServiceServer).QueryItem(ctx, req.(*QueryItemRequest))
+		return srv.(ConfigServiceServer).QueryItem(ctx, req.(*QueryItemRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MicroConfigService_AddItemToGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ConfigService_AddItemToGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddItemToGroupRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MicroConfigServiceServer).AddItemToGroup(ctx, in)
+		return srv.(ConfigServiceServer).AddItemToGroup(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.mconf.MicroConfigService/AddItemToGroup",
+		FullMethod: "/infraboard.keyauth.mconf.ConfigService/AddItemToGroup",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MicroConfigServiceServer).AddItemToGroup(ctx, req.(*AddItemToGroupRequest))
+		return srv.(ConfigServiceServer).AddItemToGroup(ctx, req.(*AddItemToGroupRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MicroConfigService_RemoveItemFromGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ConfigService_RemoveItemFromGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RemoveItemFromGroupRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MicroConfigServiceServer).RemoveItemFromGroup(ctx, in)
+		return srv.(ConfigServiceServer).RemoveItemFromGroup(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.mconf.MicroConfigService/RemoveItemFromGroup",
+		FullMethod: "/infraboard.keyauth.mconf.ConfigService/RemoveItemFromGroup",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MicroConfigServiceServer).RemoveItemFromGroup(ctx, req.(*RemoveItemFromGroupRequest))
+		return srv.(ConfigServiceServer).RemoveItemFromGroup(ctx, req.(*RemoveItemFromGroupRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// MicroConfigService_ServiceDesc is the grpc.ServiceDesc for MicroConfigService service.
+// ConfigService_ServiceDesc is the grpc.ServiceDesc for ConfigService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var MicroConfigService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "infraboard.keyauth.mconf.MicroConfigService",
-	HandlerType: (*MicroConfigServiceServer)(nil),
+var ConfigService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "infraboard.keyauth.mconf.ConfigService",
+	HandlerType: (*ConfigServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "CreateGroup",
-			Handler:    _MicroConfigService_CreateGroup_Handler,
+			Handler:    _ConfigService_CreateGroup_Handler,
 		},
 		{
 			MethodName: "QueryGroup",
-			Handler:    _MicroConfigService_QueryGroup_Handler,
+			Handler:    _ConfigService_QueryGroup_Handler,
 		},
 		{
 			MethodName: "DeleteGroup",
-			Handler:    _MicroConfigService_DeleteGroup_Handler,
+			Handler:    _ConfigService_DeleteGroup_Handler,
 		},
 		{
 			MethodName: "QueryItem",
-			Handler:    _MicroConfigService_QueryItem_Handler,
+			Handler:    _ConfigService_QueryItem_Handler,
 		},
 		{
 			MethodName: "AddItemToGroup",
-			Handler:    _MicroConfigService_AddItemToGroup_Handler,
+			Handler:    _ConfigService_AddItemToGroup_Handler,
 		},
 		{
 			MethodName: "RemoveItemFromGroup",
-			Handler:    _MicroConfigService_RemoveItemFromGroup_Handler,
+			Handler:    _ConfigService_RemoveItemFromGroup_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

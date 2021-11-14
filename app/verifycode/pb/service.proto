@@ -6,8 +6,8 @@ option go_package = "github.com/infraboard/keyauth/app/verifycode";
 import "app/verifycode/pb/request.proto";
 import "app/verifycode/pb/verifycode.proto";
 
-// VerifyCodeService 验证码服务
-service VerifyCodeService {
+// Service 验证码服务
+service Service {
 	rpc IssueCode(IssueCodeRequest) returns(IssueCodeResponse);
 	rpc CheckCode(CheckCodeRequest) returns(Code);
 }

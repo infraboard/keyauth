@@ -13,7 +13,7 @@ var (
 )
 
 type handler struct {
-	service namespace.NamespaceServiceServer
+	service namespace.ServiceServer
 }
 
 // Registry 注册HTTP服务路由
@@ -33,7 +33,7 @@ func (h *handler) Registry(router router.SubRouter) {
 }
 
 func (h *handler) Config() error {
-	h.service = app.GetGrpcApp(namespace.AppName).(namespace.NamespaceServiceServer)
+	h.service = app.GetGrpcApp(namespace.AppName).(namespace.ServiceServer)
 	return nil
 }
 

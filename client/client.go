@@ -66,58 +66,58 @@ func (c *Client) GetClientID() string {
 }
 
 // ApplicationAdmin todo
-func (c *Client) Application() application.ApplicationServiceClient {
-	return application.NewApplicationServiceClient(c.conn)
+func (c *Client) Application() application.ServiceClient {
+	return application.NewServiceClient(c.conn)
 }
 
 // Department todo
-func (c *Client) Department() department.DepartmentServiceClient {
-	return department.NewDepartmentServiceClient(c.conn)
+func (c *Client) Department() department.ServiceClient {
+	return department.NewServiceClient(c.conn)
 }
 
 // Domain todo
-func (c *Client) Domain() domain.DomainServiceClient {
-	return domain.NewDomainServiceClient(c.conn)
+func (c *Client) Domain() domain.ServiceClient {
+	return domain.NewServiceClient(c.conn)
 }
 
 // Endpoint todo
-func (c *Client) Endpoint() endpoint.EndpointServiceClient {
-	return endpoint.NewEndpointServiceClient(c.conn)
+func (c *Client) Endpoint() endpoint.ServiceClient {
+	return endpoint.NewServiceClient(c.conn)
 }
 
 // Micro todo
-func (c *Client) Micro() micro.MicroServiceClient {
-	return micro.NewMicroServiceClient(c.conn)
+func (c *Client) Micro() micro.ServiceClient {
+	return micro.NewServiceClient(c.conn)
 }
 
 // Micro todo
-func (c *Client) Mconf() mconf.MicroConfigServiceClient {
-	return mconf.NewMicroConfigServiceClient(c.conn)
+func (c *Client) Mconf() mconf.ConfigServiceClient {
+	return mconf.NewConfigServiceClient(c.conn)
 }
 
 // Namespace todo
-func (c *Client) Namespace() namespace.NamespaceServiceClient {
-	return namespace.NewNamespaceServiceClient(c.conn)
+func (c *Client) Namespace() namespace.ServiceClient {
+	return namespace.NewServiceClient(c.conn)
 }
 
 // Permission todo
-func (c *Client) Permission() permission.PermissionServiceClient {
-	return permission.NewPermissionServiceClient(c.conn)
+func (c *Client) Permission() permission.ServiceClient {
+	return permission.NewServiceClient(c.conn)
 }
 
 // Policy todo
-func (c *Client) Policy() policy.PolicyServiceClient {
-	return policy.NewPolicyServiceClient(c.conn)
+func (c *Client) Policy() policy.ServiceClient {
+	return policy.NewServiceClient(c.conn)
 }
 
 // Role todo
-func (c *Client) Role() role.RoleServiceClient {
-	return role.NewRoleServiceClient(c.conn)
+func (c *Client) Role() role.ServiceClient {
+	return role.NewServiceClient(c.conn)
 }
 
 // Tag todo
-func (c *Client) Tag() tag.TagServiceClient {
-	return tag.NewTagServiceClient(c.conn)
+func (c *Client) Tag() tag.ServiceClient {
+	return tag.NewServiceClient(c.conn)
 }
 
 // SessionAdmin todo
@@ -126,16 +126,16 @@ func (c *Client) Session() session.ServiceClient {
 }
 
 // Token todo
-func (c *Client) Token() token.TokenServiceClient {
-	return token.NewTokenServiceClient(c.conn)
+func (c *Client) Token() token.ServiceClient {
+	return token.NewServiceClient(c.conn)
 }
 
 // User todo
-func (c *Client) User() user.UserServiceClient {
-	return user.NewUserServiceClient(c.conn)
+func (c *Client) User() user.ServiceClient {
+	return user.NewServiceClient(c.conn)
 }
 
 // Verifycode todo
-func (c *Client) Verifycode() verifycode.VerifyCodeServiceClient {
-	return verifycode.NewVerifyCodeServiceClient(c.conn)
+func (c *Client) Verifycode() verifycode.ServiceClient {
+	return verifycode.NewServiceClient(c.conn)
 }

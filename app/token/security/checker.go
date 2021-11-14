@@ -26,8 +26,8 @@ func NewChecker() (Checker, error) {
 	}
 
 	return &checker{
-		domain:    app.GetGrpcApp(domain.AppName).(domain.DomainServiceServer),
-		user:      app.GetGrpcApp(user.AppName).(user.UserServiceServer),
+		domain:    app.GetGrpcApp(domain.AppName).(domain.ServiceServer),
+		user:      app.GetGrpcApp(user.AppName).(user.ServiceServer),
 		session:   app.GetGrpcApp(session.AppName).(session.ServiceServer),
 		cache:     c,
 		ip2Regoin: app.GetInternalApp(ip2region.AppName).(ip2region.Service),
@@ -36,8 +36,8 @@ func NewChecker() (Checker, error) {
 }
 
 type checker struct {
-	domain    domain.DomainServiceServer
-	user      user.UserServiceServer
+	domain    domain.ServiceServer
+	user      user.ServiceServer
 	session   session.ServiceServer
 	cache     cache.Cache
 	ip2Regoin ip2region.Service

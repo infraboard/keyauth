@@ -20,14 +20,14 @@ import (
 func NewHTTPAuther() *HTTPAuther {
 	return &HTTPAuther{
 		l:     zap.L().Named("Http Interceptor"),
-		token: app.GetGrpcApp(token.AppName).(token.TokenServiceServer),
+		token: app.GetGrpcApp(token.AppName).(token.ServiceServer),
 	}
 }
 
 // internal todo
 type HTTPAuther struct {
 	l     logger.Logger
-	token token.TokenServiceServer
+	token token.ServiceServer
 }
 
 func (a *HTTPAuther) Auth(r *http.Request, entry httpb.Entry) (

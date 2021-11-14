@@ -14,122 +14,122 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// VerifyCodeServiceClient is the client API for VerifyCodeService service.
+// ServiceClient is the client API for Service service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type VerifyCodeServiceClient interface {
+type ServiceClient interface {
 	IssueCode(ctx context.Context, in *IssueCodeRequest, opts ...grpc.CallOption) (*IssueCodeResponse, error)
 	CheckCode(ctx context.Context, in *CheckCodeRequest, opts ...grpc.CallOption) (*Code, error)
 }
 
-type verifyCodeServiceClient struct {
+type serviceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewVerifyCodeServiceClient(cc grpc.ClientConnInterface) VerifyCodeServiceClient {
-	return &verifyCodeServiceClient{cc}
+func NewServiceClient(cc grpc.ClientConnInterface) ServiceClient {
+	return &serviceClient{cc}
 }
 
-func (c *verifyCodeServiceClient) IssueCode(ctx context.Context, in *IssueCodeRequest, opts ...grpc.CallOption) (*IssueCodeResponse, error) {
+func (c *serviceClient) IssueCode(ctx context.Context, in *IssueCodeRequest, opts ...grpc.CallOption) (*IssueCodeResponse, error) {
 	out := new(IssueCodeResponse)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.verifycode.VerifyCodeService/IssueCode", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.verifycode.Service/IssueCode", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *verifyCodeServiceClient) CheckCode(ctx context.Context, in *CheckCodeRequest, opts ...grpc.CallOption) (*Code, error) {
+func (c *serviceClient) CheckCode(ctx context.Context, in *CheckCodeRequest, opts ...grpc.CallOption) (*Code, error) {
 	out := new(Code)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.verifycode.VerifyCodeService/CheckCode", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.verifycode.Service/CheckCode", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// VerifyCodeServiceServer is the server API for VerifyCodeService service.
-// All implementations must embed UnimplementedVerifyCodeServiceServer
+// ServiceServer is the server API for Service service.
+// All implementations must embed UnimplementedServiceServer
 // for forward compatibility
-type VerifyCodeServiceServer interface {
+type ServiceServer interface {
 	IssueCode(context.Context, *IssueCodeRequest) (*IssueCodeResponse, error)
 	CheckCode(context.Context, *CheckCodeRequest) (*Code, error)
-	mustEmbedUnimplementedVerifyCodeServiceServer()
+	mustEmbedUnimplementedServiceServer()
 }
 
-// UnimplementedVerifyCodeServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedVerifyCodeServiceServer struct {
+// UnimplementedServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedServiceServer struct {
 }
 
-func (UnimplementedVerifyCodeServiceServer) IssueCode(context.Context, *IssueCodeRequest) (*IssueCodeResponse, error) {
+func (UnimplementedServiceServer) IssueCode(context.Context, *IssueCodeRequest) (*IssueCodeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method IssueCode not implemented")
 }
-func (UnimplementedVerifyCodeServiceServer) CheckCode(context.Context, *CheckCodeRequest) (*Code, error) {
+func (UnimplementedServiceServer) CheckCode(context.Context, *CheckCodeRequest) (*Code, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckCode not implemented")
 }
-func (UnimplementedVerifyCodeServiceServer) mustEmbedUnimplementedVerifyCodeServiceServer() {}
+func (UnimplementedServiceServer) mustEmbedUnimplementedServiceServer() {}
 
-// UnsafeVerifyCodeServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to VerifyCodeServiceServer will
+// UnsafeServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ServiceServer will
 // result in compilation errors.
-type UnsafeVerifyCodeServiceServer interface {
-	mustEmbedUnimplementedVerifyCodeServiceServer()
+type UnsafeServiceServer interface {
+	mustEmbedUnimplementedServiceServer()
 }
 
-func RegisterVerifyCodeServiceServer(s grpc.ServiceRegistrar, srv VerifyCodeServiceServer) {
-	s.RegisterService(&VerifyCodeService_ServiceDesc, srv)
+func RegisterServiceServer(s grpc.ServiceRegistrar, srv ServiceServer) {
+	s.RegisterService(&Service_ServiceDesc, srv)
 }
 
-func _VerifyCodeService_IssueCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_IssueCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(IssueCodeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(VerifyCodeServiceServer).IssueCode(ctx, in)
+		return srv.(ServiceServer).IssueCode(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.verifycode.VerifyCodeService/IssueCode",
+		FullMethod: "/infraboard.keyauth.verifycode.Service/IssueCode",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VerifyCodeServiceServer).IssueCode(ctx, req.(*IssueCodeRequest))
+		return srv.(ServiceServer).IssueCode(ctx, req.(*IssueCodeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _VerifyCodeService_CheckCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_CheckCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CheckCodeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(VerifyCodeServiceServer).CheckCode(ctx, in)
+		return srv.(ServiceServer).CheckCode(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.verifycode.VerifyCodeService/CheckCode",
+		FullMethod: "/infraboard.keyauth.verifycode.Service/CheckCode",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VerifyCodeServiceServer).CheckCode(ctx, req.(*CheckCodeRequest))
+		return srv.(ServiceServer).CheckCode(ctx, req.(*CheckCodeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// VerifyCodeService_ServiceDesc is the grpc.ServiceDesc for VerifyCodeService service.
+// Service_ServiceDesc is the grpc.ServiceDesc for Service service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var VerifyCodeService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "infraboard.keyauth.verifycode.VerifyCodeService",
-	HandlerType: (*VerifyCodeServiceServer)(nil),
+var Service_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "infraboard.keyauth.verifycode.Service",
+	HandlerType: (*ServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "IssueCode",
-			Handler:    _VerifyCodeService_IssueCode_Handler,
+			Handler:    _Service_IssueCode_Handler,
 		},
 		{
 			MethodName: "CheckCode",
-			Handler:    _VerifyCodeService_CheckCode_Handler,
+			Handler:    _Service_CheckCode_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

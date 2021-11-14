@@ -6,8 +6,8 @@ option go_package = "github.com/infraboard/keyauth/app/domain";
 import "app/domain/pb/request.proto";
 import "app/domain/pb/domain.proto";
 
-// DomainService is an domain service
-service DomainService {
+// Service is an domain service
+service Service {
 	rpc CreateDomain(CreateDomainRequest) returns(Domain);
 	rpc UpdateDomain(UpdateDomainInfoRequest) returns(Domain);
 	rpc DescribeDomain(DescribeDomainRequest) returns(Domain);

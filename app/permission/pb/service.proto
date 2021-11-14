@@ -7,7 +7,7 @@ import "app/role/pb/role.proto";
 import "app/permission/pb/request.proto";
 
 // Service 权限查询API
-service PermissionService {
+service Service {
 	rpc QueryPermission(QueryPermissionRequest) returns(role.PermissionSet);
 	rpc QueryRole(QueryRoleRequest) returns(role.Set);
 	rpc CheckPermission(CheckPermissionRequest) returns(role.Permission);

@@ -25,13 +25,13 @@ type service struct {
 	col  *mongo.Collection
 	perm *mongo.Collection
 
-	policy policy.PolicyServiceServer
+	policy policy.ServiceServer
 	log    logger.Logger
-	role.UnimplementedRoleServiceServer
+	role.UnimplementedServiceServer
 }
 
 func (s *service) Config() error {
-	s.policy = app.GetGrpcApp(policy.AppName).(policy.PolicyServiceServer)
+	s.policy = app.GetGrpcApp(policy.AppName).(policy.ServiceServer)
 
 	db := conf.C().Mongo.GetDB()
 	col := db.Collection("role")
@@ -77,7 +77,7 @@ func (s *service) Name() string {
 }
 
 func (s *service) Registry(server *grpc.Server) {
-	role.RegisterRoleServiceServer(server, svr)
+	role.RegisterServiceServer(server, svr)
 }
 
 func init() {

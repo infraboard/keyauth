@@ -14,10 +14,10 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// DepartmentServiceClient is the client API for DepartmentService service.
+// ServiceClient is the client API for Service service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type DepartmentServiceClient interface {
+type ServiceClient interface {
 	QueryDepartment(ctx context.Context, in *QueryDepartmentRequest, opts ...grpc.CallOption) (*Set, error)
 	DescribeDepartment(ctx context.Context, in *DescribeDeparmentRequest, opts ...grpc.CallOption) (*Department, error)
 	CreateDepartment(ctx context.Context, in *CreateDepartmentRequest, opts ...grpc.CallOption) (*Department, error)
@@ -29,99 +29,99 @@ type DepartmentServiceClient interface {
 	DealApplicationForm(ctx context.Context, in *DealApplicationFormRequest, opts ...grpc.CallOption) (*ApplicationForm, error)
 }
 
-type departmentServiceClient struct {
+type serviceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewDepartmentServiceClient(cc grpc.ClientConnInterface) DepartmentServiceClient {
-	return &departmentServiceClient{cc}
+func NewServiceClient(cc grpc.ClientConnInterface) ServiceClient {
+	return &serviceClient{cc}
 }
 
-func (c *departmentServiceClient) QueryDepartment(ctx context.Context, in *QueryDepartmentRequest, opts ...grpc.CallOption) (*Set, error) {
+func (c *serviceClient) QueryDepartment(ctx context.Context, in *QueryDepartmentRequest, opts ...grpc.CallOption) (*Set, error) {
 	out := new(Set)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.department.DepartmentService/QueryDepartment", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.department.Service/QueryDepartment", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *departmentServiceClient) DescribeDepartment(ctx context.Context, in *DescribeDeparmentRequest, opts ...grpc.CallOption) (*Department, error) {
+func (c *serviceClient) DescribeDepartment(ctx context.Context, in *DescribeDeparmentRequest, opts ...grpc.CallOption) (*Department, error) {
 	out := new(Department)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.department.DepartmentService/DescribeDepartment", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.department.Service/DescribeDepartment", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *departmentServiceClient) CreateDepartment(ctx context.Context, in *CreateDepartmentRequest, opts ...grpc.CallOption) (*Department, error) {
+func (c *serviceClient) CreateDepartment(ctx context.Context, in *CreateDepartmentRequest, opts ...grpc.CallOption) (*Department, error) {
 	out := new(Department)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.department.DepartmentService/CreateDepartment", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.department.Service/CreateDepartment", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *departmentServiceClient) UpdateDepartment(ctx context.Context, in *UpdateDepartmentRequest, opts ...grpc.CallOption) (*Department, error) {
+func (c *serviceClient) UpdateDepartment(ctx context.Context, in *UpdateDepartmentRequest, opts ...grpc.CallOption) (*Department, error) {
 	out := new(Department)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.department.DepartmentService/UpdateDepartment", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.department.Service/UpdateDepartment", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *departmentServiceClient) DeleteDepartment(ctx context.Context, in *DeleteDepartmentRequest, opts ...grpc.CallOption) (*Department, error) {
+func (c *serviceClient) DeleteDepartment(ctx context.Context, in *DeleteDepartmentRequest, opts ...grpc.CallOption) (*Department, error) {
 	out := new(Department)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.department.DepartmentService/DeleteDepartment", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.department.Service/DeleteDepartment", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *departmentServiceClient) QueryApplicationForm(ctx context.Context, in *QueryApplicationFormRequet, opts ...grpc.CallOption) (*ApplicationFormSet, error) {
+func (c *serviceClient) QueryApplicationForm(ctx context.Context, in *QueryApplicationFormRequet, opts ...grpc.CallOption) (*ApplicationFormSet, error) {
 	out := new(ApplicationFormSet)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.department.DepartmentService/QueryApplicationForm", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.department.Service/QueryApplicationForm", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *departmentServiceClient) DescribeApplicationForm(ctx context.Context, in *DescribeApplicationFormRequet, opts ...grpc.CallOption) (*ApplicationForm, error) {
+func (c *serviceClient) DescribeApplicationForm(ctx context.Context, in *DescribeApplicationFormRequet, opts ...grpc.CallOption) (*ApplicationForm, error) {
 	out := new(ApplicationForm)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.department.DepartmentService/DescribeApplicationForm", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.department.Service/DescribeApplicationForm", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *departmentServiceClient) JoinDepartment(ctx context.Context, in *JoinDepartmentRequest, opts ...grpc.CallOption) (*ApplicationForm, error) {
+func (c *serviceClient) JoinDepartment(ctx context.Context, in *JoinDepartmentRequest, opts ...grpc.CallOption) (*ApplicationForm, error) {
 	out := new(ApplicationForm)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.department.DepartmentService/JoinDepartment", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.department.Service/JoinDepartment", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *departmentServiceClient) DealApplicationForm(ctx context.Context, in *DealApplicationFormRequest, opts ...grpc.CallOption) (*ApplicationForm, error) {
+func (c *serviceClient) DealApplicationForm(ctx context.Context, in *DealApplicationFormRequest, opts ...grpc.CallOption) (*ApplicationForm, error) {
 	out := new(ApplicationForm)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.department.DepartmentService/DealApplicationForm", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.department.Service/DealApplicationForm", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// DepartmentServiceServer is the server API for DepartmentService service.
-// All implementations must embed UnimplementedDepartmentServiceServer
+// ServiceServer is the server API for Service service.
+// All implementations must embed UnimplementedServiceServer
 // for forward compatibility
-type DepartmentServiceServer interface {
+type ServiceServer interface {
 	QueryDepartment(context.Context, *QueryDepartmentRequest) (*Set, error)
 	DescribeDepartment(context.Context, *DescribeDeparmentRequest) (*Department, error)
 	CreateDepartment(context.Context, *CreateDepartmentRequest) (*Department, error)
@@ -131,257 +131,257 @@ type DepartmentServiceServer interface {
 	DescribeApplicationForm(context.Context, *DescribeApplicationFormRequet) (*ApplicationForm, error)
 	JoinDepartment(context.Context, *JoinDepartmentRequest) (*ApplicationForm, error)
 	DealApplicationForm(context.Context, *DealApplicationFormRequest) (*ApplicationForm, error)
-	mustEmbedUnimplementedDepartmentServiceServer()
+	mustEmbedUnimplementedServiceServer()
 }
 
-// UnimplementedDepartmentServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedDepartmentServiceServer struct {
+// UnimplementedServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedServiceServer struct {
 }
 
-func (UnimplementedDepartmentServiceServer) QueryDepartment(context.Context, *QueryDepartmentRequest) (*Set, error) {
+func (UnimplementedServiceServer) QueryDepartment(context.Context, *QueryDepartmentRequest) (*Set, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryDepartment not implemented")
 }
-func (UnimplementedDepartmentServiceServer) DescribeDepartment(context.Context, *DescribeDeparmentRequest) (*Department, error) {
+func (UnimplementedServiceServer) DescribeDepartment(context.Context, *DescribeDeparmentRequest) (*Department, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DescribeDepartment not implemented")
 }
-func (UnimplementedDepartmentServiceServer) CreateDepartment(context.Context, *CreateDepartmentRequest) (*Department, error) {
+func (UnimplementedServiceServer) CreateDepartment(context.Context, *CreateDepartmentRequest) (*Department, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateDepartment not implemented")
 }
-func (UnimplementedDepartmentServiceServer) UpdateDepartment(context.Context, *UpdateDepartmentRequest) (*Department, error) {
+func (UnimplementedServiceServer) UpdateDepartment(context.Context, *UpdateDepartmentRequest) (*Department, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateDepartment not implemented")
 }
-func (UnimplementedDepartmentServiceServer) DeleteDepartment(context.Context, *DeleteDepartmentRequest) (*Department, error) {
+func (UnimplementedServiceServer) DeleteDepartment(context.Context, *DeleteDepartmentRequest) (*Department, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteDepartment not implemented")
 }
-func (UnimplementedDepartmentServiceServer) QueryApplicationForm(context.Context, *QueryApplicationFormRequet) (*ApplicationFormSet, error) {
+func (UnimplementedServiceServer) QueryApplicationForm(context.Context, *QueryApplicationFormRequet) (*ApplicationFormSet, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryApplicationForm not implemented")
 }
-func (UnimplementedDepartmentServiceServer) DescribeApplicationForm(context.Context, *DescribeApplicationFormRequet) (*ApplicationForm, error) {
+func (UnimplementedServiceServer) DescribeApplicationForm(context.Context, *DescribeApplicationFormRequet) (*ApplicationForm, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DescribeApplicationForm not implemented")
 }
-func (UnimplementedDepartmentServiceServer) JoinDepartment(context.Context, *JoinDepartmentRequest) (*ApplicationForm, error) {
+func (UnimplementedServiceServer) JoinDepartment(context.Context, *JoinDepartmentRequest) (*ApplicationForm, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method JoinDepartment not implemented")
 }
-func (UnimplementedDepartmentServiceServer) DealApplicationForm(context.Context, *DealApplicationFormRequest) (*ApplicationForm, error) {
+func (UnimplementedServiceServer) DealApplicationForm(context.Context, *DealApplicationFormRequest) (*ApplicationForm, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DealApplicationForm not implemented")
 }
-func (UnimplementedDepartmentServiceServer) mustEmbedUnimplementedDepartmentServiceServer() {}
+func (UnimplementedServiceServer) mustEmbedUnimplementedServiceServer() {}
 
-// UnsafeDepartmentServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to DepartmentServiceServer will
+// UnsafeServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ServiceServer will
 // result in compilation errors.
-type UnsafeDepartmentServiceServer interface {
-	mustEmbedUnimplementedDepartmentServiceServer()
+type UnsafeServiceServer interface {
+	mustEmbedUnimplementedServiceServer()
 }
 
-func RegisterDepartmentServiceServer(s grpc.ServiceRegistrar, srv DepartmentServiceServer) {
-	s.RegisterService(&DepartmentService_ServiceDesc, srv)
+func RegisterServiceServer(s grpc.ServiceRegistrar, srv ServiceServer) {
+	s.RegisterService(&Service_ServiceDesc, srv)
 }
 
-func _DepartmentService_QueryDepartment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_QueryDepartment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueryDepartmentRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DepartmentServiceServer).QueryDepartment(ctx, in)
+		return srv.(ServiceServer).QueryDepartment(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.department.DepartmentService/QueryDepartment",
+		FullMethod: "/infraboard.keyauth.department.Service/QueryDepartment",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DepartmentServiceServer).QueryDepartment(ctx, req.(*QueryDepartmentRequest))
+		return srv.(ServiceServer).QueryDepartment(ctx, req.(*QueryDepartmentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DepartmentService_DescribeDepartment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_DescribeDepartment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DescribeDeparmentRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DepartmentServiceServer).DescribeDepartment(ctx, in)
+		return srv.(ServiceServer).DescribeDepartment(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.department.DepartmentService/DescribeDepartment",
+		FullMethod: "/infraboard.keyauth.department.Service/DescribeDepartment",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DepartmentServiceServer).DescribeDepartment(ctx, req.(*DescribeDeparmentRequest))
+		return srv.(ServiceServer).DescribeDepartment(ctx, req.(*DescribeDeparmentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DepartmentService_CreateDepartment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_CreateDepartment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateDepartmentRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DepartmentServiceServer).CreateDepartment(ctx, in)
+		return srv.(ServiceServer).CreateDepartment(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.department.DepartmentService/CreateDepartment",
+		FullMethod: "/infraboard.keyauth.department.Service/CreateDepartment",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DepartmentServiceServer).CreateDepartment(ctx, req.(*CreateDepartmentRequest))
+		return srv.(ServiceServer).CreateDepartment(ctx, req.(*CreateDepartmentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DepartmentService_UpdateDepartment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_UpdateDepartment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateDepartmentRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DepartmentServiceServer).UpdateDepartment(ctx, in)
+		return srv.(ServiceServer).UpdateDepartment(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.department.DepartmentService/UpdateDepartment",
+		FullMethod: "/infraboard.keyauth.department.Service/UpdateDepartment",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DepartmentServiceServer).UpdateDepartment(ctx, req.(*UpdateDepartmentRequest))
+		return srv.(ServiceServer).UpdateDepartment(ctx, req.(*UpdateDepartmentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DepartmentService_DeleteDepartment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_DeleteDepartment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteDepartmentRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DepartmentServiceServer).DeleteDepartment(ctx, in)
+		return srv.(ServiceServer).DeleteDepartment(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.department.DepartmentService/DeleteDepartment",
+		FullMethod: "/infraboard.keyauth.department.Service/DeleteDepartment",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DepartmentServiceServer).DeleteDepartment(ctx, req.(*DeleteDepartmentRequest))
+		return srv.(ServiceServer).DeleteDepartment(ctx, req.(*DeleteDepartmentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DepartmentService_QueryApplicationForm_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_QueryApplicationForm_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueryApplicationFormRequet)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DepartmentServiceServer).QueryApplicationForm(ctx, in)
+		return srv.(ServiceServer).QueryApplicationForm(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.department.DepartmentService/QueryApplicationForm",
+		FullMethod: "/infraboard.keyauth.department.Service/QueryApplicationForm",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DepartmentServiceServer).QueryApplicationForm(ctx, req.(*QueryApplicationFormRequet))
+		return srv.(ServiceServer).QueryApplicationForm(ctx, req.(*QueryApplicationFormRequet))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DepartmentService_DescribeApplicationForm_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_DescribeApplicationForm_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DescribeApplicationFormRequet)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DepartmentServiceServer).DescribeApplicationForm(ctx, in)
+		return srv.(ServiceServer).DescribeApplicationForm(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.department.DepartmentService/DescribeApplicationForm",
+		FullMethod: "/infraboard.keyauth.department.Service/DescribeApplicationForm",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DepartmentServiceServer).DescribeApplicationForm(ctx, req.(*DescribeApplicationFormRequet))
+		return srv.(ServiceServer).DescribeApplicationForm(ctx, req.(*DescribeApplicationFormRequet))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DepartmentService_JoinDepartment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_JoinDepartment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(JoinDepartmentRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DepartmentServiceServer).JoinDepartment(ctx, in)
+		return srv.(ServiceServer).JoinDepartment(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.department.DepartmentService/JoinDepartment",
+		FullMethod: "/infraboard.keyauth.department.Service/JoinDepartment",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DepartmentServiceServer).JoinDepartment(ctx, req.(*JoinDepartmentRequest))
+		return srv.(ServiceServer).JoinDepartment(ctx, req.(*JoinDepartmentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DepartmentService_DealApplicationForm_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_DealApplicationForm_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DealApplicationFormRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DepartmentServiceServer).DealApplicationForm(ctx, in)
+		return srv.(ServiceServer).DealApplicationForm(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.department.DepartmentService/DealApplicationForm",
+		FullMethod: "/infraboard.keyauth.department.Service/DealApplicationForm",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DepartmentServiceServer).DealApplicationForm(ctx, req.(*DealApplicationFormRequest))
+		return srv.(ServiceServer).DealApplicationForm(ctx, req.(*DealApplicationFormRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// DepartmentService_ServiceDesc is the grpc.ServiceDesc for DepartmentService service.
+// Service_ServiceDesc is the grpc.ServiceDesc for Service service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var DepartmentService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "infraboard.keyauth.department.DepartmentService",
-	HandlerType: (*DepartmentServiceServer)(nil),
+var Service_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "infraboard.keyauth.department.Service",
+	HandlerType: (*ServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "QueryDepartment",
-			Handler:    _DepartmentService_QueryDepartment_Handler,
+			Handler:    _Service_QueryDepartment_Handler,
 		},
 		{
 			MethodName: "DescribeDepartment",
-			Handler:    _DepartmentService_DescribeDepartment_Handler,
+			Handler:    _Service_DescribeDepartment_Handler,
 		},
 		{
 			MethodName: "CreateDepartment",
-			Handler:    _DepartmentService_CreateDepartment_Handler,
+			Handler:    _Service_CreateDepartment_Handler,
 		},
 		{
 			MethodName: "UpdateDepartment",
-			Handler:    _DepartmentService_UpdateDepartment_Handler,
+			Handler:    _Service_UpdateDepartment_Handler,
 		},
 		{
 			MethodName: "DeleteDepartment",
-			Handler:    _DepartmentService_DeleteDepartment_Handler,
+			Handler:    _Service_DeleteDepartment_Handler,
 		},
 		{
 			MethodName: "QueryApplicationForm",
-			Handler:    _DepartmentService_QueryApplicationForm_Handler,
+			Handler:    _Service_QueryApplicationForm_Handler,
 		},
 		{
 			MethodName: "DescribeApplicationForm",
-			Handler:    _DepartmentService_DescribeApplicationForm_Handler,
+			Handler:    _Service_DescribeApplicationForm_Handler,
 		},
 		{
 			MethodName: "JoinDepartment",
-			Handler:    _DepartmentService_JoinDepartment_Handler,
+			Handler:    _Service_JoinDepartment_Handler,
 		},
 		{
 			MethodName: "DealApplicationForm",
-			Handler:    _DepartmentService_DealApplicationForm_Handler,
+			Handler:    _Service_DealApplicationForm_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

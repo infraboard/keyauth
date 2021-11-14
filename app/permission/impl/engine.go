@@ -19,17 +19,17 @@ var (
 
 type service struct {
 	log      logger.Logger
-	policy   policy.PolicyServiceServer
-	role     role.RoleServiceServer
-	endpoint endpoint.EndpointServiceServer
+	policy   policy.ServiceServer
+	role     role.ServiceServer
+	endpoint endpoint.ServiceServer
 
-	permission.UnimplementedPermissionServiceServer
+	permission.UnimplementedServiceServer
 }
 
 func (s *service) Config() error {
-	s.policy = app.GetGrpcApp(policy.AppName).(policy.PolicyServiceServer)
-	s.role = app.GetGrpcApp(role.AppName).(role.RoleServiceServer)
-	s.endpoint = app.GetGrpcApp(endpoint.AppName).(endpoint.EndpointServiceServer)
+	s.policy = app.GetGrpcApp(policy.AppName).(policy.ServiceServer)
+	s.role = app.GetGrpcApp(role.AppName).(role.ServiceServer)
+	s.endpoint = app.GetGrpcApp(endpoint.AppName).(endpoint.ServiceServer)
 	s.log = zap.L().Named("Permission")
 	return nil
 }
@@ -39,7 +39,7 @@ func (s *service) Name() string {
 }
 
 func (s *service) Registry(server *grpc.Server) {
-	permission.RegisterPermissionServiceServer(server, svr)
+	permission.RegisterServiceServer(server, svr)
 }
 
 func init() {

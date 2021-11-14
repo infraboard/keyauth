@@ -27,11 +27,11 @@ import (
 // NewTokenIssuer todo
 func NewTokenIssuer() (Issuer, error) {
 	issuer := &issuer{
-		user:    app.GetGrpcApp(user.AppName).(user.UserServiceServer),
-		domain:  app.GetGrpcApp(domain.AppName).(domain.DomainServiceServer),
-		token:   app.GetGrpcApp(token.AppName).(token.TokenServiceServer),
+		user:    app.GetGrpcApp(user.AppName).(user.ServiceServer),
+		domain:  app.GetGrpcApp(domain.AppName).(domain.ServiceServer),
+		token:   app.GetGrpcApp(token.AppName).(token.ServiceServer),
 		ldap:    app.GetInternalApp(provider.AppName).(provider.LDAP),
-		app:     app.GetGrpcApp(application.AppName).(application.ApplicationServiceServer),
+		app:     app.GetGrpcApp(application.AppName).(application.ServiceServer),
 		emailRE: regexp.MustCompile(`([a-zA-Z0-9]+)@([a-zA-Z0-9\.]+)\.([a-zA-Z0-9]+)`),
 		log:     zap.L().Named("Token Issuer"),
 	}
@@ -40,10 +40,10 @@ func NewTokenIssuer() (Issuer, error) {
 
 // TokenIssuer 基于该数据进行扩展
 type issuer struct {
-	app     application.ApplicationServiceServer
-	token   token.TokenServiceServer
-	user    user.UserServiceServer
-	domain  domain.DomainServiceServer
+	app     application.ServiceServer
+	token   token.ServiceServer
+	user    user.ServiceServer
+	domain  domain.ServiceServer
 	ldap    provider.LDAP
 	emailRE *regexp.Regexp
 	log     logger.Logger

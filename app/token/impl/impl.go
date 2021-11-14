@@ -33,33 +33,33 @@ var (
 )
 
 type service struct {
-	token.UnimplementedTokenServiceServer
+	token.UnimplementedServiceServer
 	col           *mongo.Collection
 	log           logger.Logger
 	enableCache   bool
 	notifyCachPre string
 
-	app      application.ApplicationServiceServer
-	user     user.UserServiceServer
-	domain   domain.DomainServiceServer
-	policy   policy.PolicyServiceServer
+	app      application.ServiceServer
+	user     user.ServiceServer
+	domain   domain.ServiceServer
+	policy   policy.ServiceServer
 	issuer   issuer.Issuer
-	endpoint endpoint.EndpointServiceServer
+	endpoint endpoint.ServiceServer
 	session  session.ServiceServer
 	checker  security.Checker
-	code     verifycode.VerifyCodeServiceServer
-	ns       namespace.NamespaceServiceServer
+	code     verifycode.ServiceServer
+	ns       namespace.ServiceServer
 }
 
 func (s *service) Config() error {
-	s.app = app.GetGrpcApp(application.AppName).(application.ApplicationServiceServer)
-	s.user = app.GetGrpcApp(user.AppName).(user.UserServiceServer)
-	s.domain = app.GetGrpcApp(domain.AppName).(domain.DomainServiceServer)
-	s.policy = app.GetGrpcApp(policy.AppName).(policy.PolicyServiceServer)
-	s.endpoint = app.GetGrpcApp(endpoint.AppName).(endpoint.EndpointServiceServer)
+	s.app = app.GetGrpcApp(application.AppName).(application.ServiceServer)
+	s.user = app.GetGrpcApp(user.AppName).(user.ServiceServer)
+	s.domain = app.GetGrpcApp(domain.AppName).(domain.ServiceServer)
+	s.policy = app.GetGrpcApp(policy.AppName).(policy.ServiceServer)
+	s.endpoint = app.GetGrpcApp(endpoint.AppName).(endpoint.ServiceServer)
 	s.session = app.GetGrpcApp(session.AppName).(session.ServiceServer)
-	s.code = app.GetGrpcApp(verifycode.AppName).(verifycode.VerifyCodeServiceServer)
-	s.ns = app.GetGrpcApp(namespace.AppName).(namespace.NamespaceServiceServer)
+	s.code = app.GetGrpcApp(verifycode.AppName).(verifycode.ServiceServer)
+	s.ns = app.GetGrpcApp(namespace.AppName).(namespace.ServiceServer)
 
 	issuer, err := issuer.NewTokenIssuer()
 	if err != nil {
@@ -104,7 +104,7 @@ func (s *service) Name() string {
 }
 
 func (s *service) Registry(server *grpc.Server) {
-	token.RegisterTokenServiceServer(server, svr)
+	token.RegisterServiceServer(server, svr)
 }
 
 func init() {

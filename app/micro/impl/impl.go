@@ -29,15 +29,15 @@ var (
 type service struct {
 	scol *mongo.Collection
 
-	token    token.TokenServiceServer
-	user     user.UserServiceServer
-	app      application.ApplicationServiceServer
-	policy   policy.PolicyServiceServer
-	role     role.RoleServiceServer
-	endpoint endpoint.EndpointServiceServer
+	token    token.ServiceServer
+	user     user.ServiceServer
+	app      application.ServiceServer
+	policy   policy.ServiceServer
+	role     role.ServiceServer
+	endpoint endpoint.ServiceServer
 	log      logger.Logger
 
-	micro.UnimplementedMicroServiceServer
+	micro.UnimplementedServiceServer
 }
 
 func (s *service) Config() error {
@@ -70,12 +70,12 @@ func (s *service) configService() error {
 	s.scol = sc
 	s.log = zap.L().Named("Micro")
 
-	s.token = app.GetGrpcApp(token.AppName).(token.TokenServiceServer)
-	s.app = app.GetGrpcApp(application.AppName).(application.ApplicationServiceServer)
-	s.user = app.GetGrpcApp(user.AppName).(user.UserServiceServer)
-	s.policy = app.GetGrpcApp(policy.AppName).(policy.PolicyServiceServer)
-	s.role = app.GetGrpcApp(role.AppName).(role.RoleServiceServer)
-	s.endpoint = app.GetGrpcApp(endpoint.AppName).(endpoint.EndpointServiceServer)
+	s.token = app.GetGrpcApp(token.AppName).(token.ServiceServer)
+	s.app = app.GetGrpcApp(application.AppName).(application.ServiceServer)
+	s.user = app.GetGrpcApp(user.AppName).(user.ServiceServer)
+	s.policy = app.GetGrpcApp(policy.AppName).(policy.ServiceServer)
+	s.role = app.GetGrpcApp(role.AppName).(role.ServiceServer)
+	s.endpoint = app.GetGrpcApp(endpoint.AppName).(endpoint.ServiceServer)
 	return nil
 }
 
@@ -84,7 +84,7 @@ func (s *service) Name() string {
 }
 
 func (s *service) Registry(server *grpc.Server) {
-	micro.RegisterMicroServiceServer(server, svr)
+	micro.RegisterServiceServer(server, svr)
 }
 
 func init() {

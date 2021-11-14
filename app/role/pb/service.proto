@@ -7,7 +7,7 @@ import "app/role/pb/request.proto";
 import "app/role/pb/role.proto";
 
 // Service 角色服务
-service RoleService {
+service Service {
 	rpc CreateRole(CreateRoleRequest) returns(Role);
 	rpc QueryRole(QueryRoleRequest) returns(Set);
 	rpc DescribeRole(DescribeRoleRequest) returns(Role);

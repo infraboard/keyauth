@@ -24,6 +24,7 @@ func (s *service) queryAccount(ctx context.Context, req *queryUserRequest) (*use
 	userSet := user.NewUserSet()
 
 	if !req.SkipItems {
+		s.log.Debugf("find filter: %s", req.FindFilter())
 		resp, err := s.col.Find(context.TODO(), req.FindFilter(), req.FindOptions())
 
 		// 查询出该空间下的用户列表

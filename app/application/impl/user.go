@@ -13,7 +13,7 @@ import (
 
 type userimpl struct {
 	*service
-	application.UnimplementedApplicationServiceServer
+	application.UnimplementedServiceServer
 }
 
 func (s *userimpl) CreateApplication(ctx context.Context, req *application.CreateApplicatonRequest) (

@@ -14,10 +14,10 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// RoleServiceClient is the client API for RoleService service.
+// ServiceClient is the client API for Service service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type RoleServiceClient interface {
+type ServiceClient interface {
 	CreateRole(ctx context.Context, in *CreateRoleRequest, opts ...grpc.CallOption) (*Role, error)
 	QueryRole(ctx context.Context, in *QueryRoleRequest, opts ...grpc.CallOption) (*Set, error)
 	DescribeRole(ctx context.Context, in *DescribeRoleRequest, opts ...grpc.CallOption) (*Role, error)
@@ -29,99 +29,99 @@ type RoleServiceClient interface {
 	UpdatePermission(ctx context.Context, in *UpdatePermissionRequest, opts ...grpc.CallOption) (*Permission, error)
 }
 
-type roleServiceClient struct {
+type serviceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewRoleServiceClient(cc grpc.ClientConnInterface) RoleServiceClient {
-	return &roleServiceClient{cc}
+func NewServiceClient(cc grpc.ClientConnInterface) ServiceClient {
+	return &serviceClient{cc}
 }
 
-func (c *roleServiceClient) CreateRole(ctx context.Context, in *CreateRoleRequest, opts ...grpc.CallOption) (*Role, error) {
+func (c *serviceClient) CreateRole(ctx context.Context, in *CreateRoleRequest, opts ...grpc.CallOption) (*Role, error) {
 	out := new(Role)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.role.RoleService/CreateRole", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.role.Service/CreateRole", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *roleServiceClient) QueryRole(ctx context.Context, in *QueryRoleRequest, opts ...grpc.CallOption) (*Set, error) {
+func (c *serviceClient) QueryRole(ctx context.Context, in *QueryRoleRequest, opts ...grpc.CallOption) (*Set, error) {
 	out := new(Set)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.role.RoleService/QueryRole", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.role.Service/QueryRole", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *roleServiceClient) DescribeRole(ctx context.Context, in *DescribeRoleRequest, opts ...grpc.CallOption) (*Role, error) {
+func (c *serviceClient) DescribeRole(ctx context.Context, in *DescribeRoleRequest, opts ...grpc.CallOption) (*Role, error) {
 	out := new(Role)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.role.RoleService/DescribeRole", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.role.Service/DescribeRole", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *roleServiceClient) DeleteRole(ctx context.Context, in *DeleteRoleRequest, opts ...grpc.CallOption) (*Role, error) {
+func (c *serviceClient) DeleteRole(ctx context.Context, in *DeleteRoleRequest, opts ...grpc.CallOption) (*Role, error) {
 	out := new(Role)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.role.RoleService/DeleteRole", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.role.Service/DeleteRole", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *roleServiceClient) QueryPermission(ctx context.Context, in *QueryPermissionRequest, opts ...grpc.CallOption) (*PermissionSet, error) {
+func (c *serviceClient) QueryPermission(ctx context.Context, in *QueryPermissionRequest, opts ...grpc.CallOption) (*PermissionSet, error) {
 	out := new(PermissionSet)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.role.RoleService/QueryPermission", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.role.Service/QueryPermission", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *roleServiceClient) DescribePermission(ctx context.Context, in *DescribePermissionRequest, opts ...grpc.CallOption) (*Permission, error) {
+func (c *serviceClient) DescribePermission(ctx context.Context, in *DescribePermissionRequest, opts ...grpc.CallOption) (*Permission, error) {
 	out := new(Permission)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.role.RoleService/DescribePermission", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.role.Service/DescribePermission", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *roleServiceClient) AddPermissionToRole(ctx context.Context, in *AddPermissionToRoleRequest, opts ...grpc.CallOption) (*PermissionSet, error) {
+func (c *serviceClient) AddPermissionToRole(ctx context.Context, in *AddPermissionToRoleRequest, opts ...grpc.CallOption) (*PermissionSet, error) {
 	out := new(PermissionSet)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.role.RoleService/AddPermissionToRole", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.role.Service/AddPermissionToRole", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *roleServiceClient) RemovePermissionFromRole(ctx context.Context, in *RemovePermissionFromRoleRequest, opts ...grpc.CallOption) (*PermissionSet, error) {
+func (c *serviceClient) RemovePermissionFromRole(ctx context.Context, in *RemovePermissionFromRoleRequest, opts ...grpc.CallOption) (*PermissionSet, error) {
 	out := new(PermissionSet)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.role.RoleService/RemovePermissionFromRole", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.role.Service/RemovePermissionFromRole", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *roleServiceClient) UpdatePermission(ctx context.Context, in *UpdatePermissionRequest, opts ...grpc.CallOption) (*Permission, error) {
+func (c *serviceClient) UpdatePermission(ctx context.Context, in *UpdatePermissionRequest, opts ...grpc.CallOption) (*Permission, error) {
 	out := new(Permission)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.role.RoleService/UpdatePermission", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.role.Service/UpdatePermission", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// RoleServiceServer is the server API for RoleService service.
-// All implementations must embed UnimplementedRoleServiceServer
+// ServiceServer is the server API for Service service.
+// All implementations must embed UnimplementedServiceServer
 // for forward compatibility
-type RoleServiceServer interface {
+type ServiceServer interface {
 	CreateRole(context.Context, *CreateRoleRequest) (*Role, error)
 	QueryRole(context.Context, *QueryRoleRequest) (*Set, error)
 	DescribeRole(context.Context, *DescribeRoleRequest) (*Role, error)
@@ -131,257 +131,257 @@ type RoleServiceServer interface {
 	AddPermissionToRole(context.Context, *AddPermissionToRoleRequest) (*PermissionSet, error)
 	RemovePermissionFromRole(context.Context, *RemovePermissionFromRoleRequest) (*PermissionSet, error)
 	UpdatePermission(context.Context, *UpdatePermissionRequest) (*Permission, error)
-	mustEmbedUnimplementedRoleServiceServer()
+	mustEmbedUnimplementedServiceServer()
 }
 
-// UnimplementedRoleServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedRoleServiceServer struct {
+// UnimplementedServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedServiceServer struct {
 }
 
-func (UnimplementedRoleServiceServer) CreateRole(context.Context, *CreateRoleRequest) (*Role, error) {
+func (UnimplementedServiceServer) CreateRole(context.Context, *CreateRoleRequest) (*Role, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateRole not implemented")
 }
-func (UnimplementedRoleServiceServer) QueryRole(context.Context, *QueryRoleRequest) (*Set, error) {
+func (UnimplementedServiceServer) QueryRole(context.Context, *QueryRoleRequest) (*Set, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryRole not implemented")
 }
-func (UnimplementedRoleServiceServer) DescribeRole(context.Context, *DescribeRoleRequest) (*Role, error) {
+func (UnimplementedServiceServer) DescribeRole(context.Context, *DescribeRoleRequest) (*Role, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DescribeRole not implemented")
 }
-func (UnimplementedRoleServiceServer) DeleteRole(context.Context, *DeleteRoleRequest) (*Role, error) {
+func (UnimplementedServiceServer) DeleteRole(context.Context, *DeleteRoleRequest) (*Role, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteRole not implemented")
 }
-func (UnimplementedRoleServiceServer) QueryPermission(context.Context, *QueryPermissionRequest) (*PermissionSet, error) {
+func (UnimplementedServiceServer) QueryPermission(context.Context, *QueryPermissionRequest) (*PermissionSet, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryPermission not implemented")
 }
-func (UnimplementedRoleServiceServer) DescribePermission(context.Context, *DescribePermissionRequest) (*Permission, error) {
+func (UnimplementedServiceServer) DescribePermission(context.Context, *DescribePermissionRequest) (*Permission, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DescribePermission not implemented")
 }
-func (UnimplementedRoleServiceServer) AddPermissionToRole(context.Context, *AddPermissionToRoleRequest) (*PermissionSet, error) {
+func (UnimplementedServiceServer) AddPermissionToRole(context.Context, *AddPermissionToRoleRequest) (*PermissionSet, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddPermissionToRole not implemented")
 }
-func (UnimplementedRoleServiceServer) RemovePermissionFromRole(context.Context, *RemovePermissionFromRoleRequest) (*PermissionSet, error) {
+func (UnimplementedServiceServer) RemovePermissionFromRole(context.Context, *RemovePermissionFromRoleRequest) (*PermissionSet, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemovePermissionFromRole not implemented")
 }
-func (UnimplementedRoleServiceServer) UpdatePermission(context.Context, *UpdatePermissionRequest) (*Permission, error) {
+func (UnimplementedServiceServer) UpdatePermission(context.Context, *UpdatePermissionRequest) (*Permission, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdatePermission not implemented")
 }
-func (UnimplementedRoleServiceServer) mustEmbedUnimplementedRoleServiceServer() {}
+func (UnimplementedServiceServer) mustEmbedUnimplementedServiceServer() {}
 
-// UnsafeRoleServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to RoleServiceServer will
+// UnsafeServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ServiceServer will
 // result in compilation errors.
-type UnsafeRoleServiceServer interface {
-	mustEmbedUnimplementedRoleServiceServer()
+type UnsafeServiceServer interface {
+	mustEmbedUnimplementedServiceServer()
 }
 
-func RegisterRoleServiceServer(s grpc.ServiceRegistrar, srv RoleServiceServer) {
-	s.RegisterService(&RoleService_ServiceDesc, srv)
+func RegisterServiceServer(s grpc.ServiceRegistrar, srv ServiceServer) {
+	s.RegisterService(&Service_ServiceDesc, srv)
 }
 
-func _RoleService_CreateRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_CreateRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateRoleRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RoleServiceServer).CreateRole(ctx, in)
+		return srv.(ServiceServer).CreateRole(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.role.RoleService/CreateRole",
+		FullMethod: "/infraboard.keyauth.role.Service/CreateRole",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RoleServiceServer).CreateRole(ctx, req.(*CreateRoleRequest))
+		return srv.(ServiceServer).CreateRole(ctx, req.(*CreateRoleRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RoleService_QueryRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_QueryRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueryRoleRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RoleServiceServer).QueryRole(ctx, in)
+		return srv.(ServiceServer).QueryRole(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.role.RoleService/QueryRole",
+		FullMethod: "/infraboard.keyauth.role.Service/QueryRole",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RoleServiceServer).QueryRole(ctx, req.(*QueryRoleRequest))
+		return srv.(ServiceServer).QueryRole(ctx, req.(*QueryRoleRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RoleService_DescribeRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_DescribeRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DescribeRoleRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RoleServiceServer).DescribeRole(ctx, in)
+		return srv.(ServiceServer).DescribeRole(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.role.RoleService/DescribeRole",
+		FullMethod: "/infraboard.keyauth.role.Service/DescribeRole",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RoleServiceServer).DescribeRole(ctx, req.(*DescribeRoleRequest))
+		return srv.(ServiceServer).DescribeRole(ctx, req.(*DescribeRoleRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RoleService_DeleteRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_DeleteRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteRoleRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RoleServiceServer).DeleteRole(ctx, in)
+		return srv.(ServiceServer).DeleteRole(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.role.RoleService/DeleteRole",
+		FullMethod: "/infraboard.keyauth.role.Service/DeleteRole",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RoleServiceServer).DeleteRole(ctx, req.(*DeleteRoleRequest))
+		return srv.(ServiceServer).DeleteRole(ctx, req.(*DeleteRoleRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RoleService_QueryPermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_QueryPermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueryPermissionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RoleServiceServer).QueryPermission(ctx, in)
+		return srv.(ServiceServer).QueryPermission(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.role.RoleService/QueryPermission",
+		FullMethod: "/infraboard.keyauth.role.Service/QueryPermission",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RoleServiceServer).QueryPermission(ctx, req.(*QueryPermissionRequest))
+		return srv.(ServiceServer).QueryPermission(ctx, req.(*QueryPermissionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RoleService_DescribePermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_DescribePermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DescribePermissionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RoleServiceServer).DescribePermission(ctx, in)
+		return srv.(ServiceServer).DescribePermission(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.role.RoleService/DescribePermission",
+		FullMethod: "/infraboard.keyauth.role.Service/DescribePermission",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RoleServiceServer).DescribePermission(ctx, req.(*DescribePermissionRequest))
+		return srv.(ServiceServer).DescribePermission(ctx, req.(*DescribePermissionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RoleService_AddPermissionToRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_AddPermissionToRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddPermissionToRoleRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RoleServiceServer).AddPermissionToRole(ctx, in)
+		return srv.(ServiceServer).AddPermissionToRole(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.role.RoleService/AddPermissionToRole",
+		FullMethod: "/infraboard.keyauth.role.Service/AddPermissionToRole",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RoleServiceServer).AddPermissionToRole(ctx, req.(*AddPermissionToRoleRequest))
+		return srv.(ServiceServer).AddPermissionToRole(ctx, req.(*AddPermissionToRoleRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RoleService_RemovePermissionFromRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_RemovePermissionFromRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RemovePermissionFromRoleRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RoleServiceServer).RemovePermissionFromRole(ctx, in)
+		return srv.(ServiceServer).RemovePermissionFromRole(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.role.RoleService/RemovePermissionFromRole",
+		FullMethod: "/infraboard.keyauth.role.Service/RemovePermissionFromRole",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RoleServiceServer).RemovePermissionFromRole(ctx, req.(*RemovePermissionFromRoleRequest))
+		return srv.(ServiceServer).RemovePermissionFromRole(ctx, req.(*RemovePermissionFromRoleRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RoleService_UpdatePermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_UpdatePermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdatePermissionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RoleServiceServer).UpdatePermission(ctx, in)
+		return srv.(ServiceServer).UpdatePermission(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.role.RoleService/UpdatePermission",
+		FullMethod: "/infraboard.keyauth.role.Service/UpdatePermission",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RoleServiceServer).UpdatePermission(ctx, req.(*UpdatePermissionRequest))
+		return srv.(ServiceServer).UpdatePermission(ctx, req.(*UpdatePermissionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// RoleService_ServiceDesc is the grpc.ServiceDesc for RoleService service.
+// Service_ServiceDesc is the grpc.ServiceDesc for Service service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var RoleService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "infraboard.keyauth.role.RoleService",
-	HandlerType: (*RoleServiceServer)(nil),
+var Service_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "infraboard.keyauth.role.Service",
+	HandlerType: (*ServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "CreateRole",
-			Handler:    _RoleService_CreateRole_Handler,
+			Handler:    _Service_CreateRole_Handler,
 		},
 		{
 			MethodName: "QueryRole",
-			Handler:    _RoleService_QueryRole_Handler,
+			Handler:    _Service_QueryRole_Handler,
 		},
 		{
 			MethodName: "DescribeRole",
-			Handler:    _RoleService_DescribeRole_Handler,
+			Handler:    _Service_DescribeRole_Handler,
 		},
 		{
 			MethodName: "DeleteRole",
-			Handler:    _RoleService_DeleteRole_Handler,
+			Handler:    _Service_DeleteRole_Handler,
 		},
 		{
 			MethodName: "QueryPermission",
-			Handler:    _RoleService_QueryPermission_Handler,
+			Handler:    _Service_QueryPermission_Handler,
 		},
 		{
 			MethodName: "DescribePermission",
-			Handler:    _RoleService_DescribePermission_Handler,
+			Handler:    _Service_DescribePermission_Handler,
 		},
 		{
 			MethodName: "AddPermissionToRole",
-			Handler:    _RoleService_AddPermissionToRole_Handler,
+			Handler:    _Service_AddPermissionToRole_Handler,
 		},
 		{
 			MethodName: "RemovePermissionFromRole",
-			Handler:    _RoleService_RemovePermissionFromRole_Handler,
+			Handler:    _Service_RemovePermissionFromRole_Handler,
 		},
 		{
 			MethodName: "UpdatePermission",
-			Handler:    _RoleService_UpdatePermission_Handler,
+			Handler:    _Service_UpdatePermission_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

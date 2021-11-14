@@ -14,10 +14,10 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// DomainServiceClient is the client API for DomainService service.
+// ServiceClient is the client API for Service service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type DomainServiceClient interface {
+type ServiceClient interface {
 	CreateDomain(ctx context.Context, in *CreateDomainRequest, opts ...grpc.CallOption) (*Domain, error)
 	UpdateDomain(ctx context.Context, in *UpdateDomainInfoRequest, opts ...grpc.CallOption) (*Domain, error)
 	DescribeDomain(ctx context.Context, in *DescribeDomainRequest, opts ...grpc.CallOption) (*Domain, error)
@@ -26,254 +26,254 @@ type DomainServiceClient interface {
 	UpdateDomainSecurity(ctx context.Context, in *UpdateDomainSecurityRequest, opts ...grpc.CallOption) (*SecuritySetting, error)
 }
 
-type domainServiceClient struct {
+type serviceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewDomainServiceClient(cc grpc.ClientConnInterface) DomainServiceClient {
-	return &domainServiceClient{cc}
+func NewServiceClient(cc grpc.ClientConnInterface) ServiceClient {
+	return &serviceClient{cc}
 }
 
-func (c *domainServiceClient) CreateDomain(ctx context.Context, in *CreateDomainRequest, opts ...grpc.CallOption) (*Domain, error) {
+func (c *serviceClient) CreateDomain(ctx context.Context, in *CreateDomainRequest, opts ...grpc.CallOption) (*Domain, error) {
 	out := new(Domain)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.domain.DomainService/CreateDomain", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.domain.Service/CreateDomain", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *domainServiceClient) UpdateDomain(ctx context.Context, in *UpdateDomainInfoRequest, opts ...grpc.CallOption) (*Domain, error) {
+func (c *serviceClient) UpdateDomain(ctx context.Context, in *UpdateDomainInfoRequest, opts ...grpc.CallOption) (*Domain, error) {
 	out := new(Domain)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.domain.DomainService/UpdateDomain", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.domain.Service/UpdateDomain", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *domainServiceClient) DescribeDomain(ctx context.Context, in *DescribeDomainRequest, opts ...grpc.CallOption) (*Domain, error) {
+func (c *serviceClient) DescribeDomain(ctx context.Context, in *DescribeDomainRequest, opts ...grpc.CallOption) (*Domain, error) {
 	out := new(Domain)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.domain.DomainService/DescribeDomain", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.domain.Service/DescribeDomain", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *domainServiceClient) QueryDomain(ctx context.Context, in *QueryDomainRequest, opts ...grpc.CallOption) (*Set, error) {
+func (c *serviceClient) QueryDomain(ctx context.Context, in *QueryDomainRequest, opts ...grpc.CallOption) (*Set, error) {
 	out := new(Set)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.domain.DomainService/QueryDomain", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.domain.Service/QueryDomain", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *domainServiceClient) DeleteDomain(ctx context.Context, in *DeleteDomainRequest, opts ...grpc.CallOption) (*Domain, error) {
+func (c *serviceClient) DeleteDomain(ctx context.Context, in *DeleteDomainRequest, opts ...grpc.CallOption) (*Domain, error) {
 	out := new(Domain)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.domain.DomainService/DeleteDomain", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.domain.Service/DeleteDomain", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *domainServiceClient) UpdateDomainSecurity(ctx context.Context, in *UpdateDomainSecurityRequest, opts ...grpc.CallOption) (*SecuritySetting, error) {
+func (c *serviceClient) UpdateDomainSecurity(ctx context.Context, in *UpdateDomainSecurityRequest, opts ...grpc.CallOption) (*SecuritySetting, error) {
 	out := new(SecuritySetting)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.domain.DomainService/UpdateDomainSecurity", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.domain.Service/UpdateDomainSecurity", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// DomainServiceServer is the server API for DomainService service.
-// All implementations must embed UnimplementedDomainServiceServer
+// ServiceServer is the server API for Service service.
+// All implementations must embed UnimplementedServiceServer
 // for forward compatibility
-type DomainServiceServer interface {
+type ServiceServer interface {
 	CreateDomain(context.Context, *CreateDomainRequest) (*Domain, error)
 	UpdateDomain(context.Context, *UpdateDomainInfoRequest) (*Domain, error)
 	DescribeDomain(context.Context, *DescribeDomainRequest) (*Domain, error)
 	QueryDomain(context.Context, *QueryDomainRequest) (*Set, error)
 	DeleteDomain(context.Context, *DeleteDomainRequest) (*Domain, error)
 	UpdateDomainSecurity(context.Context, *UpdateDomainSecurityRequest) (*SecuritySetting, error)
-	mustEmbedUnimplementedDomainServiceServer()
+	mustEmbedUnimplementedServiceServer()
 }
 
-// UnimplementedDomainServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedDomainServiceServer struct {
+// UnimplementedServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedServiceServer struct {
 }
 
-func (UnimplementedDomainServiceServer) CreateDomain(context.Context, *CreateDomainRequest) (*Domain, error) {
+func (UnimplementedServiceServer) CreateDomain(context.Context, *CreateDomainRequest) (*Domain, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateDomain not implemented")
 }
-func (UnimplementedDomainServiceServer) UpdateDomain(context.Context, *UpdateDomainInfoRequest) (*Domain, error) {
+func (UnimplementedServiceServer) UpdateDomain(context.Context, *UpdateDomainInfoRequest) (*Domain, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateDomain not implemented")
 }
-func (UnimplementedDomainServiceServer) DescribeDomain(context.Context, *DescribeDomainRequest) (*Domain, error) {
+func (UnimplementedServiceServer) DescribeDomain(context.Context, *DescribeDomainRequest) (*Domain, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DescribeDomain not implemented")
 }
-func (UnimplementedDomainServiceServer) QueryDomain(context.Context, *QueryDomainRequest) (*Set, error) {
+func (UnimplementedServiceServer) QueryDomain(context.Context, *QueryDomainRequest) (*Set, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryDomain not implemented")
 }
-func (UnimplementedDomainServiceServer) DeleteDomain(context.Context, *DeleteDomainRequest) (*Domain, error) {
+func (UnimplementedServiceServer) DeleteDomain(context.Context, *DeleteDomainRequest) (*Domain, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteDomain not implemented")
 }
-func (UnimplementedDomainServiceServer) UpdateDomainSecurity(context.Context, *UpdateDomainSecurityRequest) (*SecuritySetting, error) {
+func (UnimplementedServiceServer) UpdateDomainSecurity(context.Context, *UpdateDomainSecurityRequest) (*SecuritySetting, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateDomainSecurity not implemented")
 }
-func (UnimplementedDomainServiceServer) mustEmbedUnimplementedDomainServiceServer() {}
+func (UnimplementedServiceServer) mustEmbedUnimplementedServiceServer() {}
 
-// UnsafeDomainServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to DomainServiceServer will
+// UnsafeServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ServiceServer will
 // result in compilation errors.
-type UnsafeDomainServiceServer interface {
-	mustEmbedUnimplementedDomainServiceServer()
+type UnsafeServiceServer interface {
+	mustEmbedUnimplementedServiceServer()
 }
 
-func RegisterDomainServiceServer(s grpc.ServiceRegistrar, srv DomainServiceServer) {
-	s.RegisterService(&DomainService_ServiceDesc, srv)
+func RegisterServiceServer(s grpc.ServiceRegistrar, srv ServiceServer) {
+	s.RegisterService(&Service_ServiceDesc, srv)
 }
 
-func _DomainService_CreateDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_CreateDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateDomainRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DomainServiceServer).CreateDomain(ctx, in)
+		return srv.(ServiceServer).CreateDomain(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.domain.DomainService/CreateDomain",
+		FullMethod: "/infraboard.keyauth.domain.Service/CreateDomain",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DomainServiceServer).CreateDomain(ctx, req.(*CreateDomainRequest))
+		return srv.(ServiceServer).CreateDomain(ctx, req.(*CreateDomainRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DomainService_UpdateDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_UpdateDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateDomainInfoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DomainServiceServer).UpdateDomain(ctx, in)
+		return srv.(ServiceServer).UpdateDomain(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.domain.DomainService/UpdateDomain",
+		FullMethod: "/infraboard.keyauth.domain.Service/UpdateDomain",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DomainServiceServer).UpdateDomain(ctx, req.(*UpdateDomainInfoRequest))
+		return srv.(ServiceServer).UpdateDomain(ctx, req.(*UpdateDomainInfoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DomainService_DescribeDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_DescribeDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DescribeDomainRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DomainServiceServer).DescribeDomain(ctx, in)
+		return srv.(ServiceServer).DescribeDomain(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.domain.DomainService/DescribeDomain",
+		FullMethod: "/infraboard.keyauth.domain.Service/DescribeDomain",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DomainServiceServer).DescribeDomain(ctx, req.(*DescribeDomainRequest))
+		return srv.(ServiceServer).DescribeDomain(ctx, req.(*DescribeDomainRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DomainService_QueryDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_QueryDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueryDomainRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DomainServiceServer).QueryDomain(ctx, in)
+		return srv.(ServiceServer).QueryDomain(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.domain.DomainService/QueryDomain",
+		FullMethod: "/infraboard.keyauth.domain.Service/QueryDomain",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DomainServiceServer).QueryDomain(ctx, req.(*QueryDomainRequest))
+		return srv.(ServiceServer).QueryDomain(ctx, req.(*QueryDomainRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DomainService_DeleteDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_DeleteDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteDomainRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DomainServiceServer).DeleteDomain(ctx, in)
+		return srv.(ServiceServer).DeleteDomain(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.domain.DomainService/DeleteDomain",
+		FullMethod: "/infraboard.keyauth.domain.Service/DeleteDomain",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DomainServiceServer).DeleteDomain(ctx, req.(*DeleteDomainRequest))
+		return srv.(ServiceServer).DeleteDomain(ctx, req.(*DeleteDomainRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DomainService_UpdateDomainSecurity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_UpdateDomainSecurity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateDomainSecurityRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DomainServiceServer).UpdateDomainSecurity(ctx, in)
+		return srv.(ServiceServer).UpdateDomainSecurity(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.domain.DomainService/UpdateDomainSecurity",
+		FullMethod: "/infraboard.keyauth.domain.Service/UpdateDomainSecurity",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DomainServiceServer).UpdateDomainSecurity(ctx, req.(*UpdateDomainSecurityRequest))
+		return srv.(ServiceServer).UpdateDomainSecurity(ctx, req.(*UpdateDomainSecurityRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// DomainService_ServiceDesc is the grpc.ServiceDesc for DomainService service.
+// Service_ServiceDesc is the grpc.ServiceDesc for Service service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var DomainService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "infraboard.keyauth.domain.DomainService",
-	HandlerType: (*DomainServiceServer)(nil),
+var Service_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "infraboard.keyauth.domain.Service",
+	HandlerType: (*ServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "CreateDomain",
-			Handler:    _DomainService_CreateDomain_Handler,
+			Handler:    _Service_CreateDomain_Handler,
 		},
 		{
 			MethodName: "UpdateDomain",
-			Handler:    _DomainService_UpdateDomain_Handler,
+			Handler:    _Service_UpdateDomain_Handler,
 		},
 		{
 			MethodName: "DescribeDomain",
-			Handler:    _DomainService_DescribeDomain_Handler,
+			Handler:    _Service_DescribeDomain_Handler,
 		},
 		{
 			MethodName: "QueryDomain",
-			Handler:    _DomainService_QueryDomain_Handler,
+			Handler:    _Service_QueryDomain_Handler,
 		},
 		{
 			MethodName: "DeleteDomain",
-			Handler:    _DomainService_DeleteDomain_Handler,
+			Handler:    _Service_DeleteDomain_Handler,
 		},
 		{
 			MethodName: "UpdateDomainSecurity",
-			Handler:    _DomainService_UpdateDomainSecurity_Handler,
+			Handler:    _Service_UpdateDomainSecurity_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

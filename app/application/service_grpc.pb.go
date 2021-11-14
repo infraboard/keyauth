@@ -14,194 +14,194 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// ApplicationServiceClient is the client API for ApplicationService service.
+// ServiceClient is the client API for Service service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type ApplicationServiceClient interface {
+type ServiceClient interface {
 	CreateApplication(ctx context.Context, in *CreateApplicatonRequest, opts ...grpc.CallOption) (*Application, error)
 	DescribeApplication(ctx context.Context, in *DescribeApplicationRequest, opts ...grpc.CallOption) (*Application, error)
 	QueryApplication(ctx context.Context, in *QueryApplicationRequest, opts ...grpc.CallOption) (*Set, error)
 	DeleteApplication(ctx context.Context, in *DeleteApplicationRequest, opts ...grpc.CallOption) (*Application, error)
 }
 
-type applicationServiceClient struct {
+type serviceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewApplicationServiceClient(cc grpc.ClientConnInterface) ApplicationServiceClient {
-	return &applicationServiceClient{cc}
+func NewServiceClient(cc grpc.ClientConnInterface) ServiceClient {
+	return &serviceClient{cc}
 }
 
-func (c *applicationServiceClient) CreateApplication(ctx context.Context, in *CreateApplicatonRequest, opts ...grpc.CallOption) (*Application, error) {
+func (c *serviceClient) CreateApplication(ctx context.Context, in *CreateApplicatonRequest, opts ...grpc.CallOption) (*Application, error) {
 	out := new(Application)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.application.ApplicationService/CreateApplication", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.application.Service/CreateApplication", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *applicationServiceClient) DescribeApplication(ctx context.Context, in *DescribeApplicationRequest, opts ...grpc.CallOption) (*Application, error) {
+func (c *serviceClient) DescribeApplication(ctx context.Context, in *DescribeApplicationRequest, opts ...grpc.CallOption) (*Application, error) {
 	out := new(Application)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.application.ApplicationService/DescribeApplication", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.application.Service/DescribeApplication", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *applicationServiceClient) QueryApplication(ctx context.Context, in *QueryApplicationRequest, opts ...grpc.CallOption) (*Set, error) {
+func (c *serviceClient) QueryApplication(ctx context.Context, in *QueryApplicationRequest, opts ...grpc.CallOption) (*Set, error) {
 	out := new(Set)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.application.ApplicationService/QueryApplication", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.application.Service/QueryApplication", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *applicationServiceClient) DeleteApplication(ctx context.Context, in *DeleteApplicationRequest, opts ...grpc.CallOption) (*Application, error) {
+func (c *serviceClient) DeleteApplication(ctx context.Context, in *DeleteApplicationRequest, opts ...grpc.CallOption) (*Application, error) {
 	out := new(Application)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.application.ApplicationService/DeleteApplication", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.application.Service/DeleteApplication", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// ApplicationServiceServer is the server API for ApplicationService service.
-// All implementations must embed UnimplementedApplicationServiceServer
+// ServiceServer is the server API for Service service.
+// All implementations must embed UnimplementedServiceServer
 // for forward compatibility
-type ApplicationServiceServer interface {
+type ServiceServer interface {
 	CreateApplication(context.Context, *CreateApplicatonRequest) (*Application, error)
 	DescribeApplication(context.Context, *DescribeApplicationRequest) (*Application, error)
 	QueryApplication(context.Context, *QueryApplicationRequest) (*Set, error)
 	DeleteApplication(context.Context, *DeleteApplicationRequest) (*Application, error)
-	mustEmbedUnimplementedApplicationServiceServer()
+	mustEmbedUnimplementedServiceServer()
 }
 
-// UnimplementedApplicationServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedApplicationServiceServer struct {
+// UnimplementedServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedServiceServer struct {
 }
 
-func (UnimplementedApplicationServiceServer) CreateApplication(context.Context, *CreateApplicatonRequest) (*Application, error) {
+func (UnimplementedServiceServer) CreateApplication(context.Context, *CreateApplicatonRequest) (*Application, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateApplication not implemented")
 }
-func (UnimplementedApplicationServiceServer) DescribeApplication(context.Context, *DescribeApplicationRequest) (*Application, error) {
+func (UnimplementedServiceServer) DescribeApplication(context.Context, *DescribeApplicationRequest) (*Application, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DescribeApplication not implemented")
 }
-func (UnimplementedApplicationServiceServer) QueryApplication(context.Context, *QueryApplicationRequest) (*Set, error) {
+func (UnimplementedServiceServer) QueryApplication(context.Context, *QueryApplicationRequest) (*Set, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryApplication not implemented")
 }
-func (UnimplementedApplicationServiceServer) DeleteApplication(context.Context, *DeleteApplicationRequest) (*Application, error) {
+func (UnimplementedServiceServer) DeleteApplication(context.Context, *DeleteApplicationRequest) (*Application, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteApplication not implemented")
 }
-func (UnimplementedApplicationServiceServer) mustEmbedUnimplementedApplicationServiceServer() {}
+func (UnimplementedServiceServer) mustEmbedUnimplementedServiceServer() {}
 
-// UnsafeApplicationServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to ApplicationServiceServer will
+// UnsafeServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ServiceServer will
 // result in compilation errors.
-type UnsafeApplicationServiceServer interface {
-	mustEmbedUnimplementedApplicationServiceServer()
+type UnsafeServiceServer interface {
+	mustEmbedUnimplementedServiceServer()
 }
 
-func RegisterApplicationServiceServer(s grpc.ServiceRegistrar, srv ApplicationServiceServer) {
-	s.RegisterService(&ApplicationService_ServiceDesc, srv)
+func RegisterServiceServer(s grpc.ServiceRegistrar, srv ServiceServer) {
+	s.RegisterService(&Service_ServiceDesc, srv)
 }
 
-func _ApplicationService_CreateApplication_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_CreateApplication_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateApplicatonRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ApplicationServiceServer).CreateApplication(ctx, in)
+		return srv.(ServiceServer).CreateApplication(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.application.ApplicationService/CreateApplication",
+		FullMethod: "/infraboard.keyauth.application.Service/CreateApplication",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ApplicationServiceServer).CreateApplication(ctx, req.(*CreateApplicatonRequest))
+		return srv.(ServiceServer).CreateApplication(ctx, req.(*CreateApplicatonRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ApplicationService_DescribeApplication_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_DescribeApplication_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DescribeApplicationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ApplicationServiceServer).DescribeApplication(ctx, in)
+		return srv.(ServiceServer).DescribeApplication(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.application.ApplicationService/DescribeApplication",
+		FullMethod: "/infraboard.keyauth.application.Service/DescribeApplication",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ApplicationServiceServer).DescribeApplication(ctx, req.(*DescribeApplicationRequest))
+		return srv.(ServiceServer).DescribeApplication(ctx, req.(*DescribeApplicationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ApplicationService_QueryApplication_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_QueryApplication_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueryApplicationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ApplicationServiceServer).QueryApplication(ctx, in)
+		return srv.(ServiceServer).QueryApplication(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.application.ApplicationService/QueryApplication",
+		FullMethod: "/infraboard.keyauth.application.Service/QueryApplication",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ApplicationServiceServer).QueryApplication(ctx, req.(*QueryApplicationRequest))
+		return srv.(ServiceServer).QueryApplication(ctx, req.(*QueryApplicationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ApplicationService_DeleteApplication_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_DeleteApplication_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteApplicationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ApplicationServiceServer).DeleteApplication(ctx, in)
+		return srv.(ServiceServer).DeleteApplication(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.application.ApplicationService/DeleteApplication",
+		FullMethod: "/infraboard.keyauth.application.Service/DeleteApplication",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ApplicationServiceServer).DeleteApplication(ctx, req.(*DeleteApplicationRequest))
+		return srv.(ServiceServer).DeleteApplication(ctx, req.(*DeleteApplicationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// ApplicationService_ServiceDesc is the grpc.ServiceDesc for ApplicationService service.
+// Service_ServiceDesc is the grpc.ServiceDesc for Service service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var ApplicationService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "infraboard.keyauth.application.ApplicationService",
-	HandlerType: (*ApplicationServiceServer)(nil),
+var Service_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "infraboard.keyauth.application.Service",
+	HandlerType: (*ServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "CreateApplication",
-			Handler:    _ApplicationService_CreateApplication_Handler,
+			Handler:    _Service_CreateApplication_Handler,
 		},
 		{
 			MethodName: "DescribeApplication",
-			Handler:    _ApplicationService_DescribeApplication_Handler,
+			Handler:    _Service_DescribeApplication_Handler,
 		},
 		{
 			MethodName: "QueryApplication",
-			Handler:    _ApplicationService_QueryApplication_Handler,
+			Handler:    _Service_QueryApplication_Handler,
 		},
 		{
 			MethodName: "DeleteApplication",
-			Handler:    _ApplicationService_DeleteApplication_Handler,
+			Handler:    _Service_DeleteApplication_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

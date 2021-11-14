@@ -25,14 +25,14 @@ type service struct {
 	col *mongo.Collection
 
 	ip    ip2region.Service
-	token token.TokenServiceServer
+	token token.ServiceServer
 	log   logger.Logger
 	session.UnimplementedServiceServer
 }
 
 func (s *service) Config() error {
 	s.ip = app.GetInternalApp(ip2region.AppName).(ip2region.Service)
-	s.token = app.GetGrpcApp(token.AppName).(token.TokenServiceServer)
+	s.token = app.GetGrpcApp(token.AppName).(token.ServiceServer)
 
 	db := conf.C().Mongo.GetDB()
 	dc := db.Collection("session")

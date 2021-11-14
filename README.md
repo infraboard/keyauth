@@ -37,10 +37,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+    // 查询注册的Endpint
 	page := request.NewPageRequest(20, 1)
-	meta := metadata.Pairs("access_token", "NEjvVOhmhAQXFuYSrZdJaBsH")
-	ctx := metadata.NewOutgoingContext(context.Background(), meta)
-	eps, err := c.Endpoint().QueryEndpoints(ctx, endpoint.NewQueryEndpointRequest(page))
+	eps, err := c.Endpoint().QueryEndpoints(context.Background(), endpoint.NewQueryEndpointRequest(page))
 	fmt.Println(eps, err)
 }
 ```

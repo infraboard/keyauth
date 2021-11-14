@@ -6,7 +6,7 @@ option go_package = "github.com/infraboard/keyauth/app/application";
 import "app/application/pb/request.proto";
 import "app/application/pb/application.proto";
 
-service ApplicationService {
+service Service {
 	rpc CreateApplication(CreateApplicatonRequest) returns(Application);
 	rpc DescribeApplication(DescribeApplicationRequest) returns(Application);
 	rpc QueryApplication(QueryApplicationRequest) returns(Set);

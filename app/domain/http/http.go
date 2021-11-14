@@ -13,7 +13,7 @@ var (
 )
 
 type handler struct {
-	service domain.DomainServiceServer
+	service domain.ServiceServer
 }
 
 // Registry 注册HTTP服务路由
@@ -31,7 +31,7 @@ func (h *handler) Registry(router router.SubRouter) {
 }
 
 func (h *handler) Config() error {
-	h.service = app.GetGrpcApp(domain.AppName).(domain.DomainServiceServer)
+	h.service = app.GetGrpcApp(domain.AppName).(domain.ServiceServer)
 	return nil
 }
 

@@ -125,13 +125,13 @@ func NewInitialerFromCLI() (*Initialer, error) {
 func NewInitialer() *Initialer {
 	return &Initialer{
 		domainName:  domain.AdminDomainName,
-		user:        app.GetGrpcApp(user.AppName).(user.UserServiceServer),
-		domain:      app.GetGrpcApp(domain.AppName).(domain.DomainServiceServer),
-		application: app.GetGrpcApp(application.AppName).(application.ApplicationServiceServer),
-		token:       app.GetGrpcApp(token.AppName).(token.TokenServiceServer),
-		department:  app.GetGrpcApp(department.AppName).(department.DepartmentServiceServer),
-		role:        app.GetGrpcApp(role.AppName).(role.RoleServiceServer),
-		micro:       app.GetGrpcApp(micro.AppName).(micro.MicroServiceServer),
+		user:        app.GetGrpcApp(user.AppName).(user.ServiceServer),
+		domain:      app.GetGrpcApp(domain.AppName).(domain.ServiceServer),
+		application: app.GetGrpcApp(application.AppName).(application.ServiceServer),
+		token:       app.GetGrpcApp(token.AppName).(token.ServiceServer),
+		department:  app.GetGrpcApp(department.AppName).(department.ServiceServer),
+		role:        app.GetGrpcApp(role.AppName).(role.ServiceServer),
+		micro:       app.GetGrpcApp(micro.AppName).(micro.ServiceServer),
 		system:      app.GetInternalApp(system.AppName).(system.Service),
 	}
 }
@@ -145,13 +145,13 @@ type Initialer struct {
 	adminUser         *user.User
 	adminRole         *role.Role
 
-	user        user.UserServiceServer
-	domain      domain.DomainServiceServer
-	application application.ApplicationServiceServer
-	token       token.TokenServiceServer
-	department  department.DepartmentServiceServer
-	role        role.RoleServiceServer
-	micro       micro.MicroServiceServer
+	user        user.ServiceServer
+	domain      domain.ServiceServer
+	application application.ServiceServer
+	token       token.ServiceServer
+	department  department.ServiceServer
+	role        role.ServiceServer
+	micro       micro.ServiceServer
 	system      system.Service
 }
 

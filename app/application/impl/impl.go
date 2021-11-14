@@ -56,7 +56,7 @@ func (s *service) Name() string {
 }
 
 func (s *service) Registry(server *grpc.Server) {
-	application.RegisterApplicationServiceServer(server, svr)
+	application.RegisterServiceServer(server, svr)
 }
 
 func init() {

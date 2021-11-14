@@ -15,158 +15,158 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// PermissionServiceClient is the client API for PermissionService service.
+// ServiceClient is the client API for Service service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type PermissionServiceClient interface {
+type ServiceClient interface {
 	QueryPermission(ctx context.Context, in *QueryPermissionRequest, opts ...grpc.CallOption) (*role.PermissionSet, error)
 	QueryRole(ctx context.Context, in *QueryRoleRequest, opts ...grpc.CallOption) (*role.Set, error)
 	CheckPermission(ctx context.Context, in *CheckPermissionRequest, opts ...grpc.CallOption) (*role.Permission, error)
 }
 
-type permissionServiceClient struct {
+type serviceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewPermissionServiceClient(cc grpc.ClientConnInterface) PermissionServiceClient {
-	return &permissionServiceClient{cc}
+func NewServiceClient(cc grpc.ClientConnInterface) ServiceClient {
+	return &serviceClient{cc}
 }
 
-func (c *permissionServiceClient) QueryPermission(ctx context.Context, in *QueryPermissionRequest, opts ...grpc.CallOption) (*role.PermissionSet, error) {
+func (c *serviceClient) QueryPermission(ctx context.Context, in *QueryPermissionRequest, opts ...grpc.CallOption) (*role.PermissionSet, error) {
 	out := new(role.PermissionSet)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.permission.PermissionService/QueryPermission", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.permission.Service/QueryPermission", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *permissionServiceClient) QueryRole(ctx context.Context, in *QueryRoleRequest, opts ...grpc.CallOption) (*role.Set, error) {
+func (c *serviceClient) QueryRole(ctx context.Context, in *QueryRoleRequest, opts ...grpc.CallOption) (*role.Set, error) {
 	out := new(role.Set)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.permission.PermissionService/QueryRole", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.permission.Service/QueryRole", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *permissionServiceClient) CheckPermission(ctx context.Context, in *CheckPermissionRequest, opts ...grpc.CallOption) (*role.Permission, error) {
+func (c *serviceClient) CheckPermission(ctx context.Context, in *CheckPermissionRequest, opts ...grpc.CallOption) (*role.Permission, error) {
 	out := new(role.Permission)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.permission.PermissionService/CheckPermission", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.permission.Service/CheckPermission", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// PermissionServiceServer is the server API for PermissionService service.
-// All implementations must embed UnimplementedPermissionServiceServer
+// ServiceServer is the server API for Service service.
+// All implementations must embed UnimplementedServiceServer
 // for forward compatibility
-type PermissionServiceServer interface {
+type ServiceServer interface {
 	QueryPermission(context.Context, *QueryPermissionRequest) (*role.PermissionSet, error)
 	QueryRole(context.Context, *QueryRoleRequest) (*role.Set, error)
 	CheckPermission(context.Context, *CheckPermissionRequest) (*role.Permission, error)
-	mustEmbedUnimplementedPermissionServiceServer()
+	mustEmbedUnimplementedServiceServer()
 }
 
-// UnimplementedPermissionServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedPermissionServiceServer struct {
+// UnimplementedServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedServiceServer struct {
 }
 
-func (UnimplementedPermissionServiceServer) QueryPermission(context.Context, *QueryPermissionRequest) (*role.PermissionSet, error) {
+func (UnimplementedServiceServer) QueryPermission(context.Context, *QueryPermissionRequest) (*role.PermissionSet, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryPermission not implemented")
 }
-func (UnimplementedPermissionServiceServer) QueryRole(context.Context, *QueryRoleRequest) (*role.Set, error) {
+func (UnimplementedServiceServer) QueryRole(context.Context, *QueryRoleRequest) (*role.Set, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryRole not implemented")
 }
-func (UnimplementedPermissionServiceServer) CheckPermission(context.Context, *CheckPermissionRequest) (*role.Permission, error) {
+func (UnimplementedServiceServer) CheckPermission(context.Context, *CheckPermissionRequest) (*role.Permission, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckPermission not implemented")
 }
-func (UnimplementedPermissionServiceServer) mustEmbedUnimplementedPermissionServiceServer() {}
+func (UnimplementedServiceServer) mustEmbedUnimplementedServiceServer() {}
 
-// UnsafePermissionServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to PermissionServiceServer will
+// UnsafeServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ServiceServer will
 // result in compilation errors.
-type UnsafePermissionServiceServer interface {
-	mustEmbedUnimplementedPermissionServiceServer()
+type UnsafeServiceServer interface {
+	mustEmbedUnimplementedServiceServer()
 }
 
-func RegisterPermissionServiceServer(s grpc.ServiceRegistrar, srv PermissionServiceServer) {
-	s.RegisterService(&PermissionService_ServiceDesc, srv)
+func RegisterServiceServer(s grpc.ServiceRegistrar, srv ServiceServer) {
+	s.RegisterService(&Service_ServiceDesc, srv)
 }
 
-func _PermissionService_QueryPermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_QueryPermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueryPermissionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PermissionServiceServer).QueryPermission(ctx, in)
+		return srv.(ServiceServer).QueryPermission(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.permission.PermissionService/QueryPermission",
+		FullMethod: "/infraboard.keyauth.permission.Service/QueryPermission",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PermissionServiceServer).QueryPermission(ctx, req.(*QueryPermissionRequest))
+		return srv.(ServiceServer).QueryPermission(ctx, req.(*QueryPermissionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PermissionService_QueryRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_QueryRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueryRoleRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PermissionServiceServer).QueryRole(ctx, in)
+		return srv.(ServiceServer).QueryRole(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.permission.PermissionService/QueryRole",
+		FullMethod: "/infraboard.keyauth.permission.Service/QueryRole",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PermissionServiceServer).QueryRole(ctx, req.(*QueryRoleRequest))
+		return srv.(ServiceServer).QueryRole(ctx, req.(*QueryRoleRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PermissionService_CheckPermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_CheckPermission_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CheckPermissionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PermissionServiceServer).CheckPermission(ctx, in)
+		return srv.(ServiceServer).CheckPermission(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.permission.PermissionService/CheckPermission",
+		FullMethod: "/infraboard.keyauth.permission.Service/CheckPermission",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PermissionServiceServer).CheckPermission(ctx, req.(*CheckPermissionRequest))
+		return srv.(ServiceServer).CheckPermission(ctx, req.(*CheckPermissionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// PermissionService_ServiceDesc is the grpc.ServiceDesc for PermissionService service.
+// Service_ServiceDesc is the grpc.ServiceDesc for Service service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var PermissionService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "infraboard.keyauth.permission.PermissionService",
-	HandlerType: (*PermissionServiceServer)(nil),
+var Service_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "infraboard.keyauth.permission.Service",
+	HandlerType: (*ServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "QueryPermission",
-			Handler:    _PermissionService_QueryPermission_Handler,
+			Handler:    _Service_QueryPermission_Handler,
 		},
 		{
 			MethodName: "QueryRole",
-			Handler:    _PermissionService_QueryRole_Handler,
+			Handler:    _Service_QueryRole_Handler,
 		},
 		{
 			MethodName: "CheckPermission",
-			Handler:    _PermissionService_CheckPermission_Handler,
+			Handler:    _Service_CheckPermission_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

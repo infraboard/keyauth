@@ -14,8 +14,8 @@ var (
 )
 
 type handler struct {
-	service micro.MicroServiceServer
-	token   token.TokenServiceServer
+	service micro.ServiceServer
+	token   token.ServiceServer
 }
 
 // Registry 注册HTTP服务路由
@@ -32,8 +32,8 @@ func (h *handler) Registry(router router.SubRouter) {
 }
 
 func (h *handler) Config() error {
-	h.service = app.GetGrpcApp(micro.AppName).(micro.MicroServiceServer)
-	h.token = app.GetGrpcApp(token.AppName).(token.TokenServiceServer)
+	h.service = app.GetGrpcApp(micro.AppName).(micro.ServiceServer)
+	h.token = app.GetGrpcApp(token.AppName).(token.ServiceServer)
 	return nil
 }
 

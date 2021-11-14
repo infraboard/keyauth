@@ -7,7 +7,7 @@ import "app/user/pb/request.proto";
 import "app/user/pb/user.proto";
 
 // Service 用户服务
-service UserService {
+service Service {
 	// 查询用户
 	rpc QueryAccount(QueryAccountRequest) returns(Set);
 	// 获取账号Profile

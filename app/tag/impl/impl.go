@@ -25,7 +25,7 @@ type service struct {
 	enableCache bool
 
 	log logger.Logger
-	tag.UnimplementedTagServiceServer
+	tag.UnimplementedServiceServer
 }
 
 func (s *service) Config() error {
@@ -66,7 +66,7 @@ func (s *service) Name() string {
 }
 
 func (s *service) Registry(server *grpc.Server) {
-	tag.RegisterTagServiceServer(server, svr)
+	tag.RegisterServiceServer(server, svr)
 }
 
 func init() {

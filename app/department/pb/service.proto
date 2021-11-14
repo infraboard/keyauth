@@ -7,7 +7,7 @@ import "app/department/pb/request.proto";
 import "app/department/pb/department.proto";
 
 // Service 服务
-service DepartmentService {
+service Service {
 	rpc QueryDepartment(QueryDepartmentRequest) returns(Set);
 	rpc DescribeDepartment(DescribeDeparmentRequest) returns(Department);
 	rpc CreateDepartment(CreateDepartmentRequest) returns(Department);

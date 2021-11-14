@@ -12,7 +12,7 @@ var (
 )
 
 type handler struct {
-	service policy.PolicyServiceServer
+	service policy.ServiceServer
 }
 
 // Registry 注册HTTP服务路由
@@ -28,7 +28,7 @@ func (h *handler) Registry(router router.SubRouter) {
 }
 
 func (h *handler) Config() error {
-	h.service = app.GetGrpcApp(policy.AppName).(policy.PolicyServiceServer)
+	h.service = app.GetGrpcApp(policy.AppName).(policy.ServiceServer)
 	return nil
 }
 

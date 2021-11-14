@@ -28,10 +28,10 @@ type service struct {
 	issuer issuer.Issuer
 	system system.Service
 	log    logger.Logger
-	user   user.UserServiceServer
-	token  token.TokenServiceServer
+	user   user.ServiceServer
+	token  token.ServiceServer
 
-	verifycode.UnimplementedVerifyCodeServiceServer
+	verifycode.UnimplementedServiceServer
 }
 
 func (s *service) Config() error {
@@ -51,8 +51,8 @@ func (s *service) Config() error {
 	s.col = col
 
 	s.system = app.GetInternalApp(system.AppName).(system.Service)
-	s.user = app.GetGrpcApp(user.AppName).(user.UserServiceServer)
-	s.token = app.GetGrpcApp(token.AppName).(token.TokenServiceServer)
+	s.user = app.GetGrpcApp(user.AppName).(user.ServiceServer)
+	s.token = app.GetGrpcApp(token.AppName).(token.ServiceServer)
 
 	is, err := issuer.NewTokenIssuer()
 	if err != nil {
@@ -68,7 +68,7 @@ func (s *service) Name() string {
 }
 
 func (s *service) Registry(server *grpc.Server) {
-	verifycode.RegisterVerifyCodeServiceServer(server, svr)
+	verifycode.RegisterServiceServer(server, svr)
 }
 
 func init() {

@@ -24,10 +24,10 @@ type service struct {
 	col           *mongo.Collection
 	enableCache   bool
 	notifyCachPre string
-	micro         micro.MicroServiceServer
+	micro         micro.ServiceServer
 	log           logger.Logger
 
-	endpoint.UnimplementedEndpointServiceServer
+	endpoint.UnimplementedServiceServer
 }
 
 func (s *service) Config() error {
@@ -47,7 +47,7 @@ func (s *service) Config() error {
 
 	s.col = col
 
-	s.micro = app.GetGrpcApp(micro.AppName).(micro.MicroServiceServer)
+	s.micro = app.GetGrpcApp(micro.AppName).(micro.ServiceServer)
 	s.log = zap.L().Named("Endpoint")
 	return nil
 }
@@ -57,7 +57,7 @@ func (s *service) Name() string {
 }
 
 func (s *service) Registry(server *grpc.Server) {
-	endpoint.RegisterEndpointServiceServer(server, svr)
+	endpoint.RegisterServiceServer(server, svr)
 }
 
 func init() {

@@ -52,7 +52,7 @@ func (p *Policy) genID() {
 }
 
 // CheckDependence todo
-func (p *Policy) CheckDependence(ctx context.Context, u user.UserServiceServer, r role.RoleServiceServer, ns namespace.NamespaceServiceServer) (*user.User, error) {
+func (p *Policy) CheckDependence(ctx context.Context, u user.ServiceServer, r role.ServiceServer, ns namespace.ServiceServer) (*user.User, error) {
 	account, err := u.DescribeAccount(ctx, user.NewDescriptAccountRequestWithAccount(p.Account))
 	if err != nil {
 		return nil, fmt.Errorf("check user error, %s", err)
@@ -121,7 +121,7 @@ func (s *Set) Length() int {
 }
 
 // GetRoles todo
-func (s *Set) GetRoles(ctx context.Context, r role.RoleServiceServer, withPermission bool) (*role.Set, error) {
+func (s *Set) GetRoles(ctx context.Context, r role.ServiceServer, withPermission bool) (*role.Set, error) {
 	set := role.NewRoleSet()
 	for i := range s.Items {
 		req := role.NewDescribeRoleRequestWithID(s.Items[i].RoleId)

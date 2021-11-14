@@ -29,17 +29,17 @@ type service struct {
 	enableCache   bool
 	notifyCachPre string
 	counter       counter.Service
-	user          user.UserServiceServer
-	role          role.RoleServiceServer
+	user          user.ServiceServer
+	role          role.ServiceServer
 	log           logger.Logger
 
-	department.UnimplementedDepartmentServiceServer
+	department.UnimplementedServiceServer
 }
 
 func (s *service) Config() error {
 	s.counter = app.GetInternalApp(counter.AppName).(counter.Service)
-	s.user = app.GetGrpcApp(user.AppName).(user.UserServiceServer)
-	s.role = app.GetGrpcApp(role.AppName).(role.RoleServiceServer)
+	s.user = app.GetGrpcApp(user.AppName).(user.ServiceServer)
+	s.role = app.GetGrpcApp(role.AppName).(role.ServiceServer)
 
 	db := conf.C().Mongo.GetDB()
 
@@ -83,7 +83,7 @@ func (s *service) Name() string {
 }
 
 func (s *service) Registry(server *grpc.Server) {
-	department.RegisterDepartmentServiceServer(server, svr)
+	department.RegisterServiceServer(server, svr)
 }
 
 func init() {

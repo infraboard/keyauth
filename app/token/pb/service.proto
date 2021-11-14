@@ -6,7 +6,7 @@ option go_package = "github.com/infraboard/keyauth/app/token";
 import "app/token/pb/request.proto";
 import "app/token/pb/token.proto";
 
-service TokenService {
+service Service {
     rpc IssueToken(IssueTokenRequest) returns (Token) {};
     rpc ValidateToken (ValidateTokenRequest) returns (Token) {};
 	rpc DescribeToken(DescribeTokenRequest) returns (Token) {};

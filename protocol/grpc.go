@@ -30,7 +30,7 @@ func NewGRPCService() *GRPCService {
 		svr:   grpcServer,
 		l:     log,
 		c:     conf.C(),
-		micro: app.GetGrpcApp(micro.AppName).(micro.MicroServiceServer),
+		micro: app.GetGrpcApp(micro.AppName).(micro.ServiceServer),
 	}
 }
 
@@ -40,7 +40,7 @@ type GRPCService struct {
 	l   logger.Logger
 	c   *conf.Config
 
-	micro micro.MicroServiceServer
+	micro micro.ServiceServer
 }
 
 // Start 启动GRPC服务

@@ -25,18 +25,18 @@ var (
 
 type service struct {
 	col    *mongo.Collection
-	depart department.DepartmentServiceServer
-	policy policy.PolicyServiceServer
-	role   role.RoleServiceServer
+	depart department.ServiceServer
+	policy policy.ServiceServer
+	role   role.ServiceServer
 	log    logger.Logger
 
-	namespace.UnimplementedNamespaceServiceServer
+	namespace.UnimplementedServiceServer
 }
 
 func (s *service) Config() error {
-	s.depart = app.GetGrpcApp(department.AppName).(department.DepartmentServiceServer)
-	s.policy = app.GetGrpcApp(policy.AppName).(policy.PolicyServiceServer)
-	s.role = app.GetGrpcApp(role.AppName).(role.RoleServiceServer)
+	s.depart = app.GetGrpcApp(department.AppName).(department.ServiceServer)
+	s.policy = app.GetGrpcApp(policy.AppName).(policy.ServiceServer)
+	s.role = app.GetGrpcApp(role.AppName).(role.ServiceServer)
 
 	db := conf.C().Mongo.GetDB()
 	ac := db.Collection("namespace")
@@ -69,7 +69,7 @@ func (s *service) Name() string {
 }
 
 func (s *service) Registry(server *grpc.Server) {
-	namespace.RegisterNamespaceServiceServer(server, svr)
+	namespace.RegisterServiceServer(server, svr)
 }
 
 func init() {

@@ -28,17 +28,17 @@ type service struct {
 	enableCache   bool
 	notifyCachPre string
 
-	namespace namespace.NamespaceServiceServer
-	user      user.UserServiceServer
-	role      role.RoleServiceServer
+	namespace namespace.ServiceServer
+	user      user.ServiceServer
+	role      role.ServiceServer
 
-	policy.UnimplementedPolicyServiceServer
+	policy.UnimplementedServiceServer
 }
 
 func (s *service) Config() error {
-	s.namespace = app.GetGrpcApp(namespace.AppName).(namespace.NamespaceServiceServer)
-	s.user = app.GetGrpcApp(user.AppName).(user.UserServiceServer)
-	s.role = app.GetGrpcApp(role.AppName).(role.RoleServiceServer)
+	s.namespace = app.GetGrpcApp(namespace.AppName).(namespace.ServiceServer)
+	s.user = app.GetGrpcApp(user.AppName).(user.ServiceServer)
+	s.role = app.GetGrpcApp(role.AppName).(role.ServiceServer)
 
 	db := conf.C().Mongo.GetDB()
 	col := db.Collection("policy")
@@ -64,7 +64,7 @@ func (s *service) Name() string {
 }
 
 func (s *service) Registry(server *grpc.Server) {
-	policy.RegisterPolicyServiceServer(server, svr)
+	policy.RegisterServiceServer(server, svr)
 }
 
 func init() {

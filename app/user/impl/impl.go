@@ -25,17 +25,17 @@ var (
 type service struct {
 	log    logger.Logger
 	col    *mongo.Collection
-	policy policy.PolicyServiceServer
-	depart department.DepartmentServiceServer
-	domain domain.DomainServiceServer
+	policy policy.ServiceServer
+	depart department.ServiceServer
+	domain domain.ServiceServer
 
-	user.UnimplementedUserServiceServer
+	user.UnimplementedServiceServer
 }
 
 func (s *service) Config() error {
-	s.policy = app.GetGrpcApp(policy.AppName).(policy.PolicyServiceServer)
-	s.depart = app.GetGrpcApp(department.AppName).(department.DepartmentServiceServer)
-	s.domain = app.GetGrpcApp(domain.AppName).(domain.DomainServiceServer)
+	s.policy = app.GetGrpcApp(policy.AppName).(policy.ServiceServer)
+	s.depart = app.GetGrpcApp(department.AppName).(department.ServiceServer)
+	s.domain = app.GetGrpcApp(domain.AppName).(domain.ServiceServer)
 
 	db := conf.C().Mongo.GetDB()
 	uc := db.Collection("user")
@@ -64,7 +64,7 @@ func (s *service) Name() string {
 }
 
 func (s *service) Registry(server *grpc.Server) {
-	user.RegisterUserServiceServer(server, svr)
+	user.RegisterServiceServer(server, svr)
 }
 
 func init() {

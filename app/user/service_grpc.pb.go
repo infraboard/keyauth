@@ -14,10 +14,10 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// UserServiceClient is the client API for UserService service.
+// ServiceClient is the client API for Service service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type UserServiceClient interface {
+type ServiceClient interface {
 	// 查询用户
 	QueryAccount(ctx context.Context, in *QueryAccountRequest, opts ...grpc.CallOption) (*Set, error)
 	// 获取账号Profile
@@ -38,99 +38,99 @@ type UserServiceClient interface {
 	GeneratePassword(ctx context.Context, in *GeneratePasswordRequest, opts ...grpc.CallOption) (*GeneratePasswordResponse, error)
 }
 
-type userServiceClient struct {
+type serviceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewUserServiceClient(cc grpc.ClientConnInterface) UserServiceClient {
-	return &userServiceClient{cc}
+func NewServiceClient(cc grpc.ClientConnInterface) ServiceClient {
+	return &serviceClient{cc}
 }
 
-func (c *userServiceClient) QueryAccount(ctx context.Context, in *QueryAccountRequest, opts ...grpc.CallOption) (*Set, error) {
+func (c *serviceClient) QueryAccount(ctx context.Context, in *QueryAccountRequest, opts ...grpc.CallOption) (*Set, error) {
 	out := new(Set)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.user.UserService/QueryAccount", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.user.Service/QueryAccount", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userServiceClient) DescribeAccount(ctx context.Context, in *DescribeAccountRequest, opts ...grpc.CallOption) (*User, error) {
+func (c *serviceClient) DescribeAccount(ctx context.Context, in *DescribeAccountRequest, opts ...grpc.CallOption) (*User, error) {
 	out := new(User)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.user.UserService/DescribeAccount", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.user.Service/DescribeAccount", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userServiceClient) CreateAccount(ctx context.Context, in *CreateAccountRequest, opts ...grpc.CallOption) (*User, error) {
+func (c *serviceClient) CreateAccount(ctx context.Context, in *CreateAccountRequest, opts ...grpc.CallOption) (*User, error) {
 	out := new(User)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.user.UserService/CreateAccount", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.user.Service/CreateAccount", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userServiceClient) BlockAccount(ctx context.Context, in *BlockAccountRequest, opts ...grpc.CallOption) (*User, error) {
+func (c *serviceClient) BlockAccount(ctx context.Context, in *BlockAccountRequest, opts ...grpc.CallOption) (*User, error) {
 	out := new(User)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.user.UserService/BlockAccount", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.user.Service/BlockAccount", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userServiceClient) UnBlockAccount(ctx context.Context, in *UnBlockAccountRequest, opts ...grpc.CallOption) (*User, error) {
+func (c *serviceClient) UnBlockAccount(ctx context.Context, in *UnBlockAccountRequest, opts ...grpc.CallOption) (*User, error) {
 	out := new(User)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.user.UserService/UnBlockAccount", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.user.Service/UnBlockAccount", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userServiceClient) DeleteAccount(ctx context.Context, in *DeleteAccountRequest, opts ...grpc.CallOption) (*User, error) {
+func (c *serviceClient) DeleteAccount(ctx context.Context, in *DeleteAccountRequest, opts ...grpc.CallOption) (*User, error) {
 	out := new(User)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.user.UserService/DeleteAccount", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.user.Service/DeleteAccount", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userServiceClient) UpdateAccountProfile(ctx context.Context, in *UpdateAccountRequest, opts ...grpc.CallOption) (*User, error) {
+func (c *serviceClient) UpdateAccountProfile(ctx context.Context, in *UpdateAccountRequest, opts ...grpc.CallOption) (*User, error) {
 	out := new(User)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.user.UserService/UpdateAccountProfile", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.user.Service/UpdateAccountProfile", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userServiceClient) UpdateAccountPassword(ctx context.Context, in *UpdatePasswordRequest, opts ...grpc.CallOption) (*Password, error) {
+func (c *serviceClient) UpdateAccountPassword(ctx context.Context, in *UpdatePasswordRequest, opts ...grpc.CallOption) (*Password, error) {
 	out := new(Password)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.user.UserService/UpdateAccountPassword", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.user.Service/UpdateAccountPassword", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *userServiceClient) GeneratePassword(ctx context.Context, in *GeneratePasswordRequest, opts ...grpc.CallOption) (*GeneratePasswordResponse, error) {
+func (c *serviceClient) GeneratePassword(ctx context.Context, in *GeneratePasswordRequest, opts ...grpc.CallOption) (*GeneratePasswordResponse, error) {
 	out := new(GeneratePasswordResponse)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.user.UserService/GeneratePassword", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.user.Service/GeneratePassword", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// UserServiceServer is the server API for UserService service.
-// All implementations must embed UnimplementedUserServiceServer
+// ServiceServer is the server API for Service service.
+// All implementations must embed UnimplementedServiceServer
 // for forward compatibility
-type UserServiceServer interface {
+type ServiceServer interface {
 	// 查询用户
 	QueryAccount(context.Context, *QueryAccountRequest) (*Set, error)
 	// 获取账号Profile
@@ -149,257 +149,257 @@ type UserServiceServer interface {
 	UpdateAccountPassword(context.Context, *UpdatePasswordRequest) (*Password, error)
 	// GeneratePassword 生成符合检测强度的随机密码
 	GeneratePassword(context.Context, *GeneratePasswordRequest) (*GeneratePasswordResponse, error)
-	mustEmbedUnimplementedUserServiceServer()
+	mustEmbedUnimplementedServiceServer()
 }
 
-// UnimplementedUserServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedUserServiceServer struct {
+// UnimplementedServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedServiceServer struct {
 }
 
-func (UnimplementedUserServiceServer) QueryAccount(context.Context, *QueryAccountRequest) (*Set, error) {
+func (UnimplementedServiceServer) QueryAccount(context.Context, *QueryAccountRequest) (*Set, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryAccount not implemented")
 }
-func (UnimplementedUserServiceServer) DescribeAccount(context.Context, *DescribeAccountRequest) (*User, error) {
+func (UnimplementedServiceServer) DescribeAccount(context.Context, *DescribeAccountRequest) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DescribeAccount not implemented")
 }
-func (UnimplementedUserServiceServer) CreateAccount(context.Context, *CreateAccountRequest) (*User, error) {
+func (UnimplementedServiceServer) CreateAccount(context.Context, *CreateAccountRequest) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateAccount not implemented")
 }
-func (UnimplementedUserServiceServer) BlockAccount(context.Context, *BlockAccountRequest) (*User, error) {
+func (UnimplementedServiceServer) BlockAccount(context.Context, *BlockAccountRequest) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BlockAccount not implemented")
 }
-func (UnimplementedUserServiceServer) UnBlockAccount(context.Context, *UnBlockAccountRequest) (*User, error) {
+func (UnimplementedServiceServer) UnBlockAccount(context.Context, *UnBlockAccountRequest) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UnBlockAccount not implemented")
 }
-func (UnimplementedUserServiceServer) DeleteAccount(context.Context, *DeleteAccountRequest) (*User, error) {
+func (UnimplementedServiceServer) DeleteAccount(context.Context, *DeleteAccountRequest) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteAccount not implemented")
 }
-func (UnimplementedUserServiceServer) UpdateAccountProfile(context.Context, *UpdateAccountRequest) (*User, error) {
+func (UnimplementedServiceServer) UpdateAccountProfile(context.Context, *UpdateAccountRequest) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateAccountProfile not implemented")
 }
-func (UnimplementedUserServiceServer) UpdateAccountPassword(context.Context, *UpdatePasswordRequest) (*Password, error) {
+func (UnimplementedServiceServer) UpdateAccountPassword(context.Context, *UpdatePasswordRequest) (*Password, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateAccountPassword not implemented")
 }
-func (UnimplementedUserServiceServer) GeneratePassword(context.Context, *GeneratePasswordRequest) (*GeneratePasswordResponse, error) {
+func (UnimplementedServiceServer) GeneratePassword(context.Context, *GeneratePasswordRequest) (*GeneratePasswordResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GeneratePassword not implemented")
 }
-func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
+func (UnimplementedServiceServer) mustEmbedUnimplementedServiceServer() {}
 
-// UnsafeUserServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to UserServiceServer will
+// UnsafeServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ServiceServer will
 // result in compilation errors.
-type UnsafeUserServiceServer interface {
-	mustEmbedUnimplementedUserServiceServer()
+type UnsafeServiceServer interface {
+	mustEmbedUnimplementedServiceServer()
 }
 
-func RegisterUserServiceServer(s grpc.ServiceRegistrar, srv UserServiceServer) {
-	s.RegisterService(&UserService_ServiceDesc, srv)
+func RegisterServiceServer(s grpc.ServiceRegistrar, srv ServiceServer) {
+	s.RegisterService(&Service_ServiceDesc, srv)
 }
 
-func _UserService_QueryAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_QueryAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueryAccountRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).QueryAccount(ctx, in)
+		return srv.(ServiceServer).QueryAccount(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.user.UserService/QueryAccount",
+		FullMethod: "/infraboard.keyauth.user.Service/QueryAccount",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).QueryAccount(ctx, req.(*QueryAccountRequest))
+		return srv.(ServiceServer).QueryAccount(ctx, req.(*QueryAccountRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_DescribeAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_DescribeAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DescribeAccountRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).DescribeAccount(ctx, in)
+		return srv.(ServiceServer).DescribeAccount(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.user.UserService/DescribeAccount",
+		FullMethod: "/infraboard.keyauth.user.Service/DescribeAccount",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).DescribeAccount(ctx, req.(*DescribeAccountRequest))
+		return srv.(ServiceServer).DescribeAccount(ctx, req.(*DescribeAccountRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_CreateAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_CreateAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateAccountRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).CreateAccount(ctx, in)
+		return srv.(ServiceServer).CreateAccount(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.user.UserService/CreateAccount",
+		FullMethod: "/infraboard.keyauth.user.Service/CreateAccount",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).CreateAccount(ctx, req.(*CreateAccountRequest))
+		return srv.(ServiceServer).CreateAccount(ctx, req.(*CreateAccountRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_BlockAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_BlockAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(BlockAccountRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).BlockAccount(ctx, in)
+		return srv.(ServiceServer).BlockAccount(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.user.UserService/BlockAccount",
+		FullMethod: "/infraboard.keyauth.user.Service/BlockAccount",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).BlockAccount(ctx, req.(*BlockAccountRequest))
+		return srv.(ServiceServer).BlockAccount(ctx, req.(*BlockAccountRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_UnBlockAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_UnBlockAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UnBlockAccountRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).UnBlockAccount(ctx, in)
+		return srv.(ServiceServer).UnBlockAccount(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.user.UserService/UnBlockAccount",
+		FullMethod: "/infraboard.keyauth.user.Service/UnBlockAccount",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).UnBlockAccount(ctx, req.(*UnBlockAccountRequest))
+		return srv.(ServiceServer).UnBlockAccount(ctx, req.(*UnBlockAccountRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_DeleteAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_DeleteAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteAccountRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).DeleteAccount(ctx, in)
+		return srv.(ServiceServer).DeleteAccount(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.user.UserService/DeleteAccount",
+		FullMethod: "/infraboard.keyauth.user.Service/DeleteAccount",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).DeleteAccount(ctx, req.(*DeleteAccountRequest))
+		return srv.(ServiceServer).DeleteAccount(ctx, req.(*DeleteAccountRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_UpdateAccountProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_UpdateAccountProfile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateAccountRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).UpdateAccountProfile(ctx, in)
+		return srv.(ServiceServer).UpdateAccountProfile(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.user.UserService/UpdateAccountProfile",
+		FullMethod: "/infraboard.keyauth.user.Service/UpdateAccountProfile",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).UpdateAccountProfile(ctx, req.(*UpdateAccountRequest))
+		return srv.(ServiceServer).UpdateAccountProfile(ctx, req.(*UpdateAccountRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_UpdateAccountPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_UpdateAccountPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdatePasswordRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).UpdateAccountPassword(ctx, in)
+		return srv.(ServiceServer).UpdateAccountPassword(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.user.UserService/UpdateAccountPassword",
+		FullMethod: "/infraboard.keyauth.user.Service/UpdateAccountPassword",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).UpdateAccountPassword(ctx, req.(*UpdatePasswordRequest))
+		return srv.(ServiceServer).UpdateAccountPassword(ctx, req.(*UpdatePasswordRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_GeneratePassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_GeneratePassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GeneratePasswordRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).GeneratePassword(ctx, in)
+		return srv.(ServiceServer).GeneratePassword(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.user.UserService/GeneratePassword",
+		FullMethod: "/infraboard.keyauth.user.Service/GeneratePassword",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).GeneratePassword(ctx, req.(*GeneratePasswordRequest))
+		return srv.(ServiceServer).GeneratePassword(ctx, req.(*GeneratePasswordRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
+// Service_ServiceDesc is the grpc.ServiceDesc for Service service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var UserService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "infraboard.keyauth.user.UserService",
-	HandlerType: (*UserServiceServer)(nil),
+var Service_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "infraboard.keyauth.user.Service",
+	HandlerType: (*ServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "QueryAccount",
-			Handler:    _UserService_QueryAccount_Handler,
+			Handler:    _Service_QueryAccount_Handler,
 		},
 		{
 			MethodName: "DescribeAccount",
-			Handler:    _UserService_DescribeAccount_Handler,
+			Handler:    _Service_DescribeAccount_Handler,
 		},
 		{
 			MethodName: "CreateAccount",
-			Handler:    _UserService_CreateAccount_Handler,
+			Handler:    _Service_CreateAccount_Handler,
 		},
 		{
 			MethodName: "BlockAccount",
-			Handler:    _UserService_BlockAccount_Handler,
+			Handler:    _Service_BlockAccount_Handler,
 		},
 		{
 			MethodName: "UnBlockAccount",
-			Handler:    _UserService_UnBlockAccount_Handler,
+			Handler:    _Service_UnBlockAccount_Handler,
 		},
 		{
 			MethodName: "DeleteAccount",
-			Handler:    _UserService_DeleteAccount_Handler,
+			Handler:    _Service_DeleteAccount_Handler,
 		},
 		{
 			MethodName: "UpdateAccountProfile",
-			Handler:    _UserService_UpdateAccountProfile_Handler,
+			Handler:    _Service_UpdateAccountProfile_Handler,
 		},
 		{
 			MethodName: "UpdateAccountPassword",
-			Handler:    _UserService_UpdateAccountPassword_Handler,
+			Handler:    _Service_UpdateAccountPassword_Handler,
 		},
 		{
 			MethodName: "GeneratePassword",
-			Handler:    _UserService_GeneratePassword_Handler,
+			Handler:    _Service_GeneratePassword_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -8,7 +8,7 @@ import "app/endpoint/pb/endpoint.proto";
 import "app/endpoint/pb/resource.proto";
 
 // Service token管理服务
-service EndpointService {
+service Service {
 	rpc DescribeEndpoint(DescribeEndpointRequest) returns(Endpoint);
 	rpc QueryEndpoints(QueryEndpointRequest) returns(Set);
 	rpc RegistryEndpoint(RegistryRequest) returns(RegistryResponse);

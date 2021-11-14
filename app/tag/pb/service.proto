@@ -8,7 +8,7 @@ import "app/tag/pb/tag.proto";
 
 
 // Service Tag服务
-service TagService {
+service Service {
 	rpc CreateTag(CreateTagRequest) returns(TagKey);
 	rpc DescribeTag(DescribeTagRequest) returns(TagKey);
 	rpc DeleteTag(DeleteTagRequest) returns(TagKey);

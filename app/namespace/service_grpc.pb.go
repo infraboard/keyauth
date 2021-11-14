@@ -14,194 +14,194 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// NamespaceServiceClient is the client API for NamespaceService service.
+// ServiceClient is the client API for Service service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type NamespaceServiceClient interface {
+type ServiceClient interface {
 	CreateNamespace(ctx context.Context, in *CreateNamespaceRequest, opts ...grpc.CallOption) (*Namespace, error)
 	QueryNamespace(ctx context.Context, in *QueryNamespaceRequest, opts ...grpc.CallOption) (*Set, error)
 	DescribeNamespace(ctx context.Context, in *DescriptNamespaceRequest, opts ...grpc.CallOption) (*Namespace, error)
 	DeleteNamespace(ctx context.Context, in *DeleteNamespaceRequest, opts ...grpc.CallOption) (*Namespace, error)
 }
 
-type namespaceServiceClient struct {
+type serviceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewNamespaceServiceClient(cc grpc.ClientConnInterface) NamespaceServiceClient {
-	return &namespaceServiceClient{cc}
+func NewServiceClient(cc grpc.ClientConnInterface) ServiceClient {
+	return &serviceClient{cc}
 }
 
-func (c *namespaceServiceClient) CreateNamespace(ctx context.Context, in *CreateNamespaceRequest, opts ...grpc.CallOption) (*Namespace, error) {
+func (c *serviceClient) CreateNamespace(ctx context.Context, in *CreateNamespaceRequest, opts ...grpc.CallOption) (*Namespace, error) {
 	out := new(Namespace)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.namespace.NamespaceService/CreateNamespace", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.namespace.Service/CreateNamespace", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *namespaceServiceClient) QueryNamespace(ctx context.Context, in *QueryNamespaceRequest, opts ...grpc.CallOption) (*Set, error) {
+func (c *serviceClient) QueryNamespace(ctx context.Context, in *QueryNamespaceRequest, opts ...grpc.CallOption) (*Set, error) {
 	out := new(Set)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.namespace.NamespaceService/QueryNamespace", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.namespace.Service/QueryNamespace", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *namespaceServiceClient) DescribeNamespace(ctx context.Context, in *DescriptNamespaceRequest, opts ...grpc.CallOption) (*Namespace, error) {
+func (c *serviceClient) DescribeNamespace(ctx context.Context, in *DescriptNamespaceRequest, opts ...grpc.CallOption) (*Namespace, error) {
 	out := new(Namespace)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.namespace.NamespaceService/DescribeNamespace", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.namespace.Service/DescribeNamespace", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *namespaceServiceClient) DeleteNamespace(ctx context.Context, in *DeleteNamespaceRequest, opts ...grpc.CallOption) (*Namespace, error) {
+func (c *serviceClient) DeleteNamespace(ctx context.Context, in *DeleteNamespaceRequest, opts ...grpc.CallOption) (*Namespace, error) {
 	out := new(Namespace)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.namespace.NamespaceService/DeleteNamespace", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.namespace.Service/DeleteNamespace", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// NamespaceServiceServer is the server API for NamespaceService service.
-// All implementations must embed UnimplementedNamespaceServiceServer
+// ServiceServer is the server API for Service service.
+// All implementations must embed UnimplementedServiceServer
 // for forward compatibility
-type NamespaceServiceServer interface {
+type ServiceServer interface {
 	CreateNamespace(context.Context, *CreateNamespaceRequest) (*Namespace, error)
 	QueryNamespace(context.Context, *QueryNamespaceRequest) (*Set, error)
 	DescribeNamespace(context.Context, *DescriptNamespaceRequest) (*Namespace, error)
 	DeleteNamespace(context.Context, *DeleteNamespaceRequest) (*Namespace, error)
-	mustEmbedUnimplementedNamespaceServiceServer()
+	mustEmbedUnimplementedServiceServer()
 }
 
-// UnimplementedNamespaceServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedNamespaceServiceServer struct {
+// UnimplementedServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedServiceServer struct {
 }
 
-func (UnimplementedNamespaceServiceServer) CreateNamespace(context.Context, *CreateNamespaceRequest) (*Namespace, error) {
+func (UnimplementedServiceServer) CreateNamespace(context.Context, *CreateNamespaceRequest) (*Namespace, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateNamespace not implemented")
 }
-func (UnimplementedNamespaceServiceServer) QueryNamespace(context.Context, *QueryNamespaceRequest) (*Set, error) {
+func (UnimplementedServiceServer) QueryNamespace(context.Context, *QueryNamespaceRequest) (*Set, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryNamespace not implemented")
 }
-func (UnimplementedNamespaceServiceServer) DescribeNamespace(context.Context, *DescriptNamespaceRequest) (*Namespace, error) {
+func (UnimplementedServiceServer) DescribeNamespace(context.Context, *DescriptNamespaceRequest) (*Namespace, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DescribeNamespace not implemented")
 }
-func (UnimplementedNamespaceServiceServer) DeleteNamespace(context.Context, *DeleteNamespaceRequest) (*Namespace, error) {
+func (UnimplementedServiceServer) DeleteNamespace(context.Context, *DeleteNamespaceRequest) (*Namespace, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteNamespace not implemented")
 }
-func (UnimplementedNamespaceServiceServer) mustEmbedUnimplementedNamespaceServiceServer() {}
+func (UnimplementedServiceServer) mustEmbedUnimplementedServiceServer() {}
 
-// UnsafeNamespaceServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to NamespaceServiceServer will
+// UnsafeServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ServiceServer will
 // result in compilation errors.
-type UnsafeNamespaceServiceServer interface {
-	mustEmbedUnimplementedNamespaceServiceServer()
+type UnsafeServiceServer interface {
+	mustEmbedUnimplementedServiceServer()
 }
 
-func RegisterNamespaceServiceServer(s grpc.ServiceRegistrar, srv NamespaceServiceServer) {
-	s.RegisterService(&NamespaceService_ServiceDesc, srv)
+func RegisterServiceServer(s grpc.ServiceRegistrar, srv ServiceServer) {
+	s.RegisterService(&Service_ServiceDesc, srv)
 }
 
-func _NamespaceService_CreateNamespace_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_CreateNamespace_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateNamespaceRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NamespaceServiceServer).CreateNamespace(ctx, in)
+		return srv.(ServiceServer).CreateNamespace(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.namespace.NamespaceService/CreateNamespace",
+		FullMethod: "/infraboard.keyauth.namespace.Service/CreateNamespace",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NamespaceServiceServer).CreateNamespace(ctx, req.(*CreateNamespaceRequest))
+		return srv.(ServiceServer).CreateNamespace(ctx, req.(*CreateNamespaceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _NamespaceService_QueryNamespace_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_QueryNamespace_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueryNamespaceRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NamespaceServiceServer).QueryNamespace(ctx, in)
+		return srv.(ServiceServer).QueryNamespace(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.namespace.NamespaceService/QueryNamespace",
+		FullMethod: "/infraboard.keyauth.namespace.Service/QueryNamespace",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NamespaceServiceServer).QueryNamespace(ctx, req.(*QueryNamespaceRequest))
+		return srv.(ServiceServer).QueryNamespace(ctx, req.(*QueryNamespaceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _NamespaceService_DescribeNamespace_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_DescribeNamespace_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DescriptNamespaceRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NamespaceServiceServer).DescribeNamespace(ctx, in)
+		return srv.(ServiceServer).DescribeNamespace(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.namespace.NamespaceService/DescribeNamespace",
+		FullMethod: "/infraboard.keyauth.namespace.Service/DescribeNamespace",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NamespaceServiceServer).DescribeNamespace(ctx, req.(*DescriptNamespaceRequest))
+		return srv.(ServiceServer).DescribeNamespace(ctx, req.(*DescriptNamespaceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _NamespaceService_DeleteNamespace_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_DeleteNamespace_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteNamespaceRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NamespaceServiceServer).DeleteNamespace(ctx, in)
+		return srv.(ServiceServer).DeleteNamespace(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.namespace.NamespaceService/DeleteNamespace",
+		FullMethod: "/infraboard.keyauth.namespace.Service/DeleteNamespace",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NamespaceServiceServer).DeleteNamespace(ctx, req.(*DeleteNamespaceRequest))
+		return srv.(ServiceServer).DeleteNamespace(ctx, req.(*DeleteNamespaceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// NamespaceService_ServiceDesc is the grpc.ServiceDesc for NamespaceService service.
+// Service_ServiceDesc is the grpc.ServiceDesc for Service service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var NamespaceService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "infraboard.keyauth.namespace.NamespaceService",
-	HandlerType: (*NamespaceServiceServer)(nil),
+var Service_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "infraboard.keyauth.namespace.Service",
+	HandlerType: (*ServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "CreateNamespace",
-			Handler:    _NamespaceService_CreateNamespace_Handler,
+			Handler:    _Service_CreateNamespace_Handler,
 		},
 		{
 			MethodName: "QueryNamespace",
-			Handler:    _NamespaceService_QueryNamespace_Handler,
+			Handler:    _Service_QueryNamespace_Handler,
 		},
 		{
 			MethodName: "DescribeNamespace",
-			Handler:    _NamespaceService_DescribeNamespace_Handler,
+			Handler:    _Service_DescribeNamespace_Handler,
 		},
 		{
 			MethodName: "DeleteNamespace",
-			Handler:    _NamespaceService_DeleteNamespace_Handler,
+			Handler:    _Service_DeleteNamespace_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

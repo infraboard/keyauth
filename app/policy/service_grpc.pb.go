@@ -14,194 +14,194 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// PolicyServiceClient is the client API for PolicyService service.
+// ServiceClient is the client API for Service service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type PolicyServiceClient interface {
+type ServiceClient interface {
 	CreatePolicy(ctx context.Context, in *CreatePolicyRequest, opts ...grpc.CallOption) (*Policy, error)
 	QueryPolicy(ctx context.Context, in *QueryPolicyRequest, opts ...grpc.CallOption) (*Set, error)
 	DescribePolicy(ctx context.Context, in *DescribePolicyRequest, opts ...grpc.CallOption) (*Policy, error)
 	DeletePolicy(ctx context.Context, in *DeletePolicyRequest, opts ...grpc.CallOption) (*Policy, error)
 }
 
-type policyServiceClient struct {
+type serviceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewPolicyServiceClient(cc grpc.ClientConnInterface) PolicyServiceClient {
-	return &policyServiceClient{cc}
+func NewServiceClient(cc grpc.ClientConnInterface) ServiceClient {
+	return &serviceClient{cc}
 }
 
-func (c *policyServiceClient) CreatePolicy(ctx context.Context, in *CreatePolicyRequest, opts ...grpc.CallOption) (*Policy, error) {
+func (c *serviceClient) CreatePolicy(ctx context.Context, in *CreatePolicyRequest, opts ...grpc.CallOption) (*Policy, error) {
 	out := new(Policy)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.policy.PolicyService/CreatePolicy", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.policy.Service/CreatePolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *policyServiceClient) QueryPolicy(ctx context.Context, in *QueryPolicyRequest, opts ...grpc.CallOption) (*Set, error) {
+func (c *serviceClient) QueryPolicy(ctx context.Context, in *QueryPolicyRequest, opts ...grpc.CallOption) (*Set, error) {
 	out := new(Set)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.policy.PolicyService/QueryPolicy", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.policy.Service/QueryPolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *policyServiceClient) DescribePolicy(ctx context.Context, in *DescribePolicyRequest, opts ...grpc.CallOption) (*Policy, error) {
+func (c *serviceClient) DescribePolicy(ctx context.Context, in *DescribePolicyRequest, opts ...grpc.CallOption) (*Policy, error) {
 	out := new(Policy)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.policy.PolicyService/DescribePolicy", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.policy.Service/DescribePolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *policyServiceClient) DeletePolicy(ctx context.Context, in *DeletePolicyRequest, opts ...grpc.CallOption) (*Policy, error) {
+func (c *serviceClient) DeletePolicy(ctx context.Context, in *DeletePolicyRequest, opts ...grpc.CallOption) (*Policy, error) {
 	out := new(Policy)
-	err := c.cc.Invoke(ctx, "/infraboard.keyauth.policy.PolicyService/DeletePolicy", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.policy.Service/DeletePolicy", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// PolicyServiceServer is the server API for PolicyService service.
-// All implementations must embed UnimplementedPolicyServiceServer
+// ServiceServer is the server API for Service service.
+// All implementations must embed UnimplementedServiceServer
 // for forward compatibility
-type PolicyServiceServer interface {
+type ServiceServer interface {
 	CreatePolicy(context.Context, *CreatePolicyRequest) (*Policy, error)
 	QueryPolicy(context.Context, *QueryPolicyRequest) (*Set, error)
 	DescribePolicy(context.Context, *DescribePolicyRequest) (*Policy, error)
 	DeletePolicy(context.Context, *DeletePolicyRequest) (*Policy, error)
-	mustEmbedUnimplementedPolicyServiceServer()
+	mustEmbedUnimplementedServiceServer()
 }
 
-// UnimplementedPolicyServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedPolicyServiceServer struct {
+// UnimplementedServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedServiceServer struct {
 }
 
-func (UnimplementedPolicyServiceServer) CreatePolicy(context.Context, *CreatePolicyRequest) (*Policy, error) {
+func (UnimplementedServiceServer) CreatePolicy(context.Context, *CreatePolicyRequest) (*Policy, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreatePolicy not implemented")
 }
-func (UnimplementedPolicyServiceServer) QueryPolicy(context.Context, *QueryPolicyRequest) (*Set, error) {
+func (UnimplementedServiceServer) QueryPolicy(context.Context, *QueryPolicyRequest) (*Set, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method QueryPolicy not implemented")
 }
-func (UnimplementedPolicyServiceServer) DescribePolicy(context.Context, *DescribePolicyRequest) (*Policy, error) {
+func (UnimplementedServiceServer) DescribePolicy(context.Context, *DescribePolicyRequest) (*Policy, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DescribePolicy not implemented")
 }
-func (UnimplementedPolicyServiceServer) DeletePolicy(context.Context, *DeletePolicyRequest) (*Policy, error) {
+func (UnimplementedServiceServer) DeletePolicy(context.Context, *DeletePolicyRequest) (*Policy, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeletePolicy not implemented")
 }
-func (UnimplementedPolicyServiceServer) mustEmbedUnimplementedPolicyServiceServer() {}
+func (UnimplementedServiceServer) mustEmbedUnimplementedServiceServer() {}
 
-// UnsafePolicyServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to PolicyServiceServer will
+// UnsafeServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ServiceServer will
 // result in compilation errors.
-type UnsafePolicyServiceServer interface {
-	mustEmbedUnimplementedPolicyServiceServer()
+type UnsafeServiceServer interface {
+	mustEmbedUnimplementedServiceServer()
 }
 
-func RegisterPolicyServiceServer(s grpc.ServiceRegistrar, srv PolicyServiceServer) {
-	s.RegisterService(&PolicyService_ServiceDesc, srv)
+func RegisterServiceServer(s grpc.ServiceRegistrar, srv ServiceServer) {
+	s.RegisterService(&Service_ServiceDesc, srv)
 }
 
-func _PolicyService_CreatePolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_CreatePolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreatePolicyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PolicyServiceServer).CreatePolicy(ctx, in)
+		return srv.(ServiceServer).CreatePolicy(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.policy.PolicyService/CreatePolicy",
+		FullMethod: "/infraboard.keyauth.policy.Service/CreatePolicy",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicyServiceServer).CreatePolicy(ctx, req.(*CreatePolicyRequest))
+		return srv.(ServiceServer).CreatePolicy(ctx, req.(*CreatePolicyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PolicyService_QueryPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_QueryPolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(QueryPolicyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PolicyServiceServer).QueryPolicy(ctx, in)
+		return srv.(ServiceServer).QueryPolicy(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.policy.PolicyService/QueryPolicy",
+		FullMethod: "/infraboard.keyauth.policy.Service/QueryPolicy",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicyServiceServer).QueryPolicy(ctx, req.(*QueryPolicyRequest))
+		return srv.(ServiceServer).QueryPolicy(ctx, req.(*QueryPolicyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PolicyService_DescribePolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_DescribePolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DescribePolicyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PolicyServiceServer).DescribePolicy(ctx, in)
+		return srv.(ServiceServer).DescribePolicy(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.policy.PolicyService/DescribePolicy",
+		FullMethod: "/infraboard.keyauth.policy.Service/DescribePolicy",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicyServiceServer).DescribePolicy(ctx, req.(*DescribePolicyRequest))
+		return srv.(ServiceServer).DescribePolicy(ctx, req.(*DescribePolicyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PolicyService_DeletePolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Service_DeletePolicy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeletePolicyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PolicyServiceServer).DeletePolicy(ctx, in)
+		return srv.(ServiceServer).DeletePolicy(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/infraboard.keyauth.policy.PolicyService/DeletePolicy",
+		FullMethod: "/infraboard.keyauth.policy.Service/DeletePolicy",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PolicyServiceServer).DeletePolicy(ctx, req.(*DeletePolicyRequest))
+		return srv.(ServiceServer).DeletePolicy(ctx, req.(*DeletePolicyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// PolicyService_ServiceDesc is the grpc.ServiceDesc for PolicyService service.
+// Service_ServiceDesc is the grpc.ServiceDesc for Service service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var PolicyService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "infraboard.keyauth.policy.PolicyService",
-	HandlerType: (*PolicyServiceServer)(nil),
+var Service_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "infraboard.keyauth.policy.Service",
+	HandlerType: (*ServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "CreatePolicy",
-			Handler:    _PolicyService_CreatePolicy_Handler,
+			Handler:    _Service_CreatePolicy_Handler,
 		},
 		{
 			MethodName: "QueryPolicy",
-			Handler:    _PolicyService_QueryPolicy_Handler,
+			Handler:    _Service_QueryPolicy_Handler,
 		},
 		{
 			MethodName: "DescribePolicy",
-			Handler:    _PolicyService_DescribePolicy_Handler,
+			Handler:    _Service_DescribePolicy_Handler,
 		},
 		{
 			MethodName: "DeletePolicy",
-			Handler:    _PolicyService_DeletePolicy_Handler,
+			Handler:    _Service_DeletePolicy_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
