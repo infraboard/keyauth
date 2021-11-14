@@ -80,7 +80,7 @@ go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 # 4.安装自定义proto tag插件
 go install github.com/favadi/protoc-go-inject-tag@latest
 
-# 安装项目依赖的protobuf
+# 5.安装项目依赖的protobuf
 cp -r docs/include/github.com /usr/local/include
 ```
 
