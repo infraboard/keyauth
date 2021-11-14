@@ -24,6 +24,27 @@ demo访问地址: [Demo](http://keyauth.nbtuan.vip/) 用户: admin, 密码: 1234
     + 角色管理: 基于标签的权限条目匹配, 灵活编辑角色
     + 服务目录: 服务将功能注册到keyauth, keyauth基于这些服务功能 提供RBAC鉴权机制
 
+
+## SDK使用
+
+注意SDK权限很大, 仅供内部服务调用, 如果对外，请走HTTP API
+```go
+func main() {
+	conf := client.NewDefaultConfig()
+    // 提前注册一个服务, 获取服务的client_id和client_secret
+	conf.SetClientCredentials("VYizVq1fsK7olinqVHrBvFOl", "qS9FGBoFGRaVfbgeqFVDRcgH7nNJi9fp")
+	c, err := client.NewClient(conf)
+	if err != nil {
+		panic(err)
+	}
+	page := request.NewPageRequest(20, 1)
+	meta := metadata.Pairs("access_token", "NEjvVOhmhAQXFuYSrZdJaBsH")
+	ctx := metadata.NewOutgoingContext(context.Background(), meta)
+	eps, err := c.Endpoint().QueryEndpoints(ctx, endpoint.NewQueryEndpointRequest(page))
+	fmt.Println(eps, err)
+}
+```
+
 ## 快速开发
 
 1. 依赖环境搭建:
@@ -33,13 +54,25 @@ demo访问地址: [Demo](http://keyauth.nbtuan.vip/) 用户: admin, 密码: 1234
 + [消息总线](./docs/bus/install.md) (开始操作审计时需要安装)
 + [安装protobuf](./docs/protobuf/install.md)(keyauth开发者)
 
-2. 依赖的mcube protobuf文件处理
-```
-cd GOPATH/pkg/mod/github/infraboard
-ln -s mcube@v1.1.2 mcube            // 每次更新版本都需要手动建立最新版本的link
+2. grpc 环境准备
+```sh
+# 1.安装protoc编译器,  项目使用版本: v3.19.1
+# 下载预编译包安装: https://github.com/protocolbuffers/protobuf/releases
+
+# 2.protoc-gen-go go语言查询, 项目使用版本: v1.27.1   
+go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+
+# 3.安装protoc-gen-go-grpc插件, 项目使用版本: 1.1.0
+go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+
+# 4.安装自定义proto tag插件
+go install github.com/favadi/protoc-go-inject-tag@latest
+
+# 安装项目依赖的protobuf
+cp -r docs/include/github.com /usr/local/include
 ```
 
-2. 快速运行
+3. 快速运行
 
 ```sh
 # 安装依赖
