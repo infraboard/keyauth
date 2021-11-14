@@ -24,7 +24,7 @@ type service struct {
 	item  *mongo.Collection
 	log   logger.Logger
 
-	mconf.UnimplementedConfigServiceServer
+	mconf.UnimplementedServiceServer
 }
 
 func (s *service) Config() error {
@@ -69,7 +69,7 @@ func (s *service) Name() string {
 }
 
 func (s *service) Registry(server *grpc.Server) {
-	mconf.RegisterConfigServiceServer(server, svr)
+	mconf.RegisterServiceServer(server, svr)
 }
 
 func init() {

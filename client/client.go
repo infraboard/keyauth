@@ -91,8 +91,8 @@ func (c *Client) Micro() micro.ServiceClient {
 }
 
 // Micro todo
-func (c *Client) Mconf() mconf.ConfigServiceClient {
-	return mconf.NewConfigServiceClient(c.conn)
+func (c *Client) Mconf() mconf.ServiceClient {
+	return mconf.NewServiceClient(c.conn)
 }
 
 // Namespace todo

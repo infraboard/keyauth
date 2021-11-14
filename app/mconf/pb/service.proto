@@ -6,8 +6,8 @@ option go_package = "github.com/infraboard/keyauth/app/mconf";
 import "app/mconf/pb/request.proto";
 import "app/mconf/pb/conf.proto";
 
-// ConfigService 服务
-service ConfigService {
+// Service 服务
+service Service {
 	rpc CreateGroup(CreateGroupRequest) returns(Group);
 	rpc QueryGroup(QueryGroupRequest) returns(GroupSet);
 	rpc DeleteGroup(DeleteGroupRequest) returns(Group);
