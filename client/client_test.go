@@ -13,7 +13,7 @@ import (
 func Test_Client(t *testing.T) {
 	should := assert.New(t)
 	conf := client.NewDefaultConfig()
-	conf.SetClientCredentials("pz3HiVQA3indzSHzFKtLHaJW", "vDvlAtqN3rS9CZcHugXp6QBuk28zRjud")
+	conf.SetClientCredentials("pz3HiVQA3indzSHzFKtLHaJW", "pz3HiVQA3indzSHzFKtLHaJW")
 	c, err := client.NewClient(conf)
 
 	if should.NoError(err) {
