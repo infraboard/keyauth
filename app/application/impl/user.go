@@ -16,7 +16,7 @@ type userimpl struct {
 	application.UnimplementedApplicationServiceServer
 }
 
-func (s *userimpl) CreateUserApplication(ctx context.Context, req *application.CreateApplicatonRequest) (
+func (s *userimpl) CreateApplication(ctx context.Context, req *application.CreateApplicatonRequest) (
 	*application.Application, error) {
 	app, err := application.NewUserApplicartion(req)
 	if err != nil {

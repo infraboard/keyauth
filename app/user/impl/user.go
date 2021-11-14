@@ -26,7 +26,6 @@ func (s *service) QueryAccount(ctx context.Context, req *user.QueryAccountReques
 
 func (s *service) CreateAccount(ctx context.Context, req *user.CreateAccountRequest) (*user.User, error) {
 	u, err := user.New(req)
-	u.CreateType = user.CreateType_DOMAIN_CREATED
 	if err != nil {
 		return nil, err
 	}

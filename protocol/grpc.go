@@ -45,15 +45,8 @@ type GRPCService struct {
 
 // Start 启动GRPC服务
 func (s *GRPCService) Start() error {
-	// 加载内部服务
-	if err := app.LoadInternalApp(); err != nil {
-		return err
-	}
-
 	// 装载所有GRPC服务
-	if err := app.LoadGrpcApp(s.svr); err != nil {
-		return err
-	}
+	app.LoadGrpcApp(s.svr)
 
 	// 启动HTTP服务
 	lis, err := net.Listen("tcp", s.c.App.GRPCAddr())

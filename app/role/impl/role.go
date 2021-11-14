@@ -19,7 +19,7 @@ func (s *service) CreateRole(ctx context.Context, req *role.CreateRoleRequest) (
 		return nil, err
 	}
 
-	if _, err := s.col.InsertOne(context.TODO(), r); err != nil {
+	if _, err := s.col.InsertOne(ctx, r); err != nil {
 		return nil, exception.NewInternalServerError("inserted role(%s) document error, %s",
 			r.Name, err)
 	}
@@ -28,9 +28,10 @@ func (s *service) CreateRole(ctx context.Context, req *role.CreateRoleRequest) (
 	permReq := role.NewAddPermissionToRoleRequest()
 	permReq.Permissions = req.Permissions
 	permReq.RoleId = r.Id
+	permReq.CreateBy = req.CreateBy
 	ps, err := s.AddPermissionToRole(ctx, permReq)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("add permission to role %s error, err", r.Name)
 	}
 	r.Permissions = ps.Items
 	return r, nil

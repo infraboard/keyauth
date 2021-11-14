@@ -63,9 +63,7 @@ func (s *HTTPService) PathPrefix() string {
 // Start 启动服务
 func (s *HTTPService) Start() error {
 	// 装置子服务路由
-	if err := app.LoadHttpApp(s.PathPrefix(), s.r); err != nil {
-		return err
-	}
+	app.LoadHttpApp(s.PathPrefix(), s.r)
 
 	// 启动HTTP服务
 	s.l.Infof("HTTP 服务开始启动, 监听地址: %s", s.server.Addr)

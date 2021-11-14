@@ -50,7 +50,7 @@ func (s *service) getDBReader() (*reader.IPReader, error) {
 	}
 
 	if err := s.loadDBFileFromBucket(); err != nil {
-		s.log.Info("load ip2region db file from bucket error, %s")
+		s.log.Info("load ip2region db file from bucket error, %s", err)
 	} else {
 		return s.dbReader, nil
 	}

@@ -22,13 +22,13 @@ func New(req *CreateRoleRequest) (*Role, error) {
 		CreateAt:    ftime.Now().Timestamp(),
 		UpdateAt:    ftime.Now().Timestamp(),
 		Domain:      req.Domain,
-		Creater:     req.Creater,
+		Creater:     req.CreateBy,
 		Type:        req.Type,
 		Name:        req.Name,
 		Meta:        req.Meta,
 		Description: req.Description,
 	}
-	r.Permissions = NewPermission(r.Id, req.Creater, req.Permissions)
+	r.Permissions = NewPermission(r.Id, req.CreateBy, req.Permissions)
 	return r, nil
 }
 

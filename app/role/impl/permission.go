@@ -83,6 +83,7 @@ func (s *service) AddPermissionToRole(ctx context.Context, req *role.AddPermissi
 	// 查询角色条目数是否超标
 	queryPerm := role.NewQueryPermissionRequest(request.NewPageRequest(role.RoleMaxPermission, 1))
 	queryPerm.SkipItmes = true
+	queryPerm.RoleId = ins.Id
 	ps, err := s.QueryPermission(ctx, queryPerm)
 	if err != nil {
 		return nil, err
@@ -92,7 +93,7 @@ func (s *service) AddPermissionToRole(ctx context.Context, req *role.AddPermissi
 			role.RoleMaxPermission, ps.Total, req.Length())
 	}
 
-	perms := role.NewPermission(ins.Id, req.Creater, req.Permissions)
+	perms := role.NewPermission(ins.Id, req.CreateBy, req.Permissions)
 	if _, err := s.perm.InsertMany(ctx, insertDocs(perms)); err != nil {
 		return nil, exception.NewInternalServerError("inserted permission(%s) document error, %s",
 			perms, err)
