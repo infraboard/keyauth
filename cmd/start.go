@@ -49,10 +49,15 @@ var serviceCmd = &cobra.Command{
 			return err
 		}
 
+		// 初始化所有服务
+		if err := app.InitAllApp(); err != nil {
+			return err
+		}
+
 		conf := conf.C()
 		// 启动服务
 		ch := make(chan os.Signal, 1)
-		signal.Notify(ch, syscall.SIGTERM, syscall.SIGINT, syscall.SIGKILL, syscall.SIGHUP, syscall.SIGQUIT)
+		signal.Notify(ch, syscall.SIGTERM, syscall.SIGINT, syscall.SIGHUP, syscall.SIGQUIT)
 
 		// 初始化服务
 		svr, err := newService(conf)

@@ -63,7 +63,7 @@ func (r *queryRequest) FindOptions() *options.FindOptions {
 	skip := int64(r.Page.PageSize) * int64(r.Page.PageNumber-1)
 
 	opt := &options.FindOptions{
-		Sort:  bson.D{{"create_at", -1}},
+		Sort:  bson.D{{Key: "create_at", Value: -1}},
 		Limit: &pageSize,
 		Skip:  &skip,
 	}
