@@ -63,28 +63,10 @@ func main() {
 
 + [MongoDB数据库安装](./docs/mongodb/install.md) (必须)
 + [OpenLDAP安装](./docs/ldap/install.md) (开启LDAP认证时需要安装)
-+ [消息总线](./docs/bus/install.md) (开始操作审计时需要安装)
++ [消息总线](./docs/bus/install.md) (开启操作审计时需要安装)
 + [安装protobuf](./docs/protobuf/install.md)(keyauth开发者)
 
-2. grpc 环境准备
-```sh
-# 1.安装protoc编译器,  项目使用版本: v3.19.1
-# 下载预编译包安装: https://github.com/protocolbuffers/protobuf/releases
-
-# 2.protoc-gen-go go语言查询, 项目使用版本: v1.27.1   
-go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-
-# 3.安装protoc-gen-go-grpc插件, 项目使用版本: 1.1.0
-go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-
-# 4.安装自定义proto tag插件
-go install github.com/favadi/protoc-go-inject-tag@latest
-
-# 5.安装项目依赖的protobuf
-cp -r docs/include/github.com /usr/local/include
-```
-
-3. 快速运行
+2. 快速运行
 
 ```sh
 # 安装依赖
