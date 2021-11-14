@@ -6,6 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/infraboard/keyauth/app/domain"
 	"github.com/infraboard/keyauth/app/user"
 	"github.com/infraboard/keyauth/client"
 )
@@ -17,7 +18,9 @@ func Test_Client(t *testing.T) {
 	c, err := client.NewClient(conf)
 
 	if should.NoError(err) {
-		eps, err := c.User().QueryAccount(context.Background(), user.NewQueryAccountRequest())
+		req := user.NewQueryAccountRequest()
+		req.Domain = domain.AdminDomainName
+		eps, err := c.User().QueryAccount(context.Background(), req)
 		if should.NoError(err) {
 			t.Logf("get users: %s ", eps)
 		}
