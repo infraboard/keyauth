@@ -5,6 +5,7 @@ import (
 	"github.com/infraboard/mcube/http/router"
 
 	"github.com/infraboard/keyauth/app/policy"
+	"github.com/infraboard/keyauth/app/user/types"
 )
 
 var (
@@ -19,12 +20,11 @@ type handler struct {
 func (h *handler) Registry(router router.SubRouter) {
 	r := router.ResourceRouter("policy")
 
-	r.Allow()
 	r.BasePath("policies")
-	r.Handle("POST", "/", h.Create)
-	r.Handle("GET", "/", h.List)
+	r.Handle("POST", "/", h.Create).SetAllow(types.UserType_PERM_ADMIN)
+	r.Handle("GET", "/", h.List).SetAllow(types.UserType_PERM_ADMIN)
 	r.Handle("GET", "/:id", h.Get)
-	r.Handle("DELETE", "/:id", h.Delete)
+	r.Handle("DELETE", "/:id", h.Delete).SetAllow(types.UserType_PERM_ADMIN)
 }
 
 func (h *handler) Config() error {

@@ -17,12 +17,12 @@ type handler struct {
 
 // Registry 注册HTTP服务路由
 func (h *handler) Registry(router router.SubRouter) {
-	self := router.ResourceRouter("application")
-	self.BasePath("applications")
-	self.Handle("POST", "/", h.CreateApplication)
-	self.Handle("GET", "/", h.QueryApplication)
-	self.Handle("GET", "/:id", h.GetApplication)
-	self.Handle("DELETE", "/:id", h.DestroyApplication)
+	r := router.ResourceRouter("application")
+	r.BasePath("applications")
+	r.Handle("POST", "/", h.CreateApplication)
+	r.Handle("GET", "/", h.QueryApplication)
+	r.Handle("GET", "/:id", h.GetApplication)
+	r.Handle("DELETE", "/:id", h.DestroyApplication)
 }
 
 func (h *handler) Config() error {

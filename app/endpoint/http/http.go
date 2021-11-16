@@ -5,7 +5,6 @@ import (
 	"github.com/infraboard/mcube/http/router"
 
 	"github.com/infraboard/keyauth/app/endpoint"
-	"github.com/infraboard/keyauth/app/user/types"
 )
 
 var (
@@ -19,9 +18,8 @@ type handler struct {
 // Registry 注册HTTP服务路由
 func (h *handler) Registry(router router.SubRouter) {
 	r := router.ResourceRouter("endpoint")
-
 	r.BasePath("endpoints")
-	r.Handle("POST", "/", h.Create).SetAllow(types.UserType_INTERNAL)
+	r.Handle("POST", "/", h.Create)
 	r.Handle("GET", "/", h.List)
 	r.Handle("GET", "/:id", h.Get)
 
@@ -33,4 +31,12 @@ func (h *handler) Registry(router router.SubRouter) {
 func (h *handler) Config() error {
 	h.endpoint = app.GetGrpcApp(endpoint.AppName).(endpoint.ServiceServer)
 	return nil
+}
+
+func (h *handler) Name() string {
+	return endpoint.AppName
+}
+
+func init() {
+	app.RegistryHttpApp(api)
 }

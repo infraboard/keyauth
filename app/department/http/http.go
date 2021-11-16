@@ -20,21 +20,21 @@ type handler struct {
 
 // Registry 注册HTTP服务路由
 func (h *handler) Registry(router router.SubRouter) {
-	appRouter := router.ResourceRouter("department")
-	appRouter.BasePath("join_apply")
-	appRouter.Handle("POST", "/", h.CreateJoinApply)
-	appRouter.Handle("GET", "/", h.QueryJoinApply)
-	appRouter.Handle("GET", "/:id", h.GetJoinApply)
-	appRouter.Handle("PATCH", "/:id", h.DealJoinApply)
+	r := router.ResourceRouter("department")
+	r.BasePath("join_apply")
+	r.Handle("POST", "/", h.CreateJoinApply)
+	r.Handle("GET", "/", h.QueryJoinApply)
+	r.Handle("GET", "/:id", h.GetJoinApply)
+	r.Handle("PATCH", "/:id", h.DealJoinApply)
 
-	appRouter.BasePath("departments")
-	appRouter.Handle("POST", "/", h.Create).SetAllow(types.UserType_ORG_ADMIN)
-	appRouter.Handle("GET", "/", h.List)
-	appRouter.Handle("GET", "/:id", h.Get)
-	appRouter.Handle("PUT", "/:id", h.Put)
-	appRouter.Handle("PATCH", "/:id", h.Patch)
-	appRouter.Handle("GET", "/:id/subs", h.GetSub)
-	appRouter.Handle("DELETE", "/:id", h.Delete).SetAllow(types.UserType_ORG_ADMIN)
+	r.BasePath("departments")
+	r.Handle("POST", "/", h.Create).SetAllow(types.UserType_ORG_ADMIN)
+	r.Handle("GET", "/", h.List)
+	r.Handle("GET", "/:id", h.Get)
+	r.Handle("PUT", "/:id", h.Put)
+	r.Handle("PATCH", "/:id", h.Patch)
+	r.Handle("GET", "/:id/subs", h.GetSub)
+	r.Handle("DELETE", "/:id", h.Delete).SetAllow(types.UserType_ORG_ADMIN)
 }
 
 func (h *handler) Config() error {

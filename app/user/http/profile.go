@@ -67,7 +67,7 @@ func (h *handler) PatchProfile(w http.ResponseWriter, r *http.Request) {
 
 	// 更新部门
 	if req.DepartmentId != "" {
-		if !tk.UserType.IsIn(types.UserType_SUPPER, types.UserType_INTERNAL, types.UserType_DOMAIN_ADMIN, types.UserType_ORG_ADMIN) {
+		if !tk.UserType.IsIn(types.UserType_SUPPER, types.UserType_DOMAIN_ADMIN, types.UserType_ORG_ADMIN) {
 			response.Failed(w, exception.NewBadRequest("组织管理员才能直接修改用户部门"))
 			return
 		}

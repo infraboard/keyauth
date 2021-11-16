@@ -18,7 +18,7 @@ func (h *handler) CreateSubAccount(w http.ResponseWriter, r *http.Request) {
 	tk := ctx.AuthInfo.(*token.Token)
 
 	// 非管理员, 主账号 可以创建子账号
-	if !tk.UserType.IsIn(types.UserType_SUPPER, types.UserType_INTERNAL, types.UserType_PRIMARY) {
+	if !tk.UserType.IsIn(types.UserType_SUPPER, types.UserType_PRIMARY) {
 		response.Failed(w, exception.NewPermissionDeny("%s user can't create sub account", tk.UserType))
 		return
 	}

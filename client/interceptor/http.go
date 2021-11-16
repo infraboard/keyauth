@@ -121,14 +121,6 @@ func (a *HTTPAuther) ResponseHook(w http.ResponseWriter, r *http.Request, entry 
 	}
 }
 
-func (a *HTTPAuther) log() logger.Logger {
-	if a == nil {
-		a.l = zap.L().Named("HTTP Auther")
-	}
-
-	return a.l
-}
-
 // SetLogger todo
 func (a *HTTPAuther) SetLogger(l logger.Logger) {
 	a.l = l

@@ -5,6 +5,7 @@ import (
 	"github.com/infraboard/mcube/http/router"
 
 	"github.com/infraboard/keyauth/app/role"
+	"github.com/infraboard/keyauth/app/user/types"
 )
 
 var (
@@ -20,15 +21,15 @@ func (h *handler) Registry(router router.SubRouter) {
 	r := router.ResourceRouter("role")
 
 	r.BasePath("roles")
-	r.Handle("POST", "/", h.CreateRole)
+	r.Handle("POST", "/", h.CreateRole).SetAllow(types.UserType_PERM_ADMIN)
 	r.Handle("GET", "/", h.QueryRole)
 	r.Handle("GET", "/:id", h.DescribeRole)
-	r.Handle("DELETE", "/:id", h.DeleteRole)
+	r.Handle("DELETE", "/:id", h.DeleteRole).SetAllow(types.UserType_PERM_ADMIN)
 	r.Handle("GET", "/:id/permissions", h.ListRolePermission)
-	r.Handle("POST", "/:id/permissions", h.AddPermissionToRole)
-	r.Handle("DELETE", "/:id/permissions", h.RemovePermissionFromRole)
+	r.Handle("POST", "/:id/permissions", h.AddPermissionToRole).SetAllow(types.UserType_PERM_ADMIN)
+	r.Handle("DELETE", "/:id/permissions", h.RemovePermissionFromRole).SetAllow(types.UserType_PERM_ADMIN)
 	r.BasePath("permissions")
-	r.Handle("PUT", "/:id", h.UpdatePermission)
+	r.Handle("PUT", "/:id", h.UpdatePermission).SetAllow(types.UserType_PERM_ADMIN)
 }
 
 func (h *handler) Config() error {

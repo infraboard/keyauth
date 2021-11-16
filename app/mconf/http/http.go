@@ -5,7 +5,6 @@ import (
 	"github.com/infraboard/mcube/http/router"
 
 	"github.com/infraboard/keyauth/app/mconf"
-	"github.com/infraboard/keyauth/app/user/types"
 )
 
 var (
@@ -19,7 +18,6 @@ type handler struct {
 // Registry 注册HTTP服务路由
 func (h *handler) Registry(router router.SubRouter) {
 	r := router.ResourceRouter("config_group")
-	r.Allow(types.UserType_INTERNAL)
 	r.BasePath("config_group")
 	r.Handle("GET", "/", h.QueryGroup)
 	r.Handle("POST", "/", h.CreateGroup)

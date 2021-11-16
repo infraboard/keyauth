@@ -6,6 +6,7 @@ import (
 
 	"github.com/infraboard/keyauth/app/domain"
 	"github.com/infraboard/keyauth/app/user"
+	"github.com/infraboard/keyauth/app/user/types"
 )
 
 var (
@@ -19,37 +20,40 @@ type handler struct {
 
 // Registry 注册HTTP服务路由
 func (h *handler) Registry(router router.SubRouter) {
-	prmaryRouter := router.ResourceRouter("primary_account")
-	prmaryRouter.BasePath("users")
-	prmaryRouter.Handle("POST", "/", h.CreatePrimayAccount)
-	prmaryRouter.Handle("DELETE", "/", h.DestroyPrimaryAccount)
+	prmary := router.ResourceRouter("primary_account")
+	prmary.Allow(types.UserType_SUPPER)
+	prmary.BasePath("users")
+	prmary.Handle("POST", "/", h.CreatePrimayAccount)
+	prmary.Handle("DELETE", "/", h.DestroyPrimaryAccount)
 
-	ramRouter := router.ResourceRouter("ram_account")
-	ramRouter.BasePath("sub_users")
-	ramRouter.Handle("POST", "/", h.CreateSubAccount)
-	ramRouter.Handle("GET", "/", h.QuerySubAccount)
-	ramRouter.Handle("GET", "/:account", h.DescribeSubAccount)
-	ramRouter.Handle("PATCH", "/:account", h.PatchSubAccount)
-	ramRouter.Handle("DELETE", "/:account", h.DestroySubAccount)
-	ramRouter.BasePath("manage")
-	ramRouter.Handle("POST", "/block", h.BlockSubAccount)
+	ram := router.ResourceRouter("ram_account")
+	ram.Allow(types.UserType_ORG_ADMIN)
+	ram.BasePath("sub_users")
+	ram.Handle("POST", "/", h.CreateSubAccount)
+	ram.Handle("GET", "/", h.QuerySubAccount)
+	ram.Handle("GET", "/:account", h.DescribeSubAccount)
+	ram.Handle("PATCH", "/:account", h.PatchSubAccount)
+	ram.Handle("DELETE", "/:account", h.DestroySubAccount)
+	ram.BasePath("manage")
+	ram.Handle("POST", "/block", h.BlockSubAccount)
 
-	portalRouter := router.ResourceRouter("profile")
-	portalRouter.BasePath("profile")
-	portalRouter.Handle("GET", "/", h.QueryProfile)
-	portalRouter.Handle("GET", "/domain", h.QueryDomain)
-	portalRouter.Handle("PUT", "/", h.PutProfile)
-	portalRouter.Handle("PATCH", "/", h.PatchProfile)
+	portal := router.ResourceRouter("profile")
+	portal.BasePath("profile")
+	portal.Handle("GET", "/", h.QueryProfile)
+	portal.Handle("GET", "/domain", h.QueryDomain)
+	portal.Handle("PUT", "/", h.PutProfile)
+	portal.Handle("PATCH", "/", h.PatchProfile)
 
-	domRouter := router.ResourceRouter("domain")
-	domRouter.BasePath("settings/domain")
-	domRouter.Handle("PUT", "/info", h.UpdateDomainInfo)
-	domRouter.Handle("PUT", "/security", h.UpdateDomainSecurity)
+	dom := router.ResourceRouter("domain")
+	dom.Allow(types.UserType_DOMAIN_ADMIN)
+	dom.BasePath("settings/domain")
+	dom.Handle("PUT", "/info", h.UpdateDomainInfo)
+	dom.Handle("PUT", "/security", h.UpdateDomainSecurity)
 
-	passRouter := router.ResourceRouter("password")
-	passRouter.BasePath("password")
-	passRouter.Handle("POST", "/", h.GeneratePassword)
-	passRouter.Handle("PUT", "/", h.UpdatePassword)
+	pass := router.ResourceRouter("password")
+	pass.BasePath("password")
+	pass.Handle("POST", "/", h.GeneratePassword)
+	pass.Handle("PUT", "/", h.UpdatePassword)
 }
 
 func (h *handler) Config() error {
