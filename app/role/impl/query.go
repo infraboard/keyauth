@@ -76,7 +76,7 @@ func (r *queryRoleRequest) FindFilter() bson.M {
 	if r.Type != role.RoleType_NULL {
 		filter["type"] = r.Type
 	} else {
-		// 获取内建和全局的角色以及域内自己创建的角色
+		// 获取内建和全局的角色以及域内自己创建的角色
 		filter["$or"] = bson.A{
 			bson.M{"type": role.RoleType_BUILDIN},
 			bson.M{"type": role.RoleType_GLOBAL},

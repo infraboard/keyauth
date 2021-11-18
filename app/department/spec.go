@@ -9,15 +9,6 @@ import (
 	"github.com/infraboard/mcube/http/request"
 )
 
-const (
-	AppName = "department"
-)
-
-const (
-	// DefaultDepartmentName 默认部门名称
-	DefaultDepartmentName = "default"
-)
-
 // NewQueryDepartmentRequestFromHTTP 列表查询请求
 func NewQueryDepartmentRequestFromHTTP(r *http.Request) *QueryDepartmentRequest {
 	req := NewQueryDepartmentRequest()

@@ -15,6 +15,7 @@ import (
 	"github.com/infraboard/keyauth/app/department"
 	"github.com/infraboard/keyauth/app/domain"
 	"github.com/infraboard/keyauth/app/micro"
+	"github.com/infraboard/keyauth/app/namespace"
 	"github.com/infraboard/keyauth/app/role"
 	"github.com/infraboard/keyauth/app/system"
 	"github.com/infraboard/keyauth/app/token"
@@ -133,6 +134,7 @@ func NewInitialer() *Initialer {
 		role:        app.GetGrpcApp(role.AppName).(role.ServiceServer),
 		micro:       app.GetGrpcApp(micro.AppName).(micro.ServiceServer),
 		system:      app.GetInternalApp(system.AppName).(system.Service),
+		namespace:   app.GetGrpcApp(namespace.AppName).(namespace.ServiceServer),
 	}
 }
 
@@ -153,6 +155,7 @@ type Initialer struct {
 	role        role.ServiceServer
 	micro       micro.ServiceServer
 	system      system.Service
+	namespace   namespace.ServiceServer
 }
 
 // Run 执行初始化
@@ -199,6 +202,12 @@ func (i *Initialer) Run() error {
 		return err
 	}
 	fmt.Printf("初始化根部门: %s   [成功]\n", dep.DisplayName)
+
+	ns, err := i.initNamespace(ctx, dep.Id)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("初始化默认空间: %s   [成功]\n", ns.Description)
 
 	sysconf, err := i.initSystemConfig()
 	if err != nil {
@@ -321,6 +330,17 @@ func (i *Initialer) initDepartment(ctx context.Context) (*department.Department,
 	req.Manager = strings.TrimSpace(i.username)
 	req.CreateBy = i.adminUser.Account
 	return i.department.CreateDepartment(ctx, req)
+}
+
+func (i *Initialer) initNamespace(ctx context.Context, deaprtmentId string) (*namespace.Namespace, error) {
+	req := namespace.NewCreateNamespaceRequest()
+	req.Name = namespace.DefaultNamesapceName
+	req.Description = "系统初始化创建"
+	req.Domain = i.domainName
+	req.CreateBy = i.adminUser.Account
+	req.Owner = i.adminUser.Account
+	req.DepartmentId = ""
+	return i.namespace.CreateNamespace(ctx, req)
 }
 
 func (i *Initialer) initService(ctx context.Context, r *role.Role) (*micro.Micro, error) {
