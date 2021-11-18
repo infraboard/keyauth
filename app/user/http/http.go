@@ -27,7 +27,7 @@ func (h *handler) Registry(router router.SubRouter) {
 	prmary.Handle("DELETE", "/", h.DestroyPrimaryAccount)
 
 	ram := router.ResourceRouter("ram_account")
-	ram.Allow(types.UserType_ORG_ADMIN)
+	ram.Allow(types.UserType_PRIMARY, types.UserType_DOMAIN_ADMIN, types.UserType_ORG_ADMIN)
 	ram.BasePath("sub_users")
 	ram.Handle("POST", "/", h.CreateSubAccount)
 	ram.Handle("GET", "/", h.QuerySubAccount)

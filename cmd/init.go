@@ -285,6 +285,7 @@ func (i *Initialer) initRole(ctx context.Context) ([]*role.Role, error) {
 	req.Permissions = []*role.CreatePermssionRequest{admin}
 	req.Type = role.RoleType_BUILDIN
 	req.CreateBy = i.adminUser.Account
+	req.Domain = i.adminUser.Domain
 	adminRole, err := i.role.CreateRole(ctx, req)
 	if err != nil {
 		return nil, err
@@ -303,6 +304,7 @@ func (i *Initialer) initRole(ctx context.Context) ([]*role.Role, error) {
 	req.Permissions = []*role.CreatePermssionRequest{vistor}
 	req.Type = role.RoleType_BUILDIN
 	req.CreateBy = i.adminUser.Account
+	req.Domain = i.adminUser.Domain
 	vistorRole, err := i.role.CreateRole(ctx, req)
 	if err != nil {
 		return nil, err

@@ -31,7 +31,7 @@ func (s *service) CreateRole(ctx context.Context, req *role.CreateRoleRequest) (
 	permReq.CreateBy = req.CreateBy
 	ps, err := s.AddPermissionToRole(ctx, permReq)
 	if err != nil {
-		return nil, fmt.Errorf("add permission to role %s error, err", r.Name)
+		return nil, fmt.Errorf("add permission to role %s error, %s", r.Name, err)
 	}
 	r.Permissions = ps.Items
 	return r, nil
@@ -43,6 +43,7 @@ func (s *service) QueryRole(ctx context.Context, req *role.QueryRoleRequest) (*r
 		return nil, err
 	}
 
+	s.log.Debugf("query role filter: %s", query.FindFilter())
 	resp, err := s.col.Find(context.TODO(), query.FindFilter(), query.FindOptions())
 	if err != nil {
 		return nil, exception.NewInternalServerError("find role error, error is %s", err)

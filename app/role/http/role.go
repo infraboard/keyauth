@@ -19,6 +19,8 @@ func (h *handler) CreateRole(w http.ResponseWriter, r *http.Request) {
 	tk := ctx.AuthInfo.(*token.Token)
 
 	req := role.NewCreateRoleRequest()
+	req.CreateBy = tk.Account
+	req.Domain = tk.Domain
 	if err := request.GetDataFromRequest(r, req); err != nil {
 		response.Failed(w, err)
 		return

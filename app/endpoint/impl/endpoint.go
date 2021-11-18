@@ -9,6 +9,7 @@ import (
 
 	"github.com/infraboard/keyauth/app/endpoint"
 	"github.com/infraboard/keyauth/app/micro"
+	"github.com/infraboard/keyauth/common/header"
 )
 
 func (s *service) DescribeEndpoint(ctx context.Context, req *endpoint.DescribeEndpointRequest) (
@@ -61,6 +62,9 @@ func (s *service) QueryEndpoints(ctx context.Context, req *endpoint.QueryEndpoin
 }
 
 func (s *service) RegistryEndpoint(ctx context.Context, req *endpoint.RegistryRequest) (*endpoint.RegistryResponse, error) {
+	if req.ClientId == "" && req.ClientSecret == "" {
+		req.ClientId, req.ClientSecret = header.GetClientCredential(ctx)
+	}
 
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest(err.Error())

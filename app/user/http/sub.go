@@ -17,12 +17,6 @@ func (h *handler) CreateSubAccount(w http.ResponseWriter, r *http.Request) {
 	ctx := context.GetContext(r)
 	tk := ctx.AuthInfo.(*token.Token)
 
-	// 非管理员, 主账号 可以创建子账号
-	if !tk.UserType.IsIn(types.UserType_SUPPER, types.UserType_PRIMARY) {
-		response.Failed(w, exception.NewPermissionDeny("%s user can't create sub account", tk.UserType))
-		return
-	}
-
 	req := user.NewCreateUserRequest()
 	req.Domin = tk.Domain
 	if err := request.GetDataFromRequest(r, req); err != nil {
@@ -30,7 +24,12 @@ func (h *handler) CreateSubAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	req.UserType = types.UserType_SUB
+	if req.UserType >= tk.UserType {
+		response.Failed(w, exception.NewPermissionDeny(
+			"不能创建高于自身权限的用户, 创建人权限: %s, 被创建人权限: %s", req.UserType, tk.UserType))
+		return
+	}
+
 	req.CreateType = user.CreateType_DOMAIN_CREATED
 
 	d, err := h.service.CreateAccount(
