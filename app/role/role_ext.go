@@ -60,6 +60,13 @@ func NewDeaultPermission() *Permission {
 	return &Permission{}
 }
 
+func NewSkipPermission(message string) *Permission {
+	return &Permission{
+		Effect: EffectType_ALLOW,
+		Desc:   message,
+	}
+}
+
 func NewPermission(roleID, creater string, perms []*CreatePermssionRequest) []*Permission {
 	set := []*Permission{}
 	for i := range perms {
@@ -148,6 +155,10 @@ func (s *Set) Permissions() *PermissionSet {
 func (s *Set) Add(item *Role) {
 	s.Total++
 	s.Items = append(s.Items, item)
+}
+
+func (s *Set) Len() int {
+	return len(s.Items)
 }
 
 // HasPermission todo

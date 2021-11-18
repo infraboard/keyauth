@@ -8,6 +8,7 @@ import (
 	"github.com/infraboard/mcube/http/response"
 
 	"github.com/infraboard/keyauth/app/permission"
+	"github.com/infraboard/keyauth/app/token"
 )
 
 func (h *handler) ListRole(w http.ResponseWriter, r *http.Request) {
@@ -28,9 +29,11 @@ func (h *handler) ListRole(w http.ResponseWriter, r *http.Request) {
 
 func (h *handler) ListPermission(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
+	tk := rctx.AuthInfo.(*token.Token)
 
 	req := permission.NewQueryPermissionRequest(request.NewPageRequestFromHTTP(r))
 	req.NamespaceId = rctx.PS.ByName("id")
+	req.Account = tk.Account
 
 	set, err := h.service.QueryPermission(
 		r.Context(),
@@ -46,8 +49,10 @@ func (h *handler) ListPermission(w http.ResponseWriter, r *http.Request) {
 
 func (h *handler) CheckPermission(w http.ResponseWriter, r *http.Request) {
 	rctx := context.GetContext(r)
+	tk := rctx.AuthInfo.(*token.Token)
 
 	req := permission.NewCheckPermissionRequest()
+	req.Account = tk.Account
 	if err := request.GetDataFromRequest(r, req); err != nil {
 		response.Failed(w, err)
 		return

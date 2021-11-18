@@ -2,8 +2,12 @@ package interceptor
 
 import (
 	"context"
+	"fmt"
 	"net/http"
+	"sync"
 
+	"github.com/infraboard/keyauth/app/micro"
+	"github.com/infraboard/keyauth/app/permission"
 	"github.com/infraboard/keyauth/app/token"
 	"github.com/infraboard/keyauth/app/user/types"
 	"github.com/infraboard/keyauth/client"
@@ -16,11 +20,21 @@ import (
 	"github.com/rs/xid"
 )
 
+type PermissionCheckMode int
+
+const (
+	// PRBAC_MODE 基于策略的权限校验
+	PRBAC_MODE PermissionCheckMode = 1
+	// ACL_MODE 基于用户类型的权限校验
+	ACL_MODE = 2
+)
+
 // NewInternalAuther 内部使用的auther
 func NewHTTPAuther(c *client.Client) *HTTPAuther {
 	return &HTTPAuther{
 		keyauth: c,
 		l:       zap.L().Named("Http Interceptor"),
+		mode:    PRBAC_MODE,
 	}
 }
 
@@ -28,6 +42,13 @@ func NewHTTPAuther(c *client.Client) *HTTPAuther {
 type HTTPAuther struct {
 	l       logger.Logger
 	keyauth *client.Client
+	mode    PermissionCheckMode
+	svr     *micro.Micro
+	lock    sync.Mutex
+}
+
+func (a *HTTPAuther) SetPermissionCheckMode(m PermissionCheckMode) {
+	a.mode = m
 }
 
 func (a *HTTPAuther) Auth(r *http.Request, entry httpb.Entry) (
@@ -52,7 +73,7 @@ func (a *HTTPAuther) Auth(r *http.Request, entry httpb.Entry) (
 		}
 
 		// 权限检查
-		err = a.ValidatePermission(ctx, tk, entry)
+		err = a.CheckPermission(ctx, a.mode, tk, entry)
 		if err != nil {
 			return nil, err
 		}
@@ -84,7 +105,7 @@ func (a *HTTPAuther) ValidateIdentity(ctx context.Context, accessToken string) (
 	return tk, nil
 }
 
-func (a *HTTPAuther) ValidatePermission(ctx context.Context, tk *token.Token, e httpb.Entry) error {
+func (a *HTTPAuther) CheckPermission(ctx context.Context, mod PermissionCheckMode, tk *token.Token, e httpb.Entry) error {
 	if tk == nil {
 		return exception.NewUnauthorized("validate permission need token")
 	}
@@ -95,6 +116,18 @@ func (a *HTTPAuther) ValidatePermission(ctx context.Context, tk *token.Token, e 
 		return nil
 	}
 
+	switch a.mode {
+	case ACL_MODE:
+		return a.ValidatePermissionByACL(ctx, tk, e)
+	case PRBAC_MODE:
+		return a.ValidatePermissionByPRBAC(ctx, tk, e)
+	default:
+		return fmt.Errorf("only support acl and prbac")
+	}
+
+}
+
+func (a *HTTPAuther) ValidatePermissionByACL(ctx context.Context, tk *token.Token, e httpb.Entry) error {
 	// 检查是否是允许的类型
 	if len(e.Allow) > 0 {
 		a.l.Debugf("[%s] start check permission to keyauth ...", tk.Account)
@@ -105,6 +138,41 @@ func (a *HTTPAuther) ValidatePermission(ctx context.Context, tk *token.Token, e 
 	}
 
 	return nil
+}
+
+func (a *HTTPAuther) ValidatePermissionByPRBAC(ctx context.Context, tk *token.Token, e httpb.Entry) error {
+	svr, err := a.GetClientService(ctx)
+	if err != nil {
+		return err
+	}
+
+	req := permission.NewCheckPermissionRequest()
+	req.Account = tk.Account
+	req.NamespaceId = tk.Namespace
+	req.ServiceId = svr.Id
+	req.Path = e.UniquePath()
+	_, err = a.keyauth.Permission().CheckPermission(ctx, req)
+	if err != nil {
+		return exception.NewPermissionDeny(err.Error())
+	}
+	a.l.Debugf("[%s] permission check passed", tk.Account)
+	return nil
+}
+
+func (a *HTTPAuther) GetClientService(ctx context.Context) (*micro.Micro, error) {
+	if a.svr != nil {
+		return a.svr, nil
+	}
+	a.lock.Lock()
+	defer a.lock.Unlock()
+
+	req := micro.NewDescribeServiceRequestWithClientID(a.keyauth.GetClientID())
+	ins, err := a.keyauth.Micro().DescribeService(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	a.svr = ins
+	return ins, nil
 }
 
 func (a *HTTPAuther) ResponseHook(w http.ResponseWriter, r *http.Request, entry httpb.Entry) {

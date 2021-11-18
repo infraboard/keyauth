@@ -14,6 +14,7 @@ import (
 
 func (s *service) QueryPermission(ctx context.Context, req *permission.QueryPermissionRequest) (
 	*role.PermissionSet, error) {
+
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest("validate param error, %s", err)
 	}
@@ -67,9 +68,14 @@ func (s *service) CheckPermission(ctx context.Context, req *permission.CheckPerm
 
 	roleReq := permission.NewQueryRoleRequest(req.NamespaceId)
 	roleReq.WithPermission = true
+	roleReq.Account = req.Account
 	roleSet, err := s.QueryRole(ctx, roleReq)
 	if err != nil {
 		return nil, err
+	}
+
+	if roleSet.Len() == 0 {
+		return nil, exception.NewPermissionDeny("no permission")
 	}
 
 	ep, err := s.endpoint.DescribeEndpoint(ctx, endpoint.NewDescribeEndpointRequestWithID(req.EndpointId))
@@ -80,7 +86,7 @@ func (s *service) CheckPermission(ctx context.Context, req *permission.CheckPerm
 
 	// 不需要鉴权
 	if !ep.Entry.PermissionEnable {
-		return role.NewDeaultPermission(), nil
+		return role.NewSkipPermission("endpoint not enable permission check, allow all access"), nil
 	}
 
 	p, ok, err := roleSet.HasPermission(ep)

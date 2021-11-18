@@ -176,6 +176,7 @@ func (s *service) newNamespace(ctx context.Context, req *namespace.CreateNamespa
 		CreateBy:     req.CreateBy,
 		CreateAt:     ftime.Now().Timestamp(),
 		UpdateAt:     ftime.Now().Timestamp(),
+		Enabled:      true,
 		DepartmentId: req.DepartmentId,
 		Name:         req.Name,
 		Picture:      req.Picture,

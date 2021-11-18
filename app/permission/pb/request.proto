@@ -39,4 +39,6 @@ message CheckPermissionRequest {
     string service_id = 4;
     // @gotags: json:"path"
     string path = 5;
+    // @gotags: json:"account"
+    string account = 6;
 }

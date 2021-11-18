@@ -39,6 +39,13 @@ func (s *service) QueryPolicy(ctx context.Context, req *policy.QueryPolicyReques
 		return nil, err
 	}
 
+	if req.NamespaceId != "" {
+		_, err := s.namespace.DescribeNamespace(ctx, namespace.NewNewDescriptNamespaceRequestWithID(req.NamespaceId))
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	s.log.Debugf("query policy filter: %s", r.FindFilter())
 	resp, err := s.col.Find(context.TODO(), r.FindFilter(), r.FindOptions())
 	if err != nil {
