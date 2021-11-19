@@ -338,7 +338,7 @@ func (i *Initialer) initNamespace(ctx context.Context, deaprtmentId string) (*na
 	req.Domain = i.domainName
 	req.CreateBy = i.adminUser.Account
 	req.Owner = i.adminUser.Account
-	req.DepartmentId = ""
+	req.DepartmentId = deaprtmentId
 	return i.namespace.CreateNamespace(ctx, req)
 }
 
