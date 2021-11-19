@@ -36,8 +36,8 @@ var (
 // startCmd represents the start command
 var serviceCmd = &cobra.Command{
 	Use:   "start",
-	Short: "权限中心服务",
-	Long:  `权限中心服务`,
+	Short: "启动权限中心服务",
+	Long:  `启动权限中心服务`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// 初始化全局变量
 		if err := loadGlobalConfig(confType); err != nil {
