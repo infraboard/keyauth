@@ -21,7 +21,6 @@ import (
 	"github.com/infraboard/keyauth/app/token"
 	"github.com/infraboard/keyauth/app/user"
 	"github.com/infraboard/keyauth/app/user/types"
-	"github.com/infraboard/keyauth/version"
 )
 
 // InitCmd 初始化系统
@@ -343,15 +342,6 @@ func (i *Initialer) initNamespace(ctx context.Context, deaprtmentId string) (*na
 	return i.namespace.CreateNamespace(ctx, req)
 }
 
-func (i *Initialer) initService(ctx context.Context, r *role.Role) (*micro.Micro, error) {
-	req := micro.NewCreateMicroRequest()
-	req.Name = version.ServiceName
-	req.Description = version.Description
-	req.Type = micro.Type_BUILD_IN
-	req.Creater = i.adminUser.Account
-	return i.micro.CreateService(ctx, req)
-}
-
 func (i *Initialer) initSystemConfig() (*system.Config, error) {
 	sysConf := system.NewDefaultConfig()
 	if err := i.system.InitConfig(sysConf); err != nil {
@@ -361,5 +351,6 @@ func (i *Initialer) initSystemConfig() (*system.Config, error) {
 }
 
 func init() {
+	InitCmd.Flags().StringVarP(&confFile, "config-file", "f", "etc/keyauth.toml", "the service config from file")
 	RootCmd.AddCommand(InitCmd)
 }

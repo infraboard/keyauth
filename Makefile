@@ -1,7 +1,6 @@
 PROJECT_NAME=keyauth
 MAIN_FILE=main.go
 PKG := "github.com/infraboard/$(PROJECT_NAME)"
-MOD_DIR := $(shell go env GOMODCACHE)
 PKG_LIST := $(shell go list ${PKG}/... | grep -v /vendor/)
 GO_FILES := $(shell find . -name '*.go' | grep -v /vendor/ | grep -v _test.go)
 
@@ -16,7 +15,7 @@ VERSION_PATH := "${PKG}/version"
 all: build
 
 dep: ## Get the dependencies
-	@go mod download
+	@go mod tidy
 
 lint: ## Lint Golang files
 	@golint -set_exit_status ${PKG_LIST}
