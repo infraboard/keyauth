@@ -89,7 +89,7 @@ func (a *HTTPAuther) ValidatePermission(ctx context.Context, tk *token.Token, e 
 		return exception.NewUnauthorized("validate permission need token")
 	}
 
-	// 如果是超级管理员不做权限校验, 直接放行
+	// 如果是不做权限校验, 超级管理员直接放行
 	if tk.UserType.IsIn(types.UserType_SUPPER) {
 		a.l.Debugf("[%s] supper admin skip permission check!", tk.Account)
 		return nil

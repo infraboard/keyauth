@@ -19,7 +19,6 @@ type handler struct {
 // Registry 注册HTTP服务路由
 func (h *handler) Registry(router router.SubRouter) {
 	r := router.ResourceRouter("policy")
-
 	r.BasePath("policies")
 	r.Handle("POST", "/", h.Create).SetAllow(types.UserType_PERM_ADMIN)
 	r.Handle("GET", "/", h.List).SetAllow(types.UserType_PERM_ADMIN)

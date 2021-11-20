@@ -12,11 +12,16 @@ import (
 )
 
 func (s *service) UploadFile(req *storage.UploadFileRequest) error {
+	s.log.Debugf("bucket name: %s, db file name: %s", req.BucketName, req.FileName)
+
 	if err := req.Validate(); err != nil {
 		return exception.NewBadRequest("valiate upload file request error, %s", err)
 	}
 
 	bucket, err := s.getBucket(req.BucketName)
+	if err != nil {
+		return err
+	}
 
 	opts := options.GridFSUpload()
 	opts.Metadata = req.Meta()

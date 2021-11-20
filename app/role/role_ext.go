@@ -106,6 +106,13 @@ func (req *CreateRoleRequest) IsCumstomType() bool {
 	return req.Type.Equal(RoleType_CUSTOM)
 }
 
+func (req *CreateRoleRequest) ServiceIds() (ids []string) {
+	for i := range req.Permissions {
+		ids = append(ids, req.Permissions[i].ServiceId)
+	}
+	return
+}
+
 // Validate 请求校验
 func (req *CreateRoleRequest) Validate() error {
 	pc := len(req.Permissions)

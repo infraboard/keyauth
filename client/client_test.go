@@ -14,9 +14,10 @@ import (
 func Test_Client(t *testing.T) {
 	should := assert.New(t)
 	conf := client.NewDefaultConfig()
-	conf.SetClientCredentials("pz3HiVQA3indzSHzFKtLHaJW", "vDvlAtqN3rS9CZcHugXp6QBuk28zRjud")
+	conf.SetClientCredentials("nHerVBlrKIDurviMGUXVOQHC", "l5FB38Mw2JmxHgGm8rUcich2ZrGRVrl7")
 	c, err := client.NewClient(conf)
 
+	
 	if should.NoError(err) {
 		req := user.NewQueryAccountRequest()
 		req.Domain = domain.AdminDomainName

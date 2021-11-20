@@ -19,6 +19,9 @@ func (s *service) CreateRole(ctx context.Context, req *role.CreateRoleRequest) (
 		return nil, err
 	}
 
+	// 检测服务是否存在
+	req.ServiceIds()
+
 	if _, err := s.col.InsertOne(ctx, r); err != nil {
 		return nil, exception.NewInternalServerError("inserted role(%s) document error, %s",
 			r.Name, err)
