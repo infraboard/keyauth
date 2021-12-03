@@ -73,9 +73,11 @@ func (a *HTTPAuther) Auth(r *http.Request, entry httpb.Entry) (
 		}
 
 		// 权限检查
-		err = a.CheckPermission(ctx, a.mode, tk, entry)
-		if err != nil {
-			return nil, err
+		if entry.PermissionEnable {
+			err = a.CheckPermission(ctx, a.mode, tk, entry)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 
