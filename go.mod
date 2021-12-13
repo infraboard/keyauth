@@ -8,7 +8,6 @@ require (
 	github.com/caarlos0/env/v6 v6.4.0
 	github.com/go-ldap/ldap/v3 v3.2.4
 	github.com/go-playground/validator/v10 v10.9.0
-	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
 	github.com/infraboard/mcube v1.5.3
 	github.com/mattn/go-colorable v0.1.8 // indirect
 	github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d // indirect

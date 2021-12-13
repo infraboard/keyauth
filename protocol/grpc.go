@@ -9,7 +9,6 @@ import (
 	"github.com/infraboard/mcube/logger/zap"
 	"google.golang.org/grpc"
 
-	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"github.com/infraboard/keyauth/app/micro"
 	auther "github.com/infraboard/keyauth/common/interceptor/grpc"
 	"github.com/infraboard/keyauth/conf"
@@ -21,10 +20,10 @@ func NewGRPCService() *GRPCService {
 	log := zap.L().Named("GRPC Service")
 
 	rc := recovery.NewInterceptor(recovery.NewZapRecoveryHandler())
-	grpcServer := grpc.NewServer(grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
+	grpcServer := grpc.NewServer(grpc.ChainUnaryInterceptor(
 		rc.UnaryServerInterceptor(),
 		auther.GrpcAuthUnaryServerInterceptor(),
-	)))
+	))
 
 	return &GRPCService{
 		svr:   grpcServer,
