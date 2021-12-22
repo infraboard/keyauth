@@ -53,28 +53,12 @@ gen: # Init Service
 	@protoc -I=. --go_out=. --go_opt=module=${PKG} --go-grpc_out=. --go-grpc_opt=module=${PKG} common/types/*.proto
 	@protoc-go-inject-tag -input=common/types/*.pb.go
 	@protoc -I=. --go_out=. --go_opt=module=${PKG} --go-grpc_out=. --go-grpc_opt=module=${PKG} app/*/pb/*.proto
-	@protoc-go-inject-tag -input=app/application/*.pb.go
-	@protoc-go-inject-tag -input=app/department/*.pb.go
-	@protoc-go-inject-tag -input=app/domain/*.pb.go
-	@protoc-go-inject-tag -input=app/endpoint/*.pb.go
-	@protoc-go-inject-tag -input=app/mconf/*.pb.go
-	@protoc-go-inject-tag -input=app/micro/*.pb.go
-	@protoc-go-inject-tag -input=app/namespace/*.pb.go
-	@protoc-go-inject-tag -input=app/permission/*.pb.go
-	@protoc-go-inject-tag -input=app/policy/*.pb.go
-	@protoc-go-inject-tag -input=app/role/*.pb.go
-	@protoc-go-inject-tag -input=app/session/*.pb.go
-	@protoc-go-inject-tag -input=app/tag/*.pb.go
-	@protoc-go-inject-tag -input=app/token/*.pb.go
-	@protoc-go-inject-tag -input=app/user/*.pb.go
-	@protoc-go-inject-tag -input=app/verifycode/*.pb.go
+	@protoc-go-inject-tag -input=app/*/*.pb.go
 	@go generate ./...
 
 install: dep# Install depence go package
 	@go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-	@go install github.com/infraboard/mcube/cmd/mcube@v1.1.2
-	@go install github.com/infraboard/mcube/cmd/protoc-gen-go-ext@v1.1.2
-	@go install github.com/infraboard/mcube/cmd/protoc-gen-go-http@v1.1.2
+	@go install github.com/infraboard/mcube/cmd/mcube@latest
 
 help: ## Display this help screen
 	@grep -h -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
