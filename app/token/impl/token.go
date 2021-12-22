@@ -9,6 +9,7 @@ import (
 	"github.com/infraboard/mcube/http/request"
 	"go.mongodb.org/mongo-driver/mongo"
 
+	"github.com/infraboard/keyauth/app/application"
 	"github.com/infraboard/keyauth/app/namespace"
 	"github.com/infraboard/keyauth/app/policy"
 	"github.com/infraboard/keyauth/app/session"
@@ -97,6 +98,25 @@ func (s *service) securityCheck(ctx context.Context, code string, tk *token.Toke
 	return nil
 }
 
+func (s *service) reuseToken(ctx context.Context, tk *token.Token) error {
+	// 刷新token过期的，不允许复用
+	if tk.CheckRefreshIsExpired() {
+		return exception.NewRefreshTokenExpired("refresh_token: %s expoired", tk.RefreshToken)
+	}
+
+	descApp := application.NewDescriptApplicationRequest()
+	descApp.Id = tk.ApplicationId
+	app, err := s.app.DescribeApplication(ctx, descApp)
+	if err != nil {
+		return err
+	}
+	// access token延长一个过期周期
+	tk.AccessExpiredAt = time.Now().Add(time.Duration(app.AccessTokenExpireSecond)*time.Second).Unix() * 1000
+	// refresh token延长一个过期周期
+	tk.RefreshExpiredAt = time.Unix(tk.RefreshExpiredAt/1000, 0).Add(time.Duration(app.RefreshTokenExpireSecond)*time.Second).Unix() * 1000
+	return s.saveToken(tk)
+}
+
 func (s *service) ValidateToken(ctx context.Context, req *token.ValidateTokenRequest) (*token.Token, error) {
 	if err := req.Validate(); err != nil {
 		return nil, exception.NewBadRequest(err.Error())
@@ -114,7 +134,10 @@ func (s *service) ValidateToken(ctx context.Context, req *token.ValidateTokenReq
 	// 校验Access Token是否过期
 	if req.AccessToken != "" {
 		if tk.CheckAccessIsExpired() {
-			return nil, exception.NewAccessTokenExpired("access_token: %s has expired", tk.AccessToken)
+			// 如果Refresh还没有过期, 自动再续一个周期, 避免用户连续使用过程中导致访问中断
+			if err := s.reuseToken(ctx, tk); err != nil {
+				return nil, err
+			}
 		}
 	}
 

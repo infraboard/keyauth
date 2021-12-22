@@ -4,16 +4,18 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/infraboard/keyauth/app/token"
-	"github.com/infraboard/keyauth/app/user/types"
-	"github.com/infraboard/keyauth/common/header"
+	"github.com/rs/xid"
+
 	"github.com/infraboard/mcube/app"
 	"github.com/infraboard/mcube/exception"
 	httpctx "github.com/infraboard/mcube/http/context"
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
 	httpb "github.com/infraboard/mcube/pb/http"
-	"github.com/rs/xid"
+
+	"github.com/infraboard/keyauth/app/token"
+	"github.com/infraboard/keyauth/app/user/types"
+	"github.com/infraboard/keyauth/common/header"
 )
 
 // NewInternalAuther 内部使用的auther
