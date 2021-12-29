@@ -28,7 +28,9 @@ func (h *handler) Registry(router router.SubRouter) {
 	wx := router.ResourceRouter("wechat")
 	wx.BasePath("settings/wechat")
 	wx.Permission(true)
-	wx.Handle("POST", "/callback", h.WechatCheck).AddLabel(label.Create).DisableAuth()
+	wx.Handle("GET", "/", h.Get).AddLabel(label.List)
+	wx.Handle("POST", "/", h.Create).AddLabel(label.Create)
+	wx.Handle("GET", "/callback", h.WechatCheck).AddLabel(label.Create).DisableAuth()
 
 }
 

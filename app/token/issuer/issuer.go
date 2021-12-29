@@ -18,6 +18,7 @@ import (
 	"github.com/infraboard/keyauth/app/domain"
 	"github.com/infraboard/keyauth/app/provider"
 	"github.com/infraboard/keyauth/app/provider/auth/ldap"
+	"github.com/infraboard/keyauth/app/provider/auth/wxwork"
 	"github.com/infraboard/keyauth/app/token"
 	"github.com/infraboard/keyauth/app/user"
 	"github.com/infraboard/keyauth/app/user/types"
@@ -215,6 +216,36 @@ func (i *issuer) IssueToken(ctx context.Context, req *token.IssueTokenRequest) (
 		newTK := i.issueUserToken(app, u, token.GrantType_LDAP)
 		newTK.Domain = ldapConf.Domain
 		return newTK, nil
+	case token.GrantType_WECHAT_WORK:
+		np := wxwork.NewAuth()
+		//userID, err := np.CheckCallBack(&wxwork.ScanCodeRequest{
+		//	Code: req.AuthCode,
+		//	State: req.State,
+		//	AppID: req.UserAgent,
+		//	Service: req.Service,
+		//})
+		//if err != nil {
+		//	return nil, err
+		//}
+		//wxUser := np.GetUserInfo(userID)
+		wxUser := np.GetUserInfo("SXF5358")
+		u, err := i.syncWXWORKUser(ctx, &user.User{
+			Account: wxUser.Name,
+			Domain: "admin-domain",
+			Profile: &user.Profile{
+				RealName: wxUser.UserID,
+				NickName: wxUser.Name,
+				Avatar: wxUser.Avatar,
+				Email: wxUser.Email,
+				Phone: wxUser.Mobile,
+			},
+		})
+		if err != nil {
+			return nil, err
+		}
+		newTK := i.issueUserToken(app, u, 1) // token.GrantType_WECHAT_WORK
+		return newTK, nil
+
 	case token.GrantType_CLIENT:
 		return nil, exception.NewInternalServerError("not impl")
 	case token.GrantType_AUTH_CODE:
@@ -255,6 +286,31 @@ func (i *issuer) syncLDAPUser(ctx context.Context, userName string) (*user.User,
 		if exception.IsNotFoundError(err) {
 			req := user.NewCreateUserRequestWithLDAPSync(userName, i.randomPass())
 			req.UserType = types.UserType_SUB
+			u, err = i.user.CreateAccount(ctx, req)
+			if err != nil {
+				return nil, err
+			}
+		}
+		return u, err
+	}
+
+	return u, nil
+}
+
+func (i *issuer) syncWXWORKUser(ctx context.Context, reqUser *user.User) (*user.User, error) {
+	descUser := user.NewDescriptAccountRequestWithAccount(reqUser.Account)
+	u, err := i.user.DescribeAccount(ctx, descUser)
+
+	if u != nil && u.Type.IsIn(types.UserType_PRIMARY, types.UserType_SUPPER) {
+		return nil, exception.NewBadRequest("用户名和主账号用户名冲突, 请修改")
+	}
+
+	if err != nil {
+		if exception.IsNotFoundError(err) {
+			req := user.NewCreateUserRequestWithWXWORKSync(reqUser.Account, i.randomPass())
+			req.UserType = types.UserType_SUB
+			req.Profile = reqUser.Profile
+			req.Domin = reqUser.Domain
 			u, err = i.user.CreateAccount(ctx, req)
 			if err != nil {
 				return nil, err

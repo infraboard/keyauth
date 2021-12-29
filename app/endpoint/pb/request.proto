@@ -4,7 +4,7 @@ package infraboard.keyauth.endpoint;
 option go_package = "github.com/infraboard/keyauth/app/endpoint";
 
 import "github.com/infraboard/mcube/pb/page/page.proto";
-import "github.com/infraboard/mcube/pb/http/entry.proto";
+import "app/mcube/pb/http/entry.proto";
 
 import "app/endpoint/pb/enum.proto";
 

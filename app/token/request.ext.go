@@ -129,6 +129,10 @@ func (m *IssueTokenRequest) Validate() error {
 		if m.AuthCode == "" {
 			return fmt.Errorf("use %s grant type, code required", GrantType_AUTH_CODE)
 		}
+	case GrantType_WECHAT_WORK:
+		if m.State == "" || m.Service == ""{
+			return fmt.Errorf("use %s grant type, state required", GrantType_WECHAT_WORK)
+		}
 	default:
 		return fmt.Errorf("unknown grant type %s", m.GrantType)
 	}

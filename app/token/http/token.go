@@ -1,6 +1,7 @@
 package http
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/infraboard/mcube/http/context"
@@ -35,6 +36,11 @@ func (h *handler) IssueToken(w http.ResponseWriter, r *http.Request) {
 	)
 	if err != nil {
 		response.Failed(w, err)
+		return
+	}
+
+	if req.Service != "" {
+		http.Redirect(w, r, fmt.Sprintf("%s?token=%s",req.Service, d.AccessToken), http.StatusFound)
 		return
 	}
 
