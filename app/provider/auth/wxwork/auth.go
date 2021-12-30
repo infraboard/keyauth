@@ -63,9 +63,9 @@ type Wechat struct {
 
 func NewAuth() *Wechat {
 	w := &Wechat{
-		AppID:     "wx8918xxx",  // 企业微信app ID
-		AppSecret: "84Orxxxx4", // 企业微信app secret
-		AgentID:   "1000xxx",     // 企业微信 应用ID
+		AppID:     "wx8918a4299cc1b440",  // 企业微信app ID
+		AppSecret: "84OrKL_QXM1WCW_N0pAhtLLenbmFcsUetrDqymqAIH4", // 企业微信app secret
+		AgentID:   "1000071",     // 企业微信 应用ID
 	}
 	w.AccessToken = w.GetAccessToken()
 	return w
