@@ -2,6 +2,7 @@ package issuer
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"regexp"
 	"strings"
@@ -13,6 +14,8 @@ import (
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
 	"github.com/rs/xid"
+
+	wechatWork "github.com/infraboard/keyauth/app/wxwork"
 
 	"github.com/infraboard/keyauth/app/application"
 	"github.com/infraboard/keyauth/app/domain"
@@ -28,26 +31,28 @@ import (
 // NewTokenIssuer todo
 func NewTokenIssuer() (Issuer, error) {
 	issuer := &issuer{
-		user:    app.GetGrpcApp(user.AppName).(user.ServiceServer),
-		domain:  app.GetGrpcApp(domain.AppName).(domain.ServiceServer),
-		token:   app.GetGrpcApp(token.AppName).(token.ServiceServer),
-		ldap:    app.GetInternalApp(provider.AppName).(provider.LDAP),
-		app:     app.GetGrpcApp(application.AppName).(application.ServiceServer),
-		emailRE: regexp.MustCompile(`([a-zA-Z0-9]+)@([a-zA-Z0-9\.]+)\.([a-zA-Z0-9]+)`),
-		log:     zap.L().Named("Token Issuer"),
+		user:       app.GetGrpcApp(user.AppName).(user.ServiceServer),
+		domain:     app.GetGrpcApp(domain.AppName).(domain.ServiceServer),
+		token:      app.GetGrpcApp(token.AppName).(token.ServiceServer),
+		ldap:       app.GetInternalApp(provider.AppName).(provider.LDAP),
+		wechatWork: app.GetInternalApp(wechatWork.AppName).(wechatWork.WechatWork),
+		app:        app.GetGrpcApp(application.AppName).(application.ServiceServer),
+		emailRE:    regexp.MustCompile(`([a-zA-Z0-9]+)@([a-zA-Z0-9\.]+)\.([a-zA-Z0-9]+)`),
+		log:        zap.L().Named("Token Issuer"),
 	}
 	return issuer, nil
 }
 
 // TokenIssuer 基于该数据进行扩展
 type issuer struct {
-	app     application.ServiceServer
-	token   token.ServiceServer
-	user    user.ServiceServer
-	domain  domain.ServiceServer
-	ldap    provider.LDAP
-	emailRE *regexp.Regexp
-	log     logger.Logger
+	app        application.ServiceServer
+	token      token.ServiceServer
+	user       user.ServiceServer
+	domain     domain.ServiceServer
+	ldap       provider.LDAP
+	wechatWork wechatWork.WechatWork
+	emailRE    *regexp.Regexp
+	log        logger.Logger
 }
 
 func (i *issuer) checkUserPass(ctx context.Context, user, pass string) (*user.User, error) {
@@ -217,33 +222,39 @@ func (i *issuer) IssueToken(ctx context.Context, req *token.IssueTokenRequest) (
 		newTK.Domain = ldapConf.Domain
 		return newTK, nil
 	case token.GrantType_WECHAT_WORK:
-		np := wxwork.NewAuth()
-		//userID, err := np.CheckCallBack(&wxwork.ScanCodeRequest{
-		//	Code: req.AuthCode,
-		//	State: req.State,
-		//	AppID: req.UserAgent,
-		//	Service: req.Service,
-		//})
-		//if err != nil {
-		//	return nil, err
-		//}
-		//wxUser := np.GetUserInfo(userID)
-		wxUser := np.GetUserInfo("SXF5358")
+		ww, err := i.wechatWork.DescribeConfig(&wechatWork.DescribeWechatWorkConf{Domain: req.Username})
+		if err != nil {
+			return nil, err
+		}
+		if req.State != ww.State {
+			return nil, errors.New("State is error! ")
+		}
+		np := wxwork.NewAuth(ww.CorpID, ww.CorpSecret, ww.AgentID)
+		userID, err := np.CheckCallBack(&wxwork.ScanCodeRequest{
+			Code:    req.AuthCode,
+			State:   req.State,
+			AppID:   req.UserAgent,
+			Service: req.Service,
+		})
+		if err != nil {
+			return nil, err
+		}
+		wxUser := np.GetUserInfo(userID)
 		u, err := i.syncWXWORKUser(ctx, &user.User{
 			Account: wxUser.Name,
-			Domain: "admin-domain",
+			Domain:  ww.Domain,
 			Profile: &user.Profile{
 				RealName: wxUser.UserID,
 				NickName: wxUser.Name,
-				Avatar: wxUser.Avatar,
-				Email: wxUser.Email,
-				Phone: wxUser.Mobile,
+				Avatar:   wxUser.Avatar,
+				Email:    wxUser.Email,
+				Phone:    wxUser.Mobile,
 			},
 		})
 		if err != nil {
 			return nil, err
 		}
-		newTK := i.issueUserToken(app, u, 1) // token.GrantType_WECHAT_WORK
+		newTK := i.issueUserToken(app, u, token.GrantType_WECHAT_WORK)
 		return newTK, nil
 
 	case token.GrantType_CLIENT:

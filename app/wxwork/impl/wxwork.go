@@ -67,7 +67,6 @@ func (s *service) QueryConfig(req *wxwork.QueryConfigRequest) (*wxwork.WechatWor
 	return set, nil
 }
 
-
 func (s *service) DescribeConfig(req *wxwork.DescribeWechatWorkConf) (*wxwork.WechatWorkConfig, error) {
 	r, err := newDescribeWechatWorkRequest(req)
 	if err != nil {

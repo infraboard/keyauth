@@ -40,7 +40,7 @@ func (h *handler) IssueToken(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if req.Service != "" {
-		http.Redirect(w, r, fmt.Sprintf("%s?token=%s",req.Service, d.AccessToken), http.StatusFound)
+		http.Redirect(w, r, fmt.Sprintf("%s?token=%s", req.Service, d.AccessToken), http.StatusFound)
 		return
 	}
 

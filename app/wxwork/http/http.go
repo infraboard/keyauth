@@ -5,7 +5,6 @@ import (
 	"github.com/infraboard/mcube/app"
 	"github.com/infraboard/mcube/http/label"
 	"github.com/infraboard/mcube/http/router"
-
 )
 
 var (

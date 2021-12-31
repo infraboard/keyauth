@@ -1,11 +1,11 @@
 package wxwork
 
 import (
-"fmt"
-"github.com/infraboard/keyauth/app/provider/auth/wxwork"
-"github.com/infraboard/keyauth/app/token/session"
-"github.com/infraboard/mcube/http/request"
-"github.com/infraboard/mcube/types/ftime"
+	"fmt"
+	"github.com/infraboard/keyauth/app/provider/auth/wxwork"
+	"github.com/infraboard/keyauth/app/token/session"
+	"github.com/infraboard/mcube/http/request"
+	"github.com/infraboard/mcube/types/ftime"
 )
 
 type WechatWork interface {
@@ -19,7 +19,7 @@ func NewSaveConfRequest() *SaveConfRequest {
 	return &SaveConfRequest{
 		Session: session.NewSession(),
 		Enabled: true,
-		Config: wxwork.NewDefaultConfig(),
+		Config:  wxwork.NewDefaultConfig(),
 	}
 }
 
@@ -35,10 +35,10 @@ func NewWechatWorkConfig(req *SaveConfRequest) (*WechatWorkConfig, error) {
 	}
 
 	ins := &WechatWorkConfig{
-		Domain:                tk.Domain,
-		Creater:               tk.Account,
-		CreateAt:              ftime.Now(),
-		UpdateAt:              ftime.Now(),
+		Domain:          tk.Domain,
+		Creater:         tk.Account,
+		CreateAt:        ftime.Now(),
+		UpdateAt:        ftime.Now(),
 		SaveConfRequest: req,
 	}
 	return ins, nil
@@ -52,10 +52,10 @@ func NewDefaultWechatWorkConfig() *WechatWorkConfig {
 }
 
 type WechatWorkConfig struct {
-	Domain                 string     `bson:"_id" json:"domain,omitempty"`          // 所属域ID
-	Creater                string     `bson:"creater" json:"creater,omitempty"`     // 创建人
-	CreateAt               ftime.Time `bson:"create_at" json:"create_at,omitempty"` // 创建时间
-	UpdateAt               ftime.Time `bson:"update_at" json:"update_at,omitempty"` // 更新时间
+	Domain           string     `bson:"_id" json:"domain,omitempty"`          // 所属域ID
+	Creater          string     `bson:"creater" json:"creater,omitempty"`     // 创建人
+	CreateAt         ftime.Time `bson:"create_at" json:"create_at,omitempty"` // 创建时间
+	UpdateAt         ftime.Time `bson:"update_at" json:"update_at,omitempty"` // 更新时间
 	*SaveConfRequest `bson:",inline"`
 }
 
@@ -71,7 +71,7 @@ func NewConfigSet(req *request.PageRequest) *WechatWorkSet {
 type WechatWorkSet struct {
 	*request.PageRequest
 
-	Total int64         `json:"total"`
+	Total int64               `json:"total"`
 	Items []*WechatWorkConfig `json:"items"`
 }
 
@@ -114,10 +114,9 @@ type QueryConfigRequest struct {
 	*request.PageRequest
 }
 
-
 type SaveConfRequest struct {
 	Enabled          bool `bson:"enabled" json:"enabled"`
-	*wxwork.Config     `bson:",inline"`
+	*wxwork.Config   `bson:",inline"`
 	*session.Session `bson:"-" json:"-"`
 }
 

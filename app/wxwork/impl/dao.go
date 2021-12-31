@@ -26,4 +26,3 @@ func (s *service) update(ins *wxwork.WechatWorkConfig) error {
 
 	return nil
 }
-

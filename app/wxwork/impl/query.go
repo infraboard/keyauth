@@ -56,4 +56,3 @@ func (r *queryConfigRequest) FindFilter() bson.M {
 
 	return filter
 }
-

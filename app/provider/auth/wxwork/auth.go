@@ -11,9 +11,9 @@ import (
 )
 
 var (
-	URLGetToken            = "https://qyapi.weixin.qq.com/cgi-bin/gettoken"
-	URLFromCodeGetUserInfo = "https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo"
-	URLGetUserInfo             string = "https://qyapi.weixin.qq.com/cgi-bin/user/get"
+	URLGetToken                   = "https://qyapi.weixin.qq.com/cgi-bin/gettoken"
+	URLFromCodeGetUserInfo        = "https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo"
+	URLGetUserInfo         string = "https://qyapi.weixin.qq.com/cgi-bin/user/get"
 )
 
 type ScanCodeRequest struct {
@@ -61,11 +61,11 @@ type Wechat struct {
 	CreateTokenDate int64 `json:"create_token_date"` // 创建时时间
 }
 
-func NewAuth() *Wechat {
+func NewAuth(appID, appSecret, agentID string) *Wechat {
 	w := &Wechat{
-		AppID:     "wx8918a4299cc1b440",  // 企业微信app ID
-		AppSecret: "84OrKL_QXM1WCW_N0pAhtLLenbmFcsUetrDqymqAIH4", // 企业微信app secret
-		AgentID:   "1000071",     // 企业微信 应用ID
+		AppID:     appID,     // 企业微信app ID
+		AppSecret: appSecret, // 企业微信app secret
+		AgentID:   agentID,   // 企业微信 应用ID
 	}
 	w.AccessToken = w.GetAccessToken()
 	return w
@@ -137,13 +137,12 @@ func (w Wechat) FromCodeGetUserInfo(code, accessToken string) *Response {
 }
 
 func (w *Wechat) CheckCallBack(param *ScanCodeRequest) (string, error) {
-	wechat := NewAuth()
-	token := wechat.GetAccessToken()
+	token := w.GetAccessToken()
 	if token == "" {
 		return "", errors.New("get token error!")
 	}
 
-	scr := wechat.FromCodeGetUserInfo(param.Code, token)
+	scr := w.FromCodeGetUserInfo(param.Code, token)
 	if scr == nil {
 		return "", errors.New("get user info error from token!")
 	}

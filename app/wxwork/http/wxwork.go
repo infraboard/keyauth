@@ -2,6 +2,7 @@ package http
 
 import (
 	"fmt"
+	"github.com/infraboard/keyauth/app/domain"
 	"github.com/infraboard/keyauth/app/token"
 	"github.com/infraboard/keyauth/app/token/issuer"
 	"github.com/infraboard/keyauth/app/user/types"
@@ -19,22 +20,30 @@ func (h *handler) WechatWorkCheck(w http.ResponseWriter, r *http.Request) {
 	values := r.URL.Query()
 	service := values.Get("service")
 	state := values.Get("state")
+	clientId := values.Get("client_id")
+	clientSecret := values.Get("client_secret")
+	d := values.Get("domain")
+	if d == "" {
+		d = domain.AdminDomainName
+	}
+
 	i, err := issuer.NewTokenIssuer()
 	if err != nil {
 		response.Failed(w, err)
 	}
 	nt, err := i.IssueToken(r.Context(), &token.IssueTokenRequest{
-		GrantType: token.GrantType_WECHAT_WORK,
-		ClientId: "gmEZgiNk7t11sH0pcuCibi1S",
-		ClientSecret: "CilKesb1UvL0MJ5PAL1Kxm1VhejGFEp7",
-		State: state,
-		Service: service,
+		GrantType:    token.GrantType_WECHAT_WORK,
+		ClientId:     clientId,
+		ClientSecret: clientSecret,
+		State:        state,
+		Service:      service,
+		Username:     d,
 	})
 	if err != nil {
 		response.Failed(w, err)
 		return
 	}
-	http.Redirect(w, r, fmt.Sprintf("%s?token=%s",service, nt.AccessToken), http.StatusFound)
+	http.Redirect(w, r, fmt.Sprintf("%s?token=%s", service, nt.AccessToken), http.StatusFound)
 	return
 }
 
