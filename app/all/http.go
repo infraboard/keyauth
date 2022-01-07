@@ -20,4 +20,5 @@ import (
 	_ "github.com/infraboard/keyauth/app/token/http"
 	_ "github.com/infraboard/keyauth/app/user/http"
 	_ "github.com/infraboard/keyauth/app/verifycode/http"
+	_ "github.com/infraboard/keyauth/app/wxwork/http"
 )

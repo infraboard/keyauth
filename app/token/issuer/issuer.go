@@ -2,6 +2,7 @@ package issuer
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"regexp"
 	"strings"
@@ -14,10 +15,13 @@ import (
 	"github.com/infraboard/mcube/logger/zap"
 	"github.com/rs/xid"
 
+	wechatWork "github.com/infraboard/keyauth/app/wxwork"
+
 	"github.com/infraboard/keyauth/app/application"
 	"github.com/infraboard/keyauth/app/domain"
 	"github.com/infraboard/keyauth/app/provider"
 	"github.com/infraboard/keyauth/app/provider/auth/ldap"
+	"github.com/infraboard/keyauth/app/provider/auth/wxwork"
 	"github.com/infraboard/keyauth/app/token"
 	"github.com/infraboard/keyauth/app/user"
 	"github.com/infraboard/keyauth/app/user/types"
@@ -27,26 +31,28 @@ import (
 // NewTokenIssuer todo
 func NewTokenIssuer() (Issuer, error) {
 	issuer := &issuer{
-		user:    app.GetGrpcApp(user.AppName).(user.ServiceServer),
-		domain:  app.GetGrpcApp(domain.AppName).(domain.ServiceServer),
-		token:   app.GetGrpcApp(token.AppName).(token.ServiceServer),
-		ldap:    app.GetInternalApp(provider.AppName).(provider.LDAP),
-		app:     app.GetGrpcApp(application.AppName).(application.ServiceServer),
-		emailRE: regexp.MustCompile(`([a-zA-Z0-9]+)@([a-zA-Z0-9\.]+)\.([a-zA-Z0-9]+)`),
-		log:     zap.L().Named("Token Issuer"),
+		user:       app.GetGrpcApp(user.AppName).(user.ServiceServer),
+		domain:     app.GetGrpcApp(domain.AppName).(domain.ServiceServer),
+		token:      app.GetGrpcApp(token.AppName).(token.ServiceServer),
+		ldap:       app.GetInternalApp(provider.AppName).(provider.LDAP),
+		wechatWork: app.GetInternalApp(wechatWork.AppName).(wechatWork.WechatWork),
+		app:        app.GetGrpcApp(application.AppName).(application.ServiceServer),
+		emailRE:    regexp.MustCompile(`([a-zA-Z0-9]+)@([a-zA-Z0-9\.]+)\.([a-zA-Z0-9]+)`),
+		log:        zap.L().Named("Token Issuer"),
 	}
 	return issuer, nil
 }
 
 // TokenIssuer 基于该数据进行扩展
 type issuer struct {
-	app     application.ServiceServer
-	token   token.ServiceServer
-	user    user.ServiceServer
-	domain  domain.ServiceServer
-	ldap    provider.LDAP
-	emailRE *regexp.Regexp
-	log     logger.Logger
+	app        application.ServiceServer
+	token      token.ServiceServer
+	user       user.ServiceServer
+	domain     domain.ServiceServer
+	ldap       provider.LDAP
+	wechatWork wechatWork.WechatWork
+	emailRE    *regexp.Regexp
+	log        logger.Logger
 }
 
 func (i *issuer) checkUserPass(ctx context.Context, user, pass string) (*user.User, error) {
@@ -215,6 +221,42 @@ func (i *issuer) IssueToken(ctx context.Context, req *token.IssueTokenRequest) (
 		newTK := i.issueUserToken(app, u, token.GrantType_LDAP)
 		newTK.Domain = ldapConf.Domain
 		return newTK, nil
+	case token.GrantType_WECHAT_WORK:
+		ww, err := i.wechatWork.DescribeConfig(&wechatWork.DescribeWechatWorkConf{Domain: req.Username})
+		if err != nil {
+			return nil, err
+		}
+		if req.State != ww.State {
+			return nil, errors.New("State is error! ")
+		}
+		np := wxwork.NewAuth(ww.CorpID, ww.CorpSecret, ww.AgentID)
+		userID, err := np.CheckCallBack(&wxwork.ScanCodeRequest{
+			Code:    req.AuthCode,
+			State:   req.State,
+			AppID:   req.UserAgent,
+			Service: req.Service,
+		})
+		if err != nil {
+			return nil, err
+		}
+		wxUser := np.GetUserInfo(userID)
+		u, err := i.syncWXWORKUser(ctx, &user.User{
+			Account: wxUser.Name,
+			Domain:  ww.Domain,
+			Profile: &user.Profile{
+				RealName: wxUser.UserID,
+				NickName: wxUser.Name,
+				Avatar:   wxUser.Avatar,
+				Email:    wxUser.Email,
+				Phone:    wxUser.Mobile,
+			},
+		})
+		if err != nil {
+			return nil, err
+		}
+		newTK := i.issueUserToken(app, u, token.GrantType_WECHAT_WORK)
+		return newTK, nil
+
 	case token.GrantType_CLIENT:
 		return nil, exception.NewInternalServerError("not impl")
 	case token.GrantType_AUTH_CODE:
@@ -255,6 +297,31 @@ func (i *issuer) syncLDAPUser(ctx context.Context, userName string) (*user.User,
 		if exception.IsNotFoundError(err) {
 			req := user.NewCreateUserRequestWithLDAPSync(userName, i.randomPass())
 			req.UserType = types.UserType_SUB
+			u, err = i.user.CreateAccount(ctx, req)
+			if err != nil {
+				return nil, err
+			}
+		}
+		return u, err
+	}
+
+	return u, nil
+}
+
+func (i *issuer) syncWXWORKUser(ctx context.Context, reqUser *user.User) (*user.User, error) {
+	descUser := user.NewDescriptAccountRequestWithAccount(reqUser.Account)
+	u, err := i.user.DescribeAccount(ctx, descUser)
+
+	if u != nil && u.Type.IsIn(types.UserType_PRIMARY, types.UserType_SUPPER) {
+		return nil, exception.NewBadRequest("用户名和主账号用户名冲突, 请修改")
+	}
+
+	if err != nil {
+		if exception.IsNotFoundError(err) {
+			req := user.NewCreateUserRequestWithWXWORKSync(reqUser.Account, i.randomPass())
+			req.UserType = types.UserType_SUB
+			req.Profile = reqUser.Profile
+			req.Domin = reqUser.Domain
 			u, err = i.user.CreateAccount(ctx, req)
 			if err != nil {
 				return nil, err

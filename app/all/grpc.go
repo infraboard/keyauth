@@ -16,4 +16,5 @@ import (
 	_ "github.com/infraboard/keyauth/app/token/impl"
 	_ "github.com/infraboard/keyauth/app/user/impl"
 	_ "github.com/infraboard/keyauth/app/verifycode/impl"
+	_ "github.com/infraboard/keyauth/app/wxwork/impl"
 )

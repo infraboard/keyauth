@@ -61,7 +61,7 @@ func (t Provider) String() string {
 // MarshalJSON todo
 func (t Provider) MarshalJSON() ([]byte, error) {
 	b := bytes.NewBufferString(`"`)
-	b.WriteString(strings.ToUpper(t.String()))
+	b.WriteString(t.String())
 	b.WriteString(`"`)
 	return b.Bytes(), nil
 }

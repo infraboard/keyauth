@@ -3,7 +3,7 @@ syntax = "proto3";
 package infraboard.keyauth.endpoint;
 option go_package = "github.com/infraboard/keyauth/app/endpoint";
 
-import "github.com/infraboard/mcube/pb/http/entry.proto";
+import "app/mcube/pb/http/entry.proto";
 
 // Endpoint Service's features
 message Endpoint {

@@ -17,7 +17,6 @@ func Test_Client(t *testing.T) {
 	conf.SetClientCredentials("nHerVBlrKIDurviMGUXVOQHC", "l5FB38Mw2JmxHgGm8rUcich2ZrGRVrl7")
 	c, err := client.NewClient(conf)
 
-	
 	if should.NoError(err) {
 		req := user.NewQueryAccountRequest()
 		req.Domain = domain.AdminDomainName
