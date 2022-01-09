@@ -45,8 +45,8 @@ message Profile {
 // CreateAccountRequest 创建用户请求
 message CreateAccountRequest {
     // 域信息
-    // @gotags: json:"domin" validate:"required"
-    string domin = 9;
+    // @gotags: json:"domain" validate:"required"
+    string domain = 9;
     // 创建方式
     // @gotags: json:"create_type"
     CreateType create_type = 1;

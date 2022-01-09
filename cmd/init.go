@@ -236,7 +236,7 @@ func (i *Initialer) initUser(ctx context.Context) (*user.User, error) {
 	req.UserType = types.UserType_SUPPER
 	req.Account = strings.TrimSpace(i.username)
 	req.Password = strings.TrimSpace(i.password)
-	req.Domin = i.domainName
+	req.Domain = i.domainName
 	return i.user.CreateAccount(ctx, req)
 }
 

@@ -18,7 +18,7 @@ func (h *handler) CreateSubAccount(w http.ResponseWriter, r *http.Request) {
 	tk := ctx.AuthInfo.(*token.Token)
 
 	req := user.NewCreateUserRequest()
-	req.Domin = tk.Domain
+	req.Domain = tk.Domain
 	if err := request.GetDataFromRequest(r, req); err != nil {
 		response.Failed(w, err)
 		return

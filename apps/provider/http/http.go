@@ -25,11 +25,6 @@ func (h *handler) Registry(router router.SubRouter) {
 	r.Handle("POST", "/conn_check", h.Check).AddLabel(label.Create)
 	r.Handle("GET", "/", h.Get).AddLabel(label.List)
 
-	wx := router.ResourceRouter("wechat")
-	wx.BasePath("settings/wechat")
-	wx.Permission(true)
-	wx.Handle("POST", "/callback", h.WechatCheck).AddLabel(label.Create).DisableAuth()
-
 }
 
 func (h *handler) Config() error {

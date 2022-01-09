@@ -74,6 +74,15 @@ func NewCreateUserRequestWithLDAPSync(username, password string) *CreateAccountR
 	return req
 }
 
+// NewCreateUserRequestWithWXWORKSync todo
+func NewCreateUserRequestWithWXWORKSync(username, password string) *CreateAccountRequest {
+	req := NewCreateUserRequest()
+	req.CreateType = 1
+	req.Account = username
+	req.Password = password
+	return req
+}
+
 // NewCreateUserRequest 创建请求
 func NewCreateUserRequest() *CreateAccountRequest {
 	return &CreateAccountRequest{

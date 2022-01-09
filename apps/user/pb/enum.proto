@@ -16,5 +16,7 @@ enum CreateType {
     DOMAIN_CREATED = 1;
     // LDAPSync (ldap_sync) LDAP同步的用户
     LDAP_SYNC = 2;
+    // 企业微信同步的用户;
+    WXWORK_SYNC = 3;
     
 }
