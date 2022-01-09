@@ -12,7 +12,7 @@ import (
 	httpb "github.com/infraboard/mcube/pb/http"
 	"github.com/infraboard/mcube/types/ftime"
 
-	"github.com/infraboard/keyauth/app/token"
+	"github.com/infraboard/keyauth/apps/token"
 	"github.com/infraboard/keyauth/version"
 )
 

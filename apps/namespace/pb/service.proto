@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package infraboard.keyauth.namespace;
+option go_package = "github.com/infraboard/keyauth/apps/namespace";
+
+import "apps/namespace/pb/namespace.proto";
+import "apps/namespace/pb/request.proto";
+
+// Service todo
+service Service {
+	rpc CreateNamespace(CreateNamespaceRequest) returns(Namespace);
+	rpc QueryNamespace(QueryNamespaceRequest) returns(Set);
+	rpc DescribeNamespace(DescriptNamespaceRequest) returns(Namespace);
+	rpc DeleteNamespace(DeleteNamespaceRequest) returns(Namespace);
+}

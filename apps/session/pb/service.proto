@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package infraboard.keyauth.session;
+option go_package = "github.com/infraboard/keyauth/apps/session";
+
+import "apps/session/pb/request.proto";
+import "apps/session/pb/session.proto";
+import "apps/token/pb/token.proto";
+
+// Service 用户端接口
+service Service {
+	rpc Login(token.Token) returns(Session) ;
+	rpc Logout(LogoutRequest) returns(Session) ;
+	rpc DescribeSession(DescribeSessionRequest) returns(Session);
+	rpc QuerySession(QuerySessionRequest) returns(Set);
+	rpc QueryUserLastSession(QueryUserLastSessionRequest) returns(Session);
+}

@@ -1,0 +1,167 @@
+syntax = "proto3";
+
+package infraboard.keyauth.user;
+option go_package = "github.com/infraboard/keyauth/apps/user";
+
+import "github.com/infraboard/mcube/pb/page/page.proto";
+import "apps/user/pb/enum.proto";
+import "apps/user/pb/types.proto";
+import "common/types/types.proto";
+
+// Profile todo
+message Profile {
+    // 用户真实姓名
+    // @gotags: bson:"real_name" json:"real_name" validate:"lte=10"
+    string real_name = 1;
+    // 用户昵称, 用于在界面进行展示
+    // @gotags: bson:"nick_name" json:"nick_name" validate:"lte=30"
+    string nick_name = 2;
+    // 手机号码, 用户可以通过手机进行注册和密码找回, 还可以通过手机号进行登录
+    // @gotags: bson:"phone" json:"phone" validate:"lte=30"
+    string phone = 3;
+    // 邮箱, 用户可以通过邮箱进行注册和照明密码
+    // @gotags: bson:"email" json:"email" validate:"lte=30"
+    string email = 4;
+    // 用户住址
+    // @gotags: bson:"address" json:"address" validate:"lte=120"
+    string address = 5;
+    // 性别
+    // @gotags: bson:"gender" json:"gender" validate:"lte=10"
+    Gender gender = 6;
+    // 头像
+    // @gotags: bson:"avatar" json:"avatar" validate:"lte=300"
+    string avatar = 7;
+    // 用户使用的语言
+    // @gotags: bson:"language" json:"language" validate:"lte=40"
+    string language = 8;
+    // 用户所在的城市
+    // @gotags: bson:"city" json:"city" validate:"lte=40"
+    string city = 9;
+    // 用户所在的省
+    // @gotags: bson:"province" json:"province" validate:"lte=40"
+    string province = 10;                
+}
+
+// CreateAccountRequest 创建用户请求
+message CreateAccountRequest {
+    // 域信息
+    // @gotags: json:"domin" validate:"required"
+    string domin = 9;
+    // 创建方式
+    // @gotags: json:"create_type"
+    CreateType create_type = 1;
+    // 用户类型
+    // @gotags: json:"user_type"
+    UserType user_type = 2;
+    // 用户所属部门
+    // @gotags: json:"department_id" validate:"lte=200"
+    string department_id = 3;
+    // 用户账号名称
+    // @gotags: json:"account" validate:"required,lte=60"
+    string account = 4;
+    // 用户多久未登录时(天), 冻结改用户, 防止僵尸用户的账号被利用'
+    // @gotags: json:"expires_days"
+    int32 expires_days = 5;
+    // 用户描述
+    // @gotags: json:"description"
+    string description = 6;
+    // 数据
+    // @gotags: json:"profile"
+    Profile profile = 7;
+    // 密码相关信息
+    // @gotags: json:"password" validate:"required,lte=80"
+    string password = 8;
+}
+
+// DescribeAccountRequest 查询用户详情请求
+message DescribeAccountRequest {
+    // 用户账号名称
+    // @gotags: json:"account" validate:"required,lte=60"
+    string account = 1;
+}
+
+// QueryAccountRequest 获取子账号列表
+message QueryAccountRequest {
+    // @gotags: json:"page"
+   infraboard.mcube.page.PageRequest page = 1;
+    // @gotags: json:"accounts"
+    repeated string accounts = 2;
+    // @gotags: json:"user_type"
+    UserType user_type = 3;
+    // @gotags: json:"namespace_id"
+    string namespace_id = 4;
+    // @gotags: json:"with_department"
+    bool with_department = 5;
+    // @gotags: json:"department_id"
+    string department_id = 6;
+    // @gotags: json:"with_all_sub"
+    bool with_all_sub = 7;
+    // @gotags: json:"skip_items"
+    bool skip_items = 8;
+    // @gotags: json:"keywords"
+    string keywords = 9;
+    // @gotags: json:"domain"
+    string domain = 10;
+}
+
+// UpdateAccountRequest todo
+message UpdateAccountRequest {
+    // 更新模式
+    // @gotags: json:"update_mode"
+    infraboard.keyauth.types.UpdateMode update_mode = 1;
+    // 用户账号名称
+    // @gotags: json:"account" validate:"required,lte=120"
+    string account = 2;
+    // 用户所属部门
+    // @gotags: json:"department_id"
+    string department_id = 3;
+    // profile 账号profile
+    // @gotags: json:"profile"
+	Profile profile = 4;
+}
+
+// UpdatePasswordRequest todo
+message UpdatePasswordRequest {
+    // @gotags: json:"account"
+    string account = 1;
+    // @gotags: json:"old_pass"
+    string old_pass = 2;
+    // @gotags: json:"new_pass"
+    string new_pass = 3;
+    // @gotags: json:"is_reset"
+    bool is_reset = 4;
+}
+
+// GeneratePasswordRequest todo
+message GeneratePasswordRequest {
+    // @gotags: json:"length"
+    int32 length = 1;
+    // @gotags: json:"domain"
+    string domain = 2;
+}
+
+// GeneratePasswordResponse todo
+message GeneratePasswordResponse {
+    // @gotags: json:"password"
+    string password = 1;
+}
+
+// BlockAccountRequest 冻结用户
+message BlockAccountRequest {
+    // @gotags: json:"account"
+    string account = 1;
+    // @gotags: json:"reason"
+    string reason = 2;
+}
+
+// UnBlockAccountRequest 解冻用户
+message UnBlockAccountRequest {
+    // @gotags: json:"account"
+    string account = 1;
+}
+
+// DeleteAccountRequest 删除账户
+message DeleteAccountRequest {
+    // @gotags: json:"account"
+    string account = 1;
+}

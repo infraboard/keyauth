@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package infraboard.keyauth.session;
+option go_package = "github.com/infraboard/keyauth/apps/session";
+
+import "apps/token/pb/token.proto";
+import "github.com/infraboard/mcube/pb/page/page.proto";
+
+// LogoutRequest 登出请求
+message LogoutRequest {
+    string session_id = 1;
+    string account = 2;
+}
+
+// DescribeSessionRequest todo
+message DescribeSessionRequest {
+    string session_id = 1;
+    string domain = 2;
+    string account = 3;
+    bool login = 4;
+}
+
+// QuerySessionRequest todo
+message QuerySessionRequest {
+   infraboard.mcube.page.PageRequest page = 1 ;
+    string account = 2;
+    string login_ip = 3;
+    string login_city = 4;
+    string application_id = 5;
+    infraboard.keyauth.token.GrantType grant_type = 6;
+    int64 start_login_time = 7;
+    int64 end_login_time = 8;
+    string domain = 9;
+}
+
+// QueryUserLastSessionRequest todo
+message QueryUserLastSessionRequest {
+    // @gotags: validate:"required"
+    string account = 2;
+}

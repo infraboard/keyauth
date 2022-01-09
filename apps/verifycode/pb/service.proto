@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package infraboard.keyauth.verifycode;
+option go_package = "github.com/infraboard/keyauth/apps/verifycode";
+
+import "apps/verifycode/pb/request.proto";
+import "apps/verifycode/pb/verifycode.proto";
+
+// Service 验证码服务
+service Service {
+	rpc IssueCode(IssueCodeRequest) returns(IssueCodeResponse);
+	rpc CheckCode(CheckCodeRequest) returns(Code);
+}

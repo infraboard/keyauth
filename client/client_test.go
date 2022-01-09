@@ -6,8 +6,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/infraboard/keyauth/app/domain"
-	"github.com/infraboard/keyauth/app/user"
+	"github.com/infraboard/keyauth/apps/domain"
+	"github.com/infraboard/keyauth/apps/user"
 	"github.com/infraboard/keyauth/client"
 )
 
@@ -17,7 +17,6 @@ func Test_Client(t *testing.T) {
 	conf.SetClientCredentials("nHerVBlrKIDurviMGUXVOQHC", "l5FB38Mw2JmxHgGm8rUcich2ZrGRVrl7")
 	c, err := client.NewClient(conf)
 
-	
 	if should.NoError(err) {
 		req := user.NewQueryAccountRequest()
 		req.Domain = domain.AdminDomainName

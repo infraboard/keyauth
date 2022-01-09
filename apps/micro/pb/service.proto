@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package infraboard.keyauth.micro;
+option go_package = "github.com/infraboard/keyauth/apps/micro";
+
+import "apps/micro/pb/request.proto";
+import "apps/micro/pb/micro.proto";
+
+// Service 服务
+service Service {
+	rpc ValidateClientCredential(ValidateClientCredentialRequest) returns(Micro);
+	rpc CreateService(CreateMicroRequest) returns(Micro);
+	rpc QueryService(QueryMicroRequest) returns(Set);
+	rpc DescribeService(DescribeMicroRequest) returns(Micro);
+	rpc DeleteService(DeleteMicroRequest) returns(Micro);
+	rpc RefreshServiceClientSecret(DescribeMicroRequest) returns(Micro);
+}

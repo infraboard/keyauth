@@ -50,11 +50,10 @@ push: # push git to multi repo
 	@git push -u origin
 
 gen: # Init Service
-	@protoc -I=. --go_out=. --go_opt=module=${PKG} --go-grpc_out=. --go-grpc_opt=module=${PKG} common/types/*.proto
+	@protoc -I=. -I=/usr/local/include --go_out=. --go_opt=module=${PKG} --go-grpc_out=. --go-grpc_opt=module=${PKG} common/types/*.proto
+	@protoc -I=. -I=/usr/local/include --go_out=. --go_opt=module=${PKG} --go-grpc_out=. --go-grpc_opt=module=${PKG} apps/*/pb/*.proto
 	@protoc-go-inject-tag -input=common/types/*.pb.go
-	@protoc -I=. --go_out=. --go_opt=module=${PKG} --go-grpc_out=. --go-grpc_opt=module=${PKG} app/*/pb/*.proto
-	@protoc-go-inject-tag -input=app/*/*.pb.go
-	@go generate ./...
+	@protoc-go-inject-tag -input=apps/*/*.pb.go
 
 install: dep# Install depence go package
 	@go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest

@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package infraboard.keyauth.user;
+option go_package = "github.com/infraboard/keyauth/apps/user";
+
+import "apps/user/pb/request.proto";
+import "apps/user/pb/user.proto";
+
+// Service 用户服务
+service Service {
+	// 查询用户
+	rpc QueryAccount(QueryAccountRequest) returns(Set);
+	// 获取账号Profile
+	rpc DescribeAccount(DescribeAccountRequest) returns(User);
+	// 创建用户
+	rpc CreateAccount(CreateAccountRequest) returns(User);
+	// 警用账号
+	rpc BlockAccount(BlockAccountRequest) returns(User);
+	// 警用账号
+	rpc UnBlockAccount(UnBlockAccountRequest) returns(User);
+	// DeleteAccount 删除用户
+	rpc DeleteAccount(DeleteAccountRequest) returns(User);
+	// 更新用户
+    rpc UpdateAccountProfile(UpdateAccountRequest) returns(User);
+    // 修改用户密码
+	rpc UpdateAccountPassword(UpdatePasswordRequest) returns(Password);
+	// GeneratePassword 生成符合检测强度的随机密码
+	rpc GeneratePassword(GeneratePasswordRequest) returns(GeneratePasswordResponse);
+}

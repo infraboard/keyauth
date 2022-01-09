@@ -13,8 +13,8 @@ import (
 	"github.com/infraboard/mcube/logger/zap"
 	httpb "github.com/infraboard/mcube/pb/http"
 
-	"github.com/infraboard/keyauth/app/token"
-	"github.com/infraboard/keyauth/app/user/types"
+	"github.com/infraboard/keyauth/apps/token"
+	"github.com/infraboard/keyauth/apps/user/types"
 	"github.com/infraboard/keyauth/common/header"
 )
 

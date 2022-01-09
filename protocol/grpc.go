@@ -9,7 +9,7 @@ import (
 	"github.com/infraboard/mcube/logger/zap"
 	"google.golang.org/grpc"
 
-	"github.com/infraboard/keyauth/app/micro"
+	"github.com/infraboard/keyauth/apps/micro"
 	auther "github.com/infraboard/keyauth/common/interceptor/grpc"
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/mcube/grpc/middleware/recovery"

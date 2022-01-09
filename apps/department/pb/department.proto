@@ -1,0 +1,104 @@
+syntax = "proto3";
+
+package infraboard.keyauth.department;
+option go_package = "github.com/infraboard/keyauth/apps/department";
+
+import "apps/department/pb/enum.proto";
+import "apps/role/pb/role.proto";
+
+// Department user's department
+message Department {
+    // 部门ID
+    // @gotags: bson:"_id" json:"id"
+    string id = 1;
+    // 路径
+    // @gotags: bson:"parent_path" json:"parent_path"
+    string parent_path = 2;
+    // 部门编号
+    // @gotags: bson:"number" json:"number"
+    uint64 number = 3;
+    // 部门创建时间
+    // @gotags: bson:"create_at" json:"create_at"
+    int64 create_at = 4;
+    // 更新时间
+    // @gotags: bson:"update_at" json:"update_at"
+    int64 update_at = 5;
+    // 创建人
+    // @gotags: bson:"create_by" json:"create_by"
+    string create_by = 6;
+    // 部门所属域
+    // @gotags: bson:"domain" json:"domain"
+    string domain = 7;
+    // 第几级部门, 由层数决定
+    // @gotags: bson:"grade" json:"grade"
+    int32 grade = 8;
+    // 子部门数量
+    // @gotags: bson:"-" json:"sub_count"
+    int64 sub_count = 9;
+    // 部门所有用户数量
+    // @gotags: bson:"-" json:"user_count"
+    int64 user_count = 10;
+    // 部门名称
+    // @gotags: bson:"name" json:"name"
+    string name = 11;
+    // 显示名称
+    // @gotags: bson:"display_name" json:"display_name"
+    string display_name = 12;
+    // 上级部门ID
+    // @gotags: bson:"parent_id" json:"parent_id"
+    string parent_id = 13;
+    // 部门管理者account
+    // @gotags: bson:"manager" json:"manager"
+    string manager = 14;
+    // 部门成员默认角色
+    // @gotags: bson:"default_role_id" json:"default_role_id"
+    string default_role_id = 15;
+    // 默认角色
+    // @gotags: bson:"-" json:"default_role,omitempty"
+    role.Role default_role = 16; 
+}
+
+message Set {
+    // @gotags: bson:"total" json:"total"
+    int64 total = 1;
+    // @gotags: bson:"items" json:"items"
+    repeated Department items = 2;
+}
+
+// ApplicationForm todo
+message ApplicationForm {
+    // 申请单ID
+    // @gotags: bson:"_id" json:"id"
+    string id = 1;
+    // 域
+    // @gotags: bson:"domain" json:"domain"
+    string domain = 2;
+    // 申请人
+    // @gotags: bson:"creater" json:"creater"
+    string creater = 3;
+    // 创建时间
+    // @gotags: bson:"create_at" json:"create_at"
+    int64 create_at =4;
+    // 更新时间
+    // @gotags: bson:"update_at" json:"update_at"
+    int64 update_at = 5;
+    // 申请人
+    // @gotags: bson:"account" json:"account"
+    string account = 6;
+    // 申请加入的部门
+    // @gotags: bson:"department_id" json:"department_id"
+    string department_id = 7;
+    // 留言
+    // @gotags: bson:"message" json:"message"
+    string message = 8; 
+    // 状态
+    // @gotags: bson:"status" json:"status"
+    ApplicationFormStatus status = 9;
+}
+
+message ApplicationFormSet {
+    // @gotags: bson:"total" json:"total"
+    int64 total = 1;
+    // @gotags: bson:"items" json:"items"
+    repeated ApplicationForm items = 2;
+}

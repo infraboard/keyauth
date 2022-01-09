@@ -1,0 +1,129 @@
+syntax = "proto3";
+
+package infraboard.keyauth.domain;
+option go_package = "github.com/infraboard/keyauth/apps/domain";
+
+import "apps/domain/pb/setting.proto";
+import "common/types/types.proto";
+import "github.com/infraboard/mcube/pb/page/page.proto";
+
+message CreateDomainRequest  {
+    // 公司或者组织名称
+    // @gotags: bson:"name" json:"name"
+    string name = 1;
+    // Profile 需要修改内容
+    // @gotags: bson:"profile" json:"profile"
+    DomainProfile profile = 2;
+    // 归属人
+    // @gotags: bson:"owner" json:"owner"
+    string owner = 3;
+}
+
+message DomainProfile {
+    // 全称
+    // @gotags: bson:"display_name" json:"display_name"
+    string display_name = 5;
+    // 公司LOGO图片的URL
+    // @gotags: bson:"logo_path" json:"logo_path"
+    string logo_path = 6;
+    // 描述
+    // @gotags: bson:"description" json:"description"
+    string description = 7;
+    // 电话
+    // @gotags: bson:"phone" json:"phone"
+    string phone = 9;
+    // 规模: 50人以下, 50~100, ...
+    // @gotags: bson:"size" json:"size"
+    string size = 10;
+    // 位置: 指城市, 比如 中国,四川,成都
+    // @gotags: bson:"location" json:"location"
+    string location = 11;
+    // 地址: 比如环球中心 10F 1034
+    // @gotags: bson:"address" json:"address"
+    string address = 12;
+    // 所属行业: 比如, 互联网
+    // @gotags: bson:"industry" json:"industry"
+    string industry = 13;
+    // 传真
+    // @gotags: bson:"fax" json:"fax"
+    string fax = 14;
+    // 联系人
+    // @gotags: bson:"contack" json:"contack"
+    Contact contack = 15;    
+}
+
+message UpdateDomainInfoRequest  {
+    // 更新模式
+    // @gotags: bson:"update_mode" json:"update_mode"
+    infraboard.keyauth.types.UpdateMode update_mode = 1;
+    // 公司或者组织名称
+    // @gotags: bson:"name" json:"name"
+    string name = 2;
+    // CreateDomainRequest 需要修改内容
+    // @gotags: bson:"profile" json:"profile"
+    DomainProfile profile = 3;
+    // 修改者
+    // @gotags: bson:"account" json:"account"
+    string account = 4;
+}
+
+// DescribeDomainRequest 查询domain详情请求
+message DescribeDomainRequest {
+     // @gotags: bson:"name" json:"name"
+    string name = 1;
+}
+
+// DeleteDomainRequest 删除域
+message DeleteDomainRequest {
+    // @gotags: bson:"name" json:"name"
+    string name = 1;
+}
+
+// QueryDomainRequest 请求
+message QueryDomainRequest {
+    // @gotags: json:"page"
+    infraboard.mcube.page.PageRequest page = 1;
+    // @gotags: json:"name"
+    string name = 2;
+    // @gotags: json:"owner"
+    string owner = 3;
+}
+
+// UpdateDomainSecurityRequest todo
+message UpdateDomainSecurityRequest {
+    // 更新模式
+    // @gotags: bson:"update_mode" json:"update_mode"
+    infraboard.keyauth.types.UpdateMode update_mode = 1;
+    // 名称
+    // @gotags: bson:"name" json:"name"
+    string name = 2;
+    // SecuritySetting 域安全设置
+    // @gotags: bson:"security_setting" json:"security_setting"
+    SecuritySetting security_setting = 3;    
+}
+
+// SecuritySetting 安全策略
+message SecuritySetting {
+    // 密码安全
+    // @gotags: bson:"password_security" json:"password_security"
+    PasswordSecurity password_security = 1;
+    // 登录安全
+    // @gotags: bson:"login_security" json:"login_security"
+    LoginSecurity login_security = 2;      
+}
+
+// 联系人
+message Contact {
+    // 姓名
+    // @gotags: bson:"name" json:"name"
+    string name = 1;
+    // 职位
+    // @gotags: bson:"title" json:"title"
+    string title = 2;
+    // 电话
+    // @gotags: bson:"phone" json:"phone"
+    string phone = 3;
+    // 邮箱
+     // @gotags: bson:"email" json:"email"
+    string email = 4;
+}

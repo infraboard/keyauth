@@ -11,16 +11,16 @@ import (
 	"github.com/infraboard/mcube/http/label"
 	"github.com/spf13/cobra"
 
-	"github.com/infraboard/keyauth/app/application"
-	"github.com/infraboard/keyauth/app/department"
-	"github.com/infraboard/keyauth/app/domain"
-	"github.com/infraboard/keyauth/app/micro"
-	"github.com/infraboard/keyauth/app/namespace"
-	"github.com/infraboard/keyauth/app/role"
-	"github.com/infraboard/keyauth/app/system"
-	"github.com/infraboard/keyauth/app/token"
-	"github.com/infraboard/keyauth/app/user"
-	"github.com/infraboard/keyauth/app/user/types"
+	"github.com/infraboard/keyauth/apps/application"
+	"github.com/infraboard/keyauth/apps/department"
+	"github.com/infraboard/keyauth/apps/domain"
+	"github.com/infraboard/keyauth/apps/micro"
+	"github.com/infraboard/keyauth/apps/namespace"
+	"github.com/infraboard/keyauth/apps/role"
+	"github.com/infraboard/keyauth/apps/system"
+	"github.com/infraboard/keyauth/apps/token"
+	"github.com/infraboard/keyauth/apps/user"
+	"github.com/infraboard/keyauth/apps/user/types"
 )
 
 // InitCmd 初始化系统

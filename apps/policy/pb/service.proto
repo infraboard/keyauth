@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package infraboard.keyauth.policy;
+option go_package = "github.com/infraboard/keyauth/apps/policy";
+
+import "apps/policy/pb/request.proto";
+import "apps/policy/pb/policy.proto";
+
+// Service 策略服务
+service Service {
+	rpc CreatePolicy(CreatePolicyRequest) returns(Policy);
+	rpc QueryPolicy(QueryPolicyRequest) returns(Set);
+	rpc DescribePolicy(DescribePolicyRequest) returns(Policy);
+	rpc DeletePolicy(DeletePolicyRequest) returns(Policy);
+}

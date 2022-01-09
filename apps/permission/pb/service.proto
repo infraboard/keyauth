@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package infraboard.keyauth.permission;
+option go_package = "github.com/infraboard/keyauth/apps/permission";
+
+import "apps/role/pb/role.proto";
+import "apps/permission/pb/request.proto";
+
+// Service 权限查询API
+service Service {
+	rpc QueryPermission(QueryPermissionRequest) returns(role.PermissionSet);
+	rpc QueryRole(QueryRoleRequest) returns(role.Set);
+	rpc CheckPermission(CheckPermissionRequest) returns(role.Permission);
+}

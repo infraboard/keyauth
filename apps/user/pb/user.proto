@@ -1,0 +1,105 @@
+syntax = "proto3";
+
+package infraboard.keyauth.user;
+option go_package = "github.com/infraboard/keyauth/apps/user";
+
+import "apps/department/pb/department.proto";
+import "apps/user/pb/types.proto";
+import "apps/user/pb/request.proto";
+import "apps/user/pb/enum.proto";
+
+message Password {
+    // hash过后的密码
+    // @gotags: bson:"password" json:"password,omitempty"
+    string password = 1;
+    // 密码创建时间
+    // @gotags: bson:"create_at" json:"create_at,omitempty"
+    int64 create_at = 2;
+    // 密码更新时间
+    // @gotags: bson:"update_at" json:"update_at,omitempty"
+    int64 update_at = 3;
+    // 密码需要被重置
+    // @gotags: bson:"need_reset" json:"need_reset"
+    bool need_reset = 4;
+    // 需要重置的原因
+    // @gotags: bson:"reset_reason" json:"reset_reason"
+    string reset_reason = 5;
+    // 历史密码
+    // @gotags: bson:"history" json:"history,omitempty"
+    repeated string history = 6;
+    // 是否过期
+    // @gotags: bson:"-" json:"is_expired"
+    bool is_expired = 7;
+}
+
+// Status 用户状态
+message Status {
+    // 是否冻结
+    // @gotags: bson:"locked" json:"locked"
+    bool locked = 1;
+    // 冻结时间
+    // @gotags: bson:"locked_time" json:"locked_time,omitempty"
+    int64 locked_time = 2;
+    // 冻结原因
+    // @gotags: bson:"locked_reson" json:"locked_reson,omitempty"
+    string locked_reson = 3;
+    // 解冻时间
+    // @gotags: bson:"unlock_time" json:"unlock_time,omitempty"
+    int64 unlock_time = 4;  
+}
+
+// User info
+message User {
+    // 用户所属部门
+    // @gotags: bson:"department_id" json:"department_id" validate:"lte=200"
+    string department_id = 1;
+    // 用户账号名称
+    // @gotags: bson:"_id" json:"account" validate:"required,lte=60"
+    string account = 2;
+    // 创建方式
+    // @gotags: bson:"create_type" json:"create_type"
+    CreateType create_type = 3;
+    // 用户创建的时间
+    // @gotags: bson:"create_at" json:"create_at,omitempty"
+    int64 create_at = 4;
+    // 修改时间
+    // @gotags: bson:"update_at" json:"update_at,omitempty"
+    int64 update_at = 5;
+    // 如果是子账号和服务账号 都需要继承主用户Domain
+    // @gotags: bson:"domain" json:"domain,omitempty"
+    string domain = 6;
+    // 是否是主账号
+    // @gotags: bson:"type"  json:"type"
+    UserType type = 7;
+    // 数据
+    // @gotags: bson:"profile" json:"profile"
+    Profile profile = 8;
+    // 用户的角色(当携带Namesapce查询时会有)
+    // @gotags: bson:"-" json:"roles,omitempty"
+    repeated string roles = 9;
+    // 用户多久未登录时(天), 冻结改用户, 防止僵尸用户的账号被利用
+    // @gotags: bson:"expires_days" json:"expires_days"
+    int32 expires_days = 10;
+    // 用户描述
+    // @gotags: json:"description"
+    string description = 11;
+    // 用户是否初始化
+    // @gotags: bson:"is_initialized" json:"is_initialized"
+    bool is_initialized = 12; 
+    // 密码相关信息
+    // @gotags: bson:"password" json:"password"
+    Password hashed_password = 13;
+    // 用户状态
+    // @gotags: bson:"status" json:"status"
+    Status status = 14;
+    // 部门
+    // @gotags: bson:"-" json:"department,omitempty"
+    department.Department department = 15;    
+}
+
+message Set {
+    // @gotags: bson:"total" json:"total"
+    int64 total = 1;
+    // @gotags: bson:"items" json:"items"
+    repeated User items = 2;
+}

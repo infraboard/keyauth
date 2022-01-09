@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package infraboard.keyauth.namespace;
+option go_package = "github.com/infraboard/keyauth/apps/namespace";
+
+import "github.com/infraboard/mcube/pb/page/page.proto";
+                               
+// CreateNamespaceRequest 创建项目请求
+message CreateNamespaceRequest {
+    // 所属部门
+    // @gotags: json:"department_id" validate:"required,lte=80"
+    string department_id = 1;
+    // 项目名称
+    // @gotags: json:"name" validate:"required,lte=80"
+    string name = 2;
+    // 项目描述图片
+    // @gotags: json:"picture,omitempty"
+    string picture =3;
+    // 项目所有者, PMO
+    // @gotags: json:"owner,omitempty"
+    string owner = 5;
+    // 项目描述
+    // @gotags: json:"description,omitempty"
+    string description = 6;
+    // @gotags: json:"domain"
+    string domain = 7;
+    // 创建者
+    // @gotags: json:"create_by"
+    string create_by = 8;
+}
+
+// QueryNamespaceRequest 查询应用列表
+message QueryNamespaceRequest {
+    // 分页请求
+    // @gotags: json:"page"
+   infraboard.mcube.page.PageRequest page = 1;
+    // 空间的名称
+    // @gotags: json:"name"
+    string name = 5;
+    // 该用户加入的空间
+    // @gotags: json:"account"
+    string account = 6;
+    // 该部门下的空间
+    // @gotags: json:"department_id"
+    string department_id = 2;
+    // 是否返回子部门的信息
+    // @gotags: json:"with_sub_department"
+    bool with_sub_department = 3;
+    // 是否返回部门的信息
+    // @gotags: json:"with_department"
+    bool with_department = 4;
+    // @gotags: json:"domain"
+    string domain = 7;
+}
+
+// DescriptNamespaceRequest 查询应用详情
+message DescriptNamespaceRequest {
+    // @gotags: json:"id"
+    string id = 1;
+    // @gotags: json:"with_department"
+    bool with_department = 2;
+}
+
+// DeleteNamespaceRequest todo
+message DeleteNamespaceRequest {
+    // @gotags: json:"id"
+    string id = 1;
+    // @gotags: json:"domain"
+    string domain = 2;
+}

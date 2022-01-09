@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/infraboard/keyauth/app/domain"
-	"github.com/infraboard/keyauth/app/user"
+	"github.com/infraboard/keyauth/apps/domain"
+	"github.com/infraboard/keyauth/apps/user"
 	"github.com/infraboard/keyauth/client"
 )
 

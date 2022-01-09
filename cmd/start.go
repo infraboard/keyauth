@@ -24,7 +24,7 @@ import (
 	"github.com/infraboard/keyauth/protocol"
 
 	// 加载所有服务
-	_ "github.com/infraboard/keyauth/app/all"
+	_ "github.com/infraboard/keyauth/apps/all"
 )
 
 var (
