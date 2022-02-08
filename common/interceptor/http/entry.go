@@ -7,8 +7,8 @@ import (
 	"os"
 
 	"github.com/infraboard/mcube/bus"
-	"github.com/infraboard/mcube/bus/event"
 	"github.com/infraboard/mcube/http/request"
+	"github.com/infraboard/mcube/pb/event"
 	httpb "github.com/infraboard/mcube/pb/http"
 	"github.com/infraboard/mcube/types/ftime"
 
