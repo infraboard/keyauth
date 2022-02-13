@@ -174,6 +174,7 @@ func (p *Password) CheckPassword(password string) error {
 	if err != nil {
 		return exception.NewUnauthorized("user or password not connrect")
 	}
+
 	return nil
 }
 

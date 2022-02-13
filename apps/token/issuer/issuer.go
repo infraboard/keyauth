@@ -114,19 +114,23 @@ func (i *issuer) IssueToken(ctx context.Context, req *token.IssueTokenRequest) (
 		return nil, err
 	}
 
+	// 校验应用端的合法性
 	app, err := i.CheckClient(ctx, req.ClientId, req.ClientSecret)
 	if err != nil {
 		return nil, exception.NewUnauthorized(err.Error())
 	}
 
+	// 校验用户的身份
 	switch req.GrantType {
 	case token.GrantType_PASSWORD:
+		// 判断用户的密码是否正确
 		u, checkErr := i.checkUserPass(ctx, req.Username, req.Password)
 		if checkErr != nil {
 			i.log.Debugf("issue password token error, %s", checkErr)
 			return nil, exception.NewUnauthorized("user or password not connrect")
 		}
 
+		// 校验用的密码是否过期
 		if err := i.checkUserPassExpired(ctx, u); err != nil {
 			i.log.Debugf("issue password token error, %s", err)
 			if v, ok := err.(exception.APIException); ok {
@@ -135,6 +139,7 @@ func (i *issuer) IssueToken(ctx context.Context, req *token.IssueTokenRequest) (
 			return nil, err
 		}
 
+		// 颁发给用户一个token
 		tk := i.issueUserToken(app, u, token.GrantType_PASSWORD)
 		switch u.Type {
 		case types.UserType_SUPPER, types.UserType_PRIMARY:
@@ -167,7 +172,7 @@ func (i *issuer) IssueToken(ctx context.Context, req *token.IssueTokenRequest) (
 		newTK.Domain = tk.Domain
 		newTK.StartGrantType = tk.GetStartGrantType()
 		newTK.SessionId = tk.SessionId
-		newTK.Namespace = tk.Namespace
+		newTK.NamespaceId = tk.NamespaceId
 
 		revolkReq := token.NewRevolkTokenRequest(app.ClientId, app.ClientSecret)
 		revolkReq.AccessToken = req.AccessToken

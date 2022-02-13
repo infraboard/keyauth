@@ -62,8 +62,10 @@ message Token {
     GrantType grant_type = 15;
     // @gotags: bson:"type" json:"type"
     TokenType type = 16;
-    // @gotags: bson:"namespace" json:"namespace"
-    string namespace = 25;
+    // @gotags: bson:"namespace_id" json:"namespace_id"
+    string namespace_id = 25;
+    // @gotags: bson:"namespace_name" json:"namespace_name"
+    string namespace_name = 27;
     // @gotags: bson:"scope" json:"scope"
     string scope = 17;
     // @gotags: bson:"description" json:"description"

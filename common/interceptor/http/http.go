@@ -49,7 +49,7 @@ func (a *HTTPAuther) Auth(r *http.Request, entry httpb.Entry) (
 		}
 
 		// namesapce检查
-		if entry.RequiredNamespace && tk.Namespace == "" {
+		if entry.RequiredNamespace && tk.NamespaceId == "" {
 			return nil, exception.NewBadRequest("namespace required!")
 		}
 

@@ -68,7 +68,7 @@ func (a *HTTPAuther) Auth(r *http.Request, entry httpb.Entry) (
 		}
 
 		// namesapce检查
-		if entry.RequiredNamespace && tk.Namespace == "" {
+		if entry.RequiredNamespace && tk.NamespaceId == "" {
 			return nil, exception.NewBadRequest("namespace required!")
 		}
 
@@ -150,7 +150,7 @@ func (a *HTTPAuther) ValidatePermissionByPRBAC(ctx context.Context, tk *token.To
 
 	req := permission.NewCheckPermissionRequest()
 	req.Account = tk.Account
-	req.NamespaceId = tk.Namespace
+	req.NamespaceId = tk.NamespaceId
 	req.ServiceId = svr.Id
 	req.Path = e.UniquePath()
 	_, err = a.keyauth.Permission().CheckPermission(ctx, req)

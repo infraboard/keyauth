@@ -70,11 +70,19 @@ message Session {
     // 登出时间
     // @gotags: bson:"logout_at" json:"logout_at"
     int64 logout_at = 10;
-    // 应用的网站地址
+    // AT
     // @gotags: bson:"access_token" json:"access_token"
     string access_token = 11;
+    // 用户所在空间Id
+    // @gotags: bson:"namespace_id" json:"namespace_id"
+    string namespace_id = 14;
+    // 用户所在空间名称
+    // @gotags: bson:"namespace_name" json:"namespace_name"
+    string namespace_name = 15;
+    // UA信息
     // @gotags: bson:"user_agent" json:"user_agent"
     UserAgent user_agent = 12;
+    // 登录Ip的地域信息
     // @gotags: bson:"ip_info" json:"ip_info"
     IPInfo ip_info = 13;
 }

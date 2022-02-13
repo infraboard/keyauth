@@ -88,6 +88,7 @@ func (s *service) closeOldSession(ctx context.Context, tk *token.Token) {
 		return
 	}
 	sess.LogoutAt = ftime.Time(time.Unix(preTK.EndAt()/1000, 0)).Timestamp()
+	sess.NamespaceId = tk.NamespaceId
 
 	if err := s.updateSession(sess); err != nil {
 		s.log.Errorf("block session error, %s", err)

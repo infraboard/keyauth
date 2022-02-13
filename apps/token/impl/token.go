@@ -45,6 +45,16 @@ func (s *service) IssueToken(ctx context.Context, req *token.IssueTokenRequest) 
 			return nil, err
 		}
 		tk.SessionId = sess.Id
+		// 继承上次登录的Namespace
+		if tk.NamespaceId == "" {
+			tk.NamespaceId = sess.NamespaceId
+			tk.NamespaceName = sess.NamespaceName
+		}
+		// 如果还是没有设置, 使用默认空间
+		if tk.NamespaceId == "" {
+			s.setDefaultNamespace(ctx, tk)
+		}
+
 	}
 
 	// 保存入库
@@ -53,6 +63,25 @@ func (s *service) IssueToken(ctx context.Context, req *token.IssueTokenRequest) 
 	}
 
 	return tk, nil
+}
+
+func (s *service) setDefaultNamespace(ctx context.Context, tk *token.Token) error {
+	req := namespace.NewQueryNamespaceRequest(request.NewDefaultPageRequest())
+	req.Domain = tk.Domain
+	req.Name = namespace.DefaultNamesapceName
+	nset, err := s.ns.QueryNamespace(ctx, req)
+	if err != nil {
+		return err
+	}
+	if len(nset.Items) == 0 {
+		return fmt.Errorf("not default namespace")
+	}
+
+	ns := nset.Items[0]
+
+	tk.NamespaceId = ns.Id
+	tk.NamespaceName = ns.Name
+	return nil
 }
 
 func (s *service) loginBeforeCheck(ctx context.Context, req *token.IssueTokenRequest) error {
@@ -203,7 +232,7 @@ func (s *service) ChangeNamespace(ctx context.Context, req *token.ChangeNamespac
 		return nil, exception.NewPermissionDeny("your has no permission to access namespace %s", req.Namespace)
 	}
 
-	tk.Namespace = req.Namespace
+	tk.NamespaceId = req.Namespace
 	if err := s.updateToken(tk); err != nil {
 		return nil, err
 	}
@@ -232,7 +261,6 @@ func (s *service) DescribeToken(ctx context.Context, req *token.DescribeTokenReq
 		s.log.Warnf("user policy large than max policy count %d, total: %d", policy.MaxUserPolicy, ps.Total)
 	}
 	tk.AvailableNamespace = ps.GetNamespace()
-
 	return tk, nil
 }
 

@@ -6,4 +6,5 @@ import (
 	_ "github.com/infraboard/keyauth/apps/provider/impl"
 	_ "github.com/infraboard/keyauth/apps/storage/impl"
 	_ "github.com/infraboard/keyauth/apps/system/impl"
+	_ "github.com/infraboard/keyauth/apps/wxwork/impl"
 )
