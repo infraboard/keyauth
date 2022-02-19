@@ -115,14 +115,15 @@ func (h *handler) ListRolePermission(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, d)
-	return
 }
 
 // CreateApplication 创建自定义角色
 func (h *handler) AddPermissionToRole(w http.ResponseWriter, r *http.Request) {
-	rctx := context.GetContext(r)
+	ctx := context.GetContext(r)
+	tk := ctx.AuthInfo.(*token.Token)
 	req := role.NewAddPermissionToRoleRequest()
-	req.RoleId = rctx.PS.ByName("id")
+	req.RoleId = ctx.PS.ByName("id")
+	req.CreateBy = tk.Account
 
 	if err := request.GetDataFromRequest(r, req); err != nil {
 		response.Failed(w, err)

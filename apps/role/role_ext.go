@@ -5,6 +5,7 @@ import (
 	"hash/fnv"
 	"strings"
 
+	"github.com/infraboard/mcube/logger/zap"
 	"github.com/infraboard/mcube/types/ftime"
 	"github.com/rs/xid"
 
@@ -47,10 +48,17 @@ func (r *Role) HasPermission(ep *endpoint.Endpoint) (*Permission, bool, error) {
 		rok, lok bool
 	)
 	for i := range r.Permissions {
-		rok = r.Permissions[i].MatchResource(ep.ServiceId, ep.Entry.Resource)
-		lok = r.Permissions[i].MatchLabel(ep.Entry.Labels)
+		perm := r.Permissions[i]
+
+		rok = perm.MatchResource(ep.ServiceId, ep.Entry.Resource)
+		lok = perm.MatchLabel(ep.Entry.Labels)
+		zap.L().Debugf("resource match: service_id: %s[target: %s] resource: %s[target: %s], result: %v",
+			ep.ServiceId, perm.ServiceId, ep.Entry.Resource, perm.ResourceName, rok)
+		zap.L().Debugf("label match: %v from [key: %v, value: %v, result: %v",
+			ep.Entry.Labels, perm.LabelKey, perm.LabelValues, lok)
 		if rok && lok {
-			return r.Permissions[i], true, nil
+
+			return perm, true, nil
 		}
 	}
 	return nil, false, nil
