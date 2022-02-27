@@ -6,18 +6,18 @@ import (
 	"net/http"
 	"sync"
 
+	"github.com/infraboard/mcube/exception"
+	"github.com/infraboard/mcube/logger"
+	"github.com/infraboard/mcube/logger/zap"
+	httpb "github.com/infraboard/mcube/pb/http"
+	"github.com/rs/xid"
+
 	"github.com/infraboard/keyauth/apps/micro"
 	"github.com/infraboard/keyauth/apps/permission"
 	"github.com/infraboard/keyauth/apps/token"
 	"github.com/infraboard/keyauth/apps/user/types"
 	"github.com/infraboard/keyauth/client"
 	"github.com/infraboard/keyauth/common/header"
-	"github.com/infraboard/mcube/exception"
-	httpctx "github.com/infraboard/mcube/http/context"
-	"github.com/infraboard/mcube/logger"
-	"github.com/infraboard/mcube/logger/zap"
-	httpb "github.com/infraboard/mcube/pb/http"
-	"github.com/rs/xid"
 )
 
 type PermissionCheckMode int
@@ -177,19 +177,19 @@ func (a *HTTPAuther) GetClientService(ctx context.Context) (*micro.Micro, error)
 	return ins, nil
 }
 
-func (a *HTTPAuther) ResponseHook(w http.ResponseWriter, r *http.Request, entry httpb.Entry) {
-	ctx := httpctx.GetContext(r)
-	tk := ctx.AuthInfo.(*token.Token)
+// func (a *HTTPAuther) ResponseHook(w http.ResponseWriter, r *http.Request, entry httpb.Entry) {
+// 	ctx := httpctx.GetContext(r)
+// 	tk := ctx.AuthInfo.(*token.Token)
 
-	// 审计日志
-	od := newOperateEventData(&entry, tk)
-	hd := newEventHeaderFromHTTP(r)
-	if entry.AuditLog {
-		if err := SendOperateEvent(r.URL.String(), nil, hd, od); err != nil {
-			a.l.Errorf("send operate event error, %s", err)
-		}
-	}
-}
+// 	// 审计日志
+// 	od := newOperateEventData(&entry, tk)
+// 	hd := newEventHeaderFromHTTP(r)
+// 	if entry.AuditLog {
+// 		if err := SendOperateEvent(r.URL.String(), nil, hd, od); err != nil {
+// 			a.l.Errorf("send operate event error, %s", err)
+// 		}
+// 	}
+// }
 
 // SetLogger todo
 func (a *HTTPAuther) SetLogger(l logger.Logger) {

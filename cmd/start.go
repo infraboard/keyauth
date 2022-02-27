@@ -10,9 +10,6 @@ import (
 	"syscall"
 
 	"github.com/infraboard/mcube/app"
-	"github.com/infraboard/mcube/bus"
-	"github.com/infraboard/mcube/bus/broker/kafka"
-	"github.com/infraboard/mcube/bus/broker/nats"
 	"github.com/infraboard/mcube/cache"
 	"github.com/infraboard/mcube/cache/memory"
 	"github.com/infraboard/mcube/cache/redis"
@@ -85,16 +82,16 @@ func newService(cnf *conf.Config) (*service, error) {
 	grpc := protocol.NewGRPCService()
 
 	// 初始化总线
-	bm, err := newBus()
-	if err != nil {
-		log.Errorf("new bus error, %s", err)
-	}
+	// bm, err := newBus()
+	// if err != nil {
+	// 	log.Errorf("new bus error, %s", err)
+	// }
 
 	svr := &service{
 		http: http,
 		grpc: grpc,
-		bm:   bm,
-		log:  log,
+		// bm:   bm,
+		log: log,
 	}
 
 	return svr, nil
@@ -103,18 +100,18 @@ func newService(cnf *conf.Config) (*service, error) {
 type service struct {
 	http *protocol.HTTPService
 	grpc *protocol.GRPCService
-	bm   bus.Manager
+	// bm   bus.Manager
 
 	log  logger.Logger
 	stop context.CancelFunc
 }
 
 func (s *service) start() error {
-	if s.bm != nil {
-		if err := s.bm.Connect(); err != nil {
-			s.log.Errorf("connect bus error, %s", err)
-		}
-	}
+	// if s.bm != nil {
+	// 	if err := s.bm.Connect(); err != nil {
+	// 		s.log.Errorf("connect bus error, %s", err)
+	// 	}
+	// }
 
 	s.log.Infof("loaded grpc app: %s", app.LoadedGrpcApp())
 	s.log.Infof("loaded http app: %s", app.LoadedHttpApp())
@@ -221,28 +218,28 @@ func loadCache() error {
 	return nil
 }
 
-func newBus() (bus.Manager, error) {
-	c := conf.C()
-	if c.Nats != nil {
-		ns, err := nats.NewBroker(c.Nats)
-		if err != nil {
-			return nil, err
-		}
-		bus.SetPublisher(ns)
-		return ns, nil
-	}
+// func newBus() (bus.Manager, error) {
+// 	c := conf.C()
+// 	if c.Nats != nil {
+// 		ns, err := nats.NewBroker(c.Nats)
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 		bus.SetPublisher(ns)
+// 		return ns, nil
+// 	}
 
-	if c.Kafka != nil {
-		ks, err := kafka.NewPublisher(c.Kafka)
-		if err != nil {
-			return nil, err
-		}
-		bus.SetPublisher(ks)
-		return ks, nil
-	}
+// 	if c.Kafka != nil {
+// 		ks, err := kafka.NewPublisher(c.Kafka)
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 		bus.SetPublisher(ks)
+// 		return ks, nil
+// 	}
 
-	return nil, fmt.Errorf("bus not config, nats or kafka required")
-}
+// 	return nil, fmt.Errorf("bus not config, nats or kafka required")
+// }
 
 func (s *service) waitSign(sign chan os.Signal) {
 	for {

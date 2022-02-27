@@ -1,76 +1,60 @@
 package auther
 
-import (
-	"encoding/json"
-	"fmt"
-	"net/http"
-	"os"
+// func SendOperateEvent(req, resp interface{}, hd *event.Header, od *event.OperateEventData) error {
+// 	if od == nil {
+// 		return nil
+// 	}
 
-	"github.com/infraboard/mcube/bus"
-	"github.com/infraboard/mcube/http/request"
-	"github.com/infraboard/mcube/pb/event"
-	httpb "github.com/infraboard/mcube/pb/http"
-	"github.com/infraboard/mcube/types/ftime"
+// 	reqd, err := json.Marshal(req)
+// 	if err != nil {
+// 		return fmt.Errorf("marshal req for event error, %s", err)
+// 	}
 
-	"github.com/infraboard/keyauth/apps/token"
-	"github.com/infraboard/keyauth/version"
-)
+// 	respd, err := json.Marshal(resp)
+// 	if err != nil {
+// 		return fmt.Errorf("marshal resp for event error, %s", err)
+// 	}
 
-func SendOperateEvent(req, resp interface{}, hd *event.Header, od *event.OperateEventData) error {
-	if od == nil {
-		return nil
-	}
+// 	od.Request = string(reqd)
+// 	od.Response = string(respd)
+// 	od.Cost = ftime.Now().Timestamp() - hd.Time
+// 	oe, err := event.NewProtoOperateEvent(od)
+// 	if err != nil {
+// 		return fmt.Errorf("new operate event error, %s", err)
+// 	}
+// 	oe.Header = hd
 
-	reqd, err := json.Marshal(req)
-	if err != nil {
-		return fmt.Errorf("marshal req for event error, %s", err)
-	}
+// 	if err := bus.Pub(oe); err != nil {
+// 		return fmt.Errorf("pub audit log error, %s", err)
+// 	}
 
-	respd, err := json.Marshal(resp)
-	if err != nil {
-		return fmt.Errorf("marshal resp for event error, %s", err)
-	}
+// 	return nil
+// }
 
-	od.Request = string(reqd)
-	od.Response = string(respd)
-	od.Cost = ftime.Now().Timestamp() - hd.Time
-	oe, err := event.NewProtoOperateEvent(od)
-	if err != nil {
-		return fmt.Errorf("new operate event error, %s", err)
-	}
-	oe.Header = hd
+// func newOperateEventData(e *httpb.Entry, tk *token.Token) *event.OperateEventData {
+// 	od := &event.OperateEventData{
+// 		Action:       e.GetLableValue("action"),
+// 		FeaturePath:  e.Path,
+// 		ResourceType: e.Resource,
+// 		ServiceName:  version.ServiceName,
+// 	}
 
-	if err := bus.Pub(oe); err != nil {
-		return fmt.Errorf("pub audit log error, %s", err)
-	}
+// 	if tk != nil {
+// 		// 补充审计的用户信息
+// 		od.Account = tk.Account
+// 		od.UserDomain = tk.Domain
+// 		od.Session = tk.SessionId
+// 		od.UserType = tk.UserType.String()
+// 	}
+// 	return od
+// }
 
-	return nil
-}
-
-func newOperateEventData(e *httpb.Entry, tk *token.Token) *event.OperateEventData {
-	od := &event.OperateEventData{
-		Action:       e.GetLableValue("action"),
-		FeaturePath:  e.Path,
-		ResourceType: e.Resource,
-		ServiceName:  version.ServiceName,
-	}
-
-	if tk != nil {
-		// 补充审计的用户信息
-		od.Account = tk.Account
-		od.UserDomain = tk.Domain
-		od.Session = tk.SessionId
-		od.UserType = tk.UserType.String()
-	}
-	return od
-}
-
-func newEventHeaderFromHTTP(r *http.Request) *event.Header {
-	hd := event.NewHeader()
-	hd.IpAddress = request.GetRemoteIP(r)
-	hd.UserAgent = r.UserAgent()
-	hd.RequestId = r.Header.Get("RequestIdHeader")
-	hd.Source = version.ServiceName
-	hd.Meta["host"], _ = os.Hostname()
-	return hd
-}
+// func newEventHeaderFromHTTP(r *http.Request) *event.Header {
+// 	hd := event.NewHeader()
+// 	hd.IpAddress = request.GetRemoteIP(r)
+// 	hd.UserAgent = r.UserAgent()
+// 	hd.RequestId = r.Header.Get("RequestIdHeader")
+// 	hd.Source = version.ServiceName
+// 	hd.Meta["host"], _ = os.Hostname()
+// 	return hd
+// }
