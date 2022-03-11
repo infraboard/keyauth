@@ -61,7 +61,7 @@ func (p *Provider) connect(userDN string, password string) (Connection, error) {
 
 	url, err := url.Parse(p.conf.URL)
 	if err != nil {
-		return nil, fmt.Errorf("Unable to parse URL to LDAP: %s", url)
+		return nil, fmt.Errorf("unable to parse URL to LDAP: %s", url)
 	}
 
 	if url.Scheme == "ldaps" {
@@ -116,7 +116,7 @@ func (p *Provider) CheckUserPassword(inputUsername string, password string) (boo
 
 	conn, err := p.connect(profile.DN, password)
 	if err != nil {
-		return false, fmt.Errorf("Authentication of user %s failed. Cause: %s", inputUsername, err)
+		return false, fmt.Errorf("authentication of user %s failed. Cause: %s", inputUsername, err)
 	}
 	defer conn.Close()
 
@@ -171,7 +171,7 @@ func (p *Provider) getUserProfile(conn Connection, inputUsername string) (*UserP
 
 	sr, err := conn.Search(searchRequest)
 	if err != nil {
-		return nil, fmt.Errorf("Cannot find user DN of user %s. Cause: %s", inputUsername, err)
+		return nil, fmt.Errorf("cannot find user DN of user %s. Cause: %s", inputUsername, err)
 	}
 
 	if len(sr.Entries) == 0 {
@@ -179,7 +179,7 @@ func (p *Provider) getUserProfile(conn Connection, inputUsername string) (*UserP
 	}
 
 	if len(sr.Entries) > 1 {
-		return nil, fmt.Errorf("Multiple users %s found", inputUsername)
+		return nil, fmt.Errorf("multiple users %s found", inputUsername)
 	}
 
 	userProfile := UserProfile{
@@ -193,7 +193,7 @@ func (p *Provider) getUserProfile(conn Connection, inputUsername string) (*UserP
 
 		if attr.Name == p.conf.UsernameAttribute {
 			if len(attr.Values) != 1 {
-				return nil, fmt.Errorf("User %s cannot have multiple value for attribute %s",
+				return nil, fmt.Errorf("user %s cannot have multiple value for attribute %s",
 					inputUsername, p.conf.UsernameAttribute)
 			}
 
@@ -205,7 +205,7 @@ func (p *Provider) getUserProfile(conn Connection, inputUsername string) (*UserP
 	}
 
 	if userProfile.DN == "" {
-		return nil, fmt.Errorf("No DN has been found for user %s", inputUsername)
+		return nil, fmt.Errorf("no DN has been found for user %s", inputUsername)
 	}
 
 	return &userProfile, nil
@@ -243,7 +243,7 @@ func (p *Provider) GetDetails(inputUsername string) (*UserProfile, error) {
 
 	groupsFilter, err := p.resolveGroupsFilter(inputUsername, profile)
 	if err != nil {
-		return nil, fmt.Errorf("Unable to create group filter for user %s. Cause: %s", inputUsername, err)
+		return nil, fmt.Errorf("unable to create group filter for user %s. Cause: %s", inputUsername, err)
 	}
 
 	p.log.Debugf("Computed groups filter is %s", groupsFilter)
@@ -262,7 +262,7 @@ func (p *Provider) GetDetails(inputUsername string) (*UserProfile, error) {
 	sr, err := conn.Search(searchGroupRequest)
 
 	if err != nil {
-		return nil, fmt.Errorf("Unable to retrieve groups of user %s. Cause: %s", inputUsername, err)
+		return nil, fmt.Errorf("unable to retrieve groups of user %s. Cause: %s", inputUsername, err)
 	}
 
 	for _, res := range sr.Entries {
@@ -282,13 +282,13 @@ func (p *Provider) UpdatePassword(inputUsername string, newPassword string) erro
 	client, err := p.connect(p.conf.User, p.conf.Password)
 
 	if err != nil {
-		return fmt.Errorf("Unable to update password. Cause: %s", err)
+		return fmt.Errorf("unable to update password. Cause: %s", err)
 	}
 
 	profile, err := p.getUserProfile(client, inputUsername)
 
 	if err != nil {
-		return fmt.Errorf("Unable to update password. Cause: %s", err)
+		return fmt.Errorf("unable to update password. Cause: %s", err)
 	}
 
 	modifyRequest := ldap.NewModifyRequest(profile.DN, nil)
@@ -298,7 +298,7 @@ func (p *Provider) UpdatePassword(inputUsername string, newPassword string) erro
 	err = client.Modify(modifyRequest)
 
 	if err != nil {
-		return fmt.Errorf("Unable to update password. Cause: %s", err)
+		return fmt.Errorf("unable to update password. Cause: %s", err)
 	}
 
 	return nil
