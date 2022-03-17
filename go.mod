@@ -6,6 +6,7 @@ require (
 	github.com/AlecAivazis/survey/v2 v2.3.2
 	github.com/BurntSushi/toml v0.3.1
 	github.com/caarlos0/env/v6 v6.4.0
+	github.com/gin-gonic/gin v1.7.7
 	github.com/go-ldap/ldap/v3 v3.2.4
 	github.com/go-playground/validator/v10 v10.10.0
 	github.com/infraboard/mcube v1.6.8

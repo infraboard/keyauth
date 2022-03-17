@@ -6,7 +6,9 @@ import (
 	"net/http"
 	"sync"
 
+	"github.com/gin-gonic/gin"
 	"github.com/infraboard/mcube/exception"
+	"github.com/infraboard/mcube/http/response"
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
 	httpb "github.com/infraboard/mcube/pb/http"
@@ -35,6 +37,7 @@ func NewHTTPAuther(c *client.Client) *HTTPAuther {
 		keyauth: c,
 		l:       zap.L().Named("Http Interceptor"),
 		mode:    PRBAC_MODE,
+		allows:  []string{},
 	}
 }
 
@@ -45,10 +48,17 @@ type HTTPAuther struct {
 	mode    PermissionCheckMode
 	svr     *micro.Micro
 	lock    sync.Mutex
+	allows  []string
 }
 
 func (a *HTTPAuther) SetPermissionCheckMode(m PermissionCheckMode) {
 	a.mode = m
+}
+
+func (a *HTTPAuther) SetAllows(allows ...fmt.Stringer) {
+	for _, v := range allows {
+		a.allows = append(a.allows, v.String())
+	}
 }
 
 func (a *HTTPAuther) Auth(r *http.Request, entry httpb.Entry) (
@@ -74,7 +84,7 @@ func (a *HTTPAuther) Auth(r *http.Request, entry httpb.Entry) (
 
 		// 权限检查
 		if entry.PermissionEnable {
-			err = a.CheckPermission(ctx, a.mode, tk, entry)
+			err = a.CheckPermission(ctx, tk, entry)
 			if err != nil {
 				return nil, err
 			}
@@ -87,6 +97,50 @@ func (a *HTTPAuther) Auth(r *http.Request, entry httpb.Entry) (
 	}
 
 	return tk, nil
+}
+
+// Gin Auth Middleware
+func (a *HTTPAuther) AuthHandlerFunc() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// 从请求中获取access token
+		acessToken := c.GetHeader(header.OAuthTokenHeader)
+
+		// 校验身份
+		tk, err := a.ValidateIdentity(c.Request.Context(), acessToken)
+		if err != nil {
+			response.Failed(c.Writer, err)
+			return
+		}
+		c.Set("token", tk)
+		c.Next()
+	}
+}
+
+// Gin Perm Middleware
+func (a *HTTPAuther) PermHandlerFunc() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		obj := c.MustGet("token")
+
+		tk, ok := obj.(*token.Token)
+		if !ok {
+			response.Failed(c.Writer, fmt.Errorf("auth middleware first"))
+			return
+		}
+
+		e := httpb.Entry{
+			Method: c.Request.Method,
+			Path:   c.FullPath(),
+			Allow:  a.allows,
+		}
+
+		// 权限检查
+		err := a.CheckPermission(c.Request.Context(), tk, e)
+		if err != nil {
+			response.Failed(c.Writer, err)
+			return
+		}
+		c.Next()
+	}
 }
 
 func (a *HTTPAuther) ValidateIdentity(ctx context.Context, accessToken string) (*token.Token, error) {
@@ -107,7 +161,7 @@ func (a *HTTPAuther) ValidateIdentity(ctx context.Context, accessToken string) (
 	return tk, nil
 }
 
-func (a *HTTPAuther) CheckPermission(ctx context.Context, mod PermissionCheckMode, tk *token.Token, e httpb.Entry) error {
+func (a *HTTPAuther) CheckPermission(ctx context.Context, tk *token.Token, e httpb.Entry) error {
 	if tk == nil {
 		return exception.NewUnauthorized("validate permission need token")
 	}
@@ -126,7 +180,6 @@ func (a *HTTPAuther) CheckPermission(ctx context.Context, mod PermissionCheckMod
 	default:
 		return fmt.Errorf("only support acl and prbac")
 	}
-
 }
 
 func (a *HTTPAuther) ValidatePermissionByACL(ctx context.Context, tk *token.Token, e httpb.Entry) error {
@@ -176,20 +229,6 @@ func (a *HTTPAuther) GetClientService(ctx context.Context) (*micro.Micro, error)
 	a.svr = ins
 	return ins, nil
 }
-
-// func (a *HTTPAuther) ResponseHook(w http.ResponseWriter, r *http.Request, entry httpb.Entry) {
-// 	ctx := httpctx.GetContext(r)
-// 	tk := ctx.AuthInfo.(*token.Token)
-
-// 	// 审计日志
-// 	od := newOperateEventData(&entry, tk)
-// 	hd := newEventHeaderFromHTTP(r)
-// 	if entry.AuditLog {
-// 		if err := SendOperateEvent(r.URL.String(), nil, hd, od); err != nil {
-// 			a.l.Errorf("send operate event error, %s", err)
-// 		}
-// 	}
-// }
 
 // SetLogger todo
 func (a *HTTPAuther) SetLogger(l logger.Logger) {
