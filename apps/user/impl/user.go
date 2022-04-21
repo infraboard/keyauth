@@ -10,6 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/infraboard/keyauth/apps/domain"
+	"github.com/infraboard/keyauth/apps/otp"
 	"github.com/infraboard/keyauth/apps/policy"
 	"github.com/infraboard/keyauth/apps/user"
 	"github.com/infraboard/keyauth/common/password"
@@ -29,10 +30,17 @@ func (s *service) CreateAccount(ctx context.Context, req *user.CreateAccountRequ
 	if err != nil {
 		return nil, err
 	}
-
 	// 如果是管理员创建的账号需要用户自己重置密码
 	if u.CreateType.IsIn(user.CreateType_DOMAIN_CREATED) {
 		u.HashedPassword.SetNeedReset("admin created user need reset when first login")
+	}
+
+	if req.OtpEnabled {
+		_, err := s.otp.CreateOTPAuth(ctx, otp.NewCreateOTPAuthRequestWithName(req.Account))
+		if err != nil {
+			return nil, err
+		}
+		u.OtpStatus = otp.OTPStatus_ENABLED
 	}
 
 	if err := s.saveAccount(u); err != nil {
@@ -231,4 +239,25 @@ func (s *service) GeneratePassword(ctx context.Context, req *user.GeneratePasswo
 		return nil, fmt.Errorf("generate random password error, %s", err)
 	}
 	return user.NewGeneratePasswordResponse(*ranPass), nil
+}
+
+func (s *service) UpdateOTPStatus(ctx context.Context, req *user.UpdateOTPStatusRequest) (*user.User, error) {
+	if err := req.Validate(); err != nil {
+		return nil, exception.NewBadRequest("validate update department error, %s", err)
+	}
+
+	s.log.Debugf(" update %s OTP settings to %s ", req.Account, req.OtpStatus)
+	u, err := s.DescribeAccount(ctx, user.NewDescriptAccountRequestWithAccount(req.Account))
+	if err != nil {
+		return nil, err
+	}
+	u.UpdateAt = ftime.Now().Timestamp()
+	u.OtpStatus = req.OtpStatus
+
+	_, err = s.col.UpdateOne(context.TODO(), bson.M{"_id": u.Account}, bson.M{"$set": u})
+	if err != nil {
+		return nil, exception.NewInternalServerError("update user(%s) error, %s", u.Account, err)
+	}
+
+	return u, nil
 }

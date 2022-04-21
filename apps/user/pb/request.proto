@@ -7,6 +7,7 @@ import "github.com/infraboard/mcube/pb/page/page.proto";
 import "apps/user/pb/enum.proto";
 import "apps/user/pb/types.proto";
 import "common/types/types.proto";
+import "apps/otp/pb/otp.proto";
 
 // Profile todo
 message Profile {
@@ -71,6 +72,9 @@ message CreateAccountRequest {
     // 密码相关信息
     // @gotags: json:"password" validate:"required,lte=80"
     string password = 8;
+    // 是否启用OTP
+    // @gotags: json:"otp_enabled" 
+    bool otp_enabled = 10;
 }
 
 // DescribeAccountRequest 查询用户详情请求
@@ -117,7 +121,10 @@ message UpdateAccountRequest {
     string department_id = 3;
     // profile 账号profile
     // @gotags: json:"profile"
-	Profile profile = 4;
+	  Profile profile = 4;
+    // 动态令牌是否开启
+    // @gotags: bson:"otp_enabled" json:"otp_enabled"
+    bool otp_enabled = 16;
 }
 
 // UpdatePasswordRequest todo
@@ -164,4 +171,12 @@ message UnBlockAccountRequest {
 message DeleteAccountRequest {
     // @gotags: json:"account"
     string account = 1;
+}
+
+// OTPSettingsRequest 变更OTP设置
+message UpdateOTPStatusRequest {
+    // @gotags: json:"account" validate:"required"
+    string account = 1;
+    // @gotags: json:"otp_status" validate:"required"
+    otp.OTPStatus otp_status = 16;
 }

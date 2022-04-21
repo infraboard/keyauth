@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package infraboard.keyauth.otp;
+option go_package = "github.com/infraboard/keyauth/apps/otp";
+
+import "apps/otp/pb/request.proto";
+import "apps/otp/pb/otp.proto";
+
+service Service {
+	rpc CreateOTPAuth(CreateOTPAuthRequest) returns(OTPAuth);
+	rpc DescribeOTPAuth(DescribeOTPAuthRequest) returns(OTPAuth);
+	rpc DeleteOTPAuth(DeleteOTPAuthRequest) returns(OTPAuth);
+	rpc UpdateOTPAuthStatus(UpdateOTPStatusRequest) returns(OTPAuth);
+}

@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package infraboard.keyauth.otp;
+option go_package = "github.com/infraboard/keyauth/apps/otp";
+
+message OTPAuth{
+  // OTP密钥
+  // @gotags: bson:"_id" json:"secret_key"
+  string secret_key = 1;
+  // OTP过期时间
+  // @gotags: bson:"expired_second" json:"expired_second"
+	uint64 expired_second = 2;
+  // OTP长度
+  // @gotags: bson:"digits" json:"digits"
+	int32  digits = 3;
+  // OTP二维码内容
+  // @gotags: bson:"otp_code" json:"otp_code"
+  string otp_code = 4;
+  // OTP二维码图片地址
+  // @gotags: bson:"otp_url" json:"otp_url"
+  string otp_url = 5;
+  // 用户名
+  // @gotags: bson:"account" json:"account"
+  string account = 6;
+}
+
+enum  OTPStatus {
+  UNKNOWN = 0;
+  ENABLED = 1;
+  DISABLED = 2;
+}

@@ -12,6 +12,7 @@ import (
 
 	"github.com/infraboard/keyauth/apps/department"
 	"github.com/infraboard/keyauth/apps/domain"
+	"github.com/infraboard/keyauth/apps/otp"
 	"github.com/infraboard/keyauth/apps/policy"
 	"github.com/infraboard/keyauth/apps/user"
 	"github.com/infraboard/keyauth/conf"
@@ -28,6 +29,7 @@ type service struct {
 	policy policy.ServiceServer
 	depart department.ServiceServer
 	domain domain.ServiceServer
+	otp    otp.ServiceServer
 
 	user.UnimplementedServiceServer
 }
@@ -36,6 +38,7 @@ func (s *service) Config() error {
 	s.policy = app.GetGrpcApp(policy.AppName).(policy.ServiceServer)
 	s.depart = app.GetGrpcApp(department.AppName).(department.ServiceServer)
 	s.domain = app.GetGrpcApp(domain.AppName).(domain.ServiceServer)
+	s.otp = app.GetGrpcApp(otp.AppName).(otp.ServiceServer)
 
 	db := conf.C().Mongo.GetDB()
 	uc := db.Collection("user")

@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package infraboard.keyauth.otp;
+option go_package = "github.com/infraboard/keyauth/apps/otp";
+
+import "apps/otp/pb/otp.proto";
+
+// CreateOTPAuthRequest 创建OTP请求
+message CreateOTPAuthRequest {
+  // 关联用户
+  // @gotags: json:"account" validate:"required"
+  string account = 1;
+}
+
+// DescribeOTPAuthRequest 查询OTP请求
+message DescribeOTPAuthRequest {
+  // 关联用户
+  // @gotags: json:"account" validate:"required"
+  string account = 1;
+}
+
+// DeleteOTPAuthRequest 删除OTP请求
+message DeleteOTPAuthRequest {
+  // 关联用户
+  // @gotags: json:"account" validate:"required"
+  string account = 1;
+}
+
+// 启用OTP
+message EnableOTPAuthRequest {
+  // 关联用户
+  // @gotags: json:"account" validate:"required"
+  string account = 1;
+}
+
+// 禁用OTP
+message DisableOTPAuthRequest {
+  // 关联用户
+  // @gotags: json:"account" validate:"required"
+  string account = 1;
+}
+
+message UpdateOTPStatusRequest {
+  // 关联用户
+  // @gotags: json:"account" validate:"required"
+  string account = 1;
+  // OTP是否开启
+  // @gotags: json:"otp_status" validate:"required"
+  otp.OTPStatus otp_status = 2;
+}

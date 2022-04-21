@@ -7,6 +7,7 @@ import "apps/department/pb/department.proto";
 import "apps/user/pb/types.proto";
 import "apps/user/pb/request.proto";
 import "apps/user/pb/enum.proto";
+import "apps/otp/pb/otp.proto";
 
 message Password {
     // hash过后的密码
@@ -95,6 +96,9 @@ message User {
     // 部门
     // @gotags: bson:"-" json:"department,omitempty"
     department.Department department = 15;    
+    // 动态令牌是否开启
+    // @gotags: bson:"otp_enabled" json:"otp_enabled,omitempty"
+    otp.OTPStatus otp_status = 16;
 }
 
 message Set {

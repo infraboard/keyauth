@@ -16,6 +16,7 @@ enum GrantType {
     AUTH_CODE = 7;
     IMPLICIT = 8;
     WECHAT_WORK = 9;
+    OTP_CODE = 10;
 }
 
 enum TokenType {

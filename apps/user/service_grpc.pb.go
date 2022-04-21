@@ -40,6 +40,8 @@ type ServiceClient interface {
 	UpdateAccountPassword(ctx context.Context, in *UpdatePasswordRequest, opts ...grpc.CallOption) (*Password, error)
 	// GeneratePassword 生成符合检测强度的随机密码
 	GeneratePassword(ctx context.Context, in *GeneratePasswordRequest, opts ...grpc.CallOption) (*GeneratePasswordResponse, error)
+	// 开启或关闭OTP
+	UpdateOTPStatus(ctx context.Context, in *UpdateOTPStatusRequest, opts ...grpc.CallOption) (*User, error)
 }
 
 type serviceClient struct {
@@ -131,6 +133,15 @@ func (c *serviceClient) GeneratePassword(ctx context.Context, in *GeneratePasswo
 	return out, nil
 }
 
+func (c *serviceClient) UpdateOTPStatus(ctx context.Context, in *UpdateOTPStatusRequest, opts ...grpc.CallOption) (*User, error) {
+	out := new(User)
+	err := c.cc.Invoke(ctx, "/infraboard.keyauth.user.Service/UpdateOTPStatus", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ServiceServer is the server API for Service service.
 // All implementations must embed UnimplementedServiceServer
 // for forward compatibility
@@ -153,6 +164,8 @@ type ServiceServer interface {
 	UpdateAccountPassword(context.Context, *UpdatePasswordRequest) (*Password, error)
 	// GeneratePassword 生成符合检测强度的随机密码
 	GeneratePassword(context.Context, *GeneratePasswordRequest) (*GeneratePasswordResponse, error)
+	// 开启或关闭OTP
+	UpdateOTPStatus(context.Context, *UpdateOTPStatusRequest) (*User, error)
 	mustEmbedUnimplementedServiceServer()
 }
 
@@ -186,6 +199,9 @@ func (UnimplementedServiceServer) UpdateAccountPassword(context.Context, *Update
 }
 func (UnimplementedServiceServer) GeneratePassword(context.Context, *GeneratePasswordRequest) (*GeneratePasswordResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GeneratePassword not implemented")
+}
+func (UnimplementedServiceServer) UpdateOTPStatus(context.Context, *UpdateOTPStatusRequest) (*User, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateOTPStatus not implemented")
 }
 func (UnimplementedServiceServer) mustEmbedUnimplementedServiceServer() {}
 
@@ -362,6 +378,24 @@ func _Service_GeneratePassword_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Service_UpdateOTPStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateOTPStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ServiceServer).UpdateOTPStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/infraboard.keyauth.user.Service/UpdateOTPStatus",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ServiceServer).UpdateOTPStatus(ctx, req.(*UpdateOTPStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Service_ServiceDesc is the grpc.ServiceDesc for Service service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -404,6 +438,10 @@ var Service_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GeneratePassword",
 			Handler:    _Service_GeneratePassword_Handler,
+		},
+		{
+			MethodName: "UpdateOTPStatus",
+			Handler:    _Service_UpdateOTPStatus_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

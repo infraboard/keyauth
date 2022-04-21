@@ -54,6 +54,10 @@ func New(req *CreateAccountRequest) (*User, error) {
 		u.IsInitialized = true
 	}
 
+	// if req.OtpEnabled {
+
+	// }
+
 	return u, nil
 }
 
