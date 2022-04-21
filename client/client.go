@@ -12,6 +12,7 @@ import (
 	"github.com/infraboard/keyauth/apps/mconf"
 	"github.com/infraboard/keyauth/apps/micro"
 	"github.com/infraboard/keyauth/apps/namespace"
+	"github.com/infraboard/keyauth/apps/otp"
 	"github.com/infraboard/keyauth/apps/permission"
 	"github.com/infraboard/keyauth/apps/policy"
 	"github.com/infraboard/keyauth/apps/role"
@@ -138,4 +139,9 @@ func (c *Client) User() user.ServiceClient {
 // Verifycode todo
 func (c *Client) Verifycode() verifycode.ServiceClient {
 	return verifycode.NewServiceClient(c.conn)
+}
+
+// Otp todo
+func (c *Client) Otp() otp.ServiceClient {
+	return otp.NewServiceClient(c.conn)
 }
