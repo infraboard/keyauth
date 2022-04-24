@@ -15,6 +15,7 @@ import (
 	"github.com/infraboard/mcube/logger/zap"
 	"github.com/rs/xid"
 
+	"github.com/infraboard/keyauth/apps/otp"
 	wechatWork "github.com/infraboard/keyauth/apps/wxwork"
 
 	"github.com/infraboard/keyauth/apps/application"
@@ -37,6 +38,7 @@ func NewTokenIssuer() (Issuer, error) {
 		ldap:       app.GetInternalApp(provider.AppName).(provider.LDAP),
 		wechatWork: app.GetInternalApp(wechatWork.AppName).(wechatWork.WechatWork),
 		app:        app.GetGrpcApp(application.AppName).(application.ServiceServer),
+		otp:        app.GetGrpcApp(otp.AppName).(otp.ServiceServer),
 		emailRE:    regexp.MustCompile(`([a-zA-Z0-9]+)@([a-zA-Z0-9\.]+)\.([a-zA-Z0-9]+)`),
 		log:        zap.L().Named("Token Issuer"),
 	}
@@ -52,6 +54,7 @@ type issuer struct {
 	ldap       provider.LDAP
 	wechatWork wechatWork.WechatWork
 	emailRE    *regexp.Regexp
+	otp        otp.ServiceServer
 	log        logger.Logger
 }
 
@@ -266,6 +269,28 @@ func (i *issuer) IssueToken(ctx context.Context, req *token.IssueTokenRequest) (
 		return nil, exception.NewInternalServerError("not impl")
 	case token.GrantType_AUTH_CODE:
 		return nil, exception.NewInternalServerError("not impl")
+	case token.GrantType_OTP_CODE:
+		// 判断用户的otp是否正确，正确则颁发token
+		descReq := user.NewDescriptAccountRequestWithAccount(req.Username)
+		u, err := i.user.DescribeAccount(ctx, descReq)
+		if err != nil {
+			return nil, exception.NewBadRequest(err.Error())
+		}
+		if u.OtpStatus == otp.OTPStatus_DISABLED {
+			return nil, errors.New("OTP disabled, please enable it first")
+		}
+		descOtpReq := otp.NewDescribeOTPAuthRequestWithName(req.Username)
+		fmt.Println(descOtpReq)
+		ins, err := i.otp.DescribeOTPAuth(ctx, descOtpReq)
+		if err != nil {
+			return nil, err
+		}
+		otpsecret, _ := ins.GenCode(ins.SecretKey)
+		if otpsecret != req.OtpCode {
+			return nil, exception.NewUnauthorized("OTP code is not correct")
+		}
+		tk := i.issueUserToken(app, u, token.GrantType_OTP_CODE)
+		return tk, nil
 	default:
 		return nil, exception.NewInternalServerError("unknown grant type %s", req.GrantType)
 	}

@@ -10,6 +10,7 @@ import (
 	_ "github.com/infraboard/keyauth/apps/mconf/http"
 	_ "github.com/infraboard/keyauth/apps/micro/http"
 	_ "github.com/infraboard/keyauth/apps/namespace/http"
+	_ "github.com/infraboard/keyauth/apps/otp/http"
 	_ "github.com/infraboard/keyauth/apps/permission/http"
 	_ "github.com/infraboard/keyauth/apps/policy/http"
 	_ "github.com/infraboard/keyauth/apps/provider/http"

@@ -26,4 +26,6 @@ service Service {
 	rpc UpdateAccountPassword(UpdatePasswordRequest) returns(Password);
 	// GeneratePassword 生成符合检测强度的随机密码
 	rpc GeneratePassword(GeneratePasswordRequest) returns(GeneratePasswordResponse);
+	// 开启或关闭OTP
+  rpc UpdateOTPStatus(UpdateOTPStatusRequest) returns (User);
 }

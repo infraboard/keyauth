@@ -36,6 +36,7 @@ message IssueTokenRequest {
     string user_agent = 13;
     string remote_ip = 14;
     string service = 17;
+    string otp_code = 18;
 }
 
 message RevolkTokenRequest {

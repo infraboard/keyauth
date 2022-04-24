@@ -74,6 +74,10 @@ func NewCreateUserRequestWithLDAPSync(username, password string) *CreateAccountR
 	return req
 }
 
+func CreateAccountRequestEnableOTP(req *CreateAccountRequest) {
+	req.OtpEnabled = true
+}
+
 // NewCreateUserRequestWithWXWORKSync todo
 func NewCreateUserRequestWithWXWORKSync(username, password string) *CreateAccountRequest {
 	req := NewCreateUserRequest()
@@ -155,4 +159,12 @@ func (req *UnBlockAccountRequest) Validate() error {
 	}
 
 	return nil
+}
+
+func NewUpdateOTPStatusRequest() *UpdateOTPStatusRequest {
+	return &UpdateOTPStatusRequest{}
+}
+
+func (req *UpdateOTPStatusRequest) Validate() error {
+	return validate.Struct(req)
 }

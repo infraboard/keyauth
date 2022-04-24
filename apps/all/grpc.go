@@ -8,6 +8,7 @@ import (
 	_ "github.com/infraboard/keyauth/apps/mconf/impl"
 	_ "github.com/infraboard/keyauth/apps/micro/impl"
 	_ "github.com/infraboard/keyauth/apps/namespace/impl"
+	_ "github.com/infraboard/keyauth/apps/otp/impl"
 	_ "github.com/infraboard/keyauth/apps/permission/impl"
 	_ "github.com/infraboard/keyauth/apps/policy/impl"
 	_ "github.com/infraboard/keyauth/apps/role/impl"
