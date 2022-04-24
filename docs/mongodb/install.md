@@ -36,10 +36,16 @@ systemctl enable mongod
 
 ```
 docker pull mongo
-docker run -itd -p 27017:27017 mongo
+docker run -itd -p 27017:27017 --name mongo mongo
 ```
 
 # 创建管理用户
+
+进入Mongo Shell
+```
+docker exec -it mongo mongo
+```
+
 创建管理员账号
 ```
 use admin
@@ -75,5 +81,5 @@ db.changeUserPassword("admin", "xxxx");
 # 添加库用户
 ```
 use keyauth
-db.createUser({user: "keyauth", pwd: "xxx", roles: [{ role: "dbOwner", db: "keyauth" }]})
+db.createUser({user: "keyauth", pwd: "123456", roles: [{ role: "dbOwner", db: "keyauth" }]})
 ```
