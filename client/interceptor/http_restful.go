@@ -4,6 +4,7 @@ import (
 	"github.com/emicklei/go-restful/v3"
 	"github.com/infraboard/keyauth/apps/token"
 	"github.com/infraboard/mcube/http/label"
+	"github.com/infraboard/mcube/http/response"
 	"github.com/infraboard/mcube/pb/http"
 )
 
@@ -26,6 +27,7 @@ func GetEntryFromRouteReader(r restful.RouteReader) http.Entry {
 func (a *HTTPAuther) RestfulAuthHandlerFunc(req *restful.Request, resp *restful.Response, chain *restful.FilterChain) {
 	authInfo, err := a.Auth(req.Request, GetEntryFromRouteReader(req.SelectedRoute()))
 	if err != nil {
+		response.Failed(resp.ResponseWriter, err)
 		return
 	}
 
