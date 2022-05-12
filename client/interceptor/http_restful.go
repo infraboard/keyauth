@@ -25,7 +25,7 @@ func GetEntryFromRouteReader(r restful.RouteReader) http.Entry {
 	}
 }
 
-func (a *HTTPAuther) Filter(req *restful.Request, resp *restful.Response, chain *restful.FilterChain) {
+func (a *HTTPAuther) RestfulAuthHandlerFunc(req *restful.Request, resp *restful.Response, chain *restful.FilterChain) {
 	authInfo, err := a.Auth(req.Request, GetEntryFromRouteReader(req.SelectedRoute()))
 	if err != nil {
 		return
@@ -37,4 +37,5 @@ func (a *HTTPAuther) Filter(req *restful.Request, resp *restful.Response, chain 
 	}
 
 	req.SetAttribute("token", tk)
+	chain.ProcessFilter(req, resp)
 }

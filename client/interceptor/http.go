@@ -99,7 +99,7 @@ func (a *HTTPAuther) Auth(r *http.Request, entry httpb.Entry) (
 }
 
 // Gin Auth Middleware
-func (a *HTTPAuther) AuthHandlerFunc() gin.HandlerFunc {
+func (a *HTTPAuther) GinAuthHandlerFunc() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 从请求中获取access token
 		acessToken := c.GetHeader(header.OAuthTokenHeader)
