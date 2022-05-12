@@ -69,10 +69,9 @@ func (a *HTTPAuther) Auth(r *http.Request, entry httpb.Entry) (
 	acessToken := r.Header.Get(header.OAuthTokenHeader)
 
 	if entry.AuthEnable {
-		ctx := r.Context()
 
 		// 校验身份
-		tk, err = a.ValidateIdentity(ctx, acessToken)
+		tk, err = a.ValidateIdentity(r.Context(), acessToken)
 		if err != nil {
 			return nil, err
 		}
@@ -84,7 +83,7 @@ func (a *HTTPAuther) Auth(r *http.Request, entry httpb.Entry) (
 
 		// 权限检查
 		if entry.PermissionEnable {
-			err = a.CheckPermission(ctx, tk, entry)
+			err = a.CheckPermission(r.Context(), tk, entry)
 			if err != nil {
 				return nil, err
 			}
@@ -100,7 +99,7 @@ func (a *HTTPAuther) Auth(r *http.Request, entry httpb.Entry) (
 }
 
 // Gin Auth Middleware
-func (a *HTTPAuther) AuthHandlerFunc() gin.HandlerFunc {
+func (a *HTTPAuther) GinAuthHandlerFunc() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 从请求中获取access token
 		acessToken := c.GetHeader(header.OAuthTokenHeader)
