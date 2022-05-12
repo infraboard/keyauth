@@ -69,7 +69,6 @@ func (a *HTTPAuther) Auth(r *http.Request, entry httpb.Entry) (
 	acessToken := r.Header.Get(header.OAuthTokenHeader)
 
 	if entry.AuthEnable {
-
 		// 校验身份
 		tk, err = a.ValidateIdentity(r.Context(), acessToken)
 		if err != nil {

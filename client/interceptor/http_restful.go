@@ -30,12 +30,16 @@ func (a *HTTPAuther) RestfulAuthHandlerFunc(req *restful.Request, resp *restful.
 	if err != nil {
 		return
 	}
-	tk, ok := authInfo.(*token.Token)
-	if ok {
-		response.Failed(resp.ResponseWriter, exception.NewInternalServerError("auth info not *token.Token"))
-		return
+
+	if authInfo != nil {
+		tk, ok := authInfo.(*token.Token)
+		if ok {
+			response.Failed(resp.ResponseWriter, exception.NewInternalServerError("auth info not *token.Token"))
+			return
+		}
+
+		req.SetAttribute("token", tk)
 	}
 
-	req.SetAttribute("token", tk)
 	chain.ProcessFilter(req, resp)
 }
