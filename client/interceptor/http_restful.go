@@ -3,9 +3,7 @@ package interceptor
 import (
 	"github.com/emicklei/go-restful/v3"
 	"github.com/infraboard/keyauth/apps/token"
-	"github.com/infraboard/mcube/exception"
 	"github.com/infraboard/mcube/http/label"
-	"github.com/infraboard/mcube/http/response"
 	"github.com/infraboard/mcube/pb/http"
 )
 
@@ -31,14 +29,10 @@ func (a *HTTPAuther) RestfulAuthHandlerFunc(req *restful.Request, resp *restful.
 		return
 	}
 
-	if authInfo != nil {
-		tk, ok := authInfo.(*token.Token)
-		if ok {
-			response.Failed(resp.ResponseWriter, exception.NewInternalServerError("auth info not *token.Token"))
-			return
+	if tk, ok := authInfo.(*token.Token); ok {
+		if tk != nil {
+			req.SetAttribute("token", tk)
 		}
-
-		req.SetAttribute("token", tk)
 	}
 
 	chain.ProcessFilter(req, resp)
