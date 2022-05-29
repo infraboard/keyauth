@@ -19,7 +19,7 @@ func GetEntryFromRouteReader(r restful.RouteReader) http.Entry {
 		Allow:            m.Allow(),
 		AuditLog:         m.AuditEnable(),
 		Labels: map[string]string{
-			label.ActionLableKey: m.Action(),
+			label.Action: m.Action(),
 		},
 	}
 }

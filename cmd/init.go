@@ -303,7 +303,7 @@ func (i *Initialer) initRole(ctx context.Context) ([]*role.Role, error) {
 	vistor := role.NewDefaultPermission()
 	vistor.ServiceId = "*"
 	vistor.ResourceName = "*"
-	vistor.LabelKey = label.ActionLableKey
+	vistor.LabelKey = label.Action
 	vistor.LabelValues = []string{label.Get.Value(), label.List.Value()}
 
 	req = role.NewCreateRoleRequest()
