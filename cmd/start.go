@@ -9,6 +9,8 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/infraboard/mcenter/apps/instance"
+	"github.com/infraboard/mcenter/client"
 	"github.com/infraboard/mcube/app"
 	"github.com/infraboard/mcube/cache"
 	"github.com/infraboard/mcube/cache/memory"
@@ -81,38 +83,46 @@ func newService(cnf *conf.Config) (*service, error) {
 	http := protocol.NewHTTPService()
 	grpc := protocol.NewGRPCService()
 
-	// 初始化总线
-	// bm, err := newBus()
-	// if err != nil {
-	// 	log.Errorf("new bus error, %s", err)
-	// }
-
 	svr := &service{
+		conf: cnf,
 		http: http,
 		grpc: grpc,
-		// bm:   bm,
-		log: log,
+		log:  log,
 	}
 
 	return svr, nil
 }
 
 type service struct {
+	conf *conf.Config
 	http *protocol.HTTPService
 	grpc *protocol.GRPCService
-	// bm   bus.Manager
 
 	log  logger.Logger
 	stop context.CancelFunc
 }
 
-func (s *service) start() error {
-	// if s.bm != nil {
-	// 	if err := s.bm.Connect(); err != nil {
-	// 		s.log.Errorf("connect bus error, %s", err)
-	// 	}
-	// }
+// 注册
+func (s *service) registry(ctx context.Context) error {
+	// 提前加载好 mcenter客户端
+	err := client.LoadClientFromConfig(s.conf.Mcenter)
+	if err != nil {
+		return err
+	}
 
+	// 注册服务实例
+	req := instance.NewRegistryRequest()
+	req.Address = s.conf.App.GRPCAddr()
+	lf, err := client.C().Registry(ctx, req)
+	if err != nil {
+		return err
+	}
+	// 上报实例心跳
+	lf.Heartbeat()
+	return nil
+}
+
+func (s *service) start() error {
 	s.log.Infof("loaded grpc app: %s", app.LoadedGrpcApp())
 	s.log.Infof("loaded http app: %s", app.LoadedHttpApp())
 	s.log.Infof("loaded internal app: %s", app.LoadedInternalApp())
@@ -218,46 +228,20 @@ func loadCache() error {
 	return nil
 }
 
-// func newBus() (bus.Manager, error) {
-// 	c := conf.C()
-// 	if c.Nats != nil {
-// 		ns, err := nats.NewBroker(c.Nats)
-// 		if err != nil {
-// 			return nil, err
-// 		}
-// 		bus.SetPublisher(ns)
-// 		return ns, nil
-// 	}
-
-// 	if c.Kafka != nil {
-// 		ks, err := kafka.NewPublisher(c.Kafka)
-// 		if err != nil {
-// 			return nil, err
-// 		}
-// 		bus.SetPublisher(ks)
-// 		return ks, nil
-// 	}
-
-// 	return nil, fmt.Errorf("bus not config, nats or kafka required")
-// }
-
 func (s *service) waitSign(sign chan os.Signal) {
-	for {
-		select {
-		case sg := <-sign:
-			switch v := sg.(type) {
-			default:
-				s.log.Infof("receive signal '%v', start graceful shutdown", v.String())
-				if err := s.grpc.Stop(); err != nil {
-					s.log.Errorf("grpc graceful shutdown err: %s, force exit", err)
-				}
-				s.log.Info("grpc service stop complete")
-				if err := s.http.Stop(); err != nil {
-					s.log.Errorf("http graceful shutdown err: %s, force exit", err)
-				}
-				s.log.Infof("http service stop complete")
-				return
+	for sg := range sign {
+		switch v := sg.(type) {
+		default:
+			s.log.Infof("receive signal '%v', start graceful shutdown", v.String())
+			if err := s.grpc.Stop(); err != nil {
+				s.log.Errorf("grpc graceful shutdown err: %s, force exit", err)
 			}
+			s.log.Info("grpc service stop complete")
+			if err := s.http.Stop(); err != nil {
+				s.log.Errorf("http graceful shutdown err: %s, force exit", err)
+			}
+			s.log.Infof("http service stop complete")
+			return
 		}
 	}
 }

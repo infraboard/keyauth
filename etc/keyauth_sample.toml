@@ -11,10 +11,10 @@ username = "xxx"
 password = "xxxx"
 database = "keyauth"
 
-[nats]
-servers = ["nats://127.0.0.1:4222"]
-user_name = ""
-password = ""
+[mcenter]
+adress="127.0.0.1:18010"
+client_id=""
+client_secret=""
 
 [log]
 level = "debug"
