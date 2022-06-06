@@ -8,6 +8,7 @@ import (
 
 	"github.com/infraboard/mcenter/apps/instance"
 	"github.com/infraboard/mcenter/client"
+	"github.com/infraboard/mcenter/client/auth"
 	"github.com/infraboard/mcenter/client/lifecycle"
 	"github.com/infraboard/mcube/app"
 	"github.com/infraboard/mcube/logger"
@@ -15,7 +16,6 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/infraboard/keyauth/apps/micro"
-	auther "github.com/infraboard/keyauth/common/interceptor/grpc"
 	"github.com/infraboard/keyauth/conf"
 	"github.com/infraboard/mcube/grpc/middleware/recovery"
 )
@@ -24,10 +24,16 @@ import (
 func NewGRPCService() *GRPCService {
 	log := zap.L().Named("GRPC Service")
 
+	// 提前加载好 mcenter客户端
+	err := client.LoadClientFromConfig(conf.C().Mcenter)
+	if err != nil {
+		panic("load mcenter client from config error: " + err.Error())
+	}
+
 	rc := recovery.NewInterceptor(recovery.NewZapRecoveryHandler())
 	grpcServer := grpc.NewServer(grpc.ChainUnaryInterceptor(
 		rc.UnaryServerInterceptor(),
-		auther.GrpcAuthUnaryServerInterceptor(),
+		auth.GrpcAuthUnaryServerInterceptor(client.C().Application()),
 	))
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -55,14 +61,6 @@ type GRPCService struct {
 
 // 注册
 func (s *GRPCService) registry() {
-	// 提前加载好 mcenter客户端
-	err := client.LoadClientFromConfig(s.c.Mcenter)
-	if err != nil {
-		s.l.Errorf("load mcenter client from config error, %s", err)
-		return
-	}
-
-	// 注册服务实例
 	req := instance.NewRegistryRequest()
 	req.Address = s.c.App.GRPCAddr()
 	lf, err := client.C().Registry(s.ctx, req)

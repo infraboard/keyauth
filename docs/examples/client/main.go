@@ -7,12 +7,15 @@ import (
 	"github.com/infraboard/keyauth/apps/domain"
 	"github.com/infraboard/keyauth/apps/user"
 	"github.com/infraboard/keyauth/client"
+
+	mcenter "github.com/infraboard/mcenter/client"
 )
 
 func main() {
-	conf := client.NewDefaultConfig()
+	conf := mcenter.NewDefaultConfig()
 	// 提前注册一个服务, 获取服务的client_id和client_secret
-	conf.SetClientCredentials("pz3HiVQA3indzSHzFKtLHaJW", "vDvlAtqN3rS9CZcHugXp6QBuk28zRjud")
+	conf.ClientID = "pz3HiVQA3indzSHzFKtLHaJW"
+	conf.ClientSecret = "vDvlAtqN3rS9CZcHugXp6QBuk28zRjud"
 	c, err := client.NewClient(conf)
 	if err != nil {
 		panic(err)

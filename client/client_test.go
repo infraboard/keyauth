@@ -9,12 +9,12 @@ import (
 	"github.com/infraboard/keyauth/apps/domain"
 	"github.com/infraboard/keyauth/apps/user"
 	"github.com/infraboard/keyauth/client"
+	mcenter "github.com/infraboard/mcenter/client"
 )
 
 func Test_Client(t *testing.T) {
 	should := assert.New(t)
-	conf := client.NewDefaultConfig()
-	conf.SetClientCredentials("nHerVBlrKIDurviMGUXVOQHC", "l5FB38Mw2JmxHgGm8rUcich2ZrGRVrl7")
+	conf := mcenter.NewDefaultConfig()
 	c, err := client.NewClient(conf)
 
 	if should.NoError(err) {

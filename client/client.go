@@ -1,9 +1,17 @@
 package client
 
 import (
+	"context"
+	"fmt"
+	"time"
+
+	mcenter "github.com/infraboard/mcenter/client"
+	"github.com/infraboard/mcenter/client/auth"
+	"github.com/infraboard/mcenter/client/resolver"
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 
 	"github.com/infraboard/keyauth/apps/application"
 	"github.com/infraboard/keyauth/apps/department"
@@ -37,11 +45,23 @@ func C() *Client {
 }
 
 // NewClient todo
-func NewClient(conf *Config) (*Client, error) {
+func NewClient(conf *mcenter.Config) (*Client, error) {
 	zap.DevelopmentSetup()
 	log := zap.L()
 
-	conn, err := grpc.Dial(conf.address, grpc.WithInsecure(), grpc.WithPerRPCCredentials(conf.Authentication))
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+
+	// 连接到服务
+	conn, err := grpc.DialContext(
+		ctx,
+		fmt.Sprintf("%s://%s", resolver.Scheme, "keyauth"), // Dial to "mcenter://keyauth"
+		grpc.WithPerRPCCredentials(auth.NewAuthentication(conf.ClientID, conf.ClientSecret)),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy":"round_robin"}`),
+		grpc.WithBlock(),
+	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -55,14 +75,14 @@ func NewClient(conf *Config) (*Client, error) {
 
 // Client 客户端
 type Client struct {
-	conf *Config
+	conf *mcenter.Config
 	conn *grpc.ClientConn
 	log  logger.Logger
 }
 
 // GetClientID todo
 func (c *Client) GetClientID() string {
-	return c.conf.clientID
+	return c.conf.ClientID
 }
 
 // ApplicationAdmin todo
