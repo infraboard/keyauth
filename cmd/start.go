@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -9,8 +8,6 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/infraboard/mcenter/apps/instance"
-	"github.com/infraboard/mcenter/client"
 	"github.com/infraboard/mcube/app"
 	"github.com/infraboard/mcube/cache"
 	"github.com/infraboard/mcube/cache/memory"
@@ -98,28 +95,7 @@ type service struct {
 	http *protocol.HTTPService
 	grpc *protocol.GRPCService
 
-	log  logger.Logger
-	stop context.CancelFunc
-}
-
-// 注册
-func (s *service) registry(ctx context.Context) error {
-	// 提前加载好 mcenter客户端
-	err := client.LoadClientFromConfig(s.conf.Mcenter)
-	if err != nil {
-		return err
-	}
-
-	// 注册服务实例
-	req := instance.NewRegistryRequest()
-	req.Address = s.conf.App.GRPCAddr()
-	lf, err := client.C().Registry(ctx, req)
-	if err != nil {
-		return err
-	}
-	// 上报实例心跳
-	lf.Heartbeat()
-	return nil
+	log logger.Logger
 }
 
 func (s *service) start() error {
