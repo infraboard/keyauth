@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/infraboard/mcenter/client"
+	"github.com/infraboard/mcenter/client/rpc"
 	"github.com/infraboard/mcube/cache/memory"
 	"github.com/infraboard/mcube/cache/redis"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -22,17 +22,17 @@ func newConfig() *Config {
 		Log:     newDefaultLog(),
 		Mongo:   newDefaultMongoDB(),
 		Cache:   newDefaultCache(),
-		Mcenter: client.NewDefaultConfig(),
+		Mcenter: rpc.NewDefaultConfig(),
 	}
 }
 
 // Config 应用配置
 type Config struct {
-	Mcenter *client.Config `toml:"mcenter"`
-	App     *app           `toml:"app"`
-	Log     *log           `toml:"log"`
-	Mongo   *mongodb       `toml:"mongodb"`
-	Cache   *_cache        `toml:"cache"`
+	Mcenter *rpc.Config `toml:"mcenter"`
+	App     *app        `toml:"app"`
+	Log     *log        `toml:"log"`
+	Mongo   *mongodb    `toml:"mongodb"`
+	Cache   *_cache     `toml:"cache"`
 }
 
 // InitGloabl 注入全局变量

@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/infraboard/mcenter/apps/instance"
-	"github.com/infraboard/mcenter/client"
-	"github.com/infraboard/mcenter/client/auth"
-	"github.com/infraboard/mcenter/client/lifecycle"
+	"github.com/infraboard/mcenter/client/rpc"
+	"github.com/infraboard/mcenter/client/rpc/auth"
+	"github.com/infraboard/mcenter/client/rpc/lifecycle"
 	"github.com/infraboard/mcube/app"
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
@@ -25,7 +25,7 @@ func NewGRPCService() *GRPCService {
 	log := zap.L().Named("GRPC Service")
 
 	// 提前加载好 mcenter客户端
-	err := client.LoadClientFromConfig(conf.C().Mcenter)
+	err := rpc.LoadClientFromConfig(conf.C().Mcenter)
 	if err != nil {
 		panic("load mcenter client from config error: " + err.Error())
 	}
@@ -33,7 +33,7 @@ func NewGRPCService() *GRPCService {
 	rc := recovery.NewInterceptor(recovery.NewZapRecoveryHandler())
 	grpcServer := grpc.NewServer(grpc.ChainUnaryInterceptor(
 		rc.UnaryServerInterceptor(),
-		auth.GrpcAuthUnaryServerInterceptor(client.C().Application()),
+		auth.GrpcAuthUnaryServerInterceptor(rpc.C().Application()),
 	))
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -63,7 +63,7 @@ type GRPCService struct {
 func (s *GRPCService) registry() {
 	req := instance.NewRegistryRequest()
 	req.Address = s.c.App.GRPCAddr()
-	lf, err := client.C().Registry(s.ctx, req)
+	lf, err := rpc.C().Registry(s.ctx, req)
 	if err != nil {
 		s.l.Errorf("registry to mcenter error, %s", err)
 		return

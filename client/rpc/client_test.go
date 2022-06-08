@@ -1,4 +1,4 @@
-package client_test
+package rpc_test
 
 import (
 	"context"
@@ -8,14 +8,14 @@ import (
 
 	"github.com/infraboard/keyauth/apps/domain"
 	"github.com/infraboard/keyauth/apps/user"
-	"github.com/infraboard/keyauth/client"
-	mcenter "github.com/infraboard/mcenter/client"
+	"github.com/infraboard/keyauth/client/rpc"
+	mcenter "github.com/infraboard/mcenter/client/rpc"
 )
 
 func Test_Client(t *testing.T) {
 	should := assert.New(t)
 	conf := mcenter.NewDefaultConfig()
-	c, err := client.NewClient(conf)
+	c, err := rpc.NewClient(conf)
 
 	if should.NoError(err) {
 		req := user.NewQueryAccountRequest()
