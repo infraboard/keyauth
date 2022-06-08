@@ -31,11 +31,11 @@ const (
 	ACL_MODE = 2
 )
 
-// NewInternalAuther 内部使用的auther
-func NewHTTPAuther(c *rpc.Client) *HTTPAuther {
+// NewAutherFromGRPC 基于rpc的鉴权中间件
+func NewAutherFromGRPC(c *rpc.Client) *HTTPAuther {
 	return &HTTPAuther{
 		keyauth: c,
-		l:       zap.L().Named("Http Interceptor"),
+		l:       zap.L().Named("HTTP Interceptor"),
 		mode:    PRBAC_MODE,
 		allows:  []string{},
 	}
