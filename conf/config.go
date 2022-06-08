@@ -46,6 +46,12 @@ func (c *Config) InitGloabl() error {
 		return err
 	}
 	mgoclient = mclient
+
+	// 提前加载好 mcenter客户端
+	err = rpc.LoadClientFromConfig(c.Mcenter)
+	if err != nil {
+		panic("load mcenter client from config error: " + err.Error())
+	}
 	return nil
 }
 

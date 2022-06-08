@@ -24,12 +24,6 @@ import (
 func NewGRPCService() *GRPCService {
 	log := zap.L().Named("GRPC Service")
 
-	// 提前加载好 mcenter客户端
-	err := rpc.LoadClientFromConfig(conf.C().Mcenter)
-	if err != nil {
-		panic("load mcenter client from config error: " + err.Error())
-	}
-
 	rc := recovery.NewInterceptor(recovery.NewZapRecoveryHandler())
 	grpcServer := grpc.NewServer(grpc.ChainUnaryInterceptor(
 		rc.UnaryServerInterceptor(),
