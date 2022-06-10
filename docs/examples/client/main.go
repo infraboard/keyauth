@@ -8,7 +8,7 @@ import (
 	"github.com/infraboard/keyauth/apps/user"
 	"github.com/infraboard/keyauth/client"
 
-	mcenter "github.com/infraboard/mcenter/client"
+	mcenter "github.com/infraboard/mcenter/client/rpc"
 )
 
 func main() {

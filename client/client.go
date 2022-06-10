@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	mcenter "github.com/infraboard/mcenter/client"
-	"github.com/infraboard/mcenter/client/auth"
-	"github.com/infraboard/mcenter/client/resolver"
+	mcenter "github.com/infraboard/mcenter/client/rpc"
+	"github.com/infraboard/mcenter/client/rpc/auth"
+	"github.com/infraboard/mcenter/client/rpc/resolver"
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
 	"google.golang.org/grpc"
