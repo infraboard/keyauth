@@ -1,11 +1,11 @@
-package client
+package rpc
 
 import (
 	"context"
 	"fmt"
 	"time"
 
-	mcenter "github.com/infraboard/mcenter/client/rpc"
+	"github.com/infraboard/mcenter/client/rpc"
 	"github.com/infraboard/mcenter/client/rpc/auth"
 	"github.com/infraboard/mcenter/client/rpc/resolver"
 	"github.com/infraboard/mcube/logger"
@@ -45,7 +45,7 @@ func C() *Client {
 }
 
 // NewClient todo
-func NewClient(conf *mcenter.Config) (*Client, error) {
+func NewClient(conf *rpc.Config) (*Client, error) {
 	zap.DevelopmentSetup()
 	log := zap.L()
 
@@ -75,7 +75,7 @@ func NewClient(conf *mcenter.Config) (*Client, error) {
 
 // Client 客户端
 type Client struct {
-	conf *mcenter.Config
+	conf *rpc.Config
 	conn *grpc.ClientConn
 	log  logger.Logger
 }

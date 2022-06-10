@@ -1,4 +1,4 @@
-package interceptor
+package auth
 
 import (
 	"context"
@@ -18,7 +18,7 @@ import (
 	"github.com/infraboard/keyauth/apps/permission"
 	"github.com/infraboard/keyauth/apps/token"
 	"github.com/infraboard/keyauth/apps/user/types"
-	"github.com/infraboard/keyauth/client"
+	"github.com/infraboard/keyauth/client/rpc"
 	"github.com/infraboard/keyauth/common/header"
 )
 
@@ -31,11 +31,11 @@ const (
 	ACL_MODE = 2
 )
 
-// NewInternalAuther 内部使用的auther
-func NewHTTPAuther(c *client.Client) *HTTPAuther {
+// NewAutherFromGRPC 基于rpc的鉴权中间件
+func NewAutherFromGRPC(c *rpc.Client) *HTTPAuther {
 	return &HTTPAuther{
 		keyauth: c,
-		l:       zap.L().Named("Http Interceptor"),
+		l:       zap.L().Named("HTTP Interceptor"),
 		mode:    PRBAC_MODE,
 		allows:  []string{},
 	}
@@ -44,7 +44,7 @@ func NewHTTPAuther(c *client.Client) *HTTPAuther {
 // internal todo
 type HTTPAuther struct {
 	l       logger.Logger
-	keyauth *client.Client
+	keyauth *rpc.Client
 	mode    PermissionCheckMode
 	svr     *micro.Micro
 	lock    sync.Mutex
