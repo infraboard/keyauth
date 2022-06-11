@@ -10,7 +10,7 @@ require (
 	github.com/gin-gonic/gin v1.7.7
 	github.com/go-ldap/ldap/v3 v3.2.4
 	github.com/go-playground/validator/v10 v10.11.0
-	github.com/infraboard/mcenter v0.0.4
+	github.com/infraboard/mcenter v0.0.5
 	github.com/infraboard/mcube v1.9.0
 	github.com/mssola/user_agent v0.5.2
 	github.com/rs/xid v1.4.0
