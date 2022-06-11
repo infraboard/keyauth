@@ -3,6 +3,8 @@ package impl
 import (
 	"context"
 
+	micro "github.com/infraboard/mcenter/apps/service"
+	"github.com/infraboard/mcenter/client/rpc"
 	"github.com/infraboard/mcube/app"
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
@@ -11,7 +13,6 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/infraboard/keyauth/apps/endpoint"
-	"github.com/infraboard/keyauth/apps/micro"
 	"github.com/infraboard/keyauth/conf"
 )
 
@@ -21,11 +22,9 @@ var (
 )
 
 type service struct {
-	col           *mongo.Collection
-	enableCache   bool
-	notifyCachPre string
-	micro         micro.ServiceServer
-	log           logger.Logger
+	col   *mongo.Collection
+	log   logger.Logger
+	micro micro.MetaServiceClient
 
 	endpoint.UnimplementedServiceServer
 }
@@ -47,7 +46,7 @@ func (s *service) Config() error {
 
 	s.col = col
 
-	s.micro = app.GetGrpcApp(micro.AppName).(micro.ServiceServer)
+	s.micro = rpc.C().Service()
 	s.log = zap.L().Named("Endpoint")
 	return nil
 }

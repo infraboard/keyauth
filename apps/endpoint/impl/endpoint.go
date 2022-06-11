@@ -3,12 +3,12 @@ package impl
 import (
 	"context"
 
+	micro "github.com/infraboard/mcenter/apps/service"
 	"github.com/infraboard/mcube/exception"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/infraboard/keyauth/apps/endpoint"
-	"github.com/infraboard/keyauth/apps/micro"
 	"github.com/infraboard/keyauth/common/header"
 )
 
@@ -71,15 +71,11 @@ func (s *service) RegistryEndpoint(ctx context.Context, req *endpoint.RegistryRe
 	}
 
 	// 查询该服务
-	svr, err := s.micro.DescribeService(ctx, micro.NewDescribeServiceRequestWithClientID(req.ClientId))
+	svr, err := s.micro.ValidateCredential(ctx, micro.NewValidateCredentialRequest(req.ClientId, req.ClientSecret))
 	if err != nil {
 		return nil, err
 	}
-	s.log.Debugf("service %s registry endpoints", svr.Name)
-
-	if err := svr.ValiateClientCredential(req.ClientSecret); err != nil {
-		return nil, err
-	}
+	s.log.Debugf("service %s registry endpoints", svr.Spec.Name)
 
 	// 生产该服务的Endpoint
 	endpoints := req.Endpoints(svr.Id)
