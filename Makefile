@@ -54,6 +54,7 @@ gen: # Init Service
 	@protoc -I=. -I=/usr/local/include --go_out=. --go_opt=module=${PKG} --go-grpc_out=. --go-grpc_opt=module=${PKG} apps/*/pb/*.proto
 	@protoc-go-inject-tag -input=common/types/*.pb.go
 	@protoc-go-inject-tag -input=apps/*/*.pb.go
+	@mcube generate enum -p -m apps/*/*.pb.go
 
 install: dep# Install depence go package
 	@go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest

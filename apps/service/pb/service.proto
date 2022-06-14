@@ -1,0 +1,229 @@
+syntax = "proto3";
+
+package infraboard.keyauth.service;
+option go_package = "github.com/infraboard/keyauth/apps/service";
+
+import "github.com/infraboard/mcube/pb/page/page.proto";
+import "github.com/infraboard/mcube/pb/request/request.proto";
+
+// MetaService 服务
+service MetaService {
+	rpc ValidateCredential(ValidateCredentialRequest) returns(Service);
+	rpc CreateService(CreateServiceRequest) returns(Service);
+    rpc UpdateService(UpdateServiceRequest) returns(Service);
+	rpc QueryService(QueryServiceRequest) returns(ServiceSet);
+	rpc DescribeService(DescribeServiceRequest) returns(Service);
+	rpc DeleteService(DeleteServiceRequest) returns(Service);
+	rpc RefreshCredential(DescribeServiceRequest) returns(Service);
+}
+
+enum Type {
+	// SYSTEM  系统应用
+	SYSTEM = 0;
+    // USER 用户应用, 为用户提供业务功能的服务
+    USER = 1;
+	// THIRD  第三方应用
+	THIRD = 9;
+}
+
+// Service is service provider
+message Service {
+    // 微服务ID
+    // @gotags: bson:"_id" json:"id"
+    string id = 1;
+    // 创建的时间
+    // @gotags: bson:"create_at" json:"create_at"
+    int64 create_at = 4;
+    // 更新时间
+    // @gotags: bson:"update_at" json:"update_at"
+    int64 update_at = 5;
+    // 更新人
+    // @gotags: bson:"update_by" json:"update_by"
+    string update_by = 6;
+    // 服务定义
+    // @gotags: bson:"spec" json:"spec"
+    CreateServiceRequest spec = 7;
+    // 服务的凭证, 用于服务注册
+    // @gotags: bson:"credential" json:"credential"
+    Credential credential = 8;
+    // 服务安全所需配置
+    // @gotags: bson:"security" json:"security"
+    Security security = 9;
+}
+
+message CreateServiceRequest {
+    // 服务所属空间
+    // @gotags: bson:"namespace" json:"namespace"
+    string namespace = 2;
+    // 应用所有者
+    // @gotags: bson:"owner" json:"owner"
+    string owner = 3;
+    // 是否启用该服务, 服务如果被停用，将不会被发现
+    // @gotags: bson:"enabled" json:"enabled"
+    bool enabled = 4;
+    // 服务类型
+    // @gotags: bson:"type" json:"type"
+    Type type = 5;
+    // 服务名称
+    // @gotags: bson:"name" json:"name"
+    string name = 6;
+    // 服务描述信息
+    // @gotags: bson:"description" json:"description"
+    string description = 7;
+    // 仓库地址
+    // @gotags: bson:"repository" json:"repository"
+    Repository repository = 8;
+    // 服务标签
+    // @gotags: bson:"tags" json:"tags"
+    map<string, string> tags = 14;
+}
+
+message UpdateServiceRequest {
+    // book id
+    // @gotags: json:"id"
+    string id = 1;
+    // 更新模式
+    // @gotags: json:"update_mode"
+    infraboard.mcube.request.UpdateMode update_mode = 2;
+    // 更新人
+    // @gotags: json:"update_by"
+    string update_by = 3;
+    // 更新时间
+    // @gotags: json:"update_at"
+    int64 update_at = 4;
+    // 更新的书本信息
+    // @gotags: json:"spec"
+    CreateServiceRequest spec = 5;
+}
+
+message Credential {
+    // 是否启动客户端
+    // @gotags: bson:"enabled" json:"enabled"
+    bool enabled = 1;
+    // 凭证更新时间
+    // @gotags: bson:"update_at" json:"update_at"
+    int64 update_at = 2;
+    // 服务客户端ID
+    // @gotags: bson:"client_id" json:"client_id"
+    string client_id = 3;
+    // 服务客户端凭证
+    // @gotags: bson:"client_secret" json:"client_secret"
+    string client_secret = 4;
+}
+
+// SCM_TYPE 源码仓库类型
+enum SCM_PROVIDER {
+    // gitlab
+    GITLAB = 0;
+	// github
+	GITHUB = 1;
+	// coding.net
+	CODING = 2;
+}
+
+enum LANGUAGE {
+    JAVA = 0;
+    JAVASCRIPT = 1;
+    GOLANG = 2;
+    PYTHON = 3;
+    PHP = 4;
+    C_SHARP = 5;
+    C = 6;
+    C_PLUS_PLUS = 7;
+    SWIFT = 8;
+    OBJECT_C = 9;
+    RUST = 10;
+    RUBY = 11;
+    DART = 12;
+    KOTLIN = 13;
+    SHELL = 14;
+    POWER_SHELL = 15;
+}
+
+// 服务仓库信息
+message Repository {
+    // 仓库提供商
+    // @gotags: bson:"provider" json:"provider"
+    SCM_PROVIDER provider = 1;
+    // token 操作仓库, 比如设置回调
+    // @gotags: bson:"token" json:"token"
+    string token = 2;
+    // 仓库对应的项目Id
+    // @gotags: bson:"project_id" json:"project_id"
+    string project_id = 3;
+    // 仓库ssh url地址
+    // @gotags: bson:"ssh_url" json:"ssh_url"
+    string ssh_url = 4;
+    // 仓库http url地址
+    // @gotags: bson:"http_url" json:"http_url"
+    string http_url = 5;
+    // 源代码使用的编程语言, 构建时, 不同语言有不同的构建环境
+    // @gotags: bson:"language" json:"language"
+    LANGUAGE language = 6;
+    // scm设置Hook后返回的id, 用于删除应用时，取消hook使用
+    // @gotags: bson:"hook_id" json:"hook_id"
+    string hook_id = 7;
+    // 创建hook过程中的错误信息
+    // @gotags: bson:"hook_error" json:"hook_error"
+    string hook_error = 8;
+}
+
+// 服务安全相关信息
+message Security {
+    // 用于加密应用的铭感信息的key
+    // @gotags: bson:"encrypt_key" json:"encrypt_key"
+    string encrypt_key = 1;
+}
+
+message ServiceSet {
+    // @gotags: bson:"total" json:"total"
+    int64 total = 1;
+    // @gotags: bson:"items" json:"items"
+    repeated Service items = 2;
+}
+
+// ValidateCredentialRequest 校验服务凭证
+message ValidateCredentialRequest {
+    // 服务客户端ID
+    // @gotags: json:"client_id" validate:"required,lte=100"
+    string client_id = 1;
+    // 服务客户端凭证
+    // @gotags: json:"client_secret" validate:"required,lte=100"
+    string client_secret = 2;                  
+}
+
+// QueryMicroRequest 查询应用列表
+message QueryServiceRequest {
+    // @gotags: json:"page"
+   infraboard.mcube.page.PageRequest page = 1;
+    // 服务类型
+    // @gotags: json:"type"
+    Type type = 2;
+}
+
+enum DescribeBy {
+    // 通过service id查询应用详情
+    SERVICE_ID = 0;
+    // 通过service name查询应用详情
+    SERVICE_NAME = 1;
+    // 通过service client_id查询应用详情
+    SERVICE_CLIENT_ID =2;
+}
+
+// DescribeMicroRequest 查询应用详情
+message DescribeServiceRequest {
+    // @gotags: json:"describe_by"
+    DescribeBy describe_by = 1;
+    // @gotags: json:"client_id"
+    string client_id = 2;
+    // @gotags: json:"name"
+    string name = 3;
+    // @gotags: json:"id"
+    string id = 4;
+}
+
+// DeleteMicroRequest todo
+message DeleteServiceRequest {
+    // @gotags: json:"id"
+    string id = 1;
+}

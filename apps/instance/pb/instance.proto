@@ -1,0 +1,205 @@
+syntax = "proto3";
+
+package infraboard.keyauth.instance;
+option go_package = "github.com/infraboard/keyauth/apps/instance";
+
+import "github.com/infraboard/mcube/pb/page/page.proto";
+
+service Service {
+    // 实例注册
+    rpc RegistryInstance(RegistryRequest) returns(Instance);
+    // 实例上报心跳
+    rpc Heartbeat(stream HeartbeatRequest) returns(stream HeartbeatResponse);
+    // 实例注销
+    rpc UnRegistry(UnregistryRequest) returns(Instance);
+    // 实例搜索, 用于客户端做服务发现
+    rpc Search(SearchRequest) returns(InstanceSet);
+    // 查询实例详情
+    rpc DescribeInstance(DescribeInstanceRequest) returns(Instance);
+}
+
+// 实例注册的协议类型
+enum Protocal {
+    // GRPC服务
+    GRPC = 0;
+    // HTTP服务
+    HTTP = 1;
+}
+
+enum Provider {
+    // SDK直接注册
+    SDK = 0;
+    // 服务来源于kubernetes, 有operator提供注册
+    KUBERNETES = 1;
+}
+
+// 服务实例信息, 比如 阿里云_杭州/生产环境/app01/default/instance01
+message Instance {
+    // 服务所属域
+    // @gotags: bson:"_id" json:"id"
+    string id = 1;
+    // 服务所属空间
+    // @gotags: bson:"namespace" json:"namespace"
+    string namespace = 3;
+    // 实例所属应用名称
+    // @gotags: bson:"service_name" json:"service_name"
+    string service_name = 4;
+    // 实例注册相关信息
+    // @gotags: bson:"registry_info" json:"registry_info"
+    RegistryRequest registry_info = 5;
+    // 实例状态
+    // @gotags: bson:"status" json:"status"
+    Status status = 6;
+    // 实例配置
+    // @gotags: bson:"config" json:"config"
+    Config config = 7;
+}
+
+message Config {
+    // 心跳设置
+    // @gotags: bson:"heart_beat" json:"heart_beat"
+    HeartbeatConfig heartbeat = 1;
+}
+
+message HeartbeatConfig {
+    // 心跳间隔
+    // @gotags: bson:"interval" json:"interval"
+    int32 interval = 1;
+    // 心跳超时时间, 单位秒
+    // @gotags: bson:"timeout" json:"timeout"
+    int32 timeout = 2;
+}
+
+message InstanceSet {
+    // 总个数
+    // @gotags: bson:"status" json:"status"
+    int64 total = 1;
+    // 实例列表
+    // @gotags: bson:"items" json:"items"
+    repeated Instance items = 2;
+}
+
+message RegistryRequest {
+    // 提供注册提供方
+    // @gotags: bson:"provider" json:"provider" toml:"provider" yaml:"provider" env:"MCENTER_PROVIDER"
+    Provider provider = 1;
+    // 实例所属地域, 默认default
+    // @gotags: bson:"region" json:"region" toml:"region" yaml:"region" env:"MCENTER_REGION" validate:"required"
+    string region = 2;
+    // 实例所属环境, 默认default
+    // @gotags: bson:"environment" json:"environment" toml:"environment" yaml:"environment" env:"MCENTER_ENV" validate:"required"
+    string environment = 3;
+    // 实例所属分组,默认default
+    // @gotags: bson:"group" json:"group" toml:"group" yaml:"group" env:"MCENTER_GROUP" validate:"required"
+    string group = 4;
+    // 实例名称, 如果不传, 则会随机生成
+    // @gotags: bson:"name" json:"name" toml:"name" yaml:"name" env:"MCENTER_NAME"
+    string name = 5;
+    // 注册的对外的访问的协议
+    // @gotags: bson:"protocal" json:"protocal" toml:"protocal" yaml:"protocal" env:"MCENTER_PROTOCAL"
+    Protocal protocal = 6;
+    // 实例地址
+    // @gotags: bson:"address" json:"address" toml:"address" yaml:"address" env:"MCENTER_ADDRESS" validate:"required"
+    string address = 7;
+    // 该地址是否对外暴露, 如果暴露, 会被注册到网关
+    // @gotags: bson:"export" json:"export" toml:"export" yaml:"export" env:"MCENTER_EXPORT"
+    bool export = 8;
+    // 实例标签, 可以根据标签快速过滤实例
+    // @gotags: bson:"tags" json:"tags" toml:"tags" yaml:"tags" env:"MCENTER_TAGS"
+    map<string,string> tags = 9;
+    // 实例构建信息
+    // @gotags: bson:"build" json:"build" toml:"build" yaml:"build"
+    Build build = 10;
+}
+
+// 实例构建相关信息
+message Build {
+    // 实例版本
+    // @gotags: bson:"version" json:"version" toml:"version" yaml:"version" env:"MCENTER_BUILD_VERSION"
+    string version = 1;
+    // 实例代码构建对应分支
+    // @gotags: bson:"git_branch" json:"git_branch" toml:"git_branch" yaml:"git_branch" env:"MCENTER_BUILD_GIT_BRANCH"
+    string git_branch = 2;
+    // 实例代码对应commit号
+    // @gotags: bson:"git_commit" json:"git_commit" toml:"git_commit" yaml:"git_commit" env:"MCENTER_BUILD_GIT_COMMIT"
+    string git_commit = 3;
+    // 实例构建时间
+    // @gotags: bson:"build_at" json:"build_at" toml:"build_at" yaml:"build_at" env:"MCENTER_BUILD_AT"
+    int64 build_at = 4;
+}
+
+message Status {
+    // 上线时间
+    // @gotags: bson:"online" json:"online"
+    int64 online = 1;
+    // 是否健康
+    // @gotags: bson:"healthy" json:"healthy"
+    bool healthy = 2;
+}
+
+message HeartbeatRequest {
+    // 实例Id
+    // @gotags: bson:"instance_id" json:"instance_id"
+    string instance_id = 1;
+}
+
+enum CommandType {
+    UPDATE_INSTANCE = 0;
+}
+
+message RemoteCommand {
+    // 客户端需要执行命令类型
+    // @gotags: bson:"type" json:"type"
+    CommandType type = 1;
+    // 指令参数
+    // @gotags: bson:"params" json:"params"
+    map<string,string> params = 2;
+}
+
+message HeartbeatResponse {
+    // 客户端下一次心跳包的发送间隔, 单位秒
+    // @gotags: bson:"next" json:"next"
+    int32 next = 1;
+    // 客户端需要执行命令
+    // @gotags: bson:"remote_command" json:"remote_command"
+    RemoteCommand remote_command = 2;
+}
+
+message UnregistryRequest {
+    // 需要注销的实例Id
+    // @gotags: json:"instance_id"
+    string instance_id = 1;
+}
+
+message SearchRequest {
+    // 分页参数
+    // @gotags: json:"page" 
+    infraboard.mcube.page.PageRequest page = 1;
+    // 服务所属域
+    // @gotags: bson:"domain" json:"domain" validate:"required"
+    string domain = 2;
+    // 服务所属空间
+    // @gotags: bson:"namespace" json:"namespace"
+    string namespace = 3;
+    // 实例所属应用Id
+    // @gotags: bson:"service_name" json:"service_name"
+    string service_name = 4;
+    // 实例所属环境, 默认default
+    // @gotags: bson:"region" json:"region"
+    string region = 5;
+    // 实例所属环境, 默认default
+    // @gotags: bson:"environment" json:"environment"
+    string environment = 6;
+    // 实例所属分组,默认default
+    // @gotags: bson:"group" json:"group"
+    string group = 7;
+    // 实例标签, 可以根据标签快速过滤实例
+    // @gotags: bson:"tags" json:"tags" 
+    map<string,string> tags = 8;
+}
+
+message DescribeInstanceRequest {
+    // 实例的Id
+    // @gotags: json:"id"
+    string id = 1;
+}

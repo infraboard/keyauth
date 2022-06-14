@@ -14,9 +14,9 @@ import (
 	"github.com/infraboard/keyauth/apps/application"
 	"github.com/infraboard/keyauth/apps/department"
 	"github.com/infraboard/keyauth/apps/domain"
-	"github.com/infraboard/keyauth/apps/micro"
 	"github.com/infraboard/keyauth/apps/namespace"
 	"github.com/infraboard/keyauth/apps/role"
+	micro "github.com/infraboard/keyauth/apps/service"
 	"github.com/infraboard/keyauth/apps/system"
 	"github.com/infraboard/keyauth/apps/token"
 	"github.com/infraboard/keyauth/apps/user"
@@ -131,7 +131,7 @@ func NewInitialer() *Initialer {
 		token:       app.GetGrpcApp(token.AppName).(token.ServiceServer),
 		department:  app.GetGrpcApp(department.AppName).(department.ServiceServer),
 		role:        app.GetGrpcApp(role.AppName).(role.ServiceServer),
-		micro:       app.GetGrpcApp(micro.AppName).(micro.ServiceServer),
+		micro:       app.GetGrpcApp(micro.AppName).(micro.MetaServiceServer),
 		system:      app.GetInternalApp(system.AppName).(system.Service),
 		namespace:   app.GetGrpcApp(namespace.AppName).(namespace.ServiceServer),
 	}
@@ -152,7 +152,7 @@ type Initialer struct {
 	token       token.ServiceServer
 	department  department.ServiceServer
 	role        role.ServiceServer
-	micro       micro.ServiceServer
+	micro       micro.MetaServiceServer
 	system      system.Service
 	namespace   namespace.ServiceServer
 }

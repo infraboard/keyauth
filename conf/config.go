@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/infraboard/mcenter/client/rpc"
 	"github.com/infraboard/mcube/cache/memory"
 	"github.com/infraboard/mcube/cache/redis"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -18,21 +17,19 @@ var (
 
 func newConfig() *Config {
 	return &Config{
-		App:     newDefaultAPP(),
-		Log:     newDefaultLog(),
-		Mongo:   newDefaultMongoDB(),
-		Cache:   newDefaultCache(),
-		Mcenter: rpc.NewDefaultConfig(),
+		App:   newDefaultAPP(),
+		Log:   newDefaultLog(),
+		Mongo: newDefaultMongoDB(),
+		Cache: newDefaultCache(),
 	}
 }
 
 // Config 应用配置
 type Config struct {
-	Mcenter *rpc.Config `toml:"mcenter"`
-	App     *app        `toml:"app"`
-	Log     *log        `toml:"log"`
-	Mongo   *mongodb    `toml:"mongodb"`
-	Cache   *_cache     `toml:"cache"`
+	App   *app     `toml:"app"`
+	Log   *log     `toml:"log"`
+	Mongo *mongodb `toml:"mongodb"`
+	Cache *_cache  `toml:"cache"`
 }
 
 // InitGloabl 注入全局变量
@@ -47,11 +44,6 @@ func (c *Config) InitGloabl() error {
 	}
 	mgoclient = mclient
 
-	// 提前加载好 mcenter客户端
-	err = rpc.LoadClientFromConfig(c.Mcenter)
-	if err != nil {
-		panic("load mcenter client from config error: " + err.Error())
-	}
 	return nil
 }
 

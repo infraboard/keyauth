@@ -1,4 +1,4 @@
-package token
+package tools
 
 import (
 	"math/rand"

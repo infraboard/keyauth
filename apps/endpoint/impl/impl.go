@@ -3,8 +3,7 @@ package impl
 import (
 	"context"
 
-	micro "github.com/infraboard/mcenter/apps/service"
-	"github.com/infraboard/mcenter/client/rpc"
+	micro "github.com/infraboard/keyauth/apps/service"
 	"github.com/infraboard/mcube/app"
 	"github.com/infraboard/mcube/logger"
 	"github.com/infraboard/mcube/logger/zap"
@@ -24,7 +23,7 @@ var (
 type service struct {
 	col   *mongo.Collection
 	log   logger.Logger
-	micro micro.MetaServiceClient
+	micro micro.MetaServiceServer
 
 	endpoint.UnimplementedServiceServer
 }
@@ -46,7 +45,7 @@ func (s *service) Config() error {
 
 	s.col = col
 
-	s.micro = rpc.C().Service()
+	s.micro = app.GetGrpcApp(micro.AppName).(micro.MetaServiceServer)
 	s.log = zap.L().Named("Endpoint")
 	return nil
 }

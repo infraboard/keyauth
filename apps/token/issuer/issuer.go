@@ -26,6 +26,7 @@ import (
 	"github.com/infraboard/keyauth/apps/user"
 	"github.com/infraboard/keyauth/apps/user/types"
 	"github.com/infraboard/keyauth/common/password"
+	"github.com/infraboard/keyauth/common/tools"
 )
 
 // NewTokenIssuer todo
@@ -361,8 +362,8 @@ func (i *issuer) newBearToken(app *application.Application, gt token.GrantType) 
 	now := time.Now()
 	tk := &token.Token{
 		Type:            token.TokenType_BEARER,
-		AccessToken:     token.MakeBearer(24),
-		RefreshToken:    token.MakeBearer(32),
+		AccessToken:     tools.MakeBearer(24),
+		RefreshToken:    tools.MakeBearer(32),
 		CreateAt:        now.UnixNano() / 1000000,
 		ClientId:        app.ClientId,
 		GrantType:       gt,

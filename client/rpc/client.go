@@ -17,12 +17,13 @@ import (
 	"github.com/infraboard/keyauth/apps/department"
 	"github.com/infraboard/keyauth/apps/domain"
 	"github.com/infraboard/keyauth/apps/endpoint"
+	"github.com/infraboard/keyauth/apps/instance"
 	"github.com/infraboard/keyauth/apps/mconf"
-	"github.com/infraboard/keyauth/apps/micro"
 	"github.com/infraboard/keyauth/apps/namespace"
 	"github.com/infraboard/keyauth/apps/permission"
 	"github.com/infraboard/keyauth/apps/policy"
 	"github.com/infraboard/keyauth/apps/role"
+	micro "github.com/infraboard/keyauth/apps/service"
 	"github.com/infraboard/keyauth/apps/session"
 	"github.com/infraboard/keyauth/apps/tag"
 	"github.com/infraboard/keyauth/apps/token"
@@ -106,8 +107,8 @@ func (c *Client) Endpoint() endpoint.ServiceClient {
 }
 
 // Micro todo
-func (c *Client) Micro() micro.ServiceClient {
-	return micro.NewServiceClient(c.conn)
+func (c *Client) Micro() micro.MetaServiceClient {
+	return micro.NewMetaServiceClient(c.conn)
 }
 
 // Micro todo
@@ -158,4 +159,9 @@ func (c *Client) User() user.ServiceClient {
 // Verifycode todo
 func (c *Client) Verifycode() verifycode.ServiceClient {
 	return verifycode.NewServiceClient(c.conn)
+}
+
+// Verifycode todo
+func (c *Client) Instance() instance.ServiceClient {
+	return instance.NewServiceClient(c.conn)
 }

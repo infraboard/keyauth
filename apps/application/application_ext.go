@@ -8,7 +8,7 @@ import (
 	"github.com/infraboard/mcube/http/request"
 	"github.com/rs/xid"
 
-	"github.com/infraboard/keyauth/apps/token"
+	"github.com/infraboard/keyauth/common/tools"
 )
 
 // NewUserApplicartion 新建实例
@@ -40,8 +40,8 @@ func newDeafultApplication(req *CreateApplicatonRequest) *Application {
 		BuildIn:      false,
 		CreateAt:     now,
 		UpdateAt:     now,
-		ClientId:     token.MakeBearer(24),
-		ClientSecret: token.MakeBearer(32),
+		ClientId:     tools.MakeBearer(24),
+		ClientSecret: tools.MakeBearer(32),
 		CreateBy:     req.CreateBy,
 
 		Name:                     req.Name,
