@@ -27,6 +27,7 @@ demo访问地址: [Demo](http://keyauth.nbtuan.vip/) 用户: admin, 密码: 1234
 
 ## SDK使用
 
+
 注意SDK权限很大, 仅供内部服务调用, 如果对外，请走HTTP API
 ```go
 package main
